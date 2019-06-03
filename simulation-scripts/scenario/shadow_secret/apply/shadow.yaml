@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shadow
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: passwd
+  namespace: shadow
+type: Opaque
+data:
+   password: RGFyaXVzaXNiYWQ=
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: nginx
+  name: nginx
+  namespace: shadow
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      name: nginx
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+      - image: nginx
+        # image: vulnerables/cve-2014-6271
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: passwd
+          mountPath: "/super/secret"
+          readOnly: true
+      volumes:
+      - name: passwd
+        secret:
+          secretName: passwd

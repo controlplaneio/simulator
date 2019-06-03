@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: lazy
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: aws-creds
+  namespace: lazy
+type: Opaque
+data:
+   credentials: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkPUFLSUFJT1NGT0ROTjdFWEFNUExFCmF3c19zZWNyZXRfYWNjZXNzX2tleT13SmFsclhVdG5GRU1JL0s3TURFTkcvYlB4UmZpQ1lFWEFNUExFS0VZCg==
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: nginx
+  name: nginx
+  namespace: lazy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nginx
+  template:
+    metadata:
+      labels:
+        name: nginx
+    spec:
+      containers:
+      - image: nginx
+        # image: vulnerables/cve-2014-6271
+        imagePullPolicy: IfNotPresent
+        name: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: aws-creds
+          mountPath: "/secret/.aws"
+          readOnly: true
+      volumes:
+      - name: aws-creds
+        secret:
+          secretName: aws-creds

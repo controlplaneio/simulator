@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: data
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres
+  namespace: data
+type: Opaque
+data:
+  password: c3VwZXJTZWNyZXRQYXNzd29yZAo=
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: jenkins
+  name: jenkins
+  namespace: data
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: jenkins
+  template:
+    metadata:
+      labels:
+        name: jenkins
+    spec:
+      containers:
+      - image: jenkins
+        # image: vulnerables/cve-2014-6271
+        imagePullPolicy: IfNotPresent
+        name: jenkins
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: dockersock
+          mountPath: "/var/run/docker.sock"
+          readOnly: true
+      - image: postgres
+        imagePullPolicy: IfNotPresent
+        name: postgres
+        volumeMounts:
+        - name: postgres
+          readOnly: true
+          mountPath: "/etc/secret-volume"
+      volumes:
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
+      - name: postgres
+        secret:
+          secretName: postgres

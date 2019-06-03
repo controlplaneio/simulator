@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: greedy
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: greedy
+  namespace: greedy
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: greedy
+  namespace: greedy
+subjects:
+- apiGroup: ""
+  kind: ServiceAccount
+  name: greedy
+roleRef:
+  apiGroup: ""
+  kind: ClusterRole
+  name: admin
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: jumpbox
+  namespace: greedy
+spec:
+  selector:
+    name: jumpbox
+  type: NodePort
+  ports:
+  - port: 22
+    nodePort: 30022
+    protocol: TCP
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: jumpbox
+  name: jumpbox
+  namespace: greedy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: jumpbox
+  template:
+    metadata:
+      labels:
+        name: jumpbox
+    spec:
+      serviceAccountName: greedy
+      containers:
+      - image: unnerup/insecure-ssh
+        imagePullPolicy: IfNotPresent
+        name: jumpbox
+        ports:
+        - containerPort: 22
