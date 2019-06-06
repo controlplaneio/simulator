@@ -1,5 +1,5 @@
 # securus-aws-k8s
-Terraform templates to create bastion host and prublic private vpcs/subnets
+Terraform templates to create bastion host and public/private vpcs/subnets
 
 # MacOS Notes
 
