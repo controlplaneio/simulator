@@ -1,6 +1,16 @@
-variable "security_group_name" {
-  description = "Name for security group"
-  default     = "bastion-security-group"
+
+variable "region" {
+  description = "aws region"
+  default = "eu-west-1"
+}
+
+variable "shared_credentials_file" {
+  description = "location of aws credentiala file"
+}
+
+variable "aws_profile" {
+  description = "aws profile"
+  default = "default"
 }
 
 variable "access_key" {
