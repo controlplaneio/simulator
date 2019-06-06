@@ -16,7 +16,7 @@ variable "public_vpc_cidr" {
 }
 
 variable "access_cidr" {
-  description = "cidr range of client comnection"
+  description = "cidr range of client connection"
 }
 
 variable "public_cidr" {

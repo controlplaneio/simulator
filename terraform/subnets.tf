@@ -8,7 +8,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_subnet" "private_subnet" {
-   vpc_id            = "${aws_default_vpc.default.id}"
+   vpc_id            = "${aws_default_vpc.private.id}"
    cidr_block        = "${var.private_cidr}"
    availability_zone = "${var.private_avail_zone}"
    tags {

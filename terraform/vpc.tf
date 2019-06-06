@@ -1,4 +1,4 @@
-resource "aws_default_vpc" "default" {
+resource "aws_default_vpc" "private" {
   cidr_block = "${var.private_vpc_cidr}"
 }
 

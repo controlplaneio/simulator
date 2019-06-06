@@ -19,7 +19,7 @@ resource "aws_security_group" "bastion-sg" {
 
 resource "aws_security_group" "public-private-sg" {
   name   = "access-private-vpc-from-public-group"
-  vpc_id = "${aws_default_vpc.default.id}"
+  vpc_id = "${aws_default_vpc.private.id}"
 
   ingress {
     protocol    = -1
