@@ -29,11 +29,11 @@ variable "access_cidr" {
   description = "cidr range of client connection"
 }
 
-variable "public_cidr" {
+variable "public_subnet_cidr" {
   description = "cidr range for public subnet"
 }
 
-variable "private_cidr" {
+variable "private_subnet_cidr" {
   description = "cidr range for private subnet"
 }
 
