@@ -9,5 +9,5 @@ resource "aws_instance" "bastion" {
 
 resource "aws_key_pair" "bastion_key" {
   key_name   = "access_key"
-  public_key = "${var.ssh_public_key}"
+  public_key = "${var.access_key}"
 }
