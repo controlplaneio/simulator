@@ -43,7 +43,7 @@ variable "ami_id" {
 
 variable "instance_type" {
   description = "instance type for Baston host"
-  default = "t2.micro"
+  default = "t1.micro"
 }
 
 variable "private_avail_zone" {
