@@ -1,3 +1,7 @@
+#
+# rename to bastion.tfvars and update as required
+# .gitignore setup to ignore .tfvars file, do not change this
+#
 region = ""
 shared_credentials_file = ""
 aws_profile = ""
