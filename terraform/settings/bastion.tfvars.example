@@ -5,7 +5,6 @@
 region = ""
 shared_credentials_file = ""
 aws_profile = ""
-security_group_name = ""
 access_key = ""
 private_vpc_cidr = ""
 public_vpc_cidr = ""
