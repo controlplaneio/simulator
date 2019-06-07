@@ -1,6 +1,6 @@
 resource "aws_security_group" "bastion-sg" {
   name   = "bastion-security-group"
-  vpc_id = "${aws_vpc.public.id}"
+  vpc_id = "${aws_vpc.securus_vpc.id}"
 
   ingress {
     protocol    = "tcp"
@@ -17,21 +17,3 @@ resource "aws_security_group" "bastion-sg" {
   }
 }
 
-resource "aws_security_group" "public-private-sg" {
-  name   = "access-private-vpc-from-public-group"
-  vpc_id = "${aws_vpc.private.id}"
-
-  ingress {
-    protocol    = -1
-    from_port   = 0
-    to_port     = 0
-    cidr_blocks = ["${var.public_vpc_cidr}"]
-  }
-
-  egress {
-    protocol    = -1
-    from_port   = 0 
-    to_port     = 0 
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}

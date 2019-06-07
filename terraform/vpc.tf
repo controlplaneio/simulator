@@ -1,17 +1,9 @@
-resource "aws_vpc" "private" {
-  cidr_block = "${var.private_vpc_cidr}"
-  enable_dns_support = true
+resource "aws_vpc" "securus_vpc" {
+  cidr_block           = "172.31.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "PrivateVPC"
+    Name = "Securus VPC"
   }
 }
 
-resource "aws_vpc" "public" {
-  cidr_block = "${var.public_vpc_cidr}"
-  enable_dns_support = true
-  enable_dns_hostnames = true
-  tags = {
-    Name = "PublicVPC"
-  }
-}
