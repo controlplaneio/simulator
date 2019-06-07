@@ -2,17 +2,21 @@
 # rename to bastion.tfvars and update as required
 # .gitignore setup to ignore .tfvars file, do not change this
 #
-region = "eu-west-1"
-shared_credentials_file = "[location of your aws credentials file]"
-aws_profile = "[name of profile in credentials file, can be removed if default]"
-access_key = "[your ssh public key]"
-vpc_cidr = ""
-access_cidr = ""
-public_subnet_cidr  = ""
-private_subnet_cidr = ""
-ami_id = "ami-09d38086eb2b23925"
-instance_type = "[can be removed - defaults to t2.micro]"
-controlplane_instance_type = "[can be removed - defaults to t2.micro]"
-number_of_controlplane_instances = "[number of k8s nodes to create - defaults to 1]"
-private_avail_zone = "eu-west-1a"
-public_avail_zone = "eu-west-1a"
+
+# anything that supplies a default does not have to be defined if default
+# setting is of use, i.e remove setting from this file is you do not need to override
+
+region = "defaults to eu-west-1"
+shared_credentials_file = "location of your aws credentials file"
+aws_profile = "defaults to default"
+access_key = "your ssh public key"
+vpc_cidr = "defaults to 172.31.0.0/16"
+access_cidr = "ip address/cidr range of your PC/network"
+public_subnet_cidr  = "defaults to 172.31.1.0/24"
+private_subnet_cidr = "defaults to 172.31.2.0/24"
+ami_id = "defaults to ami-09d38086eb2b23925"
+instance_type = "defaults to t1.micro"
+controlplane_instance_type = "defaults to t1.micro]"
+number_of_controlplane_instances = "defaults to 1"
+private_avail_zone = "defaults to eu-west-1a"
+public_avail_zone = "defaults to eu-west-1a"
