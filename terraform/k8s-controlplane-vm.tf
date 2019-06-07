@@ -8,6 +8,6 @@ resource "aws_instance" "controlplane" {
 }
 
 resource "aws_key_pair" "bastion_key" {
-  key_name   = "access_key"
+  key_name   = "controlplane_key"
   public_key = "${var.access_key}"
 }
