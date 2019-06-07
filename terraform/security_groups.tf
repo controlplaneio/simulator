@@ -17,3 +17,22 @@ resource "aws_security_group" "bastion-sg" {
   }
 }
 
+resource "aws_security_group" "controlplane-sg" {
+  name   = "controlplane-security-group"
+  vpc_id = "${aws_vpc.securus_vpc.id}"
+
+  ingress {
+    protocol    = "tcp"
+    from_port   = 22
+    to_port     = 22
+    cidr_blocks = ["${aws_instance.bastion.private_ip}"]
+  }
+
+  egress {
+    protocol    = -1
+    from_port   = 0 
+    to_port     = 0 
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
