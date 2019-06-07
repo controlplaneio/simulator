@@ -42,6 +42,16 @@ variable "instance_type" {
   default = "t1.micro"
 }
 
+variable "controlplane_instance_type" {
+  description = "instance type for k8s controlplane host"
+  default = "t1.micro"
+}
+
+variable "number_of_controlplane_instances" {
+  description = "number of control plane VMs to create"
+  default = "1"
+}
+
 variable "private_avail_zone" {
   description = "availability zone for private subnet"
 }
