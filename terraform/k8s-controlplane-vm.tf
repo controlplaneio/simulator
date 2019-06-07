@@ -7,7 +7,7 @@ resource "aws_instance" "controlplane" {
   subnet_id                   = "${aws_subnet.private_subnet.id}"
 }
 
-resource "aws_key_pair" "bastion_key" {
+resource "aws_key_pair" "controlplane_key" {
   key_name   = "controlplane_key"
   public_key = "${var.access_key}"
 }
