@@ -17,12 +17,8 @@ variable "access_key" {
   description = "ssh public key"
 }
 
-variable "private_vpc_cidr" {
-  description = "private cidr block for vpc"
-}
-
-variable "public_vpc_cidr" {
-  description = "public cidr block for vpc"
+variable "vpc_cidr" {
+  description = "cidr block for vpc"
 }
 
 variable "access_cidr" {
