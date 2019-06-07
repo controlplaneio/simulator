@@ -1,4 +1,0 @@
-node {
-   stage 'build'
-   sh "echo triggered"
-}
