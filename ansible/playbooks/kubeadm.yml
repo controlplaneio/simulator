@@ -1,0 +1,13 @@
+---
+
+- name: Upgrade all packages to the latest version
+  roles:
+   - update=pkgs
+
+- name: kubeadm playbook
+  hosts: localhost
+  connection: local
+
+  roles:
+   - kubeadm
+
