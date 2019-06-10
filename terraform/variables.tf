@@ -46,13 +46,13 @@ variable "instance_type" {
   default = "t1.micro"
 }
 
-variable "controlplane_instance_type" {
-  description = "instance type for k8s controlplane host"
+variable "master_instance_type" {
+  description = "instance type for master node(s) "
   default = "t1.micro"
 }
 
-variable "number_of_controlplane_instances" {
-  description = "number of control plane VMs to create"
+variable "number_of_master_instances" {
+  description = "number of master instances to create"
   default = "1"
 }
 
