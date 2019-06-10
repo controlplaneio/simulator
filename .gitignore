@@ -103,3 +103,14 @@ docs/_build
 .scratch.md
 
 conf/.config/keybase/
+
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
