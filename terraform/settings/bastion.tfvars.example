@@ -1,0 +1,24 @@
+#
+# rename to bastion.tfvars and update as required
+# .gitignore setup to ignore .tfvars file, do not change this
+#
+
+# anything that supplies a default does not have to be defined if default
+# setting is of use, i.e remove setting from this file is you do not need to override
+
+region = "defaults to eu-west-1"
+shared_credentials_file = "location of your aws credentials file"
+aws_profile = "defaults to default"
+access_key = "your ssh public key"
+vpc_cidr = "defaults to 172.31.0.0/16"
+access_cidr = "ip address/cidr range of your PC/network"
+public_subnet_cidr  = "defaults to 172.31.1.0/24"
+private_subnet_cidr = "defaults to 172.31.2.0/24"
+ami_id = "defaults to ami-09d38086eb2b23925"
+instance_type = "defaults to t1.micro"
+master_instance_type = "defaults to t1.micro"
+number_of_master_instances = "defaults to 1"
+number_of_cluster_instances = "defaults to 2"
+cluster_nodes_instance_type = "defaults to t1.micro"
+private_avail_zone = "defaults to eu-west-1a"
+public_avail_zone = "defaults to eu-west-1a"
