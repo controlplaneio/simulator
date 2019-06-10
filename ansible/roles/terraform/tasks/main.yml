@@ -1,5 +1,5 @@
 ---
 - terraform:
-    project_path: '{{ project_dir }}'
+    project_path: '{{ projectDir }}'
     state: present
 

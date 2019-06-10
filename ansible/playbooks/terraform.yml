@@ -1,7 +1,7 @@
 ---
 
 - name: Run Terraform to setup initial kubernetes environment
-  host: localhost
+  hosts: localhost
   connection: local
 
   vars:
