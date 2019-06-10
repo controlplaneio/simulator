@@ -56,6 +56,16 @@ variable "number_of_controlplane_instances" {
   default = "1"
 }
 
+variable "cluster_nodes_instance_type" {
+  description = "instance type for k8s nodes"
+  default = "t1.micro"
+}
+
+variable "number_of_cluster_instances" {
+  description = "number of nodes to create"
+  default = "1"
+}
+
 variable "private_avail_zone" {
   description = "availability zone for private subnet"
   default = "eu-west-1a"
