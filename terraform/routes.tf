@@ -6,7 +6,7 @@ resource "aws_route_table" "public_route_table" {
     gateway_id = "${aws_internet_gateway.securus_igw.id}"
   }
   tags   = {
-    Name = "Public internet route table"
+    Name = "Securus Public internet route table"
   }
 }
 
@@ -17,7 +17,7 @@ resource "aws_route_table" "private_nat_route_table" {
     nat_gateway_id = "${aws_nat_gateway.securus_nat.id}"
   }
   tags   = {
-    Name = "Private NAT route table"
+    Name = "Securus Private NAT route table"
   }
 }
 
