@@ -114,3 +114,4 @@ conf/.config/keybase/
 # .tfvars files
 *.tfvars
 
+.node_modules
