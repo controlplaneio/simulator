@@ -1,6 +1,11 @@
-.DEFAULT_GOAL := help
+NAME:=simulator
+DOCKER_REPOSITORY:=controlplane
+LAUNCH_DOCKER_IMAGE_NAME:=$(DOCKER_REPOSITORY)/$(NAME)-launch
+VERSION:=0.1-dev
 
 SHELL := /usr/bin/env bash
+
+.DEFAULT_GOAL := help
 
 .PHONY: all
 all: test
@@ -12,6 +17,22 @@ check: ## Check required system packages are installed
 .PHONY: deps
 deps: check ## Install dependencies
 	@npm install
+
+.PHONY: lint
+lint: deps
+	@npm run lint
+
+.PHONY: run
+run: build
+	docker run --rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) bash
+
+.PHONY: run
+exec: build
+	docker run -v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials --rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) $(CMD)
+
+.PHONY: build
+build: lint ## Builds the launch container
+	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
 test: deps ## Run the feature tests

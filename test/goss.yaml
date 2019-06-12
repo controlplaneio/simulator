@@ -1,0 +1,12 @@
+file:
+  /goss/docker_output.log:
+    exists: true
+command:
+  cat /app/credentials:
+    exit-status: 0
+    stderr: []
+    timeout: 10000
+process:
+  bash:
+    running: true
+
