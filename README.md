@@ -4,7 +4,7 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 
 ## Sequence Diagram
 
-![Launch scenario flow diagram](./docs/launch-scenario.svg)
+![Launch scenario flow diagram](./docs/launch-scenario.png)
 
 - **User** - the end user who is operating the standalone Simulator CLI tool in order to create a cluster with a running scenario
 - **Launch Container** - a Docker container image in which the simulator tooling runs (Terraform, and triggering the perturb scripts); this runs in a container to encpasulte dependencies for portability
