@@ -18,7 +18,7 @@ Feature: Infrastructure
     When I run the standup script
     Then I cannot connect to the bastion from the host
 
-  Scenario: outputs an sc script to be used by perturb.sh
+  Scenario: outputs an rc script to be used by perturb.sh
     Given I set good env vars
     When I run the standup script
     Then the output has "MASTER_IP"
