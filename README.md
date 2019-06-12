@@ -16,6 +16,8 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 
 ## Appendix - Sequence Diagram Source
 
+Edit by pasting into something like [websequencediagrams.com](https://websequencediagrams.com), using syntax _a la_ [these docs](http://plantuml.com/sequence-diagram).
+
 ```
 User->Launch Container: 1: run simulator
 activate Launch Container
