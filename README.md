@@ -11,3 +11,5 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 - **AWS API** - Terraform interacts with AWS APIs in order to create a VPC and EC2 instances for the bastion host and Kubernetes cluster
 - **Bastion** - EC2 instance in the same VPC as the Kubernetes cluster from which the perturb scripts are run. The launch container will first generate an SSH key that can be used by Terraform to access the bastion
 - **AWS VPC & k8s** - VPC in which the Bastion and k8s cluster nodes sit
+- **RC script** - like a .env file, with values coming back from Terraform that are needed by the perturb script
+- **Attack container** - a container run on the Bastion after perturb in order to give the user a shell on the Bastion, but inside a container, with tools specific to either the cloud provider or the scenario
