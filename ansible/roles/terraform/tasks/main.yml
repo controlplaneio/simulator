@@ -1,0 +1,6 @@
+---
+- terraform:
+    project_path: '{{ projectDir }}'
+    variables_file: '{{ varFile }}'
+    state: present
+
