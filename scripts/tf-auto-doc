@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! hash terraform-docs 2>/dev/null;
+if ! hash ../../binterraform-docs 2>/dev/null;
 then
 	echo -e"This script required terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"
 	exit 1
@@ -14,7 +14,7 @@ fi
 DIRECTORY=$1
 README_NAME="README-auto.md"
 
-find "${DIRECTORY}" -type d -not -path "${DIRECTORY}/.git/*" -exec bash -c 'terraform-docs md "{}"  >  "{}"/README-auto.md;' \;
+find "${DIRECTORY}" -type d -not -path "${DIRECTORY}/.git/*" -exec bash -c '../bin/terraform-docs md "{}"  >  "{}"/README-auto.md;' \;
 
 find "${DIRECTORY}" -name "${README_NAME}" -size 1c -type f -delete
 
