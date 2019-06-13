@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if ! hash terraform-docs 2>/dev/null;
+then
+	echo -e"This script required terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"
+	exit 1
+fi
+
+if [ "$#" -ne 1 ]; then
+	echo "Usage: $0 <base-directory>"
+	exit 1
+fi
+
+DIRECTORY=$1
+README_NAME="README-auto.md"
+
+find "${DIRECTORY}" -type d -not -path "${DIRECTORY}/.git/*" -exec bash -c 'terraform-docs md "{}"  >  "{}"/README-auto.md;' \;
+
+find "${DIRECTORY}" -name "${README_NAME}" -size 1c -type f -delete
+
+printf "\n\033[35;1mUpdating the following READMEs with terraform-docs\033[0m\n\n"
+
+find "${DIRECTORY}" -name "${README_NAME}"
+
