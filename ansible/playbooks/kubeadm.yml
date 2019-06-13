@@ -3,6 +3,7 @@
 - name: Install kubeadm and update packages as required
   hosts: localhost
   connection: local
+  become: true
 
   vars:
    - privateKey: location of private key
