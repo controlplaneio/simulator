@@ -12,15 +12,7 @@ all: test
 
 .PHONY: check
 check: ## Check required system packages are installed
-	@command -v "dgoss" > /dev/null 2>&1 || echo >2 "Couldn't find dgoss - please install goss"
-
-.PHONY: deps
-deps: check ## Install dependencies
-	@npm install
-
-.PHONY: lint
-lint: deps
-	@npm run lint
+	@command -v "dgoss" > /dev/null 2>&1 || echo >2 "Couldn't find dgoss - please install goss >= v0.37.0"
 
 .PHONY: run
 run: build
@@ -35,7 +27,7 @@ build: lint ## Builds the launch container
 	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
-test: deps ## Run the tests
+test: check ## Run the tests
 	@cd test && ./test.sh
 
 .PHONY: help
