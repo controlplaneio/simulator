@@ -7,7 +7,7 @@ data "template_file" "init-script" {
 }
 
 
-data "template_cloudinit_config" "cloudinit-example" {
+data "template_cloudinit_config" "cloudinit-securus" {
 
   gzip = false
   base64_encode = false
