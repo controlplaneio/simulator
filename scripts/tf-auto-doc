@@ -1,24 +1,27 @@
 #!/bin/bash
+#
+# Simple terraform variable documentee
+#
+set -eo
 
-if ! hash ../../binterraform-docs 2>/dev/null;
-then
-	echo -e"This script required terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"
-	exit 1
-fi
+sourceDir="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+belowDir=$(echo ${sourceDir}| sed -e 's/\/scripts*$//g')
+
+[ ! -x ${belowDir}/bin/terraform-docs 2>/dev/null] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
 
 if [ "$#" -ne 1 ]; then
 	echo "Usage: $0 <base-directory>"
 	exit 1
 fi
 
-DIRECTORY=$1
-README_NAME="README-auto.md"
+directory=$1
+readmeName="README-auto.md"
 
-find "${DIRECTORY}" -type d -not -path "${DIRECTORY}/.git/*" -exec bash -c '../bin/terraform-docs md "{}"  >  "{}"/README-auto.md;' \;
+find "${directory}" -type d -not -path "${directory}/.git/*" -exec bash -c '${belowDir}/bin/terraform-docs md "{}"  >  "{}"/README-auto.md;' \;
 
-find "${DIRECTORY}" -name "${README_NAME}" -size 1c -type f -delete
+find "${directory}" -name "${readmeName}" -size 1c -type f -delete
 
 printf "\n\033[35;1mUpdating the following READMEs with terraform-docs\033[0m\n\n"
 
-find "${DIRECTORY}" -name "${README_NAME}"
+find "${directory}" -name "${readmeName}"
 
