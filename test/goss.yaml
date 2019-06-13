@@ -1,12 +1,50 @@
 file:
-  /goss/docker_output.log:
+# Has the necessary parts of the src tree to launch a scenario
+  /app/Makefile:
     exists: true
+{{- range mkSlice "/app/simulation-scripts" "/app/terraform"}}
+  {{.}}:
+    filetype: directory
+    exists: true
+{{end}}
+# Has an ssh keypair
+{{- range mkSlice "/home/launch-user/.ssh/id_rsa" "/home/launch-user/.ssh/id_rsa.pub"}}
+  {{.}}:
+    exists: true
+{{end}}
+
+
+# Has the necessary system packages for launching a scenario
+package:
+{{- range mkSlice "curl" "make" "openssh-client" "awscli" }}
+  {{.}}:
+    installed: true
+{{end}}
+
 command:
-  cat /app/credentials:
+# Has the necessary 3rd party packages for launching a scenario
+{{- range mkSlice "terraform" "jq" "yq" "docker" }}
+  {{.}}:
+    exec: "which {{.}}"
     exit-status: 0
+{{end}}
+# Has the credentials file mounted
+  file /app/credentials:
+    exit-status: 0
+    stdout: ["/app/credentials: ASCII text"]
     stderr: []
-    timeout: 10000
+
+# Runs as a non-root user
+user:
+  launch-user:
+    exists: true
+    uid: 1000
+    gid: 1000
+    home: /home/launch-user
+    shell: /bin/bash
+
+#
+# Runs a bash shell
 process:
   bash:
     running: true
-

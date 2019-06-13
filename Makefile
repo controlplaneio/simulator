@@ -12,7 +12,7 @@ all: test
 
 .PHONY: check
 check: ## Check required system packages are installed
-	@command -v "npm" > /dev/null 2>&1 || echo >2 "Couldn't find npm - please install nodejs"
+	@command -v "dgoss" > /dev/null 2>&1 || echo >2 "Couldn't find dgoss - please install goss"
 
 .PHONY: deps
 deps: check ## Install dependencies
@@ -35,8 +35,8 @@ build: lint ## Builds the launch container
 	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
-test: deps ## Run the feature tests
-	@cucumber-js
+test: deps ## Run the tests
+	@cd test && ./test.sh
 
 .PHONY: help
 help:
