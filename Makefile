@@ -10,10 +10,6 @@ SHELL := /usr/bin/env bash
 .PHONY: all
 all: test
 
-.PHONY: check
-check: ## Check required system packages are installed
-	@command -v "dgoss" > /dev/null 2>&1 || echo >2 "Couldn't find dgoss - please install goss >= v0.37.0"
-
 .PHONY: run
 run: build
 	docker run --rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) bash
@@ -27,8 +23,8 @@ build: lint ## Builds the launch container
 	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
-test: check ## Run the tests
-	@cd test && ./test.sh
+test: build ## Run the tests
+	@docker run  -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) goss validate
 
 .PHONY: help
 help:
