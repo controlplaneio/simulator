@@ -1,0 +1,22 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+# runcmd note that the list has to be proper yaml, so you have to quote
+# any characters yaml would eat (':' can be problematic)
+runcmd:
+  - [ snap, install, kubectl, --classic ]
+  - [ snap, install, kubeadm, --classic ]
+  - [ snap, install, kubelet, --classic ]
+  - [ apt, install, -y, docker.io ]
+  - [ systemctl, enable, docker ]
+  - mkdir /run/download
+  - 'wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz'
+  - [ tar, -C, /usr/bin, '-xzf', /run/download/crictl.tgz ]
+  - 'chmod 754 /usr/bin/crictl'
+  - 'chown root:root /usr/bin/crictl'
+
+output:
+  all: '| tee -a /var/log/cloud-init-output.log'
+
