@@ -28,11 +28,6 @@ command:
     exec: "which {{.}}"
     exit-status: 0
 {{end}}
-# Has the credentials file mounted
-  file /app/credentials:
-    exit-status: 0
-    stdout: ["/app/credentials: ASCII text"]
-    stderr: []
 
 # Runs as a non-root user
 user:
@@ -42,9 +37,3 @@ user:
     gid: 1000
     home: /home/launch-user
     shell: /bin/bash
-
-#
-# Runs a bash shell
-process:
-  bash:
-    running: true
