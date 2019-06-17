@@ -25,9 +25,9 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 * cloud-init-master.cfg - run on master nodes and installs kubelet, kubectl, kubeadm, docker and crictl.  Initialises the cluster
 * cloud-init.cfg - runs on nodes and installs kubelet, kubectl, kubeadm, docker and crictl.
 
-The k8s software listed above needs to be revisited.
+__The k8s software listed above needs to be revisited__.
 
 ## Settings
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/README-auto.md) for details on settings requires, and defaults provided.
+Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/README-auto.md) for details on settings required, and defaults provided.
 
