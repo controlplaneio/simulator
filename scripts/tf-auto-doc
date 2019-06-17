@@ -19,6 +19,7 @@ fi
 
 if [ "$#" -ne 1 ]; then
 	echo "Usage: $0 <base-directory>"
+	echo "e.g $0 ../terraform"
 	exit 1
 fi
 
