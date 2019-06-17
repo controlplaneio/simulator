@@ -6,6 +6,7 @@ variable "region" {
 
 variable "shared_credentials_file" {
   description = "location of aws credentials file"
+  default = "~/.aws"
 }
 
 variable "aws_profile" {
