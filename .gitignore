@@ -104,6 +104,9 @@ docs/_build
 
 conf/.config/keybase/
 
+# Terraform #
+#############
+
 #  Local .terraform directories
 **/.terraform/*
 

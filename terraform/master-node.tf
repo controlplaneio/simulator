@@ -6,5 +6,6 @@ resource "aws_instance" "controlplane" {
   security_groups             = ["${aws_security_group.controlplane-sg.id}"]
   associate_public_ip_address = false
   subnet_id                   = "${aws_subnet.private_subnet.id}"
+  user_data                   = "${data.template_cloudinit_config.cloudinit-securus-master.rendered}"
 }
 
