@@ -49,7 +49,7 @@ variable "instance_type" {
 
 variable "master_instance_type" {
   description = "instance type for master node(s) "
-  default = "t1.micro"
+  default = "t2.medium"
 }
 
 variable "number_of_master_instances" {
