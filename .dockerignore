@@ -1,0 +1,16 @@
+.git
+/docs/
+/features/
+/bin/
+/node_modules/
+/scripts/
+/test/
+.editorconfig
+.gitattributes
+.gitignore
+LICENSE
+README.md
+package.json
+package-lock.json
+security.txt
+tags
