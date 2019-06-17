@@ -28,18 +28,6 @@ resource "aws_security_group" "controlplane-sg" {
     cidr_blocks = ["${aws_subnet.public_subnet.cidr_block}"]
   }
 
-  egress {
-    protocol    = -1
-    from_port   = 0 
-    to_port     = 0 
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "private-sg" {
-  name   = "private-security-group"
-  vpc_id = "${aws_vpc.securus_vpc.id}"
-
   ingress {
     protocol    = -1
     from_port   = 0
@@ -54,4 +42,5 @@ resource "aws_security_group" "private-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 
