@@ -7,5 +7,6 @@ resource "aws_instance" "cluster_nodes" {
   associate_public_ip_address = false
   subnet_id                   = "${aws_subnet.private_subnet.id}"
   user_data                   = "${data.template_cloudinit_config.cloudinit-securus.rendered}"
+  depends_on                  = ["aws_instance.controlplane"]
 }
 
