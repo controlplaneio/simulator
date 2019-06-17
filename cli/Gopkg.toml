@@ -1,0 +1,10 @@
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"
+
+[[constraint]]
+  name = "go.uber.org/zap"
+  version = "1.9.1"
+[prune]
+  go-tests = true
+  unused-packages = true
