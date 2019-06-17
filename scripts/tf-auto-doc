@@ -6,7 +6,16 @@
 sourceDir="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export belowDir=$(echo ${sourceDir}| sed -e 's/\/scripts*$//g')
 
-[ ! -x ${belowDir}/bin/terraform-docs 2>/dev/null ] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
+if [[ ${OSTYPE} =~ ^darwin* ]]; then
+	tfdoc = "terraform-docs-darwin"
+elif [[ ${OSTYPE} =~ ^linux-gnu* ]]; then
+	tfdoc = "terraform-docs"
+else
+	echo "Cannot identify OS...exiting"
+	exit 1
+fi
+
+[ ! -x ${belowDir}/bin/${tfdoc} 2>/dev/null ] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
 
 if [ "$#" -ne 1 ]; then
 	echo "Usage: $0 <base-directory>"
@@ -16,7 +25,7 @@ fi
 directory=$1
 readmeName="README-auto.md"
 
-find "${directory}" -type d -not -path "${directory}/.git/*" -exec bash -c '${belowDir}/bin/terraform-docs md "{}"  >  "{}"/README-auto.md;' \;
+find "${directory}" -type d -not -path "${directory}/.git/*" -exec bash -c '${belowDir}/bin/${tfdoc} md "{}"  >  "{}"/README-auto.md;' \;
 
 find "${directory}" -name "${readmeName}" -size 1c -type f -delete
 
