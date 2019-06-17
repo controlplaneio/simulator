@@ -8,6 +8,6 @@ resource "aws_instance" "bastion" {
 }
 
 resource "aws_key_pair" "bastion_key" {
-  key_name   = "access_key"
+  key_name   = "bastion_access_key"
   public_key = "${var.access_key}"
 }
