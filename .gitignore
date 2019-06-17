@@ -118,3 +118,4 @@ conf/.config/keybase/
 *.tfvars
 
 .node_modules
+NOTES.md
