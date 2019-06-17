@@ -2,12 +2,11 @@
 #
 # Simple terraform variable documentee
 #
-set -eo
 
 sourceDir="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-belowDir=$(echo ${sourceDir}| sed -e 's/\/scripts*$//g')
+export belowDir=$(echo ${sourceDir}| sed -e 's/\/scripts*$//g')
 
-[ ! -x ${belowDir}/bin/terraform-docs 2>/dev/null] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
+[ ! -x ${belowDir}/bin/terraform-docs 2>/dev/null ] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
 
 if [ "$#" -ne 1 ]; then
 	echo "Usage: $0 <base-directory>"
