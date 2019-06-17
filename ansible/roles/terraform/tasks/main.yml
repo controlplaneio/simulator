@@ -1,7 +1,0 @@
----
-- terraform:
-    force_init: true
-    project_path: '{{ projectDir }}'
-    variables_file: '{{ varFile }}'
-    state: present
-
