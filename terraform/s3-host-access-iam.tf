@@ -48,7 +48,7 @@ EOF
 
 resource "aws_iam_instance_profile" "instance_profile" {
   name = "instance_profile"
-  role = "securus_s3_access_role"
+  role = "${aws_iam_role.securus_s3_access_role.name}"
 }
 
 
