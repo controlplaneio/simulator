@@ -37,7 +37,7 @@ Refer to [settings documentation](https://github.com/controlplaneio/simulator-st
 
 This Terraform code uses remote state storage and locking using S3 and DynamoDB. This is configured in `terraform/providers.tf` in the `terraform` block. The S3 bucket and DynamoDB table are assumed to have been created already.
 
-Terraform doesn't use the same AWS profile defined in `terraform/settings/bastion.tfvars`, it will use whatever is the default on your system. You may need to set the `AWS_PROFILE` environment variable to something different if you don't want it to use the default.
+Terraform doesn't use the same AWS profile defined in `terraform/settings/bastion.tfvars`, it will use whatever is the default on your system. You may need to set the `AWS_PROFILE` environment variable to something different if you don't want it to use the default. - __This need to be confirmed as Terraform should work fine with the defined profile__
 
 ## Running the Terraform Code
 
@@ -51,3 +51,8 @@ To apply:
 ```bash
 make infra-apply
 ```
+To destroy:
+```bash
+make infra-destroy
+```
+
