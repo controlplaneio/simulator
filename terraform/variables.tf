@@ -18,6 +18,11 @@ variable "access_key" {
   description = "ssh public key"
 }
 
+variable "access_key_name" {
+  description = "ssh key name"
+  default = "bastion_access_key"
+}
+
 variable "vpc_cidr" {
   description = "cidr block for vpc"
   default = "172.31.0.0/16"
