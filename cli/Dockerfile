@@ -9,7 +9,7 @@ RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
 COPY . .
 
 RUN dep ensure -v -vendor-only \
-  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o simulator ./cmd/simulator/*
+  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./dist/simulator ./simulator/**/*.go
 
 # ===
 
