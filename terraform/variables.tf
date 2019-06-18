@@ -76,4 +76,3 @@ variable "public_avail_zone" {
   description = "availability zone for public subnet"
   default = "eu-west-1a"
 }
-
