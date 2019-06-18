@@ -7,6 +7,8 @@ The Terraform templates stand up the following:
 * An Internet Gateway attached to public subnet
 * A NAT gateway
 * A single bastion host on the public subnet
+* Create S3 bucket
+* Create IAM role/policy for k8s hosts to access S3 bucket
 * One, or more, K8s master nodes on the private network
 * One, or more, K8s nodes  on the private network 
 
