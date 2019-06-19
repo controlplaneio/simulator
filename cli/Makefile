@@ -80,17 +80,12 @@ test-unit-verbose: ## golang unit tests (verbose)
 .PHONY: build
 build: ## golang build
 	@echo "+ $@"
-	go build -a -o ./dist/simulator ./simulator/**/*.go
+	go build -a -o ./dist/simulator
 
 .PHONY: dep
 dep: ## golang dependencies
 	@echo "+ $@"
-	dep ensure -v
-
-.PHONY: prune
-prune: ## golang dependency prune
-	@echo "+ $@"
-	dep prune -v
+	go install
 
 # ---
 
