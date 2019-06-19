@@ -49,6 +49,9 @@ RUN useradd -ms /bin/bash launch-user
 RUN mkdir /app
 ADD . /app
 RUN chown -R launch-user:launch-user /app
+COPY ./cli/dist/simulator /usr/local/bin/simulator
+
+ENV SIMULATOR_SCENARIO_PATH /app/simulation-scripts/scenario
 
 USER launch-user
 RUN ssh-keygen -f /home/launch-user/.ssh/id_rsa -t rsa -N ''
