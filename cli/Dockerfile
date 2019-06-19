@@ -4,12 +4,12 @@ RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone/cli
 
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/cli
 
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-
 COPY . .
 
-RUN dep ensure -v -vendor-only \
-  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./dist/simulator ./simulator/**/*.go
+ENV GO111MODULE=on
+
+RUN go install
+RUN GOPATH= CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./dist/simulator
 
 # ===
 
