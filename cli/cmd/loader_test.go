@@ -14,3 +14,15 @@ func Test_loadScenarios(t *testing.T) {
 		t.Errorf("Returned no scenarios")
 	}
 }
+
+func Test_displayName(t *testing.T) {
+	simpleName := displayName("foo")
+	if simpleName != "Foo" {
+		t.Errorf("Did not make simple name title case")
+	}
+
+	compoundName := displayName("hack_the_world")
+	if compoundName != "Hack The World" {
+		t.Errorf("Did not make compound name title case replacing the underscores")
+	}
+}

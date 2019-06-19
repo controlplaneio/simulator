@@ -11,6 +11,20 @@ type Scenario struct {
 	DisplayName string
 }
 
+func contains(scenarios []Scenario, name string) bool {
+	for _, a := range scenarios {
+		if a.Name == name {
+			return true
+		}
+	}
+
+	return false
+}
+
+func displayName(name string) string {
+	return strings.Title(strings.Replace(name, "_", " ", -1))
+}
+
 func loadScenarios(scenariosPath string) ([]Scenario, error) {
 	absPath, err := filepath.Abs(scenariosPath)
 
@@ -27,8 +41,7 @@ func loadScenarios(scenariosPath string) ([]Scenario, error) {
 	var scenarios []Scenario
 	for _, f := range files {
 		if f.IsDir() {
-			var displayName = strings.Title(strings.Replace(f.Name(), "_", " ", -1))
-			scenarios = append(scenarios, Scenario{Name: f.Name(), DisplayName: displayName})
+			scenarios = append(scenarios, Scenario{Name: f.Name(), DisplayName: displayName(f.Name())})
 		}
 	}
 
