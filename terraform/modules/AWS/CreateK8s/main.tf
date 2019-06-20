@@ -1,6 +1,6 @@
 
 data "template_file" "init-script-master" {
-  template = "${file("./cloud-init/cloud-init-master.cfg")}"
+  template = "${file("cloud-init/cloud-init-master.cfg")}"
   vars = {
     REGION = "${var.region}"
   }
@@ -21,7 +21,7 @@ data "template_cloudinit_config" "cloudinit-securus-master" {
 }
 
 data "template_file" "init-script" {
-  template = "${file("./cloud-init/cloud-init.cfg")}"
+  template = "${file("cloud-init/cloud-init.cfg")}"
   vars = {
     REGION = "${var.region}"
   }
