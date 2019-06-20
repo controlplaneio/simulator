@@ -4,7 +4,7 @@
 
 Deployments are location within:
 
-```deployment/[deployment name]```
+```deployments/[deployment name]```
 
 The main.tf defines the modules that are to actioned and the variables passed to those modules.
 
@@ -14,8 +14,10 @@ Terraform modules are segregated by Cloud Provider under the modules directory, 
 
 ```modules/AWS```
 
+## Current Terraform Modules
 
-The Terraform modules action the following
+The Terraform modules for AWS ( located under ```modules/AWS``` ) action the following:
+
 
 ### CreateBastion
 * A single bastion host on the public subnet
