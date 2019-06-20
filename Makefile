@@ -42,7 +42,7 @@ infra-plan: infra-init infra-checkvars
 
 .PHONY: infra-apply
 infra-apply: infra-init infra-checkvars
-	@pushd terraform; terraform apply -var-file=settings/bastion.tfvars; popd
+	@pushd terraform; terraform apply -var-file=settings/bastion.tfvars -auto-approve; popd
 
 .PHONY: infra-destroy
 infra-destroy: infra-init infra-checkvars
