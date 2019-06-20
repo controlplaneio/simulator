@@ -20,3 +20,11 @@ variable "access_key_name" {
   default = "ssh_access_key"
 }
 
+variable "security_group" {
+  description = "configure security group"
+}
+
+variable "subnet_id" {
+  description = "configure subnet id"
+}
+
