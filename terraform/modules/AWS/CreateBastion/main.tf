@@ -6,4 +6,7 @@ resource "aws_instance" "bastion" {
   associate_public_ip_address = true
   subnet_id                   = "${aws_subnet.public_subnet.id}"
 }
-
+resource "aws_key_pair" "bastion_key" {
+  key_name                    = "${var.access_key_name}"
+  public_key                  = "${var.access_key}"
+}

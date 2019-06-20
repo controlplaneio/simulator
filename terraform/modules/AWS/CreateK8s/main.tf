@@ -20,14 +20,12 @@ data "template_cloudinit_config" "cloudinit-securus-master" {
 
 }
 
-
 data "template_file" "init-script" {
   template = "${file("cloud-init/cloud-init.cfg")}"
   vars = {
     REGION = "${var.region}"
   }
 }
-
 
 data "template_cloudinit_config" "cloudinit-securus" {
 
