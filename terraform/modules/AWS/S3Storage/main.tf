@@ -1,3 +1,22 @@
+############################
+# Create S3 bucket
+#
+
+resource "aws_s3_bucket" "k8sjoin" {
+  bucket        = "securus-config"
+  acl           = "private"
+  force_destroy = true
+
+  tags = {
+    Name        = "K8S Config"
+  }
+}
+
+############################
+# Create IAM role, policy and instance profile
+# used to assign to instances to access S3 bucket
+#
+
 resource "aws_iam_role" "securus_s3_access_role" {
   name = "securus_s3_host_access_role"
 
