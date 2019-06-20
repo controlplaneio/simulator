@@ -31,7 +31,7 @@ variable "control_plane_sg_id" {
 variable "private_subnet_id" {
   description = "Private subnet id"
 }
-varialbe "iam_instance_profile_id" {
+variable "iam_instance_profile_id" {
   description = "IAM instance S3 access profile id"
 }
 
