@@ -66,12 +66,12 @@ test-go-fmt: ## golang fmt check
 	gofmt -l -s ./cmd | grep ".*\.go"; if [ "$$?" = "0" ]; then exit 1; fi
 
 .PHONY: test-unit
-test-unit: ## golang unit tests
+test-unit: build ## golang unit tests
 	@echo "+ $@"
 	go test -race $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
 
 .PHONY: test-unit-verbose
-test-unit-verbose: ## golang unit tests (verbose)
+test-unit-verbose: build ## golang unit tests (verbose)
 	@echo "+ $@"
 	go test -race -v $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
 
