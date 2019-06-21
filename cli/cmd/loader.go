@@ -71,7 +71,8 @@ func validateScenario(manifestPath string, scenario Scenario) error {
 }
 
 func loadScenarios(manifestPath string) ([]Scenario, error) {
-	absPath, err := filepath.Abs(filepath.Join(manifestPath, manifestFileName))
+	joined := filepath.Join(manifestPath, manifestFileName)
+	absPath, err := filepath.Abs(joined)
 	if err != nil {
 		return nil, errors.Wrap(err,
 			fmt.Sprintf("Error resolving manifest file %s from %s", manifestFileName, manifestPath))
