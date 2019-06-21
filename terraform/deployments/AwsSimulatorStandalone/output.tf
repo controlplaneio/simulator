@@ -5,6 +5,6 @@ output "master_nodes_private_ip" {
   value = "${module.CreateK8s.K8sMasterPrivateIp}"
 }
 output "cluster_nodes_private_ip" {
-  value = "${module.CreateK8s.K8sNodesPrivateIp"
+  value = "${module.CreateK8s.K8sNodesPrivateIp}"
 }
 
