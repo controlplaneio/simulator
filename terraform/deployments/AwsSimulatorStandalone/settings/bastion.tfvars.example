@@ -22,3 +22,4 @@ number_of_cluster_instances = "defaults to 2"
 cluster_nodes_instance_type = "defaults to t1.micro"
 private_avail_zone = "defaults to eu-west-1a"
 public_avail_zone = "defaults to eu-west-1a"
+

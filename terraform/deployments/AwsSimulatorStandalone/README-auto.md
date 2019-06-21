@@ -4,6 +4,7 @@
 |------|-------------|:----:|:-----:|:-----:|
 | access\_cidr | cidr range of client connection | string | n/a | yes |
 | access\_key | ssh public key | string | n/a | yes |
+| access\_key\_name | ssh key name | string | `"bastion_access_key"` | no |
 | ami\_id | ami to use with Bastion host | string | `"ami-09d38086eb2b23925"` | no |
 | aws\_profile | aws profile | string | `"default"` | no |
 | cluster\_nodes\_instance\_type | instance type for k8s nodes | string | `"t1.micro"` | no |
@@ -18,12 +19,4 @@
 | region | aws region | string | `"eu-west-1"` | no |
 | shared\_credentials\_file | location of aws credentials file | string | `"~/.aws"` | no |
 | vpc\_cidr | cidr block for vpc | string | `"172.31.0.0/16"` | no |
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| bastion\_public\_ip |  |
-| cluster\_nodes\_private\_ip |  |
-| master\_nodes\_private\_ip |  |
 
