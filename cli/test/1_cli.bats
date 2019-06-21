@@ -21,3 +21,10 @@ teardown() {
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
+
+@test "simulator scenario launch - prints scenarios" {
+  run ../dist/simulator scenario list lazy
+  echo "${output}" >&3
+  [ "${output}" != "" ]
+  [ "${status}" -eq 0 ]
+}
