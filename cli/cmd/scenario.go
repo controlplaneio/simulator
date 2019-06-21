@@ -3,29 +3,15 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"os"
 )
-
-const defaultScenariosPath = "../simulation-scripts/scenario/"
-
-func scenariosPath() string {
-	var scenariosPath = os.Getenv("SIMULATOR_SCENARIOS_PATH")
-	fmt.Println("Env for scenarios was " + scenariosPath)
-	if scenariosPath == "" {
-		scenariosPath = defaultScenariosPath
-	}
-	fmt.Println("Looking for scenarios in " + scenariosPath)
-
-	return scenariosPath
-}
 
 func newScenarioListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `list`,
 		Short: "Lists available scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			scenariosPath := scenariosPath()
-			scenarios, err := loadScenarios(scenariosPath)
+			manifestPath := manifestPath()
+			scenarios, err := loadScenarios(manifestPath)
 
 			if err != nil {
 				return err
@@ -54,8 +40,8 @@ func newScenarioLaunchCommand() *cobra.Command {
 
 			scenarioId := args[0]
 
-			scenariosPath := scenariosPath()
-			scenarios, err := loadScenarios(scenariosPath)
+			manifestPath := manifestPath()
+			scenarios, err := loadScenarios(manifestPath)
 
 			if err != nil {
 				return err

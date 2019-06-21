@@ -1,0 +1,18 @@
+name: scenarios
+kind: cp.simulator/scenarios:0.1
+scenarios:
+  - name: Database Compromise
+    path: ./scenario/database_compromise
+    id: database_compromise
+  - name: Greedy Service Account
+    path: ./scenario/greedy_serv_acc
+    id: greedy
+  - name: Lazy AWS
+    path: ./scenario/lazy_AWS
+    id: lazy
+  - name: Network Escalation
+    path: ./scenario/network_escalation
+    id: network_escalation
+  - name: Shadow Secret
+    path: ./scenario/shadow_secret
+    id: shadow_secret

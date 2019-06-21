@@ -82,11 +82,6 @@ build: ## golang build
 	@echo "+ $@"
 	go build -a -o ./dist/simulator
 
-.PHONY: dep
-dep: ## golang dependencies
-	@echo "+ $@"
-	go install
-
 # ---
 
 .PHONY: docker-build

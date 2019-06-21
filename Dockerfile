@@ -51,7 +51,7 @@ ADD . /app
 RUN chown -R launch-user:launch-user /app
 COPY ./cli/dist/simulator /usr/local/bin/simulator
 
-ENV SIMULATOR_SCENARIOS_PATH /app/simulation-scripts/scenario
+ENV SIMULATOR_MANIFEST_PATH /app/simulation-scripts/
 
 USER launch-user
 RUN ssh-keygen -f /home/launch-user/.ssh/id_rsa -t rsa -N ''
