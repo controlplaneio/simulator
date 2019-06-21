@@ -26,3 +26,20 @@ func Test_displayName(t *testing.T) {
 		t.Errorf("Did not make compound name title case replacing the underscores")
 	}
 }
+
+func Test_makeScenario(t *testing.T) {
+	dirName := "lazy_AWS"
+	s := makeScenario(dirName)
+
+	if s.DirName != dirName {
+		t.Errorf("Did not set DirName to supplied argument")
+	}
+
+	if s.DisplayName != "Lazy AWS" {
+		t.Errorf("Did not set DisplayName correctly")
+	}
+
+	if s.Id != "lazy_aws" {
+		t.Errorf("Did not set ID correctly")
+	}
+}

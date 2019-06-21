@@ -10,7 +10,14 @@ teardown() {
   _global_teardown
 }
 
-@test "prints version" {
-  run _app version
+@test "simulator version - prints version" {
+  run ../dist/simulator version
+  [ "${status}" -eq 0 ]
+}
+
+@test "simulator scenario list - prints scenarios" {
+  run ../dist/simulator scenario list
+  echo "${output}" >&3
+  [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }

@@ -7,13 +7,14 @@ import (
 )
 
 type Scenario struct {
-	Name        string
+	Id          string
+	DirName     string
 	DisplayName string
 }
 
-func contains(scenarios []Scenario, name string) bool {
+func contains(scenarios []Scenario, id string) bool {
 	for _, a := range scenarios {
-		if a.Name == name {
+		if a.Id == id {
 			return true
 		}
 	}
@@ -23,6 +24,14 @@ func contains(scenarios []Scenario, name string) bool {
 
 func displayName(name string) string {
 	return strings.Title(strings.Replace(name, "_", " ", -1))
+}
+
+func makeScenario(dirName string) Scenario {
+	return Scenario{
+		DirName:     dirName,
+		DisplayName: displayName(dirName),
+		Id:          strings.ToLower(dirName),
+	}
 }
 
 func loadScenarios(scenariosPath string) ([]Scenario, error) {
@@ -41,7 +50,7 @@ func loadScenarios(scenariosPath string) ([]Scenario, error) {
 	var scenarios []Scenario
 	for _, f := range files {
 		if f.IsDir() {
-			scenarios = append(scenarios, Scenario{Name: f.Name(), DisplayName: displayName(f.Name())})
+			scenarios = append(scenarios, makeScenario(f.Name()))
 		}
 	}
 
