@@ -52,10 +52,10 @@ export NAME DOCKER_HUB_URL BUILD_DATE GIT_MESSAGE GIT_SHA GIT_TAG \
 all: help
 
 .PHONY: test
-test: build test-acceptance## unit and local acceptance tests
+test: test-unit test-acceptance## unit and local acceptance tests
 
 .PHONY: test-acceptance
-test-acceptance: ## acceptance tests
+test-acceptance: build ## acceptance tests
 	@echo "+ $@"
 	bash -xc 'cd test && ./bin/bats/bin/bats $(BATS_PARALLEL_JOBS) .'
 
