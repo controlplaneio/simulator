@@ -8,17 +8,18 @@ TEST_DIR="."
 BIN_UNDER_TEST='./dist/simulator'
 
 _global_setup() {
-    [ ! -f ${BATS_PARENT_TMPNAME}.skip ] || skip "skip remaining tests"
+  [ ! -f ${BATS_PARENT_TMPNAME}.skip ] || skip "skip remaining tests"
+  export SIMULATOR_SCENARIOS_PATH='../../simulation-scripts/scenario'
 }
 
 _global_teardown() {
-    if [ ! -n "$BATS_TEST_COMPLETED" ]; then
-      touch ${BATS_PARENT_TMPNAME}.skip
-    fi
+  if [ ! -n "$BATS_TEST_COMPLETED" ]; then
+    touch ${BATS_PARENT_TMPNAME}.skip
+  fi
 }
 
 _app() {
-	local ARGS="${@:-}"
-	./../${BIN_UNDER_TEST:-false} "${ARGS}";
+  local ARGS="${@:-}"
+  ./../${BIN_UNDER_TEST:-false} "${ARGS}";
 }
 
