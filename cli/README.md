@@ -1,5 +1,25 @@
 # Simulator CLI
 
+## Development
+
+Development is done via make
+
+<pre>
+all: help            
+build                 golang build
+dep                   install dependencies for other targets
+doc                   generate markdown documentation for packages
+docker-build          builds a docker image
+docker-push           pushes the last build docker image
+docker-run            runs the last build docker image
+help-no-color:       
+test-acceptance       acceptance tests
+test-go-fmt           golang fmt check
+test                  unit and local acceptance tests
+test-unit             golang unit tests
+test-unit-verbose     golang unit tests (verbose)
+</pre>
+
 ## Usage
 
 <pre>

@@ -121,3 +121,10 @@ help: ## parse jobs and descriptions from this Makefile
     | sort \
     | awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: help
+help-no-color:
+	@set -x;
+	@grep -E '^[ a-zA-Z0-9_-]+:([^=]|$$)' $(MAKEFILE_LIST) \
+    | grep -Ev '^help\b[[:space:]]*:' \
+    | sort \
+    | awk 'BEGIN {FS = ":.*?##"}; {printf "%-20s %s\n", $$1, $$2}'

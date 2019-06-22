@@ -1,5 +1,13 @@
 # Simulator CLI
 
+## Development
+
+Development is done via make
+
+<pre>
+${make}
+</pre>
+
 ## Usage
 
 <pre>
