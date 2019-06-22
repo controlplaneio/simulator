@@ -1,0 +1,6 @@
+name: scenarios
+kind: cp.simulator/scenarios:0.1
+scenarios:
+  - name: Invalid Scenario
+    path: ./scenario/not-a-dir
+    id: invalid

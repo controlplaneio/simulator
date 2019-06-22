@@ -37,6 +37,7 @@ var badManifestTests = []struct {
 	{"manifest-missing-scenarios", "^Error unmarshalling"},
 	{"malformed-manifest", "^Error unmarshalling"},
 	{"missing-scenario", "^Error stating"},
+	{"scenario-not-a-dir", "is not a directory"},
 }
 
 func Test_LoadManifest_bad_manifests(t *testing.T) {

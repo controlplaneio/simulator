@@ -40,11 +40,9 @@ const (
 
 func ManifestPath() string {
 	var manifestPath = os.Getenv(manifestPathEnvVar)
-	fmt.Println("Env for scenarios was " + manifestPath)
 	if manifestPath == "" {
 		manifestPath = defaultManifestPath
 	}
-	fmt.Println("Looking for scenarios in " + manifestPath)
 
 	return manifestPath
 }
@@ -62,8 +60,8 @@ func validateScenario(manifestPath string, scenario Scenario) error {
 			fmt.Sprintf("Error stating %s for scenario %s in %s", scenario.Path, scenario.DisplayName, manifestPath))
 	}
 
-	if !stat.IsDir() {
-		return errors.Wrap(err,
+	if stat.IsDir() != true {
+		return errors.New(
 			fmt.Sprintf("Scenario %s is not a directory at %s read from %s",
 				scenario.DisplayName, scenario.Path, manifestPath))
 	}
@@ -95,7 +93,7 @@ func LoadManifest(manifestPath string) (*ScenarioManifest, error) {
 	}
 
 	for _, scenario := range manifest.Scenarios {
-		err := validateScenario(manifestPath, scenario)
+		err = validateScenario(manifestPath, scenario)
 		if err != nil {
 			return nil, err
 		}
