@@ -76,11 +76,19 @@ test-unit-verbose: build ## golang unit tests (verbose)
 	go test -race -v $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
 
 # ---
+.PHONY: dep
+dep: ## install dependencies for other targets
+	go get github.com/robertkrimen/godocdown/godocdown
 
 .PHONY: build
 build: ## golang build
 	@echo "+ $@"
 	go build -a -o ./dist/simulator
+
+.PHONY: doc
+doc: ## generate markdown documentation for packages
+	@echo "+ $@"
+	godocdown pkg/scenario > docs/scenario.md
 
 # ---
 

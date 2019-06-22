@@ -3,6 +3,7 @@ module github.com/controlplaneio/simulator-standalone/cli
 require (
 	github.com/fatih/structs v1.1.0
 	github.com/pkg/errors v0.8.1
+	github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.3.0
 	go.uber.org/atomic v1.4.0 // indirect

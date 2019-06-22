@@ -18,7 +18,7 @@ type Scenario struct {
 	DisplayName string `yaml:"name"`
 }
 
-// Validate a scneario relative to its manifest
+// Validate a scenario relative to its manifest
 func (s *Scenario) Validate(manifestPath string) error {
 	scenarioPath, err := filepath.Abs(filepath.Join(manifestPath, s.Path))
 	if err != nil {

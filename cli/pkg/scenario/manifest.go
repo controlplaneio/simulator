@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-// ScenarioManifest structure representing a scenarios.ymal document
+// ScenarioManifest structure representing a `scenarios.yaml` document
 type ScenarioManifest struct {
 	// Name - the name of the manifest e.g. scenarios
 	Name string `yaml:"name"`
@@ -38,8 +38,8 @@ const (
 	manifestFileName    = "scenarios.yaml"
 )
 
-// Reads the manifest path from the environment variable SIMULATOR_MANIFEST_PATH
-// or uses a default value of ../simulation-scripts
+// Reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
+// or uses a default value of `../simulation-scripts`
 func ManifestPath() string {
 	var manifestPath = os.Getenv(manifestPathEnvVar)
 	if manifestPath == "" {
