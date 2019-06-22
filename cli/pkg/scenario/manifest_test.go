@@ -7,19 +7,19 @@ import (
 	"testing"
 )
 
-func Test_loadScenarios(t *testing.T) {
+func Test_LoadManifest(t *testing.T) {
 	manifest, err := scenario.LoadManifest("../../../simulation-scripts/")
 
 	assert.Nil(t, err)
 	assert.NotEqual(t, len(manifest.Scenarios), 0, "Returned no scenarios")
 }
 
-func Test_manifestPath_default(t *testing.T) {
+func Test_ManifestPath_default(t *testing.T) {
 	p := scenario.ManifestPath()
 	assert.Equal(t, p, "../simulation-scripts/")
 }
 
-func Test_manifestPath_custom(t *testing.T) {
+func Test_ManifestPath_custom(t *testing.T) {
 	os.Setenv("SIMULATOR_MANIFEST_PATH", "/some/path")
 	p := scenario.ManifestPath()
 	assert.Equal(t, p, "/some/path", "manifestPath did not set custom path")
