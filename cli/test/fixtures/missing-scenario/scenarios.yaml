@@ -1,0 +1,9 @@
+name: scenarios
+kind: cp.simulator/scenarios:0.1
+scenarios:
+  - name: Scenario 1
+    path: ./scenario/1
+    id: scenario_1
+  - name: Non-existent Scenario
+    path: ./scenario/non-existent
+    id: non_existent
