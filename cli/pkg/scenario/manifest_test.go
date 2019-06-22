@@ -29,26 +29,23 @@ func fixture(name string) string {
 	return "../../test/fixtures/" + name
 }
 
-func Test_LoadManifest_missing_manifest(t *testing.T) {
-	manifest, err := scenario.LoadManifest(fixture("missing-manifest"))
-
-	assert.NotNil(t, err)
-	assert.Nil(t, manifest, "Returned a manifest")
-	assert.Regexp(t, "scenarios.yaml: no such file or directory$", err.Error())
+var badManifestTests = []struct {
+	name         string
+	errorPattern string
+}{
+	{"missing-manifest", "scenarios.yaml: no such file or directory$"},
+	{"manifest-missing-scenarios", "^Error unmarshalling"},
+	{"malformed-manifest", "^Error unmarshalling"},
 }
 
-func Test_LoadManifest_manifest_missing_scenarios(t *testing.T) {
-	manifest, err := scenario.LoadManifest(fixture("manifest-missing-scenarios"))
+func Test_LoadManifest_bad_manifests(t *testing.T) {
+	for _, tt := range badManifestTests {
+		t.Run(tt.name, func(t *testing.T) {
+			manifest, err := scenario.LoadManifest(fixture(tt.name))
 
-	assert.NotNil(t, err)
-	assert.Nil(t, manifest, "Returned a manifest")
-	assert.Regexp(t, "^Error unmarshalling", err.Error())
-}
-
-func Test_LoadManifest_malformed_manifest(t *testing.T) {
-	manifest, err := scenario.LoadManifest(fixture("malformed-manifest"))
-
-	assert.NotNil(t, err)
-	assert.Nil(t, manifest, "Returned a manifest")
-	assert.Regexp(t, "^Error unmarshalling", err.Error())
+			assert.NotNil(t, err)
+			assert.Nil(t, manifest, "Returned a manifest")
+			assert.Regexp(t, tt.errorPattern, err.Error())
+		})
+	}
 }
