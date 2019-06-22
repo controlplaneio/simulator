@@ -1,4 +1,4 @@
-package cmd
+package scenario
 
 import (
 	"fmt"
@@ -21,8 +21,8 @@ type ScenarioManifest struct {
 	Scenarios []Scenario `yaml:"scenarios"`
 }
 
-func contains(scenarios []Scenario, id string) bool {
-	for _, a := range scenarios {
+func (m *ScenarioManifest) Contains(id string) bool {
+	for _, a := range m.Scenarios {
 		if a.Id == id {
 			return true
 		}
@@ -37,7 +37,7 @@ const (
 	manifestFileName    = "scenarios.yaml"
 )
 
-func manifestPath() string {
+func ManifestPath() string {
 	var manifestPath = os.Getenv(manifestPathEnvVar)
 	fmt.Println("Env for scenarios was " + manifestPath)
 	if manifestPath == "" {
@@ -70,7 +70,7 @@ func validateScenario(manifestPath string, scenario Scenario) error {
 	return nil
 }
 
-func loadScenarios(manifestPath string) ([]Scenario, error) {
+func LoadManifest(manifestPath string) (*ScenarioManifest, error) {
 	joined := filepath.Join(manifestPath, manifestFileName)
 	absPath, err := filepath.Abs(joined)
 	if err != nil {
@@ -96,5 +96,5 @@ func loadScenarios(manifestPath string) ([]Scenario, error) {
 		}
 	}
 
-	return manifest.Scenarios, nil
+	return &manifest, nil
 }
