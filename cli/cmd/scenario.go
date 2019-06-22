@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/cli/pkg/scenario"
 	"github.com/spf13/cobra"
 )
 
@@ -10,15 +11,15 @@ func newScenarioListCommand() *cobra.Command {
 		Use:   `list`,
 		Short: "Lists available scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			manifestPath := manifestPath()
-			scenarios, err := loadScenarios(manifestPath)
+			manifestPath := scenario.ManifestPath()
+			manifest, err := scenario.LoadManifest(manifestPath)
 
 			if err != nil {
 				return err
 			}
 
 			fmt.Println("Available scenarios:")
-			for _, s := range scenarios {
+			for _, s := range manifest.Scenarios {
 				fmt.Println("ID: " + s.Id + ", Name: " + s.DisplayName)
 			}
 
@@ -40,14 +41,14 @@ func newScenarioLaunchCommand() *cobra.Command {
 
 			scenarioId := args[0]
 
-			manifestPath := manifestPath()
-			scenarios, err := loadScenarios(manifestPath)
+			manifestPath := scenario.ManifestPath()
+			manifest, err := scenario.LoadManifest(manifestPath)
 
 			if err != nil {
 				return err
 			}
 
-			if !contains(scenarios, scenarioId) {
+			if !manifest.Contains(scenarioId) {
 				return fmt.Errorf("scenario %s not found", scenarioId)
 			}
 
