@@ -25,6 +25,23 @@ func Test_ManifestPath_custom(t *testing.T) {
 	assert.Equal(t, p, "/some/path", "manifestPath did not set custom path")
 }
 
+func Test_Contains(t *testing.T) {
+	m := scenario.ScenarioManifest{
+		Name: "test",
+		Kind: "test/0.1",
+		Scenarios: []scenario.Scenario{
+			scenario.Scenario{
+				Id:          "test_scenario",
+				DisplayName: "Test Scenario",
+				Path:        "./test",
+			},
+		},
+	}
+
+	assert.True(t, m.Contains("test_scenario"), "Contains did not return true for valid scenario")
+	assert.False(t, m.Contains("invalid"), "Contains did not return false for invalid scenario")
+}
+
 func fixture(name string) string {
 	return "../../test/fixtures/" + name
 }
