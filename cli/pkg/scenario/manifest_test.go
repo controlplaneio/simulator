@@ -25,4 +25,14 @@ func Test_ManifestPath_custom(t *testing.T) {
 	assert.Equal(t, p, "/some/path", "manifestPath did not set custom path")
 }
 
-// TODO: Test bad scenario manifests
+func fixture(name string) string {
+	return "../../test/fixtures/" + name
+}
+
+func Test_LoadManifest_missing_manifest(t *testing.T) {
+	manifest, err := scenario.LoadManifest(fixture("missing-manifest"))
+
+	assert.NotNil(t, err)
+	assert.Nil(t, manifest, "Returned a manifest")
+	assert.Regexp(t, "scenarios.yaml: no such file or directory$", err.Error())
+}
