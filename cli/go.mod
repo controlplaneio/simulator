@@ -1,6 +1,7 @@
 module github.com/controlplaneio/simulator-standalone/cli
 
 require (
+	github.com/fatih/structs v1.1.0
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.3.0

@@ -2,6 +2,7 @@ package scenario
 
 import (
 	"fmt"
+	"github.com/fatih/structs"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
@@ -84,9 +85,13 @@ func LoadManifest(manifestPath string) (*ScenarioManifest, error) {
 	}
 
 	manifest := ScenarioManifest{}
-	err = yaml.Unmarshal([]byte(manifestYaml), &manifest)
+	err = yaml.UnmarshalStrict([]byte(manifestYaml), &manifest)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("Error unmarshalling %s", manifestPath))
+	}
+
+	if structs.HasZero(manifest) {
+		return nil, errors.New(fmt.Sprintf("Error unmarshalling %s - missing required fields", manifestPath))
 	}
 
 	for _, scenario := range manifest.Scenarios {
