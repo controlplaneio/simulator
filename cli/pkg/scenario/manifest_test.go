@@ -36,3 +36,11 @@ func Test_LoadManifest_missing_manifest(t *testing.T) {
 	assert.Nil(t, manifest, "Returned a manifest")
 	assert.Regexp(t, "scenarios.yaml: no such file or directory$", err.Error())
 }
+
+func Test_LoadManifest_manifest_missing_scenarios(t *testing.T) {
+	manifest, err := scenario.LoadManifest(fixture("manifest-missing-scenarios"))
+
+	assert.NotNil(t, err)
+	assert.Nil(t, manifest, "Returned a manifest")
+	assert.Regexp(t, "^Error unmarshalling", err.Error())
+}
