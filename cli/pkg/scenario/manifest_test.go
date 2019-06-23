@@ -8,6 +8,7 @@ import (
 )
 
 func Test_LoadManifest(t *testing.T) {
+	t.Parallel()
 	manifest, err := scenario.LoadManifest("../../../simulation-scripts/")
 
 	assert.Nil(t, err)
@@ -26,6 +27,7 @@ func Test_ManifestPath_custom(t *testing.T) {
 }
 
 func Test_Contains(t *testing.T) {
+	t.Parallel()
 	m := scenario.ScenarioManifest{
 		Name: "test",
 		Kind: "test/0.1",
