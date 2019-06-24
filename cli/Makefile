@@ -99,11 +99,7 @@ docker-build: ## builds a docker image
 	docker build --tag "${CONTAINER_NAME}" .
 	docker tag "${CONTAINER_NAME}" "${CONTAINER_NAME_LATEST}"
 	@echo "Successfully tagged ${CONTAINER_NAME} as ${CONTAINER_NAME_LATEST}"
-
-.PHONY: docker-run
-docker-run: ## runs the last build docker image
-	@echo "+ $@"
-	docker run -it "${CONTAINER_NAME}" simulator
+	docker run -t "${CONTAINER_NAME_LATEST}" -v "${PWD}:/go/src/github.com/controlplaneio/simulator-standalone/cli" make test
 
 .PHONY: docker-push
 docker-push: ## pushes the last build docker image

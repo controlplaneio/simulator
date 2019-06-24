@@ -9,7 +9,7 @@ import (
 
 func Test_LoadManifest(t *testing.T) {
 	t.Parallel()
-	manifest, err := scenario.LoadManifest("../../../simulation-scripts/")
+	manifest, err := scenario.LoadManifest(fixture("valid"))
 
 	assert.Nil(t, err)
 	assert.NotEqual(t, len(manifest.Scenarios), 0, "Returned no scenarios")
