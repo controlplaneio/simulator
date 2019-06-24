@@ -25,7 +25,7 @@ The Terraform modules for AWS ( located under ```modules/AWS/[module name]``` ) 
 
 ### CreateBastion
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/CreateBastion/README-auto.md)
+Refer to [settings documentation](./modules/AWS/CreateBastion/README-auto.md)
 
 * A single bastion host on the public subnet
 
