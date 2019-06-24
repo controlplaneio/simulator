@@ -19,6 +19,7 @@ main() {
   local -r make="$(make -s help-no-color)"
   local -r help="$(./dist/simulator help)"
   local -r scenario_help="$(./dist/simulator scenario help)"
+  local -r infra_help="$(./dist/simulator infra help)"
 
   eval "echo \"${template}\""
 }

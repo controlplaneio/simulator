@@ -14,8 +14,9 @@ debugging Kubernetes
 `,
 	}
 
-	cmd.AddCommand(newVersionCommand())
+	cmd.AddCommand(newInfraCommand())
 	cmd.AddCommand(newScenarioCommand())
+	cmd.AddCommand(newVersionCommand())
 
 	return cmd
 }

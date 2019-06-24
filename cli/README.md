@@ -72,6 +72,25 @@ Flags:
 Use "simulator scenario [command] --help" for more information about a command.
 </pre>
 
+### Infrastructure
+
+<pre>
+Interact with AWS to create, query and destroy the required infrastructure for scenarios
+
+Usage:
+  simulator infra [command]
+
+Available Commands:
+  create      Runs terraform to create the required infrastructure for scenarios
+  destroy     Tears down the infrastructure created for scenarios
+  destroy     Tears down the infrastructure created for scenarios
+
+Flags:
+  -h, --help   help for infra
+
+Use "simulator infra [command] --help" for more information about a command.
+</pre>
+
 ## API Documentation
 
 * [Scenario](./docs/scenario.md)

@@ -34,6 +34,12 @@ ${help}
 ${scenario_help}
 </pre>
 
+### Infrastructure
+
+<pre>
+${infra_help}
+</pre>
+
 ## API Documentation
 
 * [Scenario](./docs/scenario.md)

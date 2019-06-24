@@ -23,9 +23,27 @@ teardown() {
   [ "${status}" -eq 0 ]
 }
 
-@test "simulator scenario launch - prints scenarios" {
+@test "simulator scenario launch - prints the selected scenario" {
   run ../dist/simulator scenario list lazy
   echo 'scenario launch: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
+  [ "${output}" != "" ]
+  [ "${status}" -eq 0 ]
+}
+
+@test "simulator infra create - prints something" {
+  run ../dist/simulator infra create
+  [ "${output}" != "" ]
+  [ "${status}" -eq 0 ]
+}
+
+@test "simulator infra status - prints something" {
+  run ../dist/simulator infra status
+  [ "${output}" != "" ]
+  [ "${status}" -eq 0 ]
+}
+
+@test "simulator infra destroy - prints something" {
+  run ../dist/simulator infra destroy
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
