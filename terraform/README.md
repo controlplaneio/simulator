@@ -25,13 +25,13 @@ The Terraform modules for AWS ( located under ```modules/AWS``` ) action the fol
 
 ### CreateBastion
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/CreateBastion/README-auto.md)
+Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/CreateBastion/README-auto.md)
 
 * A single bastion host on the public subnet
 
 ### CreateK8s
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/CreateK8s/README-auto.md)
+Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/CreateK8s/README-auto.md)
 
 
 * One, or more, K8s master nodes on the private network
@@ -44,7 +44,7 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 
 ### Networking
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/Networking/README-auto.md)
+Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/Networking/README-auto.md)
 
 * Single Vpc
 * 2 subnets, 1 public, 1 private
@@ -58,14 +58,14 @@ The following routes are defined
 
 ### S3Storage
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/S3Storage/README-auto.md)
+Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/S3Storage/README-auto.md)
 
 * Create S3 bucket
 * Create IAM role/policy for k8s hosts to access S3 bucket
 
 ### SecurityGroups
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/SecurityGroups/README-auto.md)
+Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/SecurityGroups/README-auto.md)
 
 The following security groups are defined
 
