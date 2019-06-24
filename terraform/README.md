@@ -31,7 +31,7 @@ Refer to [settings documentation](./modules/AWS/CreateBastion/README-auto.md)
 
 ### CreateK8s
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/CreateK8s/README-auto.md)
+Refer to [settings documentation](./modules/AWS/CreateK8s/README-auto.md)
 
 
 * One, or more, K8s master nodes on the private network
@@ -44,7 +44,7 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 
 ### Networking
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/Networking/README-auto.md)
+Refer to [settings documentation](./modules/AWS/Networking/README-auto.md)
 
 * Single Vpc
 * 2 subnets, 1 public, 1 private
@@ -58,14 +58,14 @@ The following routes are defined
 
 ### S3Storage
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/S3Storage/README-auto.md)
+Refer to [settings documentation](./modules/AWS/S3Storage/README-auto.md)
 
 * Create S3 bucket
 * Create IAM role/policy for k8s hosts to access S3 bucket
 
 ### SecurityGroups
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/modules/AWS/SecurityGroups/README-auto.md)
+Refer to [settings documentation](./modules/AWS/SecurityGroups/README-auto.md)
 
 The following security groups are defined
 
@@ -75,7 +75,7 @@ The following security groups are defined
 
 ## Settings
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/deployments/AwsSimulatorStandalone/README-auto.md) for details on deployment settings required, and defaults provided.
+Refer to [settings documentation](./deployments/AwsSimulatorStandalone/README-auto.md) for details on deployment settings required, and defaults provided.
 
 ## Remote State
 
