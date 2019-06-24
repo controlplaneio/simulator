@@ -12,9 +12,9 @@
 
 | Name | Description |
 |------|-------------|
-| PrivateSubnetCidrBlock |  |
-| PrivateSubnetId |  |
-| PublicSubnetCidrBlock |  |
-| PublicSubnetId |  |
-| VpcId |  |
+| PrivateSubnetCidrBlock | Private subnet cidr block |
+| PrivateSubnetId | ID of private subnet |
+| PublicSubnetCidrBlock | Public subnet cidr block |
+| PublicSubnetId | ID of public subnet |
+| VpcId | ID of VPC |
 

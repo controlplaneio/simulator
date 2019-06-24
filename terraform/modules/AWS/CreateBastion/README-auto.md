@@ -13,6 +13,6 @@
 
 | Name | Description |
 |------|-------------|
-| BastionPublicIp |  |
-| KeyPairName |  |
+| BastionPublicIp | Bastion server public ip address |
+| KeyPairName | Name of Bastion SSH key in KMS |
 

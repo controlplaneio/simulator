@@ -2,5 +2,5 @@
 
 | Name | Description |
 |------|-------------|
-| IamInstanceProfileId |  |
+| IamInstanceProfileId | IAM instance profile id |
 
