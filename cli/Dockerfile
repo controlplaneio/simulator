@@ -1,29 +1,17 @@
-FROM golang:1.12 AS builder
+FROM debian:buster-slim
+
+RUN apt-get update && apt-get install -y golang build-essential git ca-certificates
 
 RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone/cli
-
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/cli
 
-COPY . .
+RUN addgroup --quiet build
+RUN adduser --quiet --disabled-password --gecos "" --ingroup build build
+RUN chown -R build:build ./
 
 ENV GO111MODULE=on
 
-RUN go install
-RUN GOPATH= CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o ./dist/simulator
+USER build
 
-# ===
-
-FROM debian:buster-slim
-
-RUN addgroup --quiet app
-RUN adduser --quiet --disabled-password --gecos "" --no-create-home --ingroup app app
-
-WORKDIR /home/app
-
-COPY --from=builder /go/src/github.com/controlplaneio/simulator-standalone/cli/dist/simulator /usr/local/bin/
-RUN chown -R app:app ./
-
-USER app
-
-CMD ["simulator"]
+CMD ["make"]
 

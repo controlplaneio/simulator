@@ -12,19 +12,20 @@ teardown() {
 
 @test "simulator version - prints version" {
   run ../dist/simulator version
+  echo 'version: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator scenario list - prints scenarios" {
   run ../dist/simulator scenario list
-  echo "${output}" >&3
+  echo 'scenario list: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator scenario launch - prints scenarios" {
   run ../dist/simulator scenario list lazy
-  echo "${output}" >&3
+  echo 'scenario launch: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
