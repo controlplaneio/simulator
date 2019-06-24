@@ -1,2 +1,2 @@
-package-lock.json binary
-cli/test/bin      binary
+package-lock.json    binary
+cli/test/bin/**      binary
