@@ -1,0 +1,6 @@
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| IamInstanceProfileId |  |
+
