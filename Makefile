@@ -20,12 +20,16 @@ exec: build ## Run a command in the launch container - CMD=<...> make exec
 	docker run -v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials --rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) $(CMD)
 
 .PHONY: build
-build: ## Builds the launch container
+build: cli-build-and-test ## Builds the launch container
 	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
 test: build ## Run the tests
 	@docker run -v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials --rm -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) goss validate
+
+.PHONY: cli-build-and-test
+cli-build-and-test: ## Build and test the simulator CLI
+	@cd cli; make test
 
 .PHONY: infra-init
 infra-init:
