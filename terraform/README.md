@@ -20,7 +20,7 @@ Terraform modules are segregated by Cloud Provider under the modules directory, 
 
 ## Current Terraform Modules
 
-The Terraform modules for AWS ( located under ```modules/AWS``` ) action the following:
+The Terraform modules for AWS ( located under ```modules/AWS/[module name]``` ) action the following:
 
 
 ### CreateBastion
