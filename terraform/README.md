@@ -1,5 +1,9 @@
 # Terraform environment  standup
 
+## Terraform target infrastructure
+
+![Terraform AWS infrastructure](./docs/aws-bastion-host-1.png)
+
 ## Terraform Deployments structure
 
 Deployments are location within:
