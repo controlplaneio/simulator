@@ -1,4 +1,4 @@
-NAME := simulator-cli
+NAME := simulator-cli-build
 PACKAGE_NAME := simulator-standalone/cli
 BIN_NAME := simulator
 GITHUB_ORG = controlplaneio
@@ -86,7 +86,7 @@ build: ## golang build
 	go build -a -o ./dist/simulator
 
 .PHONY: doc
-doc: ## generate markdown documentation for packages
+doc: dep ## generate markdown documentation for packages
 	@echo "+ $@"
 	godocdown pkg/scenario > docs/scenario.md
 	./bin/generate-readme.sh > README.md
@@ -100,12 +100,6 @@ docker-build: ## builds a docker image
 	docker tag "${CONTAINER_NAME}" "${CONTAINER_NAME_LATEST}"
 	@echo "Successfully tagged ${CONTAINER_NAME} as ${CONTAINER_NAME_LATEST}"
 	docker run -t "${CONTAINER_NAME_LATEST}" -v "${PWD}:/go/src/github.com/controlplaneio/simulator-standalone/cli" make test
-
-.PHONY: docker-push
-docker-push: ## pushes the last build docker image
-	@echo "+ $@"
-	docker push "${CONTAINER_NAME}"
-	docker push "${CONTAINER_NAME_LATEST}"
 
 # ---
 

@@ -14,4 +14,3 @@ ENV GO111MODULE=on
 USER build
 
 CMD ["make"]
-

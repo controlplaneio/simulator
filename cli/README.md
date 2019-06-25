@@ -1,8 +1,22 @@
+<!--
+This file is evaled by a quickly cobbled together bash script to replace the variables.
+- Backticks are imterpreted by bash so use <code> for inline code and <pre> for code blocks.
+- If you need to include bsah code snippets you will need to change how the templating works.
+-->
 # Simulator CLI
 
-## Development
+## Development and build
 
-Development is done via make
+Development targets are specified in the [Makefile](./Makefile).
+
+The [Dockerfile](./Dockerfile) in this folder is used to isolate and lock down versions for testing and building and not
+for publishing.
+
+Publishing of the simulator as a docker image will be [the launch container Dockerfile](../Dockerfile).
+Running  <code>make run</code> (or <code>make build</code>) in the root of this repository will implicitly call
+<code>make docker-build</code> in this folder.
+
+The remaining make targets can be run inside the build container or outside as you choose for local development.
 
 <pre>
 all: help            
@@ -10,8 +24,6 @@ build                 golang build
 dep                   install dependencies for other targets
 doc                   generate markdown documentation for packages
 docker-build          builds a docker image
-docker-push           pushes the last build docker image
-docker-run            runs the last build docker image
 help-no-color:       
 test-acceptance       acceptance tests
 test-go-fmt           golang fmt check
@@ -32,6 +44,7 @@ Usage:
 
 Available Commands:
   help        Help about any command
+  infra       Interact with AWS to create, query and destroy the required infrastructure for scenarios
   scenario    Interact with scenarios
   version     Prints simulator version
 
