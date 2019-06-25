@@ -33,24 +33,24 @@ cli-build-and-test: ## Build and test the simulator CLI
 
 .PHONY: infra-init
 infra-init:
-	@pushd terraform; terraform init; popd
+	@pushd terraform/deployments/AwsSimulatorStandalone; terraform init; popd
 
 .PHONY: infra-checkvars
 infra-checkvars:
-	@test -f terraform/settings/bastion.tfvars || \
+	@test -f terraform/deployments/AwsSimulatorStandalone/settings/bastion.tfvars || \
 		(echo Please create terraform/settings/bastion.tfvars && exit 1)
 
 .PHONY: infra-plan
 infra-plan: infra-init infra-checkvars
-	@pushd terraform; terraform plan -var-file=settings/bastion.tfvars; popd
+	@pushd terraform/deployments/AwsSimulatorStandalone; terraform plan -var-file=settings/bastion.tfvars; popd
 
 .PHONY: infra-apply
 infra-apply: infra-init infra-checkvars
-	@pushd terraform; terraform apply -var-file=settings/bastion.tfvars -auto-approve; popd
+	@pushd terraform/deployments/AwsSimulatorStandalone; terraform apply -var-file=settings/bastion.tfvars -auto-approve; popd
 
 .PHONY: infra-destroy
 infra-destroy: infra-init infra-checkvars
-	@pushd terraform; terraform destroy -var-file=settings/bastion.tfvars; popd
+	@pushd terraform/deployments/AwsSimulatorStandalone; terraform destroy -var-file=settings/bastion.tfvars; popd
 
 .PHONY: help
 help: ## This message

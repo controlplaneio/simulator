@@ -1,5 +1,9 @@
 # Terraform environment  standup
 
+## Terraform target infrastructure
+
+![Terraform AWS infrastructure](./docs/aws-bastion-host-1.png)
+
 ## Terraform Deployments structure
 
 Deployments are location within:
@@ -16,13 +20,20 @@ Terraform modules are segregated by Cloud Provider under the modules directory, 
 
 ## Current Terraform Modules
 
-The Terraform modules for AWS ( located under ```modules/AWS``` ) action the following:
+The Terraform modules for AWS ( located under ```modules/AWS/[module name]``` ) action the following:
 
 
 ### CreateBastion
+
+Refer to [settings documentation](./modules/AWS/CreateBastion/README-auto.md)
+
 * A single bastion host on the public subnet
 
 ### CreateK8s
+
+Refer to [settings documentation](./modules/AWS/CreateK8s/README-auto.md)
+
+
 * One, or more, K8s master nodes on the private network
 * One, or more, K8s nodes  on the private network 
 
@@ -32,6 +43,9 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 * cloud-init.cfg - runs on nodes and installs kubelet, kubectl, kubeadm, docker and crictl.
 
 ### Networking
+
+Refer to [settings documentation](./modules/AWS/Networking/README-auto.md)
+
 * Single Vpc
 * 2 subnets, 1 public, 1 private
 * An Internet Gateway attached to public subnet
@@ -43,10 +57,15 @@ The following routes are defined
 * private_nat_route_table - route to NAT gateway, associated to private subnet
 
 ### S3Storage
+
+Refer to [settings documentation](./modules/AWS/S3Storage/README-auto.md)
+
 * Create S3 bucket
 * Create IAM role/policy for k8s hosts to access S3 bucket
 
 ### SecurityGroups
+
+Refer to [settings documentation](./modules/AWS/SecurityGroups/README-auto.md)
 
 The following security groups are defined
 
@@ -56,7 +75,7 @@ The following security groups are defined
 
 ## Settings
 
-Refer to [settings documentation](https://github.com/controlplaneio/simulator-standalone/blob/ansible/terraform/deployments/AwsSimulatorStandalone/README-auto.md) for details on settings required, and defaults provided.
+Refer to [settings documentation](./deployments/AwsSimulatorStandalone/README-auto.md) for details on deployment settings required, and defaults provided.
 
 ## Remote State
 

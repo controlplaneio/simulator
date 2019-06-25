@@ -13,3 +13,10 @@
 | private\_subnet\_id | Private subnet id | string | n/a | yes |
 | region | aws region | string | `"eu-west-1"` | no |
 
+## Outputs
+
+| Name | Description |
+|------|-------------|
+| K8sMasterPrivateIp | Kubernetes master private ip address |
+| K8sNodesPrivateIp | Kubernetes node(s) private ip address |
+
