@@ -15,10 +15,6 @@ const (
 	tfStateDir = tfDir + "/.terraform"
 )
 
-func debug(msg ...interface{}) {
-	fmt.Println(msg...)
-}
-
 func Root() (string, error) {
 	debug("Finding root")
 	absPath, err := filepath.Abs(tfDir)
@@ -29,29 +25,32 @@ func Root() (string, error) {
 	return absPath, nil
 }
 
-func exists(path string) (bool, error) {
-	debug("Stating", path)
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return true, err
-}
-
-func Terraform(cmd string) (*string, error) {
+func PrepareArguments(cmd string) []string {
 	arguments := []string{cmd}
+
 	if cmd == "output" {
 		arguments = append(arguments, "-json")
-	} else {
+	}
+	if cmd == "plan" || cmd == "apply" || cmd == "destroy" {
+		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
+		arguments = append(arguments, "-auto-approve")
+	}
+	if cmd == "init" {
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
 	}
 
-	debug("Preparing to run terraform with args: ", arguments)
+	return arguments
 
+}
+
+func Terraform(cmd string) (*string, error) {
+	arguments := PrepareArguments(cmd)
+
+	debug("Preparing to run terraform with args: ", arguments)
 	child := exec.Command("terraform", arguments...)
+
+	// Tell terraform it is being automated
+	child.Env = append(os.Environ(), "TF_IS_IN_AUTOMATION=1")
 
 	childIn, _ := child.StdinPipe()
 	childErr, _ := child.StderrPipe()
@@ -110,6 +109,8 @@ func InitIfNeeded() error {
 
 	return nil
 }
+
+// -#-
 
 func Create() error {
 	err := InitIfNeeded()
