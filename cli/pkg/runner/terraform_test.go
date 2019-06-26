@@ -13,7 +13,7 @@ var tfCommandArgumentsTests = []struct {
 }{
 	{"init", []string{"init", "--var-file=settings/bastion.tfvars"}},
 	{"output", []string{"output", "-json"}},
-	{"plan", []string{"plan", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
+	{"plan", []string{"plan", "--var-file=settings/bastion.tfvars"}},
 	{"apply", []string{"apply", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 	{"destroy", []string{"destroy", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 }
@@ -21,7 +21,6 @@ var tfCommandArgumentsTests = []struct {
 func Test_PrepareTfArgs(t *testing.T) {
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.command, func(t *testing.T) {
-			t.Parallel()
 			assert.Equal(t, runner.PrepareTfArgs(tt.command), tt.arguments)
 		})
 	}

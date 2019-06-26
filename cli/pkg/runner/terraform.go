@@ -31,11 +31,12 @@ func PrepareTfArgs(cmd string) []string {
 	if cmd == "output" {
 		arguments = append(arguments, "-json")
 	}
-	if cmd == "plan" || cmd == "apply" || cmd == "destroy" {
+	if cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
 		arguments = append(arguments, "-auto-approve")
 	}
-	if cmd == "init" {
+
+	if cmd == "init" || cmd == "plan" {
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
 	}
 
