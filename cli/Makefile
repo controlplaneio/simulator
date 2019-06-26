@@ -81,7 +81,7 @@ dep: ## install dependencies for other targets
 	go get github.com/robertkrimen/godocdown/godocdown
 
 .PHONY: build
-build: ## golang build
+build: dep ## golang build
 	@echo "+ $@"
 	go build -a -o ./dist/simulator
 

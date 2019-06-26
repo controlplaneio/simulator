@@ -1,0 +1,31 @@
+{
+  "bastion_public_ip": {
+    "sensitive": false,
+    "type": "string",
+    "value": "34.244.109.234"
+  },
+  "cluster_nodes_private_ip": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string"
+      ]
+    ],
+    "value": [
+      "172.31.2.19"
+    ]
+  },
+  "master_nodes_private_ip": {
+    "sensitive": false,
+    "type": [
+      "tuple",
+      [
+        "string"
+      ]
+    ],
+    "value": [
+      "172.31.2.167"
+    ]
+  }
+}

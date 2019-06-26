@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func newCreateCommand() *cobra.Command {
@@ -21,12 +19,10 @@ func newCreateCommand() *cobra.Command {
 
 func newStatusCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   `destroy`,
-		Short: "Tears down the infrastructure created for scenarios",
+		Use:   `status`,
+		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Fprintln(os.Stderr, "Not Implemented")
-
-			return nil
+			return runner.Status()
 		},
 	}
 
