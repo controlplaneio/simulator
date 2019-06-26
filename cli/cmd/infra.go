@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -11,9 +12,7 @@ func newCreateCommand() *cobra.Command {
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Fprintln(os.Stderr, "Not Implemented")
-
-			return nil
+			return runner.Create()
 		},
 	}
 
@@ -39,9 +38,7 @@ func newDestroyCommand() *cobra.Command {
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Fprintln(os.Stderr, "Not Implemented")
-
-			return nil
+			return runner.Destroy()
 		},
 	}
 
