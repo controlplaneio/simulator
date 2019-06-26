@@ -11,13 +11,24 @@ import (
 )
 
 const (
-	tfDir      = "../terraform/deployments/AwsSimulatorStandalone"
-	tfStateDir = tfDir + "/.terraform"
+	tfDirEnvVar  = "SIMULATOR_TF_DIR"
+	defaultTfDir = "../terraform/deployments/AwsSimulatorStandalone"
+	tfStateDir   = "/.terraform"
 )
 
+// Reads the Terraform dir from the environment variable `SIMULATOR_TF_DIR`
+// or uses a default value of `../terraform/deployments/AwsSimulatorStandalone`
+func TfDir() string {
+	var d = os.Getenv(tfDirEnvVar)
+	if d == "" {
+		d = defaultTfDir
+	}
+
+	return d
+}
 func Root() (string, error) {
 	debug("Finding root")
-	absPath, err := filepath.Abs(tfDir)
+	absPath, err := filepath.Abs(TfDir())
 	if err != nil {
 		return "", errors.Wrap(err, "Error resolving root")
 	}
@@ -78,7 +89,7 @@ func Terraform(cmd string) (*string, error) {
 	debug("Running terraform")
 	err = child.Start()
 	if err != nil {
-		debug("Error starting terraform child process")
+		debug("Error starting terraform child process: ", err)
 		return nil, err
 	}
 
@@ -86,8 +97,8 @@ func Terraform(cmd string) (*string, error) {
 	io.Copy(os.Stderr, childErr)
 
 	err = child.Wait()
-	if err != nil {
-		debug("Error waiting for terraform child process")
+	if err != nil && err.Error() != "exit status 127" {
+		debug("Error waiting for terraform child process", err)
 		return nil, err
 	}
 
@@ -96,9 +107,10 @@ func Terraform(cmd string) (*string, error) {
 }
 
 func InitIfNeeded() error {
-	hasStateDir, err := exists(tfStateDir)
+	stateDir := TfDir() + tfStateDir
+	hasStateDir, err := exists(stateDir)
 	if err != nil {
-		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", tfStateDir)
+		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}
 
 	if hasStateDir {

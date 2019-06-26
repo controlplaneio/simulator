@@ -9,10 +9,10 @@ import (
 )
 
 func fixture(name string) string {
-	return "../../test/fixtures/" + name + ".json"
+	return "../../test/fixtures/" + name
 }
 
-func ReadTestOutput(name string) string {
+func readFixture(name string) string {
 	file, err := os.Open(fixture(name))
 	if err != nil {
 		panic(err)
@@ -29,7 +29,7 @@ func ReadTestOutput(name string) string {
 
 func Test_ParseTerraformOutput(t *testing.T) {
 	t.Parallel()
-	output := ReadTestOutput("valid-tf-output")
+	output := readFixture("valid-tf-output.json")
 
 	tfOutput, err := runner.ParseTerraformOutput(output)
 
