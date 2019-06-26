@@ -10,6 +10,7 @@ BIN_UNDER_TEST='./dist/simulator'
 _global_setup() {
   [ ! -f ${BATS_PARENT_TMPNAME}.skip ] || skip "skip remaining tests"
   export SIMULATOR_MANIFEST_PATH='./fixtures/valid'
+  export SIMULATOR_TF_DIR='../../terraform/deployments/AwsSimulatorStandalone'
   export SIMULATOR_CLI_TEST_OUTPUT='test.debug'
 }
 
