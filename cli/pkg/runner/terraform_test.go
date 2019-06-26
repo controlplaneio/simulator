@@ -3,6 +3,7 @@ package runner_test
 import (
 	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
 )
 
@@ -17,11 +18,15 @@ var tfCommandArgumentsTests = []struct {
 	{"destroy", []string{"destroy", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 }
 
-func Test_PrepareArguments(t *testing.T) {
+func Test_PrepareTfArgs(t *testing.T) {
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.command, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, runner.PrepareArguments(tt.command), tt.arguments)
+			assert.Equal(t, runner.PrepareTfArgs(tt.command), tt.arguments)
 		})
 	}
+}
+
+func Test_PrepareTfEnv(t *testing.T) {
+	assert.Equal(t, runner.PrepareTfEnv(), append(os.Environ(), "TF_IS_IN_AUTOMATION=1"))
 }

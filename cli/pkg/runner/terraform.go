@@ -25,7 +25,7 @@ func Root() (string, error) {
 	return absPath, nil
 }
 
-func PrepareArguments(cmd string) []string {
+func PrepareTfArgs(cmd string) []string {
 	arguments := []string{cmd}
 
 	if cmd == "output" {
@@ -40,17 +40,19 @@ func PrepareArguments(cmd string) []string {
 	}
 
 	return arguments
+}
 
+func PrepareTfEnv() []string {
+	return append(os.Environ(), "TF_IS_IN_AUTOMATION=1")
 }
 
 func Terraform(cmd string) (*string, error) {
-	arguments := PrepareArguments(cmd)
+	args := PrepareTfArgs(cmd)
 
-	debug("Preparing to run terraform with args: ", arguments)
-	child := exec.Command("terraform", arguments...)
+	debug("Preparing to run terraform with args: ", args)
+	child := exec.Command("terraform", args...)
 
-	// Tell terraform it is being automated
-	child.Env = append(os.Environ(), "TF_IS_IN_AUTOMATION=1")
+	child.Env = PrepareTfEnv()
 
 	childIn, _ := child.StdinPipe()
 	childErr, _ := child.StderrPipe()
