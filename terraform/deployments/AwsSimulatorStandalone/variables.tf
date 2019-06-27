@@ -69,7 +69,7 @@ variable "cluster_nodes_instance_type" {
 
 variable "number_of_cluster_instances" {
   description = "number of nodes to create"
-  default     = "1"
+  default     = "2"
 }
 
 variable "private_avail_zone" {
