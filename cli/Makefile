@@ -89,6 +89,7 @@ build: dep ## golang build
 doc: dep ## generate markdown documentation for packages
 	@echo "+ $@"
 	godocdown pkg/scenario > docs/scenario.md
+	godocdown pkg/runner > docs/runner.md
 	./bin/generate-readme.sh > README.md
 
 # ---

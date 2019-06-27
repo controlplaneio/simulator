@@ -67,3 +67,10 @@ func (m *ScenarioManifest) Contains(id string) bool
 ```
 Returns a boolean indicating whether a ScenarioManifest contains a Scenario with
 the supplied id
+
+#### func (*ScenarioManifest) Find
+
+```go
+func (m *ScenarioManifest) Find(id string) *Scenario
+```
+Returns a scenario for the supplied id

@@ -49,7 +49,8 @@ Available Commands:
   version     Prints simulator version
 
 Flags:
-  -h, --help   help for simulator
+  -h, --help      help for simulator
+  -v, --verbose   verbose output
 
 Use "simulator [command] --help" for more information about a command.
 </pre>
@@ -69,6 +70,9 @@ Available Commands:
 Flags:
   -h, --help   help for scenario
 
+Global Flags:
+  -v, --verbose   verbose output
+
 Use "simulator scenario [command] --help" for more information about a command.
 </pre>
 
@@ -83,10 +87,13 @@ Usage:
 Available Commands:
   create      Runs terraform to create the required infrastructure for scenarios
   destroy     Tears down the infrastructure created for scenarios
-  destroy     Tears down the infrastructure created for scenarios
+  status      Gets the status of the infrastructure
 
 Flags:
   -h, --help   help for infra
+
+Global Flags:
+  -v, --verbose   verbose output
 
 Use "simulator infra [command] --help" for more information about a command.
 </pre>
