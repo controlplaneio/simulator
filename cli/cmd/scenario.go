@@ -64,7 +64,7 @@ func newScenarioLaunchCommand() *cobra.Command {
 			po := runner.MakePerturbOptions(*tfo, scenarioPath)
 			fmt.Println("Converted usable terraform output into perturb options")
 			fmt.Printf("%#v", po)
-			c, err := runner.CreateSshConfig(*tfo)
+			c, err := tfo.ToSSHConfig()
 			if err != nil {
 				return err
 			}

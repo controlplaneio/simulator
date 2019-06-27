@@ -79,14 +79,14 @@ func Terraform(cmd string) (*string, error) {
 	defer childErr.Close()
 	defer childOut.Close()
 
-	tfDir, err := Root()
+	dir, err := Root()
 	if err != nil {
 		debug("Error finding root")
 		return nil, err
 	}
 
-	debug("Setting terraform working directory to ", tfDir)
-	child.Dir = tfDir
+	debug("Setting terraform working directory to ", dir)
+	child.Dir = dir
 
 	// Copy child stdout to stdout but also into a buffer to be returned
 	var buf bytes.Buffer
