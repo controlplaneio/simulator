@@ -101,3 +101,4 @@ Use "simulator infra [command] --help" for more information about a command.
 ## API Documentation
 
 * [Scenario](./docs/scenario.md)
+* [Runner](./docs/runner.md)
