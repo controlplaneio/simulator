@@ -426,13 +426,15 @@ handle_arguments() {
   parse_arguments "$@"
   validate_arguments "$@"
 
-  if ! command doctl >/dev/null; then
-    error "Please install doctl from https://github.com/digitalocean/doctl"
-  fi
+  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
+    if ! command doctl >/dev/null; then
+      error "Please install doctl from https://github.com/digitalocean/doctl"
+    fi
 
-  if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
-    warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
-    error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
+    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
+      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
+      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
+    fi
   fi
 }
 

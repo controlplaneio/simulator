@@ -6,7 +6,7 @@
 
 ### Immediate future
 
-- Remove digital ocean checks
+- ~~Remove digital ocean checks~~
 - Change terraform to create 2 worker nodes
 - Automate ssh config for connecting to instances via bastion
 - Make simulator logging configurable
