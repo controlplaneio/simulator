@@ -20,16 +20,24 @@
 - Attack container
   - nmap
   - kubectl
-- Design for supporting multiple users in the same AWS Account(?)
+- Document only one user per account
+- Terraform acceptance tests
 
 ## Milestone 1  - Epic 2
 - Validate scenarios post running the scripts
   - drop "state" into nodes - to track whats been done on them(?)
 - Evaluate user progress
 
+## Milestone 1 - Epic 3 - Documentation and open sourcing 
+
 ## Future Milestones - Post initial open-source
 
+- Support for local use with kind
 - Support configurable worker node count
 - Support configurable master node count - multimaster
+- Design for supporting multiple users in the same AWS Account(?)
 - Reset cluster
 - Multi cloud
+- Multi player
+- Leaderboard
+- attack / remedy / defend / forensics actors
