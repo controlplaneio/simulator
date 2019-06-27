@@ -26,10 +26,6 @@ func Test_PrepareTfArgs(t *testing.T) {
 	}
 }
 
-func Test_PrepareTfEnv(t *testing.T) {
-	assert.Equal(t, runner.PrepareTfEnv(), append(os.Environ(), "TF_IS_IN_AUTOMATION=1"))
-}
-
 func Test_Terraform(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", "../../../terraform/deployments/AwsSimulatorStandalone")
 	expected := readFixture("tf-help.txt")

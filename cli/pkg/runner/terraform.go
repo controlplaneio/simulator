@@ -1,12 +1,8 @@
 package runner
 
 import (
-	"bytes"
 	"github.com/pkg/errors"
-	"io"
 	"os"
-	"os/exec"
-	"path/filepath"
 )
 
 const (
@@ -24,17 +20,6 @@ func TfDir() string {
 	}
 
 	return d
-}
-
-// Root return the absolute path of the directory containing the terraform scripts
-func Root() (string, error) {
-	debug("Finding root")
-	absPath, err := filepath.Abs(TfDir())
-	if err != nil {
-		return "", errors.Wrap(err, "Error resolving root")
-	}
-
-	return absPath, nil
 }
 
 // PrepareTfArgs takes a string with the terraform command desired and returns a slice of strings
@@ -57,59 +42,12 @@ func PrepareTfArgs(cmd string) []string {
 	return arguments
 }
 
-// PrepareTfEnv returns a slice of strins containing key value pairs of environment variables for
-// the child process when exec'ing terraform
-func PrepareTfEnv() []string {
-	return append(os.Environ(), "TF_IS_IN_AUTOMATION=1")
-}
-
 // Terraform wraps running terraform as a child process
 func Terraform(cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
-
-	debug("Preparing to run terraform with args: ", args)
-	child := exec.Command("terraform", args...)
-
-	child.Env = PrepareTfEnv()
-
-	childIn, _ := child.StdinPipe()
-	childErr, _ := child.StderrPipe()
-	childOut, _ := child.StdoutPipe()
-	defer childIn.Close()
-	defer childErr.Close()
-	defer childOut.Close()
-
-	dir, err := Root()
-	if err != nil {
-		debug("Error finding root")
-		return nil, err
-	}
-
-	debug("Setting terraform working directory to ", dir)
-	child.Dir = dir
-
-	// Copy child stdout to stdout but also into a buffer to be returned
-	var buf bytes.Buffer
-	tee := io.TeeReader(childOut, &buf)
-
-	debug("Running terraform")
-	err = child.Start()
-	if err != nil {
-		debug("Error starting terraform child process: ", err)
-		return nil, err
-	}
-
-	io.Copy(os.Stdout, tee)
-	io.Copy(os.Stderr, childErr)
-
-	err = child.Wait()
-	if err != nil && err.Error() != "exit status 127" {
-		debug("Error waiting for terraform child process", err)
-		return nil, err
-	}
-
-	out := string(buf.Bytes())
-	return &out, nil
+	env := []string{"TF_IS_IN_AUTOMATION=1"}
+	wd := TfDir()
+	return Run(wd, env, "terraform", args...)
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
