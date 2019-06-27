@@ -99,7 +99,7 @@ docker-build: ## builds a docker image
 	docker build --tag "${CONTAINER_NAME}" .
 	docker tag "${CONTAINER_NAME}" "${CONTAINER_NAME_LATEST}"
 	@echo "Successfully tagged ${CONTAINER_NAME} as ${CONTAINER_NAME_LATEST}"
-	docker run -t "${CONTAINER_NAME_LATEST}" -v "${PWD}:/go/src/github.com/controlplaneio/simulator-standalone/cli" make test
+	docker run -v "${PWD}:/go/src/github.com/controlplaneio/simulator-standalone/cli" -t "${CONTAINER_NAME_LATEST}" make test
 
 # ---
 

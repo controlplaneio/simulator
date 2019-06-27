@@ -29,7 +29,7 @@ test: build ## Run the tests
 
 .PHONY: cli-build-and-test
 cli-build-and-test: ## Build and test the simulator CLI
-	@cd cli; make test
+	@cd cli; make docker-build
 
 .PHONY: infra-init
 infra-init:
