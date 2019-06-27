@@ -18,8 +18,19 @@ func Test_CreateSshConfig(t *testing.T) {
 			Type:      []interface{}{},
 			Value:     []string{"127.0.0.1"},
 		},
+		ClusterNodesPrivateIP: runner.StringSliceOutput{
+			Sensitive: false,
+			Type:      []interface{}{},
+			Value:     []string{"127.0.0.2", "127.0.0.3"},
+		},
 	}
 	const expected = `Host 127.0.0.1
+  IdentityFile ~/.ssh/id_rsa.pub
+  ProxyCommand ssh raoul@8.8.8.8 -W %h:%p
+Host 127.0.0.2
+  IdentityFile ~/.ssh/id_rsa.pub
+  ProxyCommand ssh raoul@8.8.8.8 -W %h:%p
+Host 127.0.0.3
   IdentityFile ~/.ssh/id_rsa.pub
   ProxyCommand ssh raoul@8.8.8.8 -W %h:%p
 `

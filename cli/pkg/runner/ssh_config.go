@@ -33,17 +33,33 @@ func CreateSshConfig(tfo TerraformOutput) (*string, error) {
 		return nil, errors.Wrap(err, "Unable to get current user for generating sshconfig")
 	}
 
-	c := SshConfig{
-		Hostname:    tfo.MasterNodesPrivateIP.Value[0],
-		KeyFilePath: "~/.ssh/id_rsa.pub",
-		User:        u.Username,
-		BastionIP:   tfo.BastionPublicIP.Value,
+	var buf bytes.Buffer
+	for _, ip := range tfo.MasterNodesPrivateIP.Value {
+		c := SshConfig{
+			Hostname:    ip,
+			KeyFilePath: "~/.ssh/id_rsa.pub",
+			User:        u.Username,
+			BastionIP:   tfo.BastionPublicIP.Value,
+		}
+
+		err = sshConfigTmpl.Execute(&buf, c)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error populating ssh config template with %+v", c)
+		}
 	}
 
-	var buf bytes.Buffer
-	err = sshConfigTmpl.Execute(&buf, c)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error populating ssh config template with %+v", c)
+	for _, ip := range tfo.ClusterNodesPrivateIP.Value {
+		c := SshConfig{
+			Hostname:    ip,
+			KeyFilePath: "~/.ssh/id_rsa.pub",
+			User:        u.Username,
+			BastionIP:   tfo.BastionPublicIP.Value,
+		}
+
+		err = sshConfigTmpl.Execute(&buf, c)
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error populating ssh config template with %+v", c)
+		}
 	}
 
 	var output = string(buf.Bytes())
