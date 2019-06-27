@@ -44,6 +44,23 @@ func Test_Contains(t *testing.T) {
 	assert.False(t, m.Contains("invalid"), "Contains did not return false for invalid scenario")
 }
 
+func Test_Find(t *testing.T) {
+	t.Parallel()
+	s := scenario.Scenario{
+		Id:          "test_scenario",
+		DisplayName: "Test Scenario",
+		Path:        "./test",
+	}
+	m := scenario.ScenarioManifest{
+		Name:      "test",
+		Kind:      "test/0.1",
+		Scenarios: []scenario.Scenario{s},
+	}
+
+	assert.Equal(t, m.Find("test_scenario"), &s, "Contains did not return valid scenario")
+	assert.Nil(t, m.Find("invalid"), "Contains returned scenario for invalid scenario")
+}
+
 func fixture(name string) string {
 	return "../../test/fixtures/" + name
 }

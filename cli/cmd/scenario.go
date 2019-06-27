@@ -2,7 +2,9 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
 	"github.com/controlplaneio/simulator-standalone/cli/pkg/scenario"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +41,7 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return fmt.Errorf("scenario id is required")
 			}
 
-			scenarioId := args[0]
+			scenarioID := args[0]
 
 			manifestPath := scenario.ManifestPath()
 			manifest, err := scenario.LoadManifest(manifestPath)
@@ -48,11 +50,31 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return err
 			}
 
-			if !manifest.Contains(scenarioId) {
-				return fmt.Errorf("scenario %s not found", scenarioId)
+			if !manifest.Contains(scenarioID) {
+				return fmt.Errorf("scenario %s not found", scenarioID)
 			}
 
-			fmt.Println("Chosen scenario: " + scenarioId)
+			tfo, err := runner.Status()
+			if !tfo.IsUsable() {
+				return fmt.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
+			}
+
+			scenarioPath := manifest.Find(scenarioID).Path
+
+			po := runner.MakePerturbOptions(*tfo, scenarioPath)
+			fmt.Println("Converted usable terraform output into perturb options")
+			fmt.Printf("%#v", po)
+			c, err := runner.CreateSshConfig(*tfo)
+			if err != nil {
+				return err
+			}
+			fmt.Printf("Please add the following lines to your ssh config\n---\n%s\n---\n", *c)
+
+			_, err = runner.Perturb(&po)
+			if err != nil {
+				return errors.Wrapf(err, "Error running perturb with %#v", po)
+			}
+
 			return nil
 		},
 	}

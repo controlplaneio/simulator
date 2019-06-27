@@ -2,7 +2,6 @@ package runner
 
 import (
 	"bytes"
-	"fmt"
 	"github.com/pkg/errors"
 	"io"
 	"os"
@@ -16,7 +15,7 @@ const (
 	tfStateDir   = "/.terraform"
 )
 
-// Reads the Terraform dir from the environment variable `SIMULATOR_TF_DIR`
+// TfDir reads the Terraform directory from the environment variable `SIMULATOR_TF_DIR`
 // or uses a default value of `../terraform/deployments/AwsSimulatorStandalone`
 func TfDir() string {
 	var d = os.Getenv(tfDirEnvVar)
@@ -26,6 +25,8 @@ func TfDir() string {
 
 	return d
 }
+
+// Root return the absolute path of the directory containing the terraform scripts
 func Root() (string, error) {
 	debug("Finding root")
 	absPath, err := filepath.Abs(TfDir())
@@ -36,6 +37,8 @@ func Root() (string, error) {
 	return absPath, nil
 }
 
+// PrepareTfArgs takes a string with the terraform command desired and returns a slice of strings
+// containing the complete list of arguments including the command to use when exec'ing terraform
 func PrepareTfArgs(cmd string) []string {
 	arguments := []string{cmd}
 
@@ -54,10 +57,13 @@ func PrepareTfArgs(cmd string) []string {
 	return arguments
 }
 
+// PrepareTfEnv returns a slice of strins containing key value pairs of environment variables for
+// the child process when exec'ing terraform
 func PrepareTfEnv() []string {
 	return append(os.Environ(), "TF_IS_IN_AUTOMATION=1")
 }
 
+// Terraform wraps running terraform as a child process
 func Terraform(cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
 
@@ -106,6 +112,7 @@ func Terraform(cmd string) (*string, error) {
 	return &out, nil
 }
 
+// InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
 func InitIfNeeded() error {
 	stateDir := TfDir() + tfStateDir
 	hasStateDir, err := exists(stateDir)
@@ -127,6 +134,7 @@ func InitIfNeeded() error {
 
 // -#-
 
+// Create runs terraform init, plan, apply to create the necessary infratsructure to run scenarios
 func Create() error {
 	err := InitIfNeeded()
 	if err != nil {
@@ -142,23 +150,24 @@ func Create() error {
 	return err
 }
 
-func Status() error {
+// Status calls terraform output to get the state of the infrastruture and parses the output for
+// programmatic use
+func Status() (*TerraformOutput, error) {
 	err := InitIfNeeded()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	out, err := Terraform("output")
-	tfOutput, err := ParseTerraformOutput(*out)
+	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	fmt.Printf("%+v\n", tfOutput)
-
-	return err
+	return tfo, nil
 }
 
+// Destroy call terraform destroy to remove the infrastructure
 func Destroy() error {
 	err := InitIfNeeded()
 	if err != nil {

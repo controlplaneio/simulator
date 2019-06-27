@@ -2,7 +2,10 @@ NAME:=simulator
 DOCKER_REPOSITORY:=controlplane
 LAUNCH_DOCKER_IMAGE_NAME:=$(DOCKER_REPOSITORY)/$(NAME)-launch
 VERSION:=0.1-dev
+
 SIMULATOR_CREDS_PATH:=$(HOME)/.aws/credentials
+SIMULATOR_KEY_PATH:=$(HOME)/.ssh/
+
 
 SHELL := /usr/bin/env bash
 
@@ -13,11 +16,11 @@ all: test
 
 .PHONY: run
 run: build ## Runs the simulator
-	docker run -v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials --rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) bash
-
-.PHONY: run
-exec: build ## Run a command in the launch container - CMD=<...> make exec
-	docker run -v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials --rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) $(CMD)
+	docker run                                             \
+		-v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials      \
+		-v $(SIMULATOR_KEY_PATH):/home/launch-user/.ssh      \
+		--rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION)      \
+		bash
 
 .PHONY: build
 build: cli-build-and-test ## Builds the launch container
@@ -25,7 +28,10 @@ build: cli-build-and-test ## Builds the launch container
 
 .PHONY: test
 test: build ## Run the tests
-	@docker run -v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials --rm -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) goss validate
+	@docker run -v                                   \
+		$(SIMULATOR_AWS_CREDS_PATH):/app/credentials   \
+		--rm -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) \
+		goss validate
 
 .PHONY: cli-build-and-test
 cli-build-and-test: ## Build and test the simulator CLI
@@ -42,15 +48,15 @@ infra-checkvars:
 
 .PHONY: infra-plan
 infra-plan: infra-init infra-checkvars
-	@pushd terraform/deployments/AwsSimulatorStandalone; terraform plan -var-file=settings/bastion.tfvars; popd
+	@cd terraform/deployments/AwsSimulatorStandalone; terraform plan -var-file=settings/bastion.tfvars;
 
 .PHONY: infra-apply
 infra-apply: infra-init infra-checkvars
-	@pushd terraform/deployments/AwsSimulatorStandalone; terraform apply -var-file=settings/bastion.tfvars -auto-approve; popd
+	@cd terraform/deployments/AwsSimulatorStandalone; terraform apply -var-file=settings/bastion.tfvars -auto-approve;
 
 .PHONY: infra-destroy
 infra-destroy: infra-init infra-checkvars
-	@pushd terraform/deployments/AwsSimulatorStandalone; terraform destroy -var-file=settings/bastion.tfvars; popd
+	@cd terraform/deployments/AwsSimulatorStandalone; terraform destroy -var-file=settings/bastion.tfvars;
 
 .PHONY: help
 help: ## This message

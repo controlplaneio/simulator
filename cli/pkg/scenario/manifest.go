@@ -31,6 +31,17 @@ func (m *ScenarioManifest) Contains(id string) bool {
 	return false
 }
 
+// Returns a scenario for the supplied id
+func (m *ScenarioManifest) Find(id string) *Scenario {
+	for _, a := range m.Scenarios {
+		if a.Id == id {
+			return &a
+		}
+	}
+
+	return nil
+}
+
 const (
 	manifestPathEnvVar  = "SIMULATOR_MANIFEST_PATH"
 	defaultManifestPath = "../simulation-scripts/"

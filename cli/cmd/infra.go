@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +23,11 @@ func newStatusCommand() *cobra.Command {
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runner.Status()
+			tfo, err := runner.Status()
+
+			fmt.Println(tfo)
+
+			return err
 		},
 	}
 

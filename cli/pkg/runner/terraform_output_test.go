@@ -27,6 +27,20 @@ func readFixture(name string) string {
 	return string(b)
 }
 
+func Test_IsUsable(t *testing.T) {
+	tfo := runner.TerraformOutput{}
+	assert.False(t, tfo.IsUsable(), "Empty TerraformOutput was usable")
+	tfo.BastionPublicIP.Value = "127.0.0.1"
+	assert.False(t, tfo.IsUsable(), "TerraformOutput with only bastion was usable")
+	tfo.MasterNodesPrivateIP.Value = []string{"127.0.0.1"}
+	assert.False(t, tfo.IsUsable(), "TerraformOutput with only master IP was usable")
+	tfo.ClusterNodesPrivateIP.Value = []string{"127.0.0.1"}
+	assert.False(t, tfo.IsUsable(), "TerraformOutput with only 1 cluster node IPs was usable")
+
+	tfo.ClusterNodesPrivateIP.Value = []string{"127.0.0.1", "127.0.0.2"}
+	assert.True(t, tfo.IsUsable(), "Complete TerraformOutput was not usable")
+}
+
 func Test_ParseTerraformOutput(t *testing.T) {
 	t.Parallel()
 	output := readFixture("valid-tf-output.json")
