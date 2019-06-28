@@ -1,5 +1,81 @@
-FROM docker:18.09.2 AS static-docker-source
+#----------------------#
+# Deps, Build and Test #
+#----------------------#
+FROM debian:buster-slim AS build-and-test
 
+RUN apt-get update        \
+    && apt-get install -y \
+    golang                \
+    build-essential       \
+    git                   \
+    ca-certificates       \
+    curl                  \
+    unzip
+
+# Install terraform
+# TODO: (rem) use `terraform-bundle`
+ENV TERRAFORM_VERSION 0.12.3
+RUN curl -sLO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+RUN unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
+RUN mv terraform /usr/local/bin/
+
+# Install JQ
+ENV JQ_VERSION 1.6
+RUN curl https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 -Lo /usr/local/bin/jq
+RUN chmod +x /usr/local/bin/jq
+
+## Install YQ
+ENV YQ_VERSION 2.7.2
+RUN curl https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -Lo /usr/local/bin/yq
+RUN chmod +x /usr/local/bin/yq
+
+## Install Goss
+ENV GOSS_VERSION v0.3.7
+RUN curl -L https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 -o /usr/local/bin/goss
+RUN chmod +rx /usr/local/bin/goss
+
+# Setup non-root build user
+RUN addgroup --quiet build && adduser --quiet --disabled-password --gecos "" --ingroup build build
+
+# Create golang src directory
+RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone/cli
+
+# Create module cache and copy manifest files
+RUN mkdir -p /home/build/go/pkg/mod
+COPY ./cli/go.mod /go/src/github.com/controlplaneio/simulator-standalone/cli
+COPY ./cli/go.sum /go/src/github.com/controlplaneio/simulator-standalone/cli
+
+# Give ownership of module cache and src tree to build user
+RUN chown -R build:build /go/src/github.com/controlplaneio/simulator-standalone
+RUN chown -R build:build /home/build/go
+
+# Run all build and test steps as build user
+USER build
+
+# Install golang module dependencies before copying source to cache them in their own layer
+WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/cli
+RUN ls -lasp
+RUN go mod download
+
+# Add the full source tree
+ADD .  /go/src/github.com/controlplaneio/simulator-standalone/
+WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
+
+# TODO: (rem) why is this owned by root after the earlier chmod?
+USER root
+RUN chown -R build:build /go/src/github.com/controlplaneio/simulator-standalone/
+
+USER build
+RUN ls -lasp
+
+# Golang build and test
+WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/cli
+ENV GO111MODULE=on
+RUN make test
+
+#------------------#
+# Launch Container #
+#------------------#
 FROM debian:buster-slim
 
 ENV TERRAFORM_VERSION 0.12.3
@@ -22,41 +98,36 @@ RUN \
       make \
       openssh-client \
       gnupg \
-      unzip \
  && rm -rf /var/lib/apt/lists/*
 
-#
-# 3rd party dependencies
-#
+# Use 3rd party dependencies from build
+COPY --from=build-and-test /usr/local/bin/jq /usr/local/bin/jq
+COPY --from=build-and-test /usr/local/bin/yq /usr/local/bin/yq
+COPY --from=build-and-test /usr/local/bin/goss /usr/local/bin/goss
+COPY --from=build-and-test /usr/local/bin/terraform /usr/local/bin/terraform
 
-# jq
-RUN curl https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 -Lo /usr/local/bin/jq
-RUN chmod +x /usr/local/bin/jq
-## yq
-RUN curl https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 -Lo /usr/local/bin/yq
-RUN chmod +x /usr/local/bin/yq
-## Terraform
-RUN curl -sLO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-RUN unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip
-RUN mv terraform /usr/local/bin/
-## goss
-RUN curl -L https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 -o /usr/local/bin/goss
-RUN chmod +rx /usr/local/bin/goss
-## docker
-COPY --from=static-docker-source /usr/local/bin/docker /usr/local/bin/docker
+# Copy statically linked simulator binary
+COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/cli/dist/simulator /usr/local/bin/simulator
 
-RUN useradd -ms /bin/bash launch-user
+# Setup non-root launch user
+RUN useradd -ms /bin/bash launch
 RUN mkdir /app
-ADD . /app
-RUN chown -R launch-user:launch-user /app
-COPY ./cli/dist/simulator /usr/local/bin/simulator
+RUN chown -R launch:launch /app
+
+# Add terraform and perturb/scenario scripts to the image
+COPY ./Makefile /app/Makefile
+ADD ./terraform /app/terraform
+ADD ./simulation-scripts /app/simulation-scripts
+
+# Add goss.yaml to verify the container
+ADD ./goss.yaml /app
 
 ENV SIMULATOR_MANIFEST_PATH /app/simulation-scripts/
-
-USER launch-user
-RUN ssh-keygen -f /home/launch-user/.ssh/id_rsa -t rsa -N ''
-WORKDIR app
-
-#
+ENV SIMULATOR_TF_DIR /app/terraform
 ENV TF_VAR_shared_credentials_file /app/credentials
+
+USER launch
+RUN ssh-keygen -f /home/launch/.ssh/id_rsa -t rsa -N ''
+WORKDIR /app
+
 CMD [ "/bin/bash" ]

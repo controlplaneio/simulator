@@ -23,7 +23,7 @@ run: build ## Runs the simulator
 		bash
 
 .PHONY: build
-build: cli-build-and-test ## Builds the launch container
+build: ## Builds the launch container
 	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
 
 .PHONY: test
@@ -32,10 +32,6 @@ test: build ## Run the tests
 		$(SIMULATOR_AWS_CREDS_PATH):/app/credentials   \
 		--rm -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) \
 		goss validate
-
-.PHONY: cli-build-and-test
-cli-build-and-test: ## Build and test the simulator CLI
-	@cd cli; make docker-build
 
 .PHONY: infra-init
 infra-init:

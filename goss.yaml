@@ -8,7 +8,7 @@ file:
     exists: true
 {{end}}
 # Has an ssh keypair
-{{- range mkSlice "/home/launch-user/.ssh/id_rsa" "/home/launch-user/.ssh/id_rsa.pub"}}
+{{- range mkSlice "/home/launch/.ssh/id_rsa" "/home/launch/.ssh/id_rsa.pub"}}
   {{.}}:
     exists: true
 {{end}}
@@ -23,7 +23,7 @@ package:
 
 command:
 # Has the necessary 3rd party packages for launching a scenario
-{{- range mkSlice "terraform" "jq" "yq" "docker" }}
+{{- range mkSlice "terraform" "jq" "yq" "simulator" }}
   {{.}}:
     exec: "which {{.}}"
     exit-status: 0
@@ -31,9 +31,9 @@ command:
 
 # Runs as a non-root user
 user:
-  launch-user:
+  launch:
     exists: true
     uid: 1000
     gid: 1000
-    home: /home/launch-user
+    home: /home/launch
     shell: /bin/bash
