@@ -31,7 +31,6 @@ teardown() {
 }
 
 @test "simulator infra create - prints something" {
-  skip "Don't have a way to not actually create the infra yet"
   run ../dist/simulator infra create
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
@@ -45,7 +44,6 @@ teardown() {
 }
 
 @test "simulator infra destroy - prints something" {
-  skip "Don't have a way to not actually destroy the infra yet"
   run ../dist/simulator infra destroy
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
