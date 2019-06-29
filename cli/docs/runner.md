@@ -20,6 +20,20 @@ func Destroy() error
 ```
 Destroy call terraform destroy to remove the infrastructure
 
+#### func  EnsureTfVarsFile
+
+```go
+func EnsureTfVarsFile(tfDir string, publicKey string, accessCIDR string) error
+```
+EnsureTfVarsFile writes an tfvars file if one hasnt already been made
+
+#### func  EnvOrDefault
+
+```go
+func EnvOrDefault(key string, def string) string
+```
+EnvOrDefault tries to read the key and returns a default value if it is empty
+
 #### func  FileExists
 
 ```go
@@ -51,6 +65,13 @@ PrepareTfArgs takes a string with the terraform command desired and returns a
 slice of strings containing the complete list of arguments including the command
 to use when exec'ing terraform
 
+#### func  ReadFile
+
+```go
+func ReadFile(path string) (*string, error)
+```
+ReadFile return a pointer to a string with the file's content
+
 #### func  Run
 
 ```go
@@ -66,15 +87,6 @@ to stdout of this process, `env` will be appended to the current environment.
 func Terraform(cmd string) (*string, error)
 ```
 Terraform wraps running terraform as a child process
-
-#### func  TfDir
-
-```go
-func TfDir() string
-```
-TfDir reads the Terraform directory from the environment variable
-`SIMULATOR_TF_DIR` or uses a default value of
-`../terraform/deployments/AwsSimulatorStandalone`
 
 #### type PerturbOptions
 
@@ -193,3 +205,28 @@ be converted for use with perturb
 func (tfo *TerraformOutput) ToSSHConfig() (*string, error)
 ```
 ToSSHConfig produces the SSH config
+
+#### type TfVars
+
+```go
+type TfVars struct {
+	PublicKey  string
+	AccessCIDR string
+}
+```
+
+TfVars struct representing the input variables for terraform to create the
+infrastructure
+
+#### func  NewTfVars
+
+```go
+func NewTfVars(publicKey string, accessCIDR string) TfVars
+```
+NewTfVars creates a TfVars struct with all the defaults
+
+#### func (*TfVars) String
+
+```go
+func (tfv *TfVars) String() string
+```
