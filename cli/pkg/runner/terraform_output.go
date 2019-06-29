@@ -48,7 +48,6 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 	var sshConfigTmpl, err = template.New("ssh-config").Parse(sshConfigTmplSrc)
 	if err != nil {
 		return nil, err
-
 	}
 
 	u, err := user.Current()
