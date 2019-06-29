@@ -53,7 +53,7 @@ func Terraform(cmd string) (*string, error) {
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
 func InitIfNeeded() error {
 	stateDir := TfDir() + tfStateDir
-	hasStateDir, err := exists(stateDir)
+	hasStateDir, err := FileExists(stateDir)
 	if err != nil {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}

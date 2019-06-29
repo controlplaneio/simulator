@@ -9,7 +9,8 @@ func debug(msg ...interface{}) {
 	fmt.Println(msg...)
 }
 
-func exists(path string) (bool, error) {
+// FileExists checks whether a path exists
+func FileExists(path string) (bool, error) {
 	debug("Stating", path)
 	_, err := os.Stat(path)
 	if err == nil {
