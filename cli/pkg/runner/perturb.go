@@ -37,14 +37,15 @@ func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 func (po *PerturbOptions) ToArguments() []string {
 	arguments := []string{"--master", po.Master.String()}
 	arguments = append(arguments, "--slaves")
+	slaves := ""
 	for index, slave := range po.Slaves {
-		s := slave.String()
+		slaves += slave.String()
 		if index < len(po.Slaves)-1 {
-			s += ","
+			slaves += ","
 		}
-
-		arguments = append(arguments, s)
 	}
+	arguments = append(arguments, slaves)
+
 	return arguments
 }
 
