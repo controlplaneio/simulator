@@ -20,6 +20,13 @@ func Destroy() error
 ```
 Destroy call terraform destroy to remove the infrastructure
 
+#### func  FileExists
+
+```go
+func FileExists(path string) (bool, error)
+```
+FileExists checks whether a path exists
+
 #### func  InitIfNeeded
 
 ```go
