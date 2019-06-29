@@ -57,7 +57,7 @@ func Test_Create(t *testing.T) {
 
 func Test_Destroy(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	err := runner.Create()
+	err := runner.Destroy()
 
 	assert.Nil(t, err)
 }
