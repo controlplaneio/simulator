@@ -1,13 +1,12 @@
-NAME:=simulator
-DOCKER_REPOSITORY:=controlplane
-LAUNCH_DOCKER_IMAGE_NAME:=$(DOCKER_REPOSITORY)/$(NAME)
-VERSION:=0.1-dev
+NAME := simulator
+GITHUB_ORG := controlplaneio
+DOCKER_HUB_ORG := controlplane
+VERSION := 0.1-dev
 
-SIMULATOR_CREDS_PATH:=$(HOME)/.aws/credentials
-SIMULATOR_KEY_PATH:=$(HOME)/.ssh/
+include prelude.mk
 
-
-SHELL := /usr/bin/env bash
+SIMULATOR_CREDS_PATH := $(HOME)/.aws/credentials
+SIMULATOR_KEY_PATH := $(HOME)/.ssh/
 
 .DEFAULT_GOAL := help
 
@@ -19,18 +18,18 @@ run: build ## Runs the simulator
 	docker run                                             \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials      \
 		-v $(SIMULATOR_KEY_PATH):/home/launch-user/.ssh      \
-		--rm -it $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION)      \
+		--rm -it $(CONTAINER_NAME_LATEST)                    \
 		bash
 
 .PHONY: build
 build: ## Builds the launch container
-	@docker build -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) .
+	@docker build -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: test
 test: build ## Run the tests
 	@docker run -v                                   \
 		$(SIMULATOR_AWS_CREDS_PATH):/app/credentials   \
-		--rm -t $(LAUNCH_DOCKER_IMAGE_NAME):$(VERSION) \
+		--rm -t $(CONTAINER_NAME_LATEST)               \
 		goss validate
 
 .PHONY: infra-init
