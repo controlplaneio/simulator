@@ -42,9 +42,17 @@ func Test_TfDir_custom(t *testing.T) {
 
 func Test_Status(t *testing.T) {
 	// BUG: (rem) relies on tf local state to work
-	os.Setenv("SIMULATOR_TF_DIR", "../../../terraform/deployments/AwsSimulatorStandalone")
+	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
 	tfo, err := runner.Status()
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfo, "Got no terraform output")
+}
+
+func Test_Create(t *testing.T) {
+	// BUG: (rem) relies on tf local state to work
+	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
+	err := runner.Create()
+
+	assert.Nil(t, err)
 }
