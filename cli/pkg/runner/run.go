@@ -9,14 +9,15 @@ import (
 	"path/filepath"
 )
 
-func checkWorkingDir(wd string) (string, error) {
-	debug("Checking working dir")
+func wdMust(wd string) string {
+	// only errors if syscall to get parent's wd fails in which case something
+	// really bad happened
 	absPath, err := filepath.Abs(wd)
 	if err != nil {
-		return "", errors.Wrapf(err, "Error resolving working dir %s", wd)
+		panic(err)
 	}
 
-	return absPath, nil
+	return absPath
 }
 
 // Run runs a child process and returns its buffer stdout.  Run also tees the output to stdout of this process, `env` will
@@ -35,10 +36,7 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 	defer childErr.Close()
 	defer childOut.Close()
 
-	dir, err := checkWorkingDir(wd)
-	if err != nil {
-		return nil, err
-	}
+	dir := wdMust(wd)
 
 	debug("Setting child working directory to ", dir)
 	child.Dir = dir
@@ -48,7 +46,7 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 	tee := io.TeeReader(childOut, &buf)
 
 	debug("Running child")
-	err = child.Start()
+	err := child.Start()
 	if err != nil {
 		debug("Error starting child process: ", err)
 		return nil, errors.Wrapf(err, "Error starting child process")
