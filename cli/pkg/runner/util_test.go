@@ -19,3 +19,10 @@ func Test_FileExists_garbage(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 	assert.False(t, exists, "Didn't return false for garbage")
 }
+
+func Test_ReadFile_current_file(t *testing.T) {
+	contents, err := runner.ReadFile("./util_test.go")
+
+	assert.Nil(t, err, "Got an error")
+	assert.NotNil(t, contents, "Didn't return file contents")
+}
