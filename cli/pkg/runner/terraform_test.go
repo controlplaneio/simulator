@@ -41,7 +41,6 @@ func Test_TfDir_custom(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
-	// BUG: (rem) relies on tf local state to work
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
 	tfo, err := runner.Status()
 
@@ -50,7 +49,13 @@ func Test_Status(t *testing.T) {
 }
 
 func Test_Create(t *testing.T) {
-	// BUG: (rem) relies on tf local state to work
+	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
+	err := runner.Create()
+
+	assert.Nil(t, err)
+}
+
+func Test_Destroy(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
 	err := runner.Create()
 
