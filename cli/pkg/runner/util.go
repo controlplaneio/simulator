@@ -39,3 +39,13 @@ func ReadFile(path string) (*string, error) {
 	output := string(b)
 	return &output, nil
 }
+
+// EnvOrDefault tries to read the key and returns a default value if it is empty
+func EnvOrDefault(key string, def string) string {
+	var d = os.Getenv(key)
+	if d == "" {
+		d = def
+	}
+
+	return d
+}

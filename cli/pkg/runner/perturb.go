@@ -2,7 +2,6 @@ package runner
 
 import (
 	"net"
-	"os"
 	"strings"
 )
 
@@ -59,21 +58,10 @@ const (
 	defaultPerturbPath = "../simulation-scripts/"
 )
 
-// PerturbPath reads the perturb path from the environment variable `SIMULATOR_MANIFEST_PATH`
-// or uses a default value of `../simulation-scripts`
-func PerturbPath() string {
-	var d = os.Getenv(perturbPathEnvVar)
-	if d == "" {
-		d = defaultPerturbPath
-	}
-
-	return d
-}
-
 // Perturb runs the perturb script with the supplied options
 func Perturb(po *PerturbOptions) (*string, error) {
 	args := po.ToArguments()
 	env := []string{}
-	wd := PerturbPath()
+	wd := EnvOrDefault(perturbPathEnvVar, defaultPerturbPath)
 	return Run(wd, env, "./perturb.sh", args...)
 }

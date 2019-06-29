@@ -26,20 +26,6 @@ func Test_PrepareTfArgs(t *testing.T) {
 	}
 }
 
-func Test_TfDir_default(t *testing.T) {
-	d := runner.TfDir()
-
-	assert.Equal(t, d, "../terraform/deployments/AwsSimulatorStandalone")
-}
-
-func Test_TfDir_custom(t *testing.T) {
-	// BUG: (rem) can cause tests to interact - have to remember to reset the env var in other tests
-	os.Setenv("SIMULATOR_TF_DIR", "/some/path")
-	d := runner.TfDir()
-
-	assert.Equal(t, d, "/some/path")
-}
-
 func Test_Status(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
 	tfo, err := runner.Status()

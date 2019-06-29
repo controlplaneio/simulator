@@ -2,7 +2,6 @@ package runner
 
 import (
 	"github.com/pkg/errors"
-	"os"
 )
 
 const (
@@ -10,17 +9,6 @@ const (
 	defaultTfDir = "../terraform/deployments/AwsSimulatorStandalone"
 	tfStateDir   = "/.terraform"
 )
-
-// TfDir reads the Terraform directory from the environment variable `SIMULATOR_TF_DIR`
-// or uses a default value of `../terraform/deployments/AwsSimulatorStandalone`
-func TfDir() string {
-	var d = os.Getenv(tfDirEnvVar)
-	if d == "" {
-		d = defaultTfDir
-	}
-
-	return d
-}
 
 // PrepareTfArgs takes a string with the terraform command desired and returns a slice of strings
 // containing the complete list of arguments including the command to use when exec'ing terraform
@@ -46,13 +34,13 @@ func PrepareTfArgs(cmd string) []string {
 func Terraform(cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1"}
-	wd := TfDir()
+	wd := EnvOrDefault(tfDirEnvVar, defaultTfDir)
 	return Run(wd, env, "terraform", args...)
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
 func InitIfNeeded() error {
-	stateDir := TfDir() + tfStateDir
+	stateDir := EnvOrDefault(tfDirEnvVar, defaultTfDir) + tfStateDir
 	hasStateDir, err := FileExists(stateDir)
 	if err != nil {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
