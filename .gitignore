@@ -120,3 +120,4 @@ conf/.config/keybase/
 .node_modules
 NOTES.md
 test.debug
+/cli/coverage*

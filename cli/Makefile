@@ -22,6 +22,8 @@ CTIMEVAR=-X $(PKG)/version.GITCOMMIT=$(GITCOMMIT) -X $(PKG)/version.VERSION=$(VE
 GO_LDFLAGS=-ldflags "-w $(CTIMEVAR)"
 GO_LDFLAGS_STATIC=-ldflags "-w $(CTIMEVAR) -extldflags -static"
 
+GO := go
+
 export NAME BUILD_DATE GIT_SHA
 ### github.com/controlplaneio/ensure-content.git makefile-header END ###
 
@@ -39,22 +41,34 @@ test-acceptance: build ## run bats acceptance tests
 .PHONY: test-unit
 test-unit: build ## run golang unit tests
 	@echo "+ $@"
-	go test -race $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
+	$(GO) test -race $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
 
 .PHONY: test-unit-verbose
 test-unit-verbose: build ## golang unit tests (verbose)
 	@echo "+ $@"
-	go test -race -v $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
+	$(GO) test -race -v $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
+
+.PHONY: cover
+cover:  ## Runs go test with coverage.
+	@echo "" > coverage.txt
+	@for d in $(shell $(GO) list ./pkg/... | grep -v vendor); do \
+		$(GO) test -race -covermode=atomic -html=coverage.html "$$d"; \
+		if [ -f profile.out ]; then \
+			cat profile.out >> coverage.txt; \
+			rm profile.out; \
+		fi; \
+	done;
 
 # ---
 .PHONY: dep
 dep: ## install dependencies for other targets
-	go get github.com/robertkrimen/godocdown/godocdown
+	$(GO) get github.com/robertkrimen/godocdown/godocdown
+	$(GO) mod download
 
 .PHONY: build
 build: dep ## golang build
 	@echo "+ $@"
-	go build -a -o ./dist/simulator
+	$(GO) build -a -o ./dist/simulator
 
 .PHONY: doc
 doc: dep ## generate markdown documentation for packages
