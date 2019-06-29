@@ -28,5 +28,6 @@ func EnsureTfVarsFile(tfDir, publicKey, accessCIDR string) error {
 	filename := tfDir + "/settings/bastion.tfVars"
 	tfv := NewTfVars(publicKey, accessCIDR)
 
-	return EnsureFile(filename, tfv.String())
+	_, err := EnsureFile(filename, tfv.String())
+	return err
 }

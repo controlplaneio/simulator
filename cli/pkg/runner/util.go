@@ -27,24 +27,24 @@ func DetectPublicIP() (*string, error) {
 	return &output, nil
 }
 
-// DefaultPublicKeyPath returns the path to `id_rsa.pub`
-func DefaultPublicKeyPath() (*string, error) {
+// Home returns the path to a file in the user's home directory
+func Home(path string) (*string, error) {
 	usr, err := user.Current()
 	if err != nil {
-		return nil, errors.Wrapf(err, "Error finding default public key")
+		return nil, errors.Wrapf(err, "Error finding %s in home", path)
 	}
 
 	home := usr.HomeDir
-	keypath := filepath.Join(home, ".ssh/id_rsa.pub")
-	exists, err := FileExists(keypath)
+	p := filepath.Join(home, path)
+	exists, err := FileExists(p)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Error checking default public key exists at %s", keypath)
+		return nil, errors.Wrapf(err, "Error checking %s exists", p)
 	}
 	if !exists {
-		return nil, errors.Errorf("No default public key found at %s", keypath)
+		return nil, errors.Errorf("No file found at %s", p)
 	}
 
-	return &keypath, nil
+	return &p, nil
 }
 
 // FileExists checks whether a path exists
@@ -82,25 +82,31 @@ func ReadFile(path string) (*string, error) {
 	return &output, nil
 }
 
-// EnsureFile checks a file exists and writes the supplied contents if not
-func EnsureFile(path, contents string) error {
+// EnsureFile checks a file exists and writes the supplied contents if not.  returns a boolean indicating whether it
+// wrote a file or not and any error
+func EnsureFile(path, contents string) (bool, error) {
 	exists, err := FileExists(path)
 	if err != nil || exists {
-		return err
+		return false, err
 	}
 
 	file, err := os.Create(path)
 	if err != nil {
-		return err
+		return false, err
 	}
 	defer file.Close()
 
 	_, err = io.WriteString(file, contents)
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	return file.Sync()
+	err = file.Sync()
+	if err != nil {
+		return true, err
+	}
+
+	return true, nil
 }
 
 // EnvOrDefault tries to read the key and returns a default value if it is empty

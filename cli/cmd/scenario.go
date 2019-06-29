@@ -68,7 +68,20 @@ func newScenarioLaunchCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Please add the following lines to your ssh config\n---\n%s\n---\n", *c)
+
+			cp, err := runner.Home(".ssh/config")
+			if err != nil {
+				return err
+			}
+
+			written, err := runner.EnsureFile(*cp, *c)
+			if err != nil {
+				return err
+			}
+
+			if !written {
+				fmt.Printf("Please add the following lines to your ssh config\n---\n%s\n---\n", *c)
+			}
 
 			_, err = runner.Perturb(&po)
 			if err != nil {

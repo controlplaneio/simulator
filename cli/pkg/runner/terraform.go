@@ -51,7 +51,7 @@ func InitIfNeeded() error {
 		return err
 	}
 	accessCIDR := *ip + "/32"
-	publicKeyPath, err := DefaultPublicKeyPath()
+	publicKeyPath, err := Home(".ssh/id_rsa.pub")
 	if err != nil {
 		return err
 	}
