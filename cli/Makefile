@@ -41,23 +41,13 @@ test-acceptance: build ## run bats acceptance tests
 .PHONY: test-unit
 test-unit: build ## run golang unit tests
 	@echo "+ $@"
-	$(GO) test -race $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
+	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
-.PHONY: test-unit-verbose
-test-unit-verbose: build ## golang unit tests (verbose)
-	@echo "+ $@"
-	$(GO) test -race -v $$(go list ./... | grep -v '/vendor/') -run "$${RUN:-.*}"
-
-.PHONY: cover
-cover:  ## Runs go test with coverage.
-	@echo "" > coverage.txt
-	@for d in $(shell $(GO) list ./pkg/... | grep -v vendor); do \
-		$(GO) test -race -covermode=atomic -html=coverage.html "$$d"; \
-		if [ -f profile.out ]; then \
-			cat profile.out >> coverage.txt; \
-			rm profile.out; \
-		fi; \
-	done;
+.PHONY: coverage
+coverage:  ## runs golang unit tests with coverage and opens a browser with the results
+	@echo "" > count.out
+	$(GO) test -covermode=count -coverprofile=count.out ./...
+	$(GO) tool cover -html=count.out
 
 # ---
 .PHONY: dep

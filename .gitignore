@@ -117,7 +117,7 @@ conf/.config/keybase/
 # .tfvars files
 *.tfvars
 
-.node_modules
 NOTES.md
 test.debug
-/cli/coverage*
+/cli/count.out
+/cli/coverage.txt
