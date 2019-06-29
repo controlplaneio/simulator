@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 )
 
-// ScenarioManifest structure representing a `scenarios.yaml` document
-type ScenarioManifest struct {
+// Manifest structure representing a `scenarios.yaml` document
+type Manifest struct {
 	// Name - the name of the manifest e.g. scenarios
 	Name string `yaml:"name"`
 	// Kind - unique name and version string idenitfying the schema of this document
@@ -19,9 +19,9 @@ type ScenarioManifest struct {
 	Scenarios []Scenario `yaml:"scenarios"`
 }
 
-// Returns a boolean indicating whether a ScenarioManifest contains a Scenario
+// Contains returns a boolean indicating whether a ScenarioManifest contains a Scenario
 // with the supplied id
-func (m *ScenarioManifest) Contains(id string) bool {
+func (m *Manifest) Contains(id string) bool {
 	for _, a := range m.Scenarios {
 		if a.Id == id {
 			return true
@@ -31,8 +31,8 @@ func (m *ScenarioManifest) Contains(id string) bool {
 	return false
 }
 
-// Returns a scenario for the supplied id
-func (m *ScenarioManifest) Find(id string) *Scenario {
+// Find returns a scenario for the supplied id
+func (m *Manifest) Find(id string) *Scenario {
 	for _, a := range m.Scenarios {
 		if a.Id == id {
 			return &a
@@ -48,7 +48,7 @@ const (
 	manifestFileName    = "scenarios.yaml"
 )
 
-// Reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
+// Manifest reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
 // or uses a default value of `../simulation-scripts`
 func ManifestPath() string {
 	var manifestPath = os.Getenv(manifestPathEnvVar)
@@ -60,7 +60,7 @@ func ManifestPath() string {
 }
 
 // Loads a manifest named scenarios.yaml from the supplied path
-func LoadManifest(manifestPath string) (*ScenarioManifest, error) {
+func LoadManifest(manifestPath string) (*Manifest, error) {
 	joined := filepath.Join(manifestPath, manifestFileName)
 	absPath, err := filepath.Abs(joined)
 	if err != nil {
@@ -73,7 +73,7 @@ func LoadManifest(manifestPath string) (*ScenarioManifest, error) {
 		return nil, errors.Wrapf(err, "Error reading manifest file %s", manifestPath)
 	}
 
-	manifest := ScenarioManifest{}
+	manifest := Manifest{}
 	err = yaml.UnmarshalStrict([]byte(manifestYaml), &manifest)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error unmarshalling %s", manifestPath)

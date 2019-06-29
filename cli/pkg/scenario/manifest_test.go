@@ -28,7 +28,7 @@ func Test_ManifestPath_custom(t *testing.T) {
 
 func Test_Contains(t *testing.T) {
 	t.Parallel()
-	m := scenario.ScenarioManifest{
+	m := scenario.Manifest{
 		Name: "test",
 		Kind: "test/0.1",
 		Scenarios: []scenario.Scenario{
@@ -51,7 +51,7 @@ func Test_Find(t *testing.T) {
 		DisplayName: "Test Scenario",
 		Path:        "./test",
 	}
-	m := scenario.ScenarioManifest{
+	m := scenario.Manifest{
 		Name:      "test",
 		Kind:      "test/0.1",
 		Scenarios: []scenario.Scenario{s},
