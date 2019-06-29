@@ -40,3 +40,11 @@ func Test_TfDir_custom(t *testing.T) {
 	assert.Equal(t, d, "/some/path")
 }
 
+func Test_Status(t *testing.T) {
+	// BUG: (rem) relies on tf local state to work
+	os.Setenv("SIMULATOR_TF_DIR", "../../../terraform/deployments/AwsSimulatorStandalone")
+	tfo, err := runner.Status()
+
+	assert.Nil(t, err, "Got an error")
+	assert.NotNil(t, tfo, "Got no terraform output")
+}
