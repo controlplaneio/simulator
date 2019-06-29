@@ -1,10 +1,5 @@
 package runner
 
-import (
-	"io"
-	"os"
-)
-
 // TfVars struct representing the input variables for terraform to create the infrastructure
 type TfVars struct {
 	PublicKey  string
@@ -29,25 +24,9 @@ func (tfv *TfVars) String() string {
 }
 
 // EnsureTfVarsFile writes an tfvars file if one hasnt already been made
-func EnsureTfVarsFile(tfDir string, publicKey string, accessCIDR string) error {
+func EnsureTfVarsFile(tfDir, publicKey, accessCIDR string) error {
 	filename := tfDir + "/settings/bastion.tfVars"
-	exists, err := FileExists(filename)
-	if err != nil || exists {
-		return err
-	}
-
-	file, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
 	tfv := NewTfVars(publicKey, accessCIDR)
 
-	_, err = io.WriteString(file, tfv.String())
-	if err != nil {
-		return err
-	}
-	return file.Sync()
-
+	return EnsureFile(filename, tfv.String())
 }

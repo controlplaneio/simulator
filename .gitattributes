@@ -1,3 +1,4 @@
 package-lock.json    binary
 cli/test/bin/**      binary
 *.vsd                binary
+go.sum               binary

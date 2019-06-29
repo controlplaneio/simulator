@@ -16,6 +16,7 @@ require (
 	github.com/fatih/gomodifytags v0.0.0-20190517204355-df91c5bc7551 // indirect
 	github.com/fatih/motion v0.0.0-20190527122956-41470362fad4 // indirect
 	github.com/fatih/structs v1.1.0
+	github.com/glendc/go-external-ip v0.0.0-20170425150139-139229dcdddd
 	github.com/go-critic/go-critic v0.3.4 // indirect
 	github.com/go-delve/delve v1.2.0 // indirect
 	github.com/go-ole/go-ole v1.2.4 // indirect

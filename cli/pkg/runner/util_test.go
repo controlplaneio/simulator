@@ -26,3 +26,10 @@ func Test_ReadFile_current_file(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, contents, "Didn't return file contents")
 }
+
+func Test_DetectPublicIP(t *testing.T) {
+	ip, err := runner.DetectPublicIP()
+
+	assert.Nil(t, err, "Got an error")
+	assert.NotNil(t, ip, "Got no IP address")
+}
