@@ -42,13 +42,27 @@ func Terraform(cmd string) (*string, error) {
 func InitIfNeeded() error {
 	stateDir := EnvOrDefault(tfDirEnvVar, defaultTfDir) + tfStateDir
 	hasStateDir, err := FileExists(stateDir)
-	if err != nil {
+	if err != nil || hasStateDir {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}
 
-	if hasStateDir {
-		return nil
+	ip, err := DetectPublicIP()
+	if err != nil {
+		return err
 	}
+	accessCIDR := *ip + "/32"
+	publicKeyPath, err := DefaultPublicKeyPath()
+	if err != nil {
+		return err
+	}
+
+	publicKey, err := ReadFile(*publicKeyPath)
+	if err != nil {
+		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
+	}
+
+	tfDir := EnvOrDefault(tfDirEnvVar, defaultTfDir)
+	err = EnsureTfVarsFile(tfDir, *publicKey, accessCIDR)
 
 	_, err = Terraform("init")
 	if err != nil {

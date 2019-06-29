@@ -3,9 +3,12 @@ package runner
 import (
 	"fmt"
 	"github.com/glendc/go-external-ip"
+	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
 	"os"
+	"os/user"
+	"path/filepath"
 )
 
 func debug(msg ...interface{}) {
@@ -24,6 +27,26 @@ func DetectPublicIP() (*string, error) {
 	return &output, nil
 }
 
+// DefaultPublicKeyPath returns the path to `id_rsa.pub`
+func DefaultPublicKeyPath() (*string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error finding default public key")
+	}
+
+	home := usr.HomeDir
+	keypath := filepath.Join(home, ".ssh/id_rsa.pub")
+	exists, err := FileExists(keypath)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error checking default public key exists at %s", keypath)
+	}
+	if !exists {
+		return nil, errors.Errorf("No default public key found at %s", keypath)
+	}
+
+	return &keypath, nil
+}
+
 // FileExists checks whether a path exists
 func FileExists(path string) (bool, error) {
 	debug("Stating", path)
@@ -39,7 +62,12 @@ func FileExists(path string) (bool, error) {
 
 // ReadFile return a pointer to a string with the file's content
 func ReadFile(path string) (*string, error) {
-	file, err := os.Open(path)
+	fp, err := filepath.Abs(path)
+	if err != nil {
+		return nil, err
+	}
+
+	file, err := os.Open(fp)
 	if err != nil {
 		return nil, err
 	}
