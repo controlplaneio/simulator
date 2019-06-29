@@ -4,6 +4,7 @@ import (
 	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
 	"github.com/stretchr/testify/assert"
 	"net"
+	"os"
 	"testing"
 )
 
@@ -35,4 +36,12 @@ func Test_MakePerturbOptions(t *testing.T) {
 	assert.Equal(t, po.Master.String(), tfo.MasterNodesPrivateIP.Value[0])
 	assert.Equal(t, po.Slaves[0].String(), tfo.ClusterNodesPrivateIP.Value[0])
 
+}
+
+func Test_Perturb(t *testing.T) {
+	os.Setenv("SIMULATOR_MANIFEST_PATH", fixture("noop-perturb"))
+	po := runner.PerturbOptions{}
+	_, err := runner.Perturb(&po)
+
+	assert.Nil(t, err, "Got an error")
 }
