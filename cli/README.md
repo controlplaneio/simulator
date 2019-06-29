@@ -9,22 +9,25 @@ This file is evaled by a quickly cobbled together bash script to replace the var
 
 Development targets are specified in the [Makefile](./Makefile).
 
-This application is built and tested in a multi-stage build in the parent directory's [launch container dockerfile](../Dockerfile)
+The [Dockerfile](./Dockerfile) in this folder is used to isolate and lock down versions for testing and building and not
+for publishing.
 
-The remaining make targets can be run locally.
+Publishing of the simulator as a docker image will be [the launch container Dockerfile](../Dockerfile).
+Running  <code>make run</code> (or <code>make build</code>) in the root of this repository will implicitly call
+<code>make docker-build</code> in this folder.
+
+The remaining make targets can be run inside the build container or outside as you choose for local development.
 
 <pre>
-all: help
+all: help            
 build                 golang build
+coverage              runs golang unit tests with coverage and opens a browser with the results
 dep                   install dependencies for other targets
 doc                   generate markdown documentation for packages
-docker-build          builds a docker image
-help-no-color:
-test-acceptance       acceptance tests
-test-go-fmt           golang fmt check
-test                  unit and local acceptance tests
-test-unit             golang unit tests
-test-unit-verbose     golang unit tests (verbose)
+help-no-color:       
+test-acceptance       run bats acceptance tests
+test                  run all tests
+test-unit             run golang unit tests
 </pre>
 
 ## Usage

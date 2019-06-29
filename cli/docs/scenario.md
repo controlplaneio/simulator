@@ -12,8 +12,45 @@ Package scnenario is a package for loading scenario manifests from a
 ```go
 func ManifestPath() string
 ```
-Reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
-or uses a default value of `../simulation-scripts`
+ManifestPath reads the manifest path from the environment variable
+`SIMULATOR_MANIFEST_PATH` or uses a default value of `../simulation-scripts`
+
+#### type Manifest
+
+```go
+type Manifest struct {
+	// Name - the name of the manifest e.g. scenarios
+	Name string `yaml:"name"`
+	// Kind - unique name and version string idenitfying the schema of this document
+	Kind string `yaml:"kind"`
+	// Scenarios - a list of Scenario structs representing the scenarios
+	Scenarios []Scenario `yaml:"scenarios"`
+}
+```
+
+Manifest structure representing a `scenarios.yaml` document
+
+#### func  LoadManifest
+
+```go
+func LoadManifest(manifestPath string) (*Manifest, error)
+```
+LoadManifest loads a manifest named `scenarios.yaml` from the supplied path
+
+#### func (*Manifest) Contains
+
+```go
+func (m *Manifest) Contains(id string) bool
+```
+Contains returns a boolean indicating whether a ScenarioManifest contains a
+Scenario with the supplied id
+
+#### func (*Manifest) Find
+
+```go
+func (m *Manifest) Find(id string) *Scenario
+```
+Find returns a scenario for the supplied id
 
 #### type Scenario
 
@@ -37,40 +74,3 @@ Scenario structure representing a scenario
 func (s *Scenario) Validate(manifestPath string) error
 ```
 Validate a scenario relative to its manifest
-
-#### type ScenarioManifest
-
-```go
-type ScenarioManifest struct {
-	// Name - the name of the manifest e.g. scenarios
-	Name string `yaml:"name"`
-	// Kind - unique name and version string idenitfying the schema of this document
-	Kind string `yaml:"kind"`
-	// Scenarios - a list of Scenario structs representing the scenarios
-	Scenarios []Scenario `yaml:"scenarios"`
-}
-```
-
-ScenarioManifest structure representing a `scenarios.yaml` document
-
-#### func  LoadManifest
-
-```go
-func LoadManifest(manifestPath string) (*ScenarioManifest, error)
-```
-Loads a manifest named scenarios.yaml from the supplied path
-
-#### func (*ScenarioManifest) Contains
-
-```go
-func (m *ScenarioManifest) Contains(id string) bool
-```
-Returns a boolean indicating whether a ScenarioManifest contains a Scenario with
-the supplied id
-
-#### func (*ScenarioManifest) Find
-
-```go
-func (m *ScenarioManifest) Find(id string) *Scenario
-```
-Returns a scenario for the supplied id

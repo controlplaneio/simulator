@@ -48,7 +48,7 @@ const (
 	manifestFileName    = "scenarios.yaml"
 )
 
-// Manifest reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
+// ManifestPath reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
 // or uses a default value of `../simulation-scripts`
 func ManifestPath() string {
 	var manifestPath = os.Getenv(manifestPathEnvVar)
@@ -59,7 +59,7 @@ func ManifestPath() string {
 	return manifestPath
 }
 
-// Loads a manifest named scenarios.yaml from the supplied path
+// LoadManifest loads a manifest named `scenarios.yaml` from the supplied path
 func LoadManifest(manifestPath string) (*Manifest, error) {
 	joined := filepath.Join(manifestPath, manifestFileName)
 	absPath, err := filepath.Abs(joined)
