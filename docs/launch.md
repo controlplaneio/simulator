@@ -2,7 +2,7 @@
 
 ## Launch Flow Sequence Diagram
 
-![Launch scenario flow diagram](./docs/launch-scenario.png)
+![Launch scenario flow diagram](./launch-scenario.png)
 
 - **User** - the end user who is operating the standalone Simulator CLI tool in order to create a cluster with a running
 scenario
