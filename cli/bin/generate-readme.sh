@@ -20,6 +20,7 @@ main() {
   local -r help="$(./dist/simulator help)"
   local -r scenario_help="$(./dist/simulator scenario help)"
   local -r infra_help="$(./dist/simulator infra help)"
+  local -r config_help="$(./dist/simulator config help)"
 
   eval "echo \"${template}\""
 }

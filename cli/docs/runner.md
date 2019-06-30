@@ -20,17 +20,32 @@ func Destroy() error
 ```
 Destroy call terraform destroy to remove the infrastructure
 
+#### func  DetectPublicIP
+
+```go
+func DetectPublicIP() (*string, error)
+```
+DetectPublicIP detects your public IP address
+
+#### func  EnsureFile
+
+```go
+func EnsureFile(path, contents string) (bool, error)
+```
+EnsureFile checks a file exists and writes the supplied contents if not. returns
+a boolean indicating whether it wrote a file or not and any error
+
 #### func  EnsureTfVarsFile
 
 ```go
-func EnsureTfVarsFile(tfDir string, publicKey string, accessCIDR string) error
+func EnsureTfVarsFile(tfDir, publicKey, accessCIDR string) error
 ```
 EnsureTfVarsFile writes an tfvars file if one hasnt already been made
 
 #### func  EnvOrDefault
 
 ```go
-func EnvOrDefault(key string, def string) string
+func EnvOrDefault(key, def string) string
 ```
 EnvOrDefault tries to read the key and returns a default value if it is empty
 
@@ -40,6 +55,13 @@ EnvOrDefault tries to read the key and returns a default value if it is empty
 func FileExists(path string) (bool, error)
 ```
 FileExists checks whether a path exists
+
+#### func  Home
+
+```go
+func Home(path string) (*string, error)
+```
+Home returns the path to a file in the user's home directory
 
 #### func  InitIfNeeded
 

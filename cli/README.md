@@ -33,6 +33,7 @@ test-unit             run golang unit tests
 ## Usage
 
 <pre>
+init ---------  
 
 A distributed systems and infrastructure simulator for attacking and
 debugging Kubernetes
@@ -41,14 +42,16 @@ Usage:
   simulator [command]
 
 Available Commands:
+  config      Interact with simulator config
   help        Help about any command
   infra       Interact with AWS to create, query and destroy the required infrastructure for scenarios
   scenario    Interact with scenarios
   version     Prints simulator version
 
 Flags:
-  -h, --help      help for simulator
-  -v, --verbose   verbose output
+  -c, --config-file string   the directory where simulator.yaml can be found
+  -h, --help                 help for simulator
+  -l, --loglevel string      the level of detail in output logging (default "info")
 
 Use "simulator [command] --help" for more information about a command.
 </pre>
@@ -69,7 +72,8 @@ Flags:
   -h, --help   help for scenario
 
 Global Flags:
-  -v, --verbose   verbose output
+  -c, --config-file string   the directory where simulator.yaml can be found
+  -l, --loglevel string      the level of detail in output logging (default "info")
 
 Use "simulator scenario [command] --help" for more information about a command.
 </pre>
@@ -91,9 +95,31 @@ Flags:
   -h, --help   help for infra
 
 Global Flags:
-  -v, --verbose   verbose output
+  -c, --config-file string   the directory where simulator.yaml can be found
+  -l, --loglevel string      the level of detail in output logging (default "info")
 
 Use "simulator infra [command] --help" for more information about a command.
+</pre>
+
+### Config
+
+<pre>
+Interact with simulator config
+
+Usage:
+  simulator config [command]
+
+Available Commands:
+  get         Gets the value of a setting
+
+Flags:
+  -h, --help   help for config
+
+Global Flags:
+  -c, --config-file string   the directory where simulator.yaml can be found
+  -l, --loglevel string      the level of detail in output logging (default "info")
+
+Use "simulator config [command] --help" for more information about a command.
 </pre>
 
 ## API Documentation
