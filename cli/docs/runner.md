@@ -61,7 +61,9 @@ FileExists checks whether a path exists
 ```go
 func Home(path string) (*string, error)
 ```
-Home returns the path to a file in the user's home directory
+Home returns the fully qualified path to a file in the user's home directory.
+I.E. it expands a path beginning with `~`) and checks the file exists. Home will
+cache the user's home directory to amortise the cost of the syscall
 
 #### func  InitIfNeeded
 

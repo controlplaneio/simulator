@@ -32,7 +32,7 @@ var homedirCache string
 var cacheLock sync.RWMutex
 
 // Home returns the fully qualified path to a file in the user's home directory. I.E. it expands a path beginning with
-// `~`) and checks the file exists
+// `~`) and checks the file exists. Home will cache the user's home directory to amortise the cost of the syscall
 func Home(path string) (*string, error) {
 	var homedir string
 
