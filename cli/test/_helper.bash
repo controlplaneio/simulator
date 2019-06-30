@@ -5,7 +5,7 @@ load './bin/bats-assert/load'
 
 TEST_DIR="."
 
-BIN_UNDER_TEST='./dist/simulator'
+BIN_UNDER_TEST='../dist/simulator -c ../simulator.yaml'
 
 _global_setup() {
   [ ! -f ${BATS_PARENT_TMPNAME}.skip ] || skip "skip remaining tests"

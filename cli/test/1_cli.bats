@@ -11,40 +11,49 @@ teardown() {
 }
 
 @test "simulator version - prints version" {
-  run ../dist/simulator version
+  run ${BIN_UNDER_TEST} version
   echo 'version: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
+  [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator scenario list - prints scenarios" {
-  run ../dist/simulator scenario list
+  run ${BIN_UNDER_TEST} scenario list
   echo 'scenario list: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator scenario launch - prints the selected scenario" {
-  run ../dist/simulator scenario list lazy
+  run ${BIN_UNDER_TEST} scenario list lazy
   echo 'scenario launch: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator infra create - prints something" {
-  run ../dist/simulator infra create
+  run ${BIN_UNDER_TEST} infra create
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator infra status - prints something" {
-  run ../dist/simulator infra status
+  run ${BIN_UNDER_TEST} infra status
   echo '---\ninfra status: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
 
 @test "simulator infra destroy - prints something" {
-  run ../dist/simulator infra destroy
+  run ${BIN_UNDER_TEST} infra destroy
   [ "${output}" != "" ]
   [ "${status}" -eq 0 ]
 }
+
+@test "simulator get <key> - prints the key value pair" {
+  run ${BIN_UNDER_TEST} config get loglevel
+  echo '---\nconfig get: \n' "${output}" >> "${SIMULATOR_CLI_TEST_OUTPUT}"
+  [ "${output}" != "logelevel = info\n" ]
+  [ "${status}" -eq 0 ]
+}
+
