@@ -34,6 +34,16 @@ func EnvOrDefault(key, def string) string
 ```
 EnvOrDefault tries to read the key and returns a default value if it is empty
 
+#### func  ExpandTilde
+
+```go
+func ExpandTilde(path string) (*string, error)
+```
+ExpandTilde returns the fully qualified path to a file in the user's home
+directory. I.E. it expands a path beginning with `~/`) and checks the file
+exists. ExpandTilde will cache the user's home directory to amortise the cost of
+the syscall
+
 #### func  FileExists
 
 ```go
@@ -41,18 +51,10 @@ func FileExists(path string) (bool, error)
 ```
 FileExists checks whether a path exists
 
-#### func  Home
+#### func  Slurp
 
 ```go
-func Home(path string) (*string, error)
+func Slurp(path string) (*string, error)
 ```
-Home returns the fully qualified path to a file in the user's home directory.
-I.E. it expands a path beginning with `~`) and checks the file exists. Home will
-cache the user's home directory to amortise the cost of the syscall
-
-#### func  ReadFile
-
-```go
-func ReadFile(path string) (*string, error)
-```
-ReadFile return a pointer to a string with the file's content
+Slurp reads an entire file into a string in one operation and returns a pointer
+to the file's content
