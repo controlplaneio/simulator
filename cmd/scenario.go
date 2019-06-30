@@ -70,7 +70,7 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return err
 			}
 
-			cp, err := util.Home(".ssh/config")
+			cp, err := util.ExpandTilde("~/.ssh/config")
 			if err != nil {
 				return err
 			}

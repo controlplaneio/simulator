@@ -32,9 +32,16 @@ func DetectPublicIP() (*string, error) {
 var homedirCache string
 var cacheLock sync.RWMutex
 
-// Home returns the fully qualified path to a file in the user's home directory. I.E. it expands a path beginning with
-// `~`) and checks the file exists. Home will cache the user's home directory to amortise the cost of the syscall
-func Home(path string) (*string, error) {
+// ExpandTilde returns the fully qualified path to a file in the user's home directory. I.E. it expands a path beginning with
+// `~/`) and checks the file exists. ExpandTilde will cache the user's home directory to amortise the cost of the syscall
+func ExpandTilde(path string) (*string, error) {
+	if len(path) == 0 || path[0:2] != "~/" {
+		return nil, errors.Errorf(`Path was empty or did not start with a tilde and a slash: "%s"`, path)
+	}
+
+	// discard ~/
+	path = path[2:]
+
 	var homedir string
 
 	// Lock and read the cache to see if we already resolved the current user's home directory
@@ -79,8 +86,8 @@ func FileExists(path string) (bool, error) {
 	return true, err
 }
 
-// ReadFile return a pointer to a string with the file's content
-func ReadFile(path string) (*string, error) {
+// Slurp reads an entire file into a string in one operation and returns a pointer to the file's content
+func Slurp(path string) (*string, error) {
 	fp, err := filepath.Abs(path)
 	if err != nil {
 		return nil, err

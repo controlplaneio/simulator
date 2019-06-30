@@ -52,12 +52,12 @@ func InitIfNeeded() error {
 		return err
 	}
 	accessCIDR := *ip + "/32"
-	publicKeyPath, err := util.Home(".ssh/id_rsa.pub")
+	publicKeyPath, err := util.ExpandTilde("~/.ssh/id_rsa.pub")
 	if err != nil {
 		return err
 	}
 
-	publicKey, err := util.ReadFile(*publicKeyPath)
+	publicKey, err := util.Slurp(*publicKeyPath)
 	if err != nil {
 		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
 	}
