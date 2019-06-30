@@ -45,3 +45,12 @@ func Test_EnvOrDefault(t *testing.T) {
 	val := util.EnvOrDefault(key, "custom")
 	assert.Equal(t, val, "custom", "Did not read env var")
 }
+
+func Test_ExpandTilde(t *testing.T) {
+	// BUG: (rem) this is brittle but will work in the container and most
+	// people's machines
+	p, err := util.ExpandTilde("~/.bashrc")
+	assert.Nil(t, err, "Got an error")
+
+	assert.Regexp(t, `^/home/(.+)/.bashrc$`, *p)
+}
