@@ -9,15 +9,6 @@ This file is evaled by a quickly cobbled together bash script to replace the var
 
 Development targets are specified in the [Makefile](./Makefile).
 
-The [Dockerfile](./Dockerfile) in this folder is used to isolate and lock down versions for testing and building and not
-for publishing.
-
-Publishing of the simulator as a docker image will be [the launch container Dockerfile](../Dockerfile).
-Running  <code>make run</code> (or <code>make build</code>) in the root of this repository will implicitly call
-<code>make docker-build</code> in this folder.
-
-The remaining make targets can be run inside the build container or outside as you choose for local development.
-
 <pre>
 ${make}
 </pre>
@@ -48,5 +39,5 @@ ${config_help}
 
 ## API Documentation
 
-* [Scenario](./docs/scenario.md)
-* [Runner](./docs/runner.md)
+* [Scenario](./docs/api/scenario.md)
+* [Runner](./docs/api/runner.md)

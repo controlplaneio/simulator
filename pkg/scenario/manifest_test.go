@@ -1,7 +1,7 @@
 package scenario_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/cli/pkg/scenario"
+	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -17,7 +17,7 @@ func Test_LoadManifest(t *testing.T) {
 
 func Test_ManifestPath_default(t *testing.T) {
 	p := scenario.ManifestPath()
-	assert.Equal(t, p, "../simulation-scripts/")
+	assert.Equal(t, p, "./simulation-scripts/")
 }
 
 func Test_ManifestPath_custom(t *testing.T) {

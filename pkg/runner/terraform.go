@@ -6,7 +6,7 @@ import (
 
 const (
 	tfDirEnvVar  = "SIMULATOR_TF_DIR"
-	defaultTfDir = "../terraform/deployments/AwsSimulatorStandalone"
+	defaultTfDir = "./terraform/deployments/AwsSimulatorStandalone"
 	tfStateDir   = "/.terraform"
 )
 

@@ -15,7 +15,7 @@ unset CDPATH
 # Main function
 #
 main() {
-  local -r template="$(cat ./README.template.md)"
+  local -r template="$(cat ./CLI.template.md)"
   local -r make="$(make -s help-no-color)"
   local -r help="$(./dist/simulator help)"
   local -r scenario_help="$(./dist/simulator scenario help)"

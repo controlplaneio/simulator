@@ -1,4 +1,4 @@
-module github.com/controlplaneio/simulator-standalone/cli
+module github.com/controlplaneio/simulator-standalone
 
 require (
 	9fans.net/go v0.0.2 // indirect

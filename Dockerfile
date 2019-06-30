@@ -38,12 +38,14 @@ RUN chmod +rx /usr/local/bin/goss
 RUN addgroup --quiet build && adduser --quiet --disabled-password --gecos "" --ingroup build build
 
 # Create golang src directory
-RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone/cli
+RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone
 
+# Create an empty public ssh key file for the tests
+RUN mkdir -p /home/build/.ssh && echo  "ssh-rsa FOR TESTING" > /home/build/.ssh/id_rsa.pub
 # Create module cache and copy manifest files
 RUN mkdir -p /home/build/go/pkg/mod
-COPY ./cli/go.mod /go/src/github.com/controlplaneio/simulator-standalone/cli
-COPY ./cli/go.sum /go/src/github.com/controlplaneio/simulator-standalone/cli
+COPY ./go.mod /go/src/github.com/controlplaneio/simulator-standalone
+COPY ./go.sum /go/src/github.com/controlplaneio/simulator-standalone
 
 # Give ownership of module cache and src tree to build user
 RUN chown -R build:build /go/src/github.com/controlplaneio/simulator-standalone
@@ -53,8 +55,7 @@ RUN chown -R build:build /home/build/go
 USER build
 
 # Install golang module dependencies before copying source to cache them in their own layer
-WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/cli
-RUN ls -lasp
+WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
 RUN go mod download
 
 # Add the full source tree
@@ -66,10 +67,9 @@ USER root
 RUN chown -R build:build /go/src/github.com/controlplaneio/simulator-standalone/
 
 USER build
-RUN ls -lasp
 
 # Golang build and test
-WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/cli
+WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
 ENV GO111MODULE=on
 RUN make test
 
@@ -107,7 +107,7 @@ COPY --from=build-and-test /usr/local/bin/goss /usr/local/bin/goss
 COPY --from=build-and-test /usr/local/bin/terraform /usr/local/bin/terraform
 
 # Copy statically linked simulator binary
-COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/cli/dist/simulator /usr/local/bin/simulator
+COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/dist/simulator /usr/local/bin/simulator
 
 # Setup non-root launch user
 RUN useradd -ms /bin/bash launch
@@ -121,6 +121,10 @@ ADD ./simulation-scripts /app/simulation-scripts
 
 # Add goss.yaml to verify the container
 ADD ./goss.yaml /app
+
+# Add simulator.yaml config file
+# TODO: (rem) make this build-time configurable with an ARG
+ADD ./simulator.yaml /app
 
 ENV SIMULATOR_MANIFEST_PATH /app/simulation-scripts/
 ENV SIMULATOR_TF_DIR /app/terraform

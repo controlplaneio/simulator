@@ -1,62 +1,76 @@
-# Scenarios
+# scenario
+--
+    import "."
 
-### The scenario runner - `perturb.sh`
+Package scnenario is a package for loading scenario manifests from a
+`scenarios.yaml` file and accessing and manipulating them programmatically.
 
-* **Cloud provider** - is hardcoded to work with digital ocean and hobbykube
-* **Node detection** - Expects exactly 3 nodes - 1 master and 2 slaves
-  * `--auto-populate` uses `doctl` and a regexp to find the droplets
+## Usage
 
-#### Phases
+#### func  ManifestPath
 
-* `handle_arguments` - Argument parsing and vaildation
-* `run_scenario` - Setup the scenario
-* `run_test_loop` - Run Test loop
+```go
+func ManifestPath() string
+```
+ManifestPath reads the manifest path from the environment variable
+`SIMULATOR_MANIFEST_PATH` or uses a default value of `../simulation-scripts`
 
-### Scenario setup
+#### type Manifest
 
-#### Validation `validate_instructions`
+```go
+type Manifest struct {
+	// Name - the name of the manifest e.g. scenarios
+	Name string `yaml:"name"`
+	// Kind - unique name and version string idenitfying the schema of this document
+	Kind string `yaml:"kind"`
+	// Scenarios - a list of Scenario structs representing the scenarios
+	Scenarios []Scenario `yaml:"scenarios"`
+}
+```
 
-Before doing anything `perturb.sh` checks that it can only find bash scripts with well-known names.
+Manifest structure representing a `scenarios.yaml` document
 
-Scenario scripts are found by looking for files with a `.sh` extension under the `$SCENARIO_DIR`
+#### func  LoadManifest
 
-* `worker-any.sh` - runs on a randomly chosen slave
-* `worker-1.sh` - runs on slave 1
-* `worker-2.sh` - runs on slave 2
-* `workers-every.sh` - runs on slaves 1 &  2
-* `nodes-every.sh` - runs on master and slaves 1 and 2
-* `master.sh` - runs on master
-* `test.sh` - Ignored for setup
+```go
+func LoadManifest(manifestPath string) (*Manifest, error)
+```
+LoadManifest loads a manifest named `scenarios.yaml` from the supplied path
 
-**Any other `.sh` scripts will cause an error**
+#### func (*Manifest) Contains
 
-#### Configure Kubernetes `run_kubectl_yaml`
+```go
+func (m *Manifest) Contains(id string) bool
+```
+Contains returns a boolean indicating whether a ScenarioManifest contains a
+Scenario with the supplied id
 
-1. Loop over subdirectories in `$SCENARIO_DIR`.  Subdirectories must be named after the command to be run by `kubectl`. **This is currently always only `apply`**
-1. Concatenate all the `*.ya?ml` files together into a string
-1. Run the concatenated string through ssh/kubectl on the master
+#### func (*Manifest) Find
 
-### Run the validated shell scripts `run_scenario`
+```go
+func (m *Manifest) Find(id string) *Scenario
+```
+Find returns a scenario for the supplied id
 
-Runs each shell script on the appropriate host (see above)
+#### type Scenario
 
+```go
+type Scenario struct {
+	// A machine parseable unique id for the scenario
+	Id string `yaml:"id"`
+	// Path to the scenario - paths are relative to the ScenarioManifest that
+	// defines this scenario
+	Path string `yaml:"path"`
+	// A human-friendly readable name for this scenario for use in user interfaces
+	DisplayName string `yaml:"name"`
+}
+```
 
-### Cleanup
+Scenario structure representing a scenario
 
-### Special scenarios
+#### func (*Scenario) Validate
 
-* `cleanup`
-* `noop`
-
-#### Scripts run always
-
-* `no-cleanup.do` If this is present `scenario/cover-tracks.sh` will not run
-* `reboot-all.do` If this is present `scenario/reboot.sh` will run on all nodes
-* `reboot-workers.do` If this is present `scenario/reboot.sh` will run on master node
-* `reboot-master.do` If this is present `scenario/reboot.sh` will run on worker nodes
-* temporary script to copy base64 encoded`$SCENARIO_DIR/flag.txt` to `/root/flag.txt` if that file exists in `$SCENARIO_DIR`
-
-
-#### Scripts only run for "normal scenarios
-
-* temporary script to copy `$SCENARIO_DIR/challenge.txt` to `/opt/challenge.txt`
+```go
+func (s *Scenario) Validate(manifestPath string) error
+```
+Validate a scenario relative to its manifest

@@ -44,7 +44,7 @@ func (m *Manifest) Find(id string) *Scenario {
 
 const (
 	manifestPathEnvVar  = "SIMULATOR_MANIFEST_PATH"
-	defaultManifestPath = "../simulation-scripts/"
+	defaultManifestPath = "./simulation-scripts/"
 	manifestFileName    = "scenarios.yaml"
 )
 

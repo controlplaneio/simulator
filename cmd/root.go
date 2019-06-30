@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,7 +34,6 @@ debugging Kubernetes
 }
 
 func initConfig() {
-	fmt.Println("init --------- ", cfgFile)
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {

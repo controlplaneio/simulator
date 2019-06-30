@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
-	"github.com/controlplaneio/simulator-standalone/cli/pkg/scenario"
+	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

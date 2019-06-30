@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/controlplaneio/simulator-standalone/cli/cmd"
+	"github.com/controlplaneio/simulator-standalone/cmd"
 	"go.uber.org/zap"
 	"log"
 	"os"

@@ -36,7 +36,7 @@ pipeline {
 
       steps {
         ansiColor('xterm') {
-          sh 'make test'
+          sh 'make docker-test'
         }
       }
     }

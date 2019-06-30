@@ -55,7 +55,7 @@ func (po *PerturbOptions) String() string {
 
 const (
 	perturbPathEnvVar  = "SIMULATOR_MANIFEST_PATH"
-	defaultPerturbPath = "../simulation-scripts/"
+	defaultPerturbPath = "./simulation-scripts/"
 )
 
 // Perturb runs the perturb script with the supplied options

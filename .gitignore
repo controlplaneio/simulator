@@ -119,6 +119,6 @@ conf/.config/keybase/
 
 NOTES.md
 test.debug
-/cli/count.out
-/cli/coverage.txt
-/cli/test/fixtures/noop-tf-dir/settings
+/count.out
+/coverage.txt
+/test/fixtures/noop-tf-dir/settings

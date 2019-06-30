@@ -9,31 +9,27 @@ This file is evaled by a quickly cobbled together bash script to replace the var
 
 Development targets are specified in the [Makefile](./Makefile).
 
-The [Dockerfile](./Dockerfile) in this folder is used to isolate and lock down versions for testing and building and not
-for publishing.
-
-Publishing of the simulator as a docker image will be [the launch container Dockerfile](../Dockerfile).
-Running  <code>make run</code> (or <code>make build</code>) in the root of this repository will implicitly call
-<code>make docker-build</code> in this folder.
-
-The remaining make targets can be run inside the build container or outside as you choose for local development.
-
 <pre>
-all: help            
-build                 golang build
-coverage              runs golang unit tests with coverage and opens a browser with the results
-dep                   install dependencies for other targets
-doc                   generate markdown documentation for packages
-help-no-color:       
-test-acceptance       run bats acceptance tests
-test                  run all tests
-test-unit             run golang unit tests
+run                   Runs the simulator - the build stage of the container runs all the cli tests
+docker-build          Builds the launch container
+docker-test           Run the tests
+infra-init            Initialisation needed before interacting with the infra
+infra-checkvars       Check the tfvars file exists before interacting with the infra
+infra-plan            Show what changes will be applied to the infrastructure
+infra-apply           Apply any changes needed to the infrastructure before running a scenario
+infra-destroy         Teardown any infrastructure
+dep                   Install dependencies for other targets
+build                 Run golang build for the CLI program
+test                  run all tests except goss tests
+test-acceptance       Run bats acceptance tests for the CLI program
+test-unit             Run golang unit tests for the CLI program
+coverage              Run golang unit tests with coverage and opens a browser with the results
+doc                   Generate documentation
 </pre>
 
 ## Usage
 
 <pre>
-init ---------  
 
 A distributed systems and infrastructure simulator for attacking and
 debugging Kubernetes
@@ -124,5 +120,5 @@ Use "simulator config [command] --help" for more information about a command.
 
 ## API Documentation
 
-* [Scenario](./docs/scenario.md)
-* [Runner](./docs/runner.md)
+* [Scenario](./docs/api/scenario.md)
+* [Runner](./docs/api/runner.md)

@@ -39,3 +39,14 @@ ifeq ($(GIT_UNTRACKED_CHANGES),)
 endif
 
 CONTAINER_NAME_LATEST := $(DOCKER_REGISTRY_FQDN)/$(NAME):$(CONTAINER_TAG_LATEST)
+
+PKG := github.com/$(GITHUB_ORG)/$(PACKAGE_NAME)
+
+# golang buildtime, more at https://github.com/jessfraz/pepper/blob/master/Makefile
+# BUG: (rem) this is broken because the
+CTIMEVAR=-X $(PKG)/cmd/version.GITCOMMIT=$(GITCOMMIT) -X $(PKG)/cmd/version.VERSION=$(VERSION)
+GO_LDFLAGS=-ldflags "-w $(CTIMEVAR)"
+GO_LDFLAGS_STATIC=-ldflags "-w $(CTIMEVAR) -extldflags -static"
+
+GO := go
+

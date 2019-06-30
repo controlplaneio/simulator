@@ -1,7 +1,7 @@
 package runner_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/cli/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/runner"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
