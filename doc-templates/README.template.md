@@ -57,6 +57,7 @@ cluster in the given cloud provider
 
 * [Scenario](./docs/api/scenario.md)
 * [Runner](./docs/api/runner.md)
+* [Util](./docs/api/util.md)
 
 ## Project Roadmap
 

@@ -94,6 +94,7 @@ doc: dep ## Generate documentation
 	@echo "+ $@"
 	godocdown pkg/scenario > docs/api/scenario.md
 	godocdown pkg/runner > docs/api/runner.md
+	godocdown pkg/util > docs/api/util.md
 	./scripts/generate-docs-from-templates.sh
 
 # --- MAKEFILE HELP
