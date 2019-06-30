@@ -11,7 +11,7 @@ make run
 ```
 
 This will drop you into a bash shell in a launch container.  You will have a program on the `$PATH` named `simulator`
-to interact with.  Documentation for using the `simulator` program can be found in [in CLI.md](./CLI.md).
+to interact with.  Documentation for using the `simulator` program can be found in [in cli.md](./docs/cli.md).
 
 ## Roadmap
 

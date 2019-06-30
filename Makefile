@@ -94,7 +94,7 @@ doc: dep ## Generate documentation
 	@echo "+ $@"
 	godocdown pkg/scenario > docs/api/scenario.md
 	godocdown pkg/runner > docs/api/runner.md
-	./scripts/generate-readme.sh > CLI.md
+	./scripts/generate-readme.sh > docs/cli.md
 
 # --- MAKEFILE HELP
 
