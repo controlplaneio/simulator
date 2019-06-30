@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
-	"time"
 )
 
 func Test_TfVars_String(t *testing.T) {
@@ -53,14 +52,4 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 
 	assert.Equal(t, read(varsFile), "test = true\n")
-}
-
-func Test_EnvOrDefault(t *testing.T) {
-	key := "SIMULATOR_TEST_" + string(time.Now().Unix())
-	defaulted := util.EnvOrDefault(key, "setting")
-	assert.Equal(t, defaulted, "setting", "Did not return default")
-
-	os.Setenv(key, "custom")
-	val := util.EnvOrDefault(key, "custom")
-	assert.Equal(t, val, "custom", "Did not read env var")
 }

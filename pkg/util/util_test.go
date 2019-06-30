@@ -3,7 +3,9 @@ package util_test
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/stretchr/testify/assert"
+	"os"
 	"testing"
+	"time"
 )
 
 func Test_FileExists_current_file(t *testing.T) {
@@ -32,4 +34,14 @@ func Test_DetectPublicIP(t *testing.T) {
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, ip, "Got no IP address")
+}
+
+func Test_EnvOrDefault(t *testing.T) {
+	key := "SIMULATOR_TEST_" + string(time.Now().Unix())
+	defaulted := util.EnvOrDefault(key, "setting")
+	assert.Equal(t, defaulted, "setting", "Did not return default")
+
+	os.Setenv(key, "custom")
+	val := util.EnvOrDefault(key, "custom")
+	assert.Equal(t, val, "custom", "Did not read env var")
 }
