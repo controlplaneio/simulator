@@ -2,6 +2,7 @@ package runner_test
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
@@ -24,7 +25,7 @@ func Test_Ensure_TfVarsFile_no_settings(t *testing.T) {
 	err := runner.EnsureTfVarsFile(tfDir, "ssh-rsa", "10.0.0.1/16")
 	assert.Nil(t, err, "Got an error")
 
-	exists, err := runner.FileExists(tfDir + "/settings/bastion.tfVars")
+	exists, err := util.FileExists(tfDir + "/settings/bastion.tfVars")
 	assert.Nil(t, err, "Got an error checking file had been written")
 	assert.True(t, exists, "File wasn't created")
 }
@@ -56,10 +57,10 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 
 func Test_EnvOrDefault(t *testing.T) {
 	key := "SIMULATOR_TEST_" + string(time.Now().Unix())
-	defaulted := runner.EnvOrDefault(key, "setting")
+	defaulted := util.EnvOrDefault(key, "setting")
 	assert.Equal(t, defaulted, "setting", "Did not return default")
 
 	os.Setenv(key, "custom")
-	val := runner.EnvOrDefault(key, "custom")
+	val := util.EnvOrDefault(key, "custom")
 	assert.Equal(t, val, "custom", "Did not read env var")
 }

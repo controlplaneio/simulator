@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/runner"
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -69,12 +70,12 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return err
 			}
 
-			cp, err := runner.Home(".ssh/config")
+			cp, err := util.Home(".ssh/config")
 			if err != nil {
 				return err
 			}
 
-			written, err := runner.EnsureFile(*cp, *c)
+			written, err := util.EnsureFile(*cp, *c)
 			if err != nil {
 				return err
 			}

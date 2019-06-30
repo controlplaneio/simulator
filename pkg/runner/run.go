@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bytes"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"io"
 	"os"
@@ -24,7 +25,7 @@ func wdMust(wd string) string {
 // be appended to the current environment.  `wd` is the working directory for the child
 func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 
-	debug("Preparing to run: ", cmd, args)
+	util.Debug("Preparing to run: ", cmd, args)
 	child := exec.Command(cmd, args...)
 
 	child.Env = append(os.Environ(), env...)
@@ -38,17 +39,17 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 
 	dir := wdMust(wd)
 
-	debug("Setting child working directory to ", dir)
+	util.Debug("Setting child working directory to ", dir)
 	child.Dir = dir
 
 	// Copy child stdout to stdout but also into a buffer to be returned
 	var buf bytes.Buffer
 	tee := io.TeeReader(childOut, &buf)
 
-	debug("Running child")
+	util.Debug("Running child")
 	err := child.Start()
 	if err != nil {
-		debug("Error starting child process: ", err)
+		util.Debug("Error starting child process: ", err)
 		return nil, errors.Wrapf(err, "Error starting child process")
 	}
 
@@ -58,7 +59,7 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 	err = child.Wait()
 	// TODO: (rem) make this parameterisable?
 	if err != nil && err.Error() != "exit status 127" {
-		debug("Error waiting for child process", err)
+		util.Debug("Error waiting for child process", err)
 		return nil, err
 	}
 

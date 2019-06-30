@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 )
 
@@ -34,34 +35,34 @@ func PrepareTfArgs(cmd string) []string {
 func Terraform(cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1"}
-	wd := EnvOrDefault(tfDirEnvVar, defaultTfDir)
+	wd := util.EnvOrDefault(tfDirEnvVar, defaultTfDir)
 	return Run(wd, env, "terraform", args...)
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
 func InitIfNeeded() error {
-	stateDir := EnvOrDefault(tfDirEnvVar, defaultTfDir) + tfStateDir
-	hasStateDir, err := FileExists(stateDir)
+	stateDir := util.EnvOrDefault(tfDirEnvVar, defaultTfDir) + tfStateDir
+	hasStateDir, err := util.FileExists(stateDir)
 	if err != nil || hasStateDir {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}
 
-	ip, err := DetectPublicIP()
+	ip, err := util.DetectPublicIP()
 	if err != nil {
 		return err
 	}
 	accessCIDR := *ip + "/32"
-	publicKeyPath, err := Home(".ssh/id_rsa.pub")
+	publicKeyPath, err := util.Home(".ssh/id_rsa.pub")
 	if err != nil {
 		return err
 	}
 
-	publicKey, err := ReadFile(*publicKeyPath)
+	publicKey, err := util.ReadFile(*publicKeyPath)
 	if err != nil {
 		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
 	}
 
-	tfDir := EnvOrDefault(tfDirEnvVar, defaultTfDir)
+	tfDir := util.EnvOrDefault(tfDirEnvVar, defaultTfDir)
 	err = EnsureTfVarsFile(tfDir, *publicKey, accessCIDR)
 
 	_, err = Terraform("init")

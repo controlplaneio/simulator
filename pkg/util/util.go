@@ -1,4 +1,4 @@
-package runner
+package util
 
 import (
 	"fmt"
@@ -12,7 +12,8 @@ import (
 	"sync"
 )
 
-func debug(msg ...interface{}) {
+// Debug prints a debug message to stdout
+func Debug(msg ...interface{}) {
 	fmt.Println(msg...)
 }
 
@@ -67,7 +68,7 @@ func Home(path string) (*string, error) {
 
 // FileExists checks whether a path exists
 func FileExists(path string) (bool, error) {
-	debug("Stating", path)
+	Debug("Stating", path)
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil

@@ -1,5 +1,9 @@
 package runner
 
+import (
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
+)
+
 // TfVars struct representing the input variables for terraform to create the infrastructure
 type TfVars struct {
 	PublicKey  string
@@ -28,6 +32,6 @@ func EnsureTfVarsFile(tfDir, publicKey, accessCIDR string) error {
 	filename := tfDir + "/settings/bastion.tfVars"
 	tfv := NewTfVars(publicKey, accessCIDR)
 
-	_, err := EnsureFile(filename, tfv.String())
+	_, err := util.EnsureFile(filename, tfv.String())
 	return err
 }

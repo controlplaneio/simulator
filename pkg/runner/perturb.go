@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"net"
 	"strings"
 )
@@ -62,6 +63,6 @@ const (
 func Perturb(po *PerturbOptions) (*string, error) {
 	args := po.ToArguments()
 	env := []string{}
-	wd := EnvOrDefault(perturbPathEnvVar, defaultPerturbPath)
+	wd := util.EnvOrDefault(perturbPathEnvVar, defaultPerturbPath)
 	return Run(wd, env, "./perturb.sh", args...)
 }
