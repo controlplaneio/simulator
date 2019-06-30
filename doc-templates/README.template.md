@@ -32,21 +32,7 @@ to interact with.
 Development targets are specified in the [Makefile](./Makefile).
 
 <pre>
-run                   Runs the simulator - the build stage of the container runs all the cli tests
-docker-build          Builds the launch container
-docker-test           Run the tests
-infra-init            Initialisation needed before interacting with the infra
-infra-checkvars       Check the tfvars file exists before interacting with the infra
-infra-plan            Show what changes will be applied to the infrastructure
-infra-apply           Apply any changes needed to the infrastructure before running a scenario
-infra-destroy         Teardown any infrastructure
-dep                   Install dependencies for other targets
-build                 Run golang build for the CLI program
-test                  run all tests except goss tests
-test-acceptance       Run bats acceptance tests for the CLI program
-test-unit             Run golang unit tests for the CLI program
-coverage              Run golang unit tests with coverage and opens a browser with the results
-doc                   Generate documentation
+${make}
 </pre>
 
 ## Architecture

@@ -15,14 +15,30 @@ unset CDPATH
 # Main function
 #
 main() {
-  local -r template="$(cat ./doc-templates/cli.template.md)"
+  generate_readme
+  generate_cli_usage
+}
+readonly -f main
+
+generate_readme() {
+  local -r template="$(cat ./doc-templates/README.template.md)"
   local -r make="$(make -s help-no-color)"
+
+  eval "echo \"${template}\"" > ./README.md
+  return 0
+}
+readonly -f generate_readme
+
+generate_cli_usage() {
+  local -r template="$(cat ./doc-templates/cli.template.md)"
   local -r help="$(./dist/simulator help)"
   local -r scenario_help="$(./dist/simulator scenario help)"
   local -r infra_help="$(./dist/simulator infra help)"
   local -r config_help="$(./dist/simulator config help)"
 
-  eval "echo \"${template}\""
+  eval "echo \"${template}\"" > ./docs/cli.md
+  return 0
 }
+readonly -f generate_cli_usage
 
 main
