@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"sync"
 )
 
 func debug(msg ...interface{}) {
@@ -27,15 +28,32 @@ func DetectPublicIP() (*string, error) {
 	return &output, nil
 }
 
-// Home returns the path to a file in the user's home directory
+var homedirCache string
+var cacheLock sync.RWMutex
+
+// Home returns the fully qualified path to a file in the user's home directory. I.E. it expands a path beginning with
+// `~`) and checks the file exists
 func Home(path string) (*string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error finding %s in home", path)
+	var homedir string
+
+	// Lock and read the cache to see if we already resolved the current user's home directory
+	cacheLock.RLock()
+	homedir = homedirCache
+	cacheLock.RUnlock()
+	if homedir == "" {
+		// Take a write lock to update the cache
+		cacheLock.Lock()
+		defer cacheLock.Unlock()
+
+		usr, err := user.Current()
+		if err != nil {
+			return nil, errors.Wrapf(err, "Error finding %s in home", path)
+		}
+
+		homedir = usr.HomeDir
 	}
 
-	home := usr.HomeDir
-	p := filepath.Join(home, path)
+	p := filepath.Join(homedir, path)
 	exists, err := FileExists(p)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error checking %s exists", p)
