@@ -48,7 +48,7 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(errors.Wrapf(err, "Error reading config file at ./simulator.yaml"))
+		panic(errors.Wrapf(err, "Error reading config file"))
 	}
 
 	// read config from environment too
