@@ -121,5 +121,4 @@ NOTES.md
 test.debug
 /count.out
 /coverage.txt
-/test/fixtures/noop-tf-dir/settings
 /test/fixtures/.ignored
