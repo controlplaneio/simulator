@@ -59,6 +59,16 @@ func Test_ExpandTilde(t *testing.T) {
 	// Call ExpandTilde again to exercise the cache
 	p2, err := util.ExpandTilde("~/.")
 	assert.Equal(t, *p, *p2, "Cached version differed")
+
+	p3, err := util.ExpandTilde("fail")
+	assert.NotNil(t, err, "Didn't get an error when path didn't start with tilde slash")
+	assert.Nil(t, p3, "Got a path when path didn't start with tilde slash")
+	assert.Regexp(t, `^Path was empty or did not start with a tilde and a slash:`, err.Error())
+
+	p4, err := util.ExpandTilde("")
+	assert.NotNil(t, err, "Didn't get an error for empty path")
+	assert.Nil(t, p4, "Got a path when resolving an empty path")
+	assert.Regexp(t, `^Path was empty or did not start with a tilde and a slash:`, err.Error())
 }
 
 func Test_Slurp(t *testing.T) {
