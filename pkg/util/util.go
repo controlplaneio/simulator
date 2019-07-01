@@ -87,7 +87,11 @@ func FileExists(path string) (bool, error) {
 }
 
 // Slurp reads an entire file into a string in one operation and returns a pointer to the file's content or an error if
-// any
+// any.  Similar to `ioutil.ReadFile` but it calls `filepath.Abs` first which cleans the path and resolves relative
+// paths from the working directory.
+//
+// Note that this is slightly less efficient for zero-length files than `ioutil.Readfile` as it uses the default
+// read buffer size of `bytes.MinRead` internally
 func Slurp(path string) (*string, error) {
 	fp, err := filepath.Abs(path)
 	if err != nil {
@@ -153,7 +157,8 @@ func EnsureFile(path, contents string) (bool, error) {
 	return true, nil
 }
 
-// EnvOrDefault tries to read the key and returns a default value if it is empty
+// EnvOrDefault tries to read an environment variable with the supplied key and returns its value.  EnvOrDefault returns
+// a default value if it is empty or unset
 func EnvOrDefault(key, def string) string {
 	var d = os.Getenv(key)
 	if d == "" {

@@ -32,7 +32,8 @@ a boolean indicating whether it wrote a file or not and any error
 ```go
 func EnvOrDefault(key, def string) string
 ```
-EnvOrDefault tries to read the key and returns a default value if it is empty
+EnvOrDefault tries to read an environment variable with the supplied key and
+returns its value. EnvOrDefault returns a default value if it is empty or unset
 
 #### func  ExpandTilde
 
@@ -51,10 +52,25 @@ func FileExists(path string) (bool, error)
 ```
 FileExists checks whether a path exists
 
+#### func  MustSlurp
+
+```go
+func MustSlurp(path string) string
+```
+MustSlurp is the panicky counterpart to Slurp. MustSlurp reads an entire file
+into a string in one operation and returns the contents or panics if it
+encouters and error
+
 #### func  Slurp
 
 ```go
 func Slurp(path string) (*string, error)
 ```
 Slurp reads an entire file into a string in one operation and returns a pointer
-to the file's content
+to the file's content or an error if any. Similar to `ioutil.ReadFile` but it
+calls `filepath.Abs` first which cleans the path and resolves relative paths
+from the working directory.
+
+Note that this is slightly less efficient for zero-length files than
+`ioutil.Readfile` as it uses the default read buffer size of `bytes.MinRead`
+internally
