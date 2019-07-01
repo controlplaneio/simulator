@@ -73,5 +73,11 @@ func Test_MustSlurp(t *testing.T) {
 }
 
 func Test_EnsureFile(t *testing.T) {
+	written, err := util.EnsureFile(fixture("tf-help.txt"), "testing")
+	assert.Nil(t, err, "Got an error")
+	assert.False(t, written, "Wrote the file")
 
+	written, err = util.EnsureFile(fixture(".ignored"), "testing")
+	assert.Nil(t, err, "Got an error")
+	assert.True(t, written, "Didn't write the file")
 }
