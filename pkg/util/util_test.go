@@ -47,10 +47,12 @@ func Test_EnvOrDefault(t *testing.T) {
 }
 
 func Test_ExpandTilde(t *testing.T) {
-	// BUG: (rem) this is brittle but will work in the container and most
-	// people's machines
-	p, err := util.ExpandTilde("~/.bashrc")
+	p, err := util.ExpandTilde("~/.")
 	assert.Nil(t, err, "Got an error")
 
-	assert.Regexp(t, `^/home/(.+)/.bashrc$`, *p)
+	assert.Regexp(t, `^/home/([^/]+)$`, *p)
+
+	// Call ExpandTilde again to exercise the cache
+	p2, err := util.ExpandTilde("~/.")
+	assert.Equal(t, *p, *p2, "Cached version differed")
 }
