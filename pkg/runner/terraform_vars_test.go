@@ -4,8 +4,6 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/runner"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
-	"os"
 	"testing"
 )
 
@@ -29,21 +27,6 @@ func Test_Ensure_TfVarsFile_no_settings(t *testing.T) {
 	assert.True(t, exists, "File wasn't created")
 }
 
-func read(path string) string {
-	file, err := os.Open(path)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
-
-	b, err := ioutil.ReadAll(file)
-	if err != nil {
-		panic(err)
-	}
-
-	return string(b)
-}
-
 func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	tfDir := fixture("tf-dir-with-settings")
 	varsFile := tfDir + "/settings/bastion.tfVars"
@@ -51,5 +34,5 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	err := runner.EnsureTfVarsFile(tfDir, "ssh-rsa", "10.0.0.1/16")
 	assert.Nil(t, err, "Got an error")
 
-	assert.Equal(t, read(varsFile), "test = true\n")
+	assert.Equal(t, util.MustSlurp(varsFile), "test = true\n")
 }

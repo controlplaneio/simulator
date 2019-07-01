@@ -86,7 +86,8 @@ func FileExists(path string) (bool, error) {
 	return true, err
 }
 
-// Slurp reads an entire file into a string in one operation and returns a pointer to the file's content
+// Slurp reads an entire file into a string in one operation and returns a pointer to the file's content or an error if
+// any
 func Slurp(path string) (*string, error) {
 	fp, err := filepath.Abs(path)
 	if err != nil {
@@ -106,6 +107,23 @@ func Slurp(path string) (*string, error) {
 
 	output := string(b)
 	return &output, nil
+}
+
+// MustSlurp is the panicky counterpart to Slurp. MustSlurp reads an entire file into a string in one operation and
+// returns the contents or panics if it encouters and error
+func MustSlurp(path string) string {
+	file, err := os.Open(path)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	b, err := ioutil.ReadAll(file)
+	if err != nil {
+		panic(err)
+	}
+
+	return string(b)
 }
 
 // EnsureFile checks a file exists and writes the supplied contents if not.  returns a boolean indicating whether it

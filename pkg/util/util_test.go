@@ -66,3 +66,12 @@ func Test_Slurp(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 	assert.NotEmpty(t, contents, "Got empty file contents")
 }
+
+func Test_MustSlurp(t *testing.T) {
+	contents := util.MustSlurp(fixture("tf-help.txt"))
+	assert.NotEmpty(t, contents, "Got empty file contents")
+}
+
+func Test_EnsureFile(t *testing.T) {
+
+}
