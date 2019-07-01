@@ -130,6 +130,20 @@ func MustSlurp(path string) string {
 	return string(b)
 }
 
+// MustRemove removes a file or empty directory.  MustRemove will ignore an error if the path doesn't exist or panic for
+// any other error
+func MustRemove(path string) {
+	err := os.Remove(path)
+	if err != nil && os.IsNotExist(err) {
+		return
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	return
+}
+
 // EnsureFile checks a file exists and writes the supplied contents if not.  returns a boolean indicating whether it
 // wrote a file or not and any error
 func EnsureFile(path, contents string) (bool, error) {

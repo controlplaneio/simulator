@@ -77,7 +77,12 @@ func Test_EnsureFile(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 	assert.False(t, written, "Wrote the file")
 
+	util.MustRemove(fixture(".ignored"))
 	written, err = util.EnsureFile(fixture(".ignored"), "testing")
 	assert.Nil(t, err, "Got an error")
 	assert.True(t, written, "Didn't write the file")
+}
+
+func Test_MustRemove(t *testing.T) {
+	util.MustRemove("./non-existent-file")
 }
