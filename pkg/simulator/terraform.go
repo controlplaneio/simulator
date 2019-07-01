@@ -36,7 +36,7 @@ func Terraform(cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1"}
 	wd := util.EnvOrDefault(tfDirEnvVar, defaultTfDir)
-	return Run(wd, env, "terraform", args...)
+	return util.Run(wd, env, "terraform", args...)
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not

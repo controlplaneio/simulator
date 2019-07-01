@@ -64,5 +64,5 @@ func Perturb(po *PerturbOptions) (*string, error) {
 	args := po.ToArguments()
 	env := []string{}
 	wd := util.EnvOrDefault(perturbPathEnvVar, defaultPerturbPath)
-	return Run(wd, env, "./perturb.sh", args...)
+	return util.Run(wd, env, "./perturb.sh", args...)
 }
