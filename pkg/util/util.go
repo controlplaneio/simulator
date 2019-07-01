@@ -29,8 +29,10 @@ func DetectPublicIP() (*string, error) {
 	return &output, nil
 }
 
-var homedirCache string
-var cacheLock sync.RWMutex
+var cache = struct {
+	sync.RWMutex
+	homedir string
+}{}
 
 // ExpandTilde returns the fully qualified path to a file in the user's home directory. I.E. it expands a path beginning with
 // `~/`) and checks the file exists. ExpandTilde will cache the user's home directory to amortise the cost of the syscall
@@ -45,13 +47,13 @@ func ExpandTilde(path string) (*string, error) {
 	var homedir string
 
 	// Lock and read the cache to see if we already resolved the current user's home directory
-	cacheLock.RLock()
-	homedir = homedirCache
-	cacheLock.RUnlock()
+	cache.RLock()
+	homedir = cache.homedir
+	cache.RUnlock()
 	if homedir == "" {
 		// Take a write lock to update the cache
-		cacheLock.Lock()
-		defer cacheLock.Unlock()
+		cache.Lock()
+		defer cache.Unlock()
 
 		usr, err := user.Current()
 		if err != nil {
@@ -59,6 +61,7 @@ func ExpandTilde(path string) (*string, error) {
 		}
 
 		homedir = usr.HomeDir
+		cache.homedir = homedir
 	}
 
 	p := filepath.Join(homedir, path)
