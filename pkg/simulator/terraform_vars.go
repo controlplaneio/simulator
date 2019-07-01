@@ -29,7 +29,7 @@ func (tfv *TfVars) String() string {
 
 // EnsureTfVarsFile writes an tfvars file if one hasnt already been made
 func EnsureTfVarsFile(tfDir, publicKey, accessCIDR string) error {
-	filename := tfDir + "/settings/bastion.tfVars"
+	filename := tfDir + "/settings/bastion.tfvars"
 	tfv := NewTfVars(publicKey, accessCIDR)
 
 	_, err := util.EnsureFile(filename, tfv.String())
