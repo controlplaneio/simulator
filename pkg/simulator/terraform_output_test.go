@@ -1,7 +1,7 @@
-package runner_test
+package simulator_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
@@ -29,7 +29,7 @@ func readFixture(name string) string {
 }
 
 func Test_IsUsable(t *testing.T) {
-	tfo := runner.TerraformOutput{}
+	tfo := simulator.TerraformOutput{}
 	assert.False(t, tfo.IsUsable(), "Empty TerraformOutput was usable")
 	tfo.BastionPublicIP.Value = "127.0.0.1"
 	assert.False(t, tfo.IsUsable(), "TerraformOutput with only bastion was usable")
@@ -52,18 +52,18 @@ func currentUserName() string {
 }
 
 func Test_ToSSHConfig(t *testing.T) {
-	tfo := runner.TerraformOutput{
-		BastionPublicIP: runner.StringOutput{
+	tfo := simulator.TerraformOutput{
+		BastionPublicIP: simulator.StringOutput{
 			Sensitive: false,
 			Type:      "string",
 			Value:     "8.8.8.8",
 		},
-		MasterNodesPrivateIP: runner.StringSliceOutput{
+		MasterNodesPrivateIP: simulator.StringSliceOutput{
 			Sensitive: false,
 			Type:      []interface{}{},
 			Value:     []string{"127.0.0.1"},
 		},
-		ClusterNodesPrivateIP: runner.StringSliceOutput{
+		ClusterNodesPrivateIP: simulator.StringSliceOutput{
 			Sensitive: false,
 			Type:      []interface{}{},
 			Value:     []string{"127.0.0.2", "127.0.0.3"},
@@ -92,7 +92,7 @@ func Test_ParseTerraformOutput(t *testing.T) {
 	t.Parallel()
 	output := readFixture("valid-tf-output.json")
 
-	tfOutput, err := runner.ParseTerraformOutput(output)
+	tfOutput, err := simulator.ParseTerraformOutput(output)
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfOutput, "Output was nil")

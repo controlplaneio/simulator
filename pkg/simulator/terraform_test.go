@@ -1,7 +1,7 @@
-package runner_test
+package simulator_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -21,14 +21,14 @@ var tfCommandArgumentsTests = []struct {
 func Test_PrepareTfArgs(t *testing.T) {
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.command, func(t *testing.T) {
-			assert.Equal(t, runner.PrepareTfArgs(tt.command), tt.arguments)
+			assert.Equal(t, simulator.PrepareTfArgs(tt.command), tt.arguments)
 		})
 	}
 }
 
 func Test_Status(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	tfo, err := runner.Status()
+	tfo, err := simulator.Status()
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfo, "Got no terraform output")
@@ -36,14 +36,14 @@ func Test_Status(t *testing.T) {
 
 func Test_Create(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	err := runner.Create()
+	err := simulator.Create()
 
 	assert.Nil(t, err)
 }
 
 func Test_Destroy(t *testing.T) {
 	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	err := runner.Destroy()
+	err := simulator.Destroy()
 
 	assert.Nil(t, err)
 }

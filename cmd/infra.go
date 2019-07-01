@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
 )
 
@@ -11,7 +11,7 @@ func newCreateCommand() *cobra.Command {
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runner.Create()
+			return simulator.Create()
 		},
 	}
 
@@ -23,7 +23,7 @@ func newStatusCommand() *cobra.Command {
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			tfo, err := runner.Status()
+			tfo, err := simulator.Status()
 
 			fmt.Println(tfo)
 
@@ -39,7 +39,7 @@ func newDestroyCommand() *cobra.Command {
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runner.Destroy()
+			return simulator.Destroy()
 		},
 	}
 

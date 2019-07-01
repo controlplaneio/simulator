@@ -1,7 +1,7 @@
-package runner_test
+package simulator_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/stretchr/testify/assert"
 	"net"
 	"os"
@@ -10,7 +10,7 @@ import (
 
 func Test_ToArguments_And_String(t *testing.T) {
 	t.Parallel()
-	po := runner.PerturbOptions{
+	po := simulator.PerturbOptions{
 		Master: net.IPv4(127, 0, 0, 1),
 		Slaves: []net.IP{net.IPv4(8, 8, 8, 8), net.IPv4(127, 0, 0, 2)},
 	}
@@ -20,18 +20,18 @@ func Test_ToArguments_And_String(t *testing.T) {
 
 func Test_MakePerturbOptions(t *testing.T) {
 	t.Parallel()
-	tfo := runner.TerraformOutput{
-		MasterNodesPrivateIP: runner.StringSliceOutput{
+	tfo := simulator.TerraformOutput{
+		MasterNodesPrivateIP: simulator.StringSliceOutput{
 			Value: []string{"127.0.0.1"},
 		},
-		ClusterNodesPrivateIP: runner.StringSliceOutput{
+		ClusterNodesPrivateIP: simulator.StringSliceOutput{
 			Value: []string{"127.0.0.2"},
 		},
 	}
 
 	path := "./scenario/test"
 
-	po := runner.MakePerturbOptions(tfo, path)
+	po := simulator.MakePerturbOptions(tfo, path)
 
 	assert.Equal(t, po.Master.String(), tfo.MasterNodesPrivateIP.Value[0])
 	assert.Equal(t, po.Slaves[0].String(), tfo.ClusterNodesPrivateIP.Value[0])
@@ -40,8 +40,8 @@ func Test_MakePerturbOptions(t *testing.T) {
 
 func Test_Perturb(t *testing.T) {
 	os.Setenv("SIMULATOR_MANIFEST_PATH", fixture("noop-perturb"))
-	po := runner.PerturbOptions{}
-	_, err := runner.Perturb(&po)
+	po := simulator.PerturbOptions{}
+	_, err := simulator.Perturb(&po)
 
 	assert.Nil(t, err, "Got an error")
 }

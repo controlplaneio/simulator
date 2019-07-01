@@ -1,4 +1,4 @@
-package runner
+package simulator
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/util"

@@ -1,7 +1,7 @@
-package runner_test
+package simulator_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/runner"
+	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
@@ -9,7 +9,7 @@ import (
 
 func Test_Run(t *testing.T) {
 	expected := readFixture("tf-help.txt")
-	out, err := runner.Run("./", []string{}, "terraform", "help")
+	out, err := simulator.Run("./", []string{}, "terraform", "help")
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "out was nil")
@@ -19,7 +19,7 @@ func Test_Run(t *testing.T) {
 
 func Test_Run_invalid_working_dir(t *testing.T) {
 	wd := strings.Repeat("deadbeef", 1024)
-	out, err := runner.Run(wd, []string{}, "terraform", "help")
+	out, err := simulator.Run(wd, []string{}, "terraform", "help")
 
 	assert.NotNil(t, err, "Got no error")
 	assert.Nil(t, out, "Got output")

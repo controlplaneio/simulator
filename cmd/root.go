@@ -9,7 +9,6 @@ import (
 var cfgFile string
 
 func NewCmdRoot() *cobra.Command {
-
 	cmd := &cobra.Command{
 		Use:   "simulator",
 		Short: "Simulator command line",

@@ -56,7 +56,7 @@ cluster in the given cloud provider
 ### Simulator API Documentation
 
 * [Scenario](./docs/api/scenario.md)
-* [Runner](./docs/api/runner.md)
+* [Simulator](./docs/api/simulator.md)
 * [Util](./docs/api/util.md)
 
 ## Project Roadmap
