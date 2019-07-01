@@ -52,6 +52,14 @@ func FileExists(path string) (bool, error)
 ```
 FileExists checks whether a path exists
 
+#### func  MustRemove
+
+```go
+func MustRemove(path string)
+```
+MustRemove removes a file or empty directory. MustRemove will ignore an error if
+the path doesn't exist or panic for any other error
+
 #### func  MustSlurp
 
 ```go
