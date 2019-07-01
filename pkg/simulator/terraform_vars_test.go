@@ -16,17 +16,6 @@ access_cidr = "10.0.0.1/16"
 	assert.Equal(t, tfv.String(), expected)
 }
 
-func Test_Ensure_TfVarsFile_no_settings(t *testing.T) {
-	tfDir := fixture("noop-tf-dir")
-
-	err := simulator.EnsureTfVarsFile(tfDir, "ssh-rsa", "10.0.0.1/16")
-	assert.Nil(t, err, "Got an error")
-
-	exists, err := util.FileExists(tfDir + "/settings/bastion.tfVars")
-	assert.Nil(t, err, "Got an error checking file had been written")
-	assert.True(t, exists, "File wasn't created")
-}
-
 func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	tfDir := fixture("tf-dir-with-settings")
 	varsFile := tfDir + "/settings/bastion.tfVars"

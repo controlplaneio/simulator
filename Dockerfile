@@ -100,6 +100,10 @@ RUN \
       gnupg \
  && rm -rf /var/lib/apt/lists/*
 
+# Add login message
+COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/assets/generate-motd /usr/local/bin/generate-motd
+RUN echo '[ ! -z "$TERM" ] && generate-motd' >> /etc/bash.bashrc
+
 # Use 3rd party dependencies from build
 COPY --from=build-and-test /usr/local/bin/jq /usr/local/bin/jq
 COPY --from=build-and-test /usr/local/bin/yq /usr/local/bin/yq
