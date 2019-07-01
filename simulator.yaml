@@ -1,1 +1,4 @@
 loglevel: info
+scenarios-dir: "./simulation-scripts"
+tf-dir: "./terraform"
+

@@ -69,6 +69,15 @@ MustSlurp is the panicky counterpart to Slurp. MustSlurp reads an entire file
 into a string in one operation and returns the contents or panics if it
 encouters and error
 
+#### func  Run
+
+```go
+func Run(wd string, env []string, cmd string, args ...string) (*string, error)
+```
+Run runs a child process and returns its buffer stdout. Run also tees the output
+to stdout of this process, `env` will be appended to the current environment.
+`wd` is the working directory for the child
+
 #### func  Slurp
 
 ```go

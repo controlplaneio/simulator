@@ -51,15 +51,6 @@ PrepareTfArgs takes a string with the terraform command desired and returns a
 slice of strings containing the complete list of arguments including the command
 to use when exec'ing terraform
 
-#### func  Run
-
-```go
-func Run(wd string, env []string, cmd string, args ...string) (*string, error)
-```
-Run runs a child process and returns its buffer stdout. Run also tees the output
-to stdout of this process, `env` will be appended to the current environment.
-`wd` is the working directory for the child
-
 #### func  Terraform
 
 ```go

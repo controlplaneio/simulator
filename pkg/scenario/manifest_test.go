@@ -21,7 +21,7 @@ func Test_ManifestPath_default(t *testing.T) {
 }
 
 func Test_ManifestPath_custom(t *testing.T) {
-	os.Setenv("SIMULATOR_MANIFEST_PATH", "/some/path")
+	os.Setenv("SIMULATOR_SCENARIOS_DIR", "/some/path")
 	p := scenario.ManifestPath()
 	assert.Equal(t, p, "/some/path", "manifestPath did not set custom path")
 }

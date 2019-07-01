@@ -130,7 +130,7 @@ ADD ./goss.yaml /app
 # TODO: (rem) make this build-time configurable with an ARG
 ADD ./simulator.yaml /app
 
-ENV SIMULATOR_MANIFEST_PATH /app/simulation-scripts/
+ENV SIMULATOR_SCENARIOS_DIR /app/simulation-scripts/
 ENV SIMULATOR_TF_DIR /app/terraform
 ENV TF_VAR_shared_credentials_file /app/credentials
 

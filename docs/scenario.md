@@ -13,7 +13,7 @@ Package scnenario is a package for loading scenario manifests from a
 func ManifestPath() string
 ```
 ManifestPath reads the manifest path from the environment variable
-`SIMULATOR_MANIFEST_PATH` or uses a default value of `../simulation-scripts`
+`SIMULATOR_SCENARIOS_DIR` or uses a default value of `../simulation-scripts`
 
 #### type Manifest
 

@@ -43,12 +43,12 @@ func (m *Manifest) Find(id string) *Scenario {
 }
 
 const (
-	manifestPathEnvVar  = "SIMULATOR_MANIFEST_PATH"
+	manifestPathEnvVar  = "SIMULATOR_SCENARIOS_DIR"
 	defaultManifestPath = "./simulation-scripts/"
 	manifestFileName    = "scenarios.yaml"
 )
 
-// ManifestPath reads the manifest path from the environment variable `SIMULATOR_MANIFEST_PATH`
+// ManifestPath reads the manifest path from the environment variable `SIMULATOR_SCENARIOS_DIR`
 // or uses a default value of `../simulation-scripts`
 func ManifestPath() string {
 	var manifestPath = os.Getenv(manifestPathEnvVar)

@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 var cfgFile string
@@ -45,7 +46,10 @@ func initConfig() {
 		panic(errors.Wrapf(err, "Error reading config file at ./simulator.yaml"))
 	}
 
+	// read config from environment too
 	viper.SetEnvPrefix("simulator")
+	replacer := strings.NewReplacer("-", "_")
+	viper.SetEnvKeyReplacer(replacer)
 	viper.AutomaticEnv()
 }
 
