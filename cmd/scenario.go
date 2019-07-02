@@ -52,12 +52,12 @@ func newScenarioLaunchCommand() *cobra.Command {
 			}
 
 			if !manifest.Contains(scenarioID) {
-				return fmt.Errorf("scenario %s not found", scenarioID)
+				return errors.Errorf("scenario %s not found", scenarioID)
 			}
 
 			tfo, err := simulator.Status()
 			if !tfo.IsUsable() {
-				return fmt.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
+				return errors.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
 			}
 
 			scenarioPath := manifest.Find(scenarioID).Path
@@ -75,6 +75,7 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return err
 			}
 
+			// BUG: (rem) doesnt work when SSH config doesnt exist
 			written, err := util.EnsureFile(*cp, *c)
 			if err != nil {
 				return err
