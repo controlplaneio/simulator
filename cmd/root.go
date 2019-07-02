@@ -29,7 +29,7 @@ debugging Kubernetes
 
 	cmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
 	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform", "Path to a directory containing the infrastructure scripts")
-	// TODO: (rem) this is also used to locate the perturb.sh script
+	// TODO: (rem) this is also used to locate the perturb.sh script which may be subsumed by this app
 	cmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts", "Path to a directory containing a scenario manifest")
 	viper.BindPFlag("loglevel", cmd.PersistentFlags().Lookup("loglevel"))
 	viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir"))

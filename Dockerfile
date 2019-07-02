@@ -101,7 +101,7 @@ RUN \
  && rm -rf /var/lib/apt/lists/*
 
 # Add login message
-COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/assets/generate-motd /usr/local/bin/generate-motd
+COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/scripts/launch-motd /usr/local/bin/launch-motd
 RUN echo '[ ! -z "$TERM" ] && generate-motd' >> /etc/bash.bashrc
 
 # Use 3rd party dependencies from build
