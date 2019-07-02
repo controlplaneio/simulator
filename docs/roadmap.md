@@ -28,6 +28,8 @@
  - go vet
 - Design for supporting multiple users in the same AWS Account(?)
 
+(REM): I think it must work in AWS free tier for initial open sourcing
+
 ## Milestone 1  - Epic 2
 - Validate scenarios post running the scripts
   - drop "state" into nodes - to track whats been done on them(?)
