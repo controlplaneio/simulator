@@ -12,6 +12,10 @@ require (
 	github.com/coreos/go-systemd v0.0.0-20190620071333-e64a0ec8b42a // indirect
 	github.com/cosiner/argv v0.0.1 // indirect
 	github.com/davidrjenni/reftools v0.0.0-20190411195930-981bbac422f8 // indirect
+	github.com/docker/distribution v2.7.1+incompatible // indirect
+	github.com/docker/docker v1.13.1 // indirect
+	github.com/docker/go-connections v0.4.0 // indirect
+	github.com/docker/go-units v0.4.0 // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/fatih/gomodifytags v0.0.0-20190517204355-df91c5bc7551 // indirect
 	github.com/fatih/motion v0.0.0-20190527122956-41470362fad4 // indirect
@@ -52,6 +56,7 @@ require (
 	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d // indirect
 	github.com/onsi/ginkgo v1.8.0 // indirect
 	github.com/onsi/gomega v1.5.0 // indirect
+	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/peterh/liner v1.1.0 // indirect
 	github.com/pkg/errors v0.8.1

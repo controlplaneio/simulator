@@ -47,6 +47,9 @@ func (po *PerturbOptions) ToArguments() []string {
 	}
 	arguments = append(arguments, slaves)
 
+	arguments = append(arguments, "--debug")
+	arguments = append(arguments, po.ScenarioName)
+
 	return arguments
 }
 
@@ -64,5 +67,6 @@ func Perturb(po *PerturbOptions) (*string, error) {
 	args := po.ToArguments()
 	env := []string{}
 	wd := util.EnvOrDefault(perturbPathEnvVar, defaultPerturbPath)
+	// TODO: (rem) check that public IP hasn't changed
 	return util.Run(wd, env, "./perturb.sh", args...)
 }
