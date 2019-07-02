@@ -102,7 +102,7 @@ RUN \
 
 # Add login message
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/scripts/launch-motd /usr/local/bin/launch-motd
-RUN echo '[ ! -z "$TERM" ] && generate-motd' >> /etc/bash.bashrc
+RUN echo '[ ! -z "$TERM" ] && launch-motd' >> /etc/bash.bashrc
 
 # Use 3rd party dependencies from build
 COPY --from=build-and-test /usr/local/bin/jq /usr/local/bin/jq

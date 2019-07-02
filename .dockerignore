@@ -3,7 +3,6 @@
 /features/
 /bin/
 /node_modules/
-/scripts/
 .editorconfig
 .gitattributes
 .gitignore

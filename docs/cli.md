@@ -29,9 +29,11 @@ Available Commands:
   version     Prints simulator version
 
 Flags:
-  -c, --config-file string   the directory where simulator.yaml can be found
-  -h, --help                 help for simulator
-  -l, --loglevel string      the level of detail in output logging (default "info")
+  -c, --config-file string     the directory where simulator.yaml can be found
+  -h, --help                   help for simulator
+  -l, --loglevel string        the level of detail in output logging (default "info")
+  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
+  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
 
 Use "simulator [command] --help" for more information about a command.
 </pre>
@@ -52,8 +54,10 @@ Flags:
   -h, --help   help for scenario
 
 Global Flags:
-  -c, --config-file string   the directory where simulator.yaml can be found
-  -l, --loglevel string      the level of detail in output logging (default "info")
+  -c, --config-file string     the directory where simulator.yaml can be found
+  -l, --loglevel string        the level of detail in output logging (default "info")
+  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
+  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
 
 Use "simulator scenario [command] --help" for more information about a command.
 </pre>
@@ -75,8 +79,10 @@ Flags:
   -h, --help   help for infra
 
 Global Flags:
-  -c, --config-file string   the directory where simulator.yaml can be found
-  -l, --loglevel string      the level of detail in output logging (default "info")
+  -c, --config-file string     the directory where simulator.yaml can be found
+  -l, --loglevel string        the level of detail in output logging (default "info")
+  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
+  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
 
 Use "simulator infra [command] --help" for more information about a command.
 </pre>
@@ -96,8 +102,10 @@ Flags:
   -h, --help   help for config
 
 Global Flags:
-  -c, --config-file string   the directory where simulator.yaml can be found
-  -l, --loglevel string      the level of detail in output logging (default "info")
+  -c, --config-file string     the directory where simulator.yaml can be found
+  -l, --loglevel string        the level of detail in output logging (default "info")
+  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
+  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
 
 Use "simulator config [command] --help" for more information about a command.
 </pre>
