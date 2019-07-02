@@ -7,4 +7,6 @@ output "master_nodes_private_ip" {
 output "cluster_nodes_private_ip" {
   value = "${module.CreateK8s.K8sNodesPrivateIp}"
 }
-
+output "access_cidr" {
+  value = "${var.access_cidr}"
+}
