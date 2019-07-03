@@ -3,6 +3,7 @@ data "template_file" "init-script-master" {
   template = "${file("cloud-init/cloud-init-master.cfg")}"
   vars = {
     REGION = "${var.region}"
+    s3_bucket_name = "${var.s3_bucket_name}"
   }
 }
 
@@ -24,6 +25,7 @@ data "template_file" "init-script" {
   template = "${file("cloud-init/cloud-init.cfg")}"
   vars = {
     REGION = "${var.region}"
+    s3_bucket_name = "${var.s3_bucket_name}"
   }
 }
 
