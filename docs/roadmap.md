@@ -27,6 +27,7 @@
  - Code coverage
  - go vet
 - Design for supporting multiple users in the same AWS Account(?)
+- Refactor IAM policy implementation in Terraform using data source - https://www.terraform.io/docs/providers/aws/d/iam_policy_document.html
 
 (REM): I think it must work in AWS free tier for initial open sourcing
 
