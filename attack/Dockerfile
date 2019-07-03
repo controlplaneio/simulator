@@ -1,33 +1,35 @@
-FROM kalilinux/kali-linux-docker:latest AS attack
+#FROM kalilinux/kali-linux-docker:latest AS attack
+FROM ubuntu:latest
 
 RUN apt -y update        \
     && apt -y install    \
     openssh-server       \
-    metasploit-framework \
-    exploitdb            \
-    amap                 \
-    dirb                 \
-    dnschef              \
-    dnsenum              \
-    dnsmap               \
-    dnsrecon             \
-    dnswalk              \
+#    metasploit-framework \
+#    exploitdb            \
+#    amap                 \
+#    dirb                 \
+#    dnschef              \
+#    dnsenum              \
+#    dnsmap               \
+#    dnsrecon             \
+#    dnswalk              \
     hping3               \ 
-    ndiff                \ 
-    netdiscover          \ 
-    nikto                \
+#    ndiff                \ 
+#    netdiscover          \ 
+#    nikto                \
     nmap                 \
-    padbuster            \
-    reaver               \
-    responder            \
-    sqlmap               \
-    socat                \
-    tshark               \
-    volafox              \
-    volatility           \
-    wireshark            \
-    wpscan               \
-    yersinia
+#    padbuster            \
+#    reaver               \
+#    responder            \
+#    sqlmap               \
+#    socat                \
+#    tshark               \
+#    volafox              \
+#    volatility           \
+#    wireshark            \
+#    wpscan               \
+#    yersinia             \
+    curl
 
 RUN mkdir -p /root/.ssh
 RUN mkdir /var/run/sshd
