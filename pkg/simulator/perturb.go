@@ -54,7 +54,7 @@ func (po *PerturbOptions) ToArguments() []string {
 }
 
 func (po *PerturbOptions) String() string {
-	return strings.Join(po.ToArguments(), " ")
+	return strings.TrimSpace(strings.Join(po.ToArguments(), " "))
 }
 
 const (
