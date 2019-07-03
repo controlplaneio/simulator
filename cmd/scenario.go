@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
@@ -43,54 +41,7 @@ func newScenarioLaunchCommand() *cobra.Command {
 			}
 
 			scenarioID := args[0]
-
-			manifestPath := scenario.ManifestPath()
-			manifest, err := scenario.LoadManifest(manifestPath)
-
-			if err != nil {
-				return err
-			}
-
-			if !manifest.Contains(scenarioID) {
-				return errors.Errorf("scenario %s not found", scenarioID)
-			}
-
-			tfo, err := simulator.Status()
-			if !tfo.IsUsable() {
-				return errors.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
-			}
-
-			scenarioPath := manifest.Find(scenarioID).Path
-
-			po := simulator.MakePerturbOptions(*tfo, scenarioPath)
-			fmt.Println("Converted usable terraform output into perturb options")
-			fmt.Printf("%#v", po)
-			c, err := tfo.ToSSHConfig()
-			if err != nil {
-				return err
-			}
-
-			cp, err := util.ExpandTilde("~/.ssh/config")
-			if err != nil {
-				return err
-			}
-
-			// BUG: (rem) doesnt work when SSH config doesnt exist
-			written, err := util.EnsureFile(*cp, *c)
-			if err != nil {
-				return err
-			}
-
-			if !written {
-				fmt.Printf("Please add the following lines to your ssh config\n---\n%s\n---\n", *c)
-			}
-
-			_, err = simulator.Perturb(&po)
-			if err != nil {
-				return errors.Wrapf(err, "Error running perturb with %#v", po)
-			}
-
-			return nil
+			return simulator.Launch(scenarioID)
 		},
 	}
 
