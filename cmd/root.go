@@ -22,9 +22,10 @@ debugging Kubernetes
 	cmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "c", "", "Path to the simulator config file")
 	cobra.OnInitialize(initConfig)
 
+	cmd.AddCommand(newConfigCommand())
 	cmd.AddCommand(newInfraCommand())
 	cmd.AddCommand(newScenarioCommand())
-	cmd.AddCommand(newConfigCommand())
+	cmd.AddCommand(newSSHCommand())
 	cmd.AddCommand(newVersionCommand())
 
 	cmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")

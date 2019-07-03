@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func NewConfigGetCommand() *cobra.Command {
+func newConfigGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `get <key>`,
 		Short: "Gets the value of a setting",
@@ -33,7 +33,7 @@ func newConfigCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	cmd.AddCommand(NewConfigGetCommand())
+	cmd.AddCommand(newConfigGetCommand())
 
 	return cmd
 }

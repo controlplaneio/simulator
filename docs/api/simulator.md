@@ -35,6 +35,15 @@ func InitIfNeeded() error
 InitIfNeeded checks if there is a terraform state folder and calls terraform
 init if not
 
+#### func  Launch
+
+```go
+func Launch(id string) error
+```
+Launch runs perturb.sh to setup a scenario with the supplied `id` assuming the
+infrastructure has been created. Returns an error if the infrastructure is not
+ready or something goes wrong
+
 #### func  Perturb
 
 ```go
