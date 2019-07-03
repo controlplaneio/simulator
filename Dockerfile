@@ -127,8 +127,8 @@ ADD ./simulation-scripts /app/simulation-scripts
 ADD ./goss.yaml /app
 
 # Add simulator.yaml config file
-# TODO: (rem) make this build-time configurable with an ARG
-ADD ./simulator.yaml /app
+ARG config_file=./simulator.yaml
+ADD ${config_file} /app
 
 ENV SIMULATOR_SCENARIOS_DIR /app/simulation-scripts/
 ENV SIMULATOR_TF_DIR /app/terraform
