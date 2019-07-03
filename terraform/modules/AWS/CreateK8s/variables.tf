@@ -34,4 +34,7 @@ variable "private_subnet_id" {
 variable "iam_instance_profile_id" {
   description = "IAM instance S3 access profile id"
 }
+variable "s3_bucket_name" {
+  description = "Name  of s3 bucket"
+}
 

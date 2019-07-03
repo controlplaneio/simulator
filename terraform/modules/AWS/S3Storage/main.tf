@@ -3,7 +3,7 @@
 #
 
 resource "aws_s3_bucket" "k8sjoin" {
-  bucket        = "securus-config"
+  bucket        = "${var.s3_bucket_name}"
   acl           = "private"
   force_destroy = true
 
@@ -49,7 +49,7 @@ resource "aws_iam_role_policy" "securus_s3_access_policy" {
     {
       "Effect": "Allow",
       "Action": ["s3:ListBucket"],
-      "Resource": ["arn:aws:s3:::securus-config"]
+      "Resource": ["arn:aws:s3:::${var.s3_bucket_name}"]
     },
     {
       "Effect": "Allow",
@@ -58,7 +58,7 @@ resource "aws_iam_role_policy" "securus_s3_access_policy" {
         "s3:GetObject",
         "s3:DeleteObject"
       ],
-      "Resource": ["arn:aws:s3:::securus-config/*"]
+      "Resource": ["arn:aws:s3:::${var.s3_bucket_name}/*"]
     }
   ]
 }

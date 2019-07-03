@@ -82,3 +82,6 @@ variable "public_avail_zone" {
   default     = "eu-west-1a"
 }
 
+variable "s3_bucket_name" {
+  description = "name of S3 bucket"
+}
