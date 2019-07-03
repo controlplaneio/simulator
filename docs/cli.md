@@ -26,40 +26,17 @@ Available Commands:
   help        Help about any command
   infra       Interact with AWS to create, query and destroy the required infrastructure for scenarios
   scenario    Interact with scenarios
+  ssh         Interact with the cluster
   version     Prints simulator version
 
 Flags:
-  -c, --config-file string     the directory where simulator.yaml can be found
+  -c, --config-file string     Path to the simulator config file
   -h, --help                   help for simulator
-  -l, --loglevel string        the level of detail in output logging (default "info")
-  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
-  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform")
 
 Use "simulator [command] --help" for more information about a command.
-</pre>
-
-### Scenarios
-
-<pre>
-Interact with scenarios
-
-Usage:
-  simulator scenario [command]
-
-Available Commands:
-  launch      Launches a scenario
-  list        Lists available scenarios
-
-Flags:
-  -h, --help   help for scenario
-
-Global Flags:
-  -c, --config-file string     the directory where simulator.yaml can be found
-  -l, --loglevel string        the level of detail in output logging (default "info")
-  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
-  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
-
-Use "simulator scenario [command] --help" for more information about a command.
 </pre>
 
 ### Infrastructure
@@ -79,12 +56,59 @@ Flags:
   -h, --help   help for infra
 
 Global Flags:
-  -c, --config-file string     the directory where simulator.yaml can be found
-  -l, --loglevel string        the level of detail in output logging (default "info")
-  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
-  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform")
 
 Use "simulator infra [command] --help" for more information about a command.
+</pre>
+
+### Scenarios
+
+<pre>
+Interact with scenarios
+
+Usage:
+  simulator scenario [command]
+
+Available Commands:
+  launch      Launches a scenario
+  list        Lists available scenarios
+
+Flags:
+  -h, --help   help for scenario
+
+Global Flags:
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform")
+
+Use "simulator scenario [command] --help" for more information about a command.
+</pre>
+
+### SSH
+
+<pre>
+Interact with the cluster
+
+Usage:
+  simulator ssh [command]
+
+Available Commands:
+  config      Interact with simulator config
+
+Flags:
+  -h, --help   help for ssh
+
+Global Flags:
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform")
+
+Use "simulator ssh [command] --help" for more information about a command.
 </pre>
 
 ### Config
@@ -102,10 +126,10 @@ Flags:
   -h, --help   help for config
 
 Global Flags:
-  -c, --config-file string     the directory where simulator.yaml can be found
-  -l, --loglevel string        the level of detail in output logging (default "info")
-  -s, --scenarios-dir string   the level of detail in output logging (default "./simulation-scripts")
-  -t, --tf-dir string          the level of detail in output logging (default "./terraform")
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform")
 
 Use "simulator config [command] --help" for more information about a command.
 </pre>

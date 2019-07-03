@@ -17,16 +17,22 @@ If you need to include bsah code snippets you will need to change how the templa
 ${help}
 </pre>
 
+### Infrastructure
+
+<pre>
+${infra_help}
+</pre>
+
 ### Scenarios
 
 <pre>
 ${scenario_help}
 </pre>
 
-### Infrastructure
+### SSH
 
 <pre>
-${infra_help}
+${ssh_help}
 </pre>
 
 ### Config
