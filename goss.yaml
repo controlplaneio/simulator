@@ -1,14 +1,12 @@
 file:
 # Has the necessary parts of the src tree to launch a scenario
-  /app/Makefile:
-    exists: true
 {{- range mkSlice "/app/simulation-scripts" "/app/terraform"}}
   {{.}}:
     filetype: directory
     exists: true
 {{end}}
-# Has an ssh keypair
-{{- range mkSlice "/home/launch/.ssh/id_rsa" "/home/launch/.ssh/id_rsa.pub"}}
+# Has an ssh keypair and simulator config file
+{{- range mkSlice "/home/launch/.ssh/id_rsa" "/home/launch/.ssh/id_rsa.pub" "/app/simulator.yaml"}}
   {{.}}:
     exists: true
 {{end}}
@@ -16,7 +14,7 @@ file:
 
 # Has the necessary system packages for launching a scenario
 package:
-{{- range mkSlice "curl" "make" "openssh-client" "awscli" }}
+{{- range mkSlice "openssh-client" "awscli" }}
   {{.}}:
     installed: true
 {{end}}

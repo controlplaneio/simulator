@@ -1,13 +1,11 @@
 #----------------------#
-# Deps, Build and Test #
+# Dependencies         #
 #----------------------#
-FROM debian:buster-slim AS build-and-test
+FROM debian:buster-slim AS dependencies
 
 RUN apt-get update        \
     && apt-get install -y \
     golang                \
-    build-essential       \
-    git                   \
     ca-certificates       \
     curl                  \
     unzip
@@ -33,6 +31,21 @@ RUN chmod +x /usr/local/bin/yq
 ENV GOSS_VERSION v0.3.7
 RUN curl -L https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 -o /usr/local/bin/goss
 RUN chmod +rx /usr/local/bin/goss
+
+#-----------------------#
+# Golang Build and Test #
+#-----------------------#
+FROM debian:buster-slim AS build-and-test
+
+RUN apt-get update        \
+    && apt-get install -y \
+    golang                \
+    build-essential       \
+    git                   \
+    ca-certificates       \
+    unzip
+
+COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
 
 # Setup non-root build user
 RUN addgroup --quiet build && adduser --quiet --disabled-password --gecos "" --ingroup build build
@@ -78,11 +91,6 @@ RUN make test
 #------------------#
 FROM debian:buster-slim
 
-ENV TERRAFORM_VERSION 0.12.3
-ENV JQ_VERSION 1.6
-ENV YQ_VERSION 2.7.2
-ENV GOSS_VERSION v0.3.7
-
 RUN \
   DEBIAN_FRONTEND=noninteractive \
     apt update && apt install --assume-yes --no-install-recommends \
@@ -105,10 +113,10 @@ COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalon
 RUN echo '[ ! -z "$TERM" ] && launch-motd' >> /etc/bash.bashrc
 
 # Use 3rd party dependencies from build
-COPY --from=build-and-test /usr/local/bin/jq /usr/local/bin/jq
-COPY --from=build-and-test /usr/local/bin/yq /usr/local/bin/yq
-COPY --from=build-and-test /usr/local/bin/goss /usr/local/bin/goss
-COPY --from=build-and-test /usr/local/bin/terraform /usr/local/bin/terraform
+COPY --from=dependencies /usr/local/bin/jq /usr/local/bin/jq
+COPY --from=dependencies /usr/local/bin/yq /usr/local/bin/yq
+COPY --from=dependencies /usr/local/bin/goss /usr/local/bin/goss
+COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
 
 # Copy statically linked simulator binary
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/dist/simulator /usr/local/bin/simulator
@@ -126,6 +134,9 @@ ADD ./simulation-scripts /app/simulation-scripts
 ADD ./goss.yaml /app
 
 # Add simulator.yaml config file
+# The path to the config file can be supplied at build time to provide a custom conig from the host
+#
+# docker build --build-arg config_file=/path/to/simulator.yaml .
 ARG config_file=./simulator.yaml
 ADD ${config_file} /app
 
