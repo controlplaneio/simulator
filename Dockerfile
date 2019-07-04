@@ -1,13 +1,12 @@
-#----------------------#
-# Dependencies         #
-#----------------------#
+#--------------------------#
+# Dependencies and Linting #
+#--------------------------#
 FROM debian:buster-slim AS dependencies
 
-RUN apt-get update        \
-    && apt-get install -y \
-    golang                \
-    ca-certificates       \
-    curl                  \
+RUN apt-get update                                 \
+    && apt-get install -y  --no-install-recommends \
+    ca-certificates                                \
+    curl                                           \
     unzip
 
 # Install terraform
@@ -32,17 +31,39 @@ ENV GOSS_VERSION v0.3.7
 RUN curl -L https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 -o /usr/local/bin/goss
 RUN chmod +rx /usr/local/bin/goss
 
+# Install Hadolint
+ENV HADOLINT_VERSION v1.16.3
+RUN curl https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 -Lo /usr/local/bin/hadolint
+RUN chmod +x /usr/local/bin/hadolint
+
+# Setup non-root lint user
+ARG lint_user=lint
+RUN useradd -ms /bin/bash ${lint_user}
+
+# Copy dockerfiles and hadolint configs
+RUN mkdir /app
+COPY Dockerfile  /app
+COPY .hadolint.yaml  /app
+COPY attack/ /app/attack/
+RUN chown -R ${lint_user}:${lint_user} /app
+
+WORKDIR /app
+USER ${lint_user}
+
+RUN hadolint Dockerfile
+RUN hadolint attack/Dockerfile
+
 #-----------------------#
 # Golang Build and Test #
 #-----------------------#
 FROM debian:buster-slim AS build-and-test
 
-RUN apt-get update        \
-    && apt-get install -y \
-    golang                \
-    build-essential       \
-    git                   \
-    ca-certificates       \
+RUN apt-get update                                \
+    && apt-get install -y --no-install-recommends \
+    golang                                        \
+    build-essential                               \
+    git                                           \
+    ca-certificates                               \
     unzip
 
 COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
@@ -72,7 +93,7 @@ WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
 RUN go mod download
 
 # Add the full source tree
-ADD .  /go/src/github.com/controlplaneio/simulator-standalone/
+COPY .  /go/src/github.com/controlplaneio/simulator-standalone/
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
 
 # TODO: (rem) why is this owned by root after the earlier chmod?
@@ -122,30 +143,31 @@ COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/dist/simulator /usr/local/bin/simulator
 
 # Setup non-root launch user
-RUN useradd -ms /bin/bash launch
+ARG launch_user=launch
+RUN useradd -ms /bin/bash ${launch_user}
 RUN mkdir /app
-RUN chown -R launch:launch /app
+RUN chown -R ${launch_user}:${launch_user} /app
 
 # Add terraform and perturb/scenario scripts to the image
-ADD ./terraform /app/terraform
-ADD ./simulation-scripts /app/simulation-scripts
+COPY ./terraform /app/terraform
+COPY ./simulation-scripts /app/simulation-scripts
 
 # Add goss.yaml to verify the container
-ADD ./goss.yaml /app
+COPY ./goss.yaml /app
 
 # Add simulator.yaml config file
 # The path to the config file can be supplied at build time to provide a custom conig from the host
 #
 # docker build --build-arg config_file=/path/to/simulator.yaml .
 ARG config_file=./simulator.yaml
-ADD ${config_file} /app
+COPY ${config_file} /app
 
 ENV SIMULATOR_SCENARIOS_DIR /app/simulation-scripts/
 ENV SIMULATOR_TF_DIR /app/terraform/deployments/AwsSimulatorStandalone
 ENV TF_VAR_shared_credentials_file /app/credentials
 
-USER launch
-RUN ssh-keygen -f /home/launch/.ssh/id_rsa -t rsa -N ''
+USER ${launch_user}
+RUN ssh-keygen -f /home/${launch_user}/.ssh/id_rsa -t rsa -N ''
 WORKDIR /app
 
 CMD [ "/bin/bash" ]
