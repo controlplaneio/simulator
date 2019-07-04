@@ -20,7 +20,7 @@ run: docker-build ## Runs the simulator - the build stage of the container runs 
 	docker run                                             \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials      \
 		-v $(SIMULATOR_KEY_PATH):/home/launch-user/.ssh      \
-		--rm -it $(CONTAINER_NAME_LATEST)                    \
+		--rm --init -it $(CONTAINER_NAME_LATEST)             \
 		bash
 
 .PHONY: docker-build
