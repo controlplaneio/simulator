@@ -5,7 +5,7 @@ VERSION := 0.1-dev
 
 include prelude.mk
 
-SIMULATOR_CREDS_PATH := $(HOME)/.aws/credentials
+SIMULATOR_AWS_CREDS_PATH := $(HOME)/.aws/
 SIMULATOR_KEY_PATH := $(HOME)/.ssh/
 
 .DEFAULT_GOAL := help
@@ -17,10 +17,13 @@ all: test
 
 .PHONY: run
 run: docker-build ## Runs the simulator - the build stage of the container runs all the cli tests
-	docker run                                             \
-		-v $(SIMULATOR_AWS_CREDS_PATH):/app/credentials      \
-		-v $(SIMULATOR_KEY_PATH):/home/launch-user/.ssh      \
-		--rm --init -it $(CONTAINER_NAME_LATEST)             \
+	docker run                                                          \
+		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
+		-v $(SIMULATOR_KEY_PATH):/home/launch/.ssh                        \
+		-e AWS_ACCESS_KEY_ID                                              \
+		-e AWS_DEFAULT_REGION                                             \
+		-e AWS_SECRET_ACCESS_KEY                                          \
+		--rm --init -it $(CONTAINER_NAME_LATEST)                          \
 		bash
 
 .PHONY: docker-build
@@ -29,9 +32,9 @@ docker-build: ## Builds the launch container
 
 .PHONY: docker-test
 docker-test: docker-build ## Run the tests
-	@docker run -v                                   \
-		$(SIMULATOR_AWS_CREDS_PATH):/app/credentials   \
-		--rm -t $(CONTAINER_NAME_LATEST)               \
+	@docker run                                                         \
+		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
+		--rm -t $(CONTAINER_NAME_LATEST)                                  \
 		goss validate
 
 
