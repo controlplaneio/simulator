@@ -5,7 +5,6 @@ import (
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 )
 
@@ -42,22 +41,7 @@ func (m *Manifest) Find(id string) *Scenario {
 	return nil
 }
 
-const (
-	manifestPathEnvVar  = "SIMULATOR_SCENARIOS_DIR"
-	defaultManifestPath = "./simulation-scripts/"
-	manifestFileName    = "scenarios.yaml"
-)
-
-// ManifestPath reads the manifest path from the environment variable `SIMULATOR_SCENARIOS_DIR`
-// or uses a default value of `../simulation-scripts`
-func ManifestPath() string {
-	var manifestPath = os.Getenv(manifestPathEnvVar)
-	if manifestPath == "" {
-		manifestPath = defaultManifestPath
-	}
-
-	return manifestPath
-}
+const manifestFileName = "scenarios.yaml"
 
 // LoadManifest loads a manifest named `scenarios.yaml` from the supplied path
 func LoadManifest(manifestPath string) (*Manifest, error) {

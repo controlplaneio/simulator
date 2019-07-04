@@ -3,7 +3,6 @@ package scenario_test
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/stretchr/testify/assert"
-	"os"
 	"testing"
 )
 
@@ -13,17 +12,6 @@ func Test_LoadManifest(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.NotEqual(t, len(manifest.Scenarios), 0, "Returned no scenarios")
-}
-
-func Test_ManifestPath_default(t *testing.T) {
-	p := scenario.ManifestPath()
-	assert.Equal(t, p, "./simulation-scripts/")
-}
-
-func Test_ManifestPath_custom(t *testing.T) {
-	os.Setenv("SIMULATOR_SCENARIOS_DIR", "/some/path")
-	p := scenario.ManifestPath()
-	assert.Equal(t, p, "/some/path", "manifestPath did not set custom path")
 }
 
 func Test_Contains(t *testing.T) {

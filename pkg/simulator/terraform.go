@@ -5,11 +5,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	tfDirEnvVar  = "SIMULATOR_TF_DIR"
-	defaultTfDir = "./terraform/deployments/AwsSimulatorStandalone"
-	tfStateDir   = "/.terraform"
-)
+const tfStateDir = "/.terraform"
 
 // PrepareTfArgs takes a string with the terraform command desired and returns a slice of strings
 // containing the complete list of arguments including the command to use when exec'ing terraform
@@ -32,16 +28,15 @@ func PrepareTfArgs(cmd string) []string {
 }
 
 // Terraform wraps running terraform as a child process
-func Terraform(cmd string) (*string, error) {
+func Terraform(wd, cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1"}
-	wd := util.EnvOrDefault(tfDirEnvVar, defaultTfDir)
 	return util.Run(wd, env, "terraform", args...)
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
-func InitIfNeeded() error {
-	stateDir := util.EnvOrDefault(tfDirEnvVar, defaultTfDir) + tfStateDir
+func InitIfNeeded(tfDir string) error {
+	stateDir := tfDir + tfStateDir
 	hasStateDir, err := util.FileExists(stateDir)
 	if err != nil || hasStateDir {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
@@ -62,10 +57,9 @@ func InitIfNeeded() error {
 		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
 	}
 
-	tfDir := util.EnvOrDefault(tfDirEnvVar, defaultTfDir)
 	err = EnsureTfVarsFile(tfDir, *publicKey, accessCIDR)
 
-	_, err = Terraform("init")
+	_, err = Terraform(tfDir, "init")
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
 	}
@@ -76,30 +70,30 @@ func InitIfNeeded() error {
 // -#-
 
 // Create runs terraform init, plan, apply to create the necessary infratsructure to run scenarios
-func Create() error {
-	err := InitIfNeeded()
+func Create(tfDir string) error {
+	err := InitIfNeeded(tfDir)
 	if err != nil {
 		return err
 	}
 
-	_, err = Terraform("plan")
+	_, err = Terraform(tfDir, "plan")
 	if err != nil {
 		return err
 	}
 
-	_, err = Terraform("apply")
+	_, err = Terraform(tfDir, "apply")
 	return err
 }
 
 // Status calls terraform output to get the state of the infrastruture and parses the output for
 // programmatic use
-func Status() (*TerraformOutput, error) {
-	err := InitIfNeeded()
+func Status(tfDir string) (*TerraformOutput, error) {
+	err := InitIfNeeded(tfDir)
 	if err != nil {
 		return nil, err
 	}
 
-	out, err := Terraform("output")
+	out, err := Terraform(tfDir, "output")
 	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
 		return nil, err
@@ -109,12 +103,12 @@ func Status() (*TerraformOutput, error) {
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy() error {
-	err := InitIfNeeded()
+func Destroy(tfDir string) error {
+	err := InitIfNeeded(tfDir)
 	if err != nil {
 		return err
 	}
 
-	_, err = Terraform("destroy")
+	_, err = Terraform(tfDir, "destroy")
 	return err
 }

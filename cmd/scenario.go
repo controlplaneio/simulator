@@ -5,6 +5,7 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func newScenarioListCommand() *cobra.Command {
@@ -12,7 +13,7 @@ func newScenarioListCommand() *cobra.Command {
 		Use:   `list`,
 		Short: "Lists available scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			manifestPath := scenario.ManifestPath()
+			manifestPath := viper.GetString("scenarios-dir")
 			manifest, err := scenario.LoadManifest(manifestPath)
 
 			if err != nil {
@@ -40,8 +41,10 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return fmt.Errorf("scenario id is required")
 			}
 
+			tfDir := viper.GetString("tf-dir")
+			scenariosDir := viper.GetString("scenarios-dir")
 			scenarioID := args[0]
-			return simulator.Launch(scenarioID)
+			return simulator.Launch(tfDir, scenariosDir, scenarioID)
 		},
 	}
 

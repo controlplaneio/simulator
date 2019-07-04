@@ -9,9 +9,8 @@ import (
 
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming the infrastructure has been created.
 // Returns an error if the infrastructure is not ready or something goes wrong
-func Launch(id string) error {
-	manifestPath := scenario.ManifestPath()
-	manifest, err := scenario.LoadManifest(manifestPath)
+func Launch(tfDir, scenariosDir, id string) error {
+	manifest, err := scenario.LoadManifest(scenariosDir)
 	if err != nil {
 		return err
 	}
@@ -20,7 +19,7 @@ func Launch(id string) error {
 		return errors.Errorf("scenario %s not found", id)
 	}
 
-	tfo, err := Status()
+	tfo, err := Status(tfDir)
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
 	}

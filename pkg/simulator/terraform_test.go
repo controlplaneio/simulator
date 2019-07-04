@@ -3,7 +3,6 @@ package simulator_test
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/stretchr/testify/assert"
-	"os"
 	"testing"
 )
 
@@ -27,23 +26,20 @@ func Test_PrepareTfArgs(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
-	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	tfo, err := simulator.Status()
+	tfo, err := simulator.Status(fixture("noop-tf-dir"))
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfo, "Got no terraform output")
 }
 
 func Test_Create(t *testing.T) {
-	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	err := simulator.Create()
+	err := simulator.Create(fixture("noop-tf-dir"))
 
 	assert.Nil(t, err)
 }
 
 func Test_Destroy(t *testing.T) {
-	os.Setenv("SIMULATOR_TF_DIR", fixture("noop-tf-dir"))
-	err := simulator.Destroy()
+	err := simulator.Destroy(fixture("noop-tf-dir"))
 
 	assert.Nil(t, err)
 }

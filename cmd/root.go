@@ -40,6 +40,7 @@ debugging Kubernetes
 }
 
 func initConfig() {
+	viper.SetConfigType("yaml")
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
