@@ -119,7 +119,6 @@ RUN mkdir /app
 RUN chown -R launch:launch /app
 
 # Add terraform and perturb/scenario scripts to the image
-COPY ./Makefile /app/Makefile
 ADD ./terraform /app/terraform
 ADD ./simulation-scripts /app/simulation-scripts
 
@@ -131,7 +130,7 @@ ARG config_file=./simulator.yaml
 ADD ${config_file} /app
 
 ENV SIMULATOR_SCENARIOS_DIR /app/simulation-scripts/
-ENV SIMULATOR_TF_DIR /app/terraform
+ENV SIMULATOR_TF_DIR /app/terraform/deployments/AwsSimulatorStandalone
 ENV TF_VAR_shared_credentials_file /app/credentials
 
 USER launch
