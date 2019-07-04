@@ -41,10 +41,12 @@ func newScenarioLaunchCommand() *cobra.Command {
 				return fmt.Errorf("scenario id is required")
 			}
 
+			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
 			scenariosDir := viper.GetString("scenarios-dir")
 			scenarioID := args[0]
-			return simulator.Launch(tfDir, scenariosDir, scenarioID)
+
+			return simulator.Launch(tfDir, scenariosDir, bucket, scenarioID)
 		},
 	}
 

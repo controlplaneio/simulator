@@ -35,7 +35,7 @@ func Terraform(wd, cmd string) (*string, error) {
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
-func InitIfNeeded(tfDir string) error {
+func InitIfNeeded(tfDir, bucketName string) error {
 	stateDir := tfDir + tfStateDir
 	hasStateDir, err := util.FileExists(stateDir)
 	if err != nil || hasStateDir {
@@ -57,7 +57,7 @@ func InitIfNeeded(tfDir string) error {
 		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
 	}
 
-	err = EnsureTfVarsFile(tfDir, *publicKey, accessCIDR)
+	err = EnsureTfVarsFile(tfDir, *publicKey, accessCIDR, bucketName)
 
 	_, err = Terraform(tfDir, "init")
 	if err != nil {
@@ -70,8 +70,8 @@ func InitIfNeeded(tfDir string) error {
 // -#-
 
 // Create runs terraform init, plan, apply to create the necessary infratsructure to run scenarios
-func Create(tfDir string) error {
-	err := InitIfNeeded(tfDir)
+func Create(tfDir, bucketName string) error {
+	err := InitIfNeeded(tfDir, bucketName)
 	if err != nil {
 		return err
 	}
@@ -87,8 +87,8 @@ func Create(tfDir string) error {
 
 // Status calls terraform output to get the state of the infrastruture and parses the output for
 // programmatic use
-func Status(tfDir string) (*TerraformOutput, error) {
-	err := InitIfNeeded(tfDir)
+func Status(tfDir, bucketName string) (*TerraformOutput, error) {
+	err := InitIfNeeded(tfDir, bucketName)
 	if err != nil {
 		return nil, err
 	}
@@ -103,8 +103,8 @@ func Status(tfDir string) (*TerraformOutput, error) {
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy(tfDir string) error {
-	err := InitIfNeeded(tfDir)
+func Destroy(tfDir, bucketName string) error {
+	err := InitIfNeeded(tfDir, bucketName)
 	if err != nil {
 		return err
 	}

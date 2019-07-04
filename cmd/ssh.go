@@ -12,9 +12,10 @@ func newSSHConfigCommand() *cobra.Command {
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			p := viper.GetString("scenarios-dir")
+			scenariosDir := viper.GetString("scenarios-dir")
+			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			cfg, err := simulator.Config(tfDir, p)
+			cfg, err := simulator.Config(tfDir, scenariosDir, bucket)
 			if err != nil {
 				return err
 			}

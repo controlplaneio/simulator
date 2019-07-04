@@ -28,12 +28,21 @@ debugging Kubernetes
 	cmd.AddCommand(newSSHCommand())
 	cmd.AddCommand(newVersionCommand())
 
+	cmd.PersistentFlags().StringP("bucket", "b", "",
+		"The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'")
+	cmd.MarkFlagRequired("bucket")
+	viper.BindPFlag("bucket", cmd.PersistentFlags().Lookup("bucket"))
+
 	cmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
-	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AwsSimulatorStandalone", "Path to a directory containing the infrastructure scripts")
-	// TODO: (rem) this is also used to locate the perturb.sh script which may be subsumed by this app
-	cmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts", "Path to a directory containing a scenario manifest")
 	viper.BindPFlag("loglevel", cmd.PersistentFlags().Lookup("loglevel"))
+
+	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AwsSimulatorStandalone",
+		"Path to a directory containing the infrastructure scripts")
 	viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir"))
+
+	// TODO: (rem) this is also used to locate the perturb.sh script which may be subsumed by this app
+	cmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
+		"Path to a directory containing a scenario manifest")
 	viper.BindPFlag("scenarios-dir", cmd.PersistentFlags().Lookup("scenarios-dir"))
 
 	return cmd

@@ -7,8 +7,8 @@ import (
 
 // Config returns a pointer to string containing the stanzas to add to an ssh config file so that the kubernetes nodes
 // are connectable directly via the bastion or an error if the infrastructure has not been created
-func Config(tfDir, scenarioPath string) (*string, error) {
-	tfo, err := Status(tfDir)
+func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
+	tfo, err := Status(tfDir, bucketName)
 	if err != nil {
 		return nil, err
 	}

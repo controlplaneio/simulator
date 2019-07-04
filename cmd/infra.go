@@ -12,8 +12,9 @@ func newCreateCommand() *cobra.Command {
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			return simulator.Create(tfDir)
+			return simulator.Create(tfDir, bucket)
 		},
 	}
 
@@ -25,8 +26,9 @@ func newStatusCommand() *cobra.Command {
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			tfo, err := simulator.Status(tfDir)
+			tfo, err := simulator.Status(tfDir, bucket)
 
 			fmt.Println(tfo)
 
@@ -42,8 +44,9 @@ func newDestroyCommand() *cobra.Command {
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			return simulator.Destroy(tfDir)
+			return simulator.Destroy(tfDir, bucket)
 		},
 	}
 
