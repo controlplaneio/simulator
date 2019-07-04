@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 )
 
@@ -14,11 +13,8 @@ func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
 	}
 
 	if !tfo.IsUsable() {
-		return nil, errors.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
+		return nil, errors.Errorf("No infrastructure, please run simulator infra create")
 	}
 
-	po := MakePerturbOptions(*tfo, scenarioPath)
-	fmt.Println("Converted usable terraform output into perturb options")
-	fmt.Printf("%#v", po)
 	return tfo.ToSSHConfig()
 }

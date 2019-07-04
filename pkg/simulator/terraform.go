@@ -94,6 +94,10 @@ func Status(tfDir, bucketName string) (*TerraformOutput, error) {
 	}
 
 	out, err := Terraform(tfDir, "output")
+	if err != nil {
+		return nil, err
+	}
+
 	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
 		return nil, err

@@ -21,14 +21,12 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 
 	tfo, err := Status(tfDir, bucketName)
 	if !tfo.IsUsable() {
-		return errors.Errorf("No infrastructure, please run simulator infra create:\n %#v", tfo)
+		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}
 
 	scenarioPath := manifest.Find(id).Path
 
 	po := MakePerturbOptions(*tfo, scenarioPath)
-	fmt.Println("Converted usable terraform output into perturb options")
-	fmt.Printf("%#v", po)
 	c, err := tfo.ToSSHConfig()
 	if err != nil {
 		return err

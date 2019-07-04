@@ -23,7 +23,6 @@ func wdMust(wd string) string {
 // Run runs a child process and returns its buffer stdout.  Run also tees the output to stdout of this process, `env` will
 // be appended to the current environment.  `wd` is the working directory for the child
 func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
-	Debug("Preparing to run: ", cmd, args)
 	child := exec.Command(cmd, args...)
 
 	child.Env = append(os.Environ(), env...)
@@ -37,14 +36,12 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 
 	dir := wdMust(wd)
 
-	Debug("Setting child working directory to ", dir)
 	child.Dir = dir
 
 	// Copy child stdout to stdout but also into a buffer to be returned
 	var buf bytes.Buffer
 	tee := io.TeeReader(childOut, &buf)
 
-	Debug("Running child")
 	err := child.Start()
 	if err != nil {
 		Debug("Error starting child process: ", err)

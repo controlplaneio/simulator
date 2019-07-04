@@ -78,7 +78,6 @@ func ExpandTilde(path string) (*string, error) {
 
 // FileExists checks whether a path exists
 func FileExists(path string) (bool, error) {
-	Debug("Stating", path)
 	_, err := os.Stat(path)
 	if err == nil {
 		return true, nil
