@@ -4,7 +4,8 @@
 #
 set -e
 sourceDir="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export belowDir=$(echo ${sourceDir}| sed -e 's/\/scripts*$//g')
+belowDir=$(echo "${sourceDir}" | sed -e 's/\/scripts*$//g')
+export belowDir
 
 if [[ ${OSTYPE} =~ ^darwin* ]]; then
 	export tfdoc="terraform-docs-darwin"
@@ -15,7 +16,7 @@ else
 	exit 1
 fi
 
-[ ! -x ${belowDir}/bin/${tfdoc} 2>/dev/null ] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
+[[ ! -x ${belowDir}/bin/${tfdoc} ]] && { echo -e "This script requires terraform-docs available from <https://github.com/segmentio/terraform-docs>....exiting"; exit 1; }
 
 if [ "$#" -ne 1 ]; then
 	echo "Usage: $0 <base-directory>"
@@ -26,10 +27,12 @@ fi
 directory=$1
 readmeName="README-auto.md"
 
+# shellcheck disable=SC2156
 find "${directory}" -type d -not -path "${directory}/.git/*" -not -path "${directory}/.terraform/*" -exec bash -c '${belowDir}/bin/${tfdoc} md "{}"  >  "{}"/README-auto.md;' \;
 
 find "${directory}" -name "${readmeName}" -size 1c -type f -delete
 
+# shellcheck disable=SC1117
 printf "\n\033[35;1mUpdating the following READMEs with terraform-docs\033[0m\n\n"
 
 find "${directory}" -name "${readmeName}"

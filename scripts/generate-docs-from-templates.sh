@@ -20,6 +20,7 @@ main() {
 }
 readonly -f main
 
+# shellcheck disable=SC2034
 generate_readme() {
   local -r template="$(cat ./doc-templates/README.template.md)"
   local -r make="$(make -s help-no-color)"
@@ -29,6 +30,7 @@ generate_readme() {
 }
 readonly -f generate_readme
 
+# shellcheck disable=SC2034
 generate_cli_usage() {
   local -r template="$(cat ./doc-templates/cli.template.md)"
   local -r config_help="$(./dist/simulator config help)"

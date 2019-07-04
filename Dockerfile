@@ -3,10 +3,11 @@
 #--------------------------#
 FROM debian:buster-slim AS dependencies
 
-RUN apt-get update                                 \
-    && apt-get install -y  --no-install-recommends \
-    ca-certificates                                \
-    curl                                           \
+RUN apt-get update                                                               \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    ca-certificates                                                              \
+    curl                                                                         \
+    shellcheck                                                                   \
     unzip
 
 # Install terraform
@@ -40,30 +41,36 @@ RUN chmod +x /usr/local/bin/hadolint
 ARG lint_user=lint
 RUN useradd -ms /bin/bash ${lint_user}
 
-# Copy dockerfiles and hadolint configs
 RUN mkdir /app
+# Copy Dockerfiles and hadolint configs
 COPY Dockerfile  /app
 COPY .hadolint.yaml  /app
 COPY attack/ /app/attack/
+# Copy shell scripts
+COPY scripts/ /app/scripts/
 RUN chown -R ${lint_user}:${lint_user} /app
 
 WORKDIR /app
 USER ${lint_user}
 
+# Lint Dockerfiles
 RUN hadolint Dockerfile
 RUN hadolint attack/Dockerfile
+
+# Lint shell scripts
+RUN shellcheck scripts/*
 
 #-----------------------#
 # Golang Build and Test #
 #-----------------------#
 FROM debian:buster-slim AS build-and-test
 
-RUN apt-get update                                \
-    && apt-get install -y --no-install-recommends \
-    golang                                        \
-    build-essential                               \
-    git                                           \
-    ca-certificates                               \
+RUN apt-get update                                                               \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential                                                              \
+    ca-certificates                                                              \
+    git                                                                          \
+    golang                                                                       \
     unzip
 
 COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
@@ -112,21 +119,20 @@ RUN make test
 #------------------#
 FROM debian:buster-slim
 
-RUN \
-  DEBIAN_FRONTEND=noninteractive \
-    apt update && apt install --assume-yes --no-install-recommends \
-      bash \
-      awscli \
-      bzip2 \
-      file \
-      ca-certificates \
-      curl \
-      gettext-base \
-      golang \
-      lsb-release \
-      make \
-      openssh-client \
-      gnupg \
+RUN apt update                                                               \
+    && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
+    awscli                                                                   \
+    bash                                                                     \
+    bzip2                                                                    \
+    ca-certificates                                                          \
+    curl                                                                     \
+    file                                                                     \
+    gettext-base                                                             \
+    gnupg                                                                    \
+    golang                                                                   \
+    lsb-release                                                              \
+    make                                                                     \
+    openssh-client                                                           \
  && rm -rf /var/lib/apt/lists/*
 
 # Add login message
