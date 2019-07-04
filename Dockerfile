@@ -76,24 +76,25 @@ RUN apt-get update                                                              
 COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
 
 # Setup non-root build user
-RUN addgroup --quiet build && adduser --quiet --disabled-password --gecos "" --ingroup build build
+ARG build_user=build
+RUN useradd -ms /bin/bash ${build_user}
 
 # Create golang src directory
 RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone
 
 # Create an empty public ssh key file for the tests
-RUN mkdir -p /home/build/.ssh && echo  "ssh-rsa FOR TESTING" > /home/build/.ssh/id_rsa.pub
+RUN mkdir -p /home/${build_user}/.ssh && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/id_rsa.pub
 # Create module cache and copy manifest files
-RUN mkdir -p /home/build/go/pkg/mod
+RUN mkdir -p /home/${build_user}/go/pkg/mod
 COPY ./go.mod /go/src/github.com/controlplaneio/simulator-standalone
 COPY ./go.sum /go/src/github.com/controlplaneio/simulator-standalone
 
 # Give ownership of module cache and src tree to build user
-RUN chown -R build:build /go/src/github.com/controlplaneio/simulator-standalone
-RUN chown -R build:build /home/build/go
+RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone
+RUN chown -R ${build_user}:${build_user} /home/${build_user}/go
 
 # Run all build and test steps as build user
-USER build
+USER ${build_user}
 
 # Install golang module dependencies before copying source to cache them in their own layer
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
@@ -152,7 +153,6 @@ COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalon
 ARG launch_user=launch
 RUN useradd -ms /bin/bash ${launch_user}
 RUN mkdir /app
-RUN chown -R ${launch_user}:${launch_user} /app
 
 # Add terraform and perturb/scenario scripts to the image
 COPY ./terraform /app/terraform
@@ -167,6 +167,8 @@ COPY ./goss.yaml /app
 # docker build --build-arg config_file=/path/to/simulator.yaml .
 ARG config_file=./simulator.yaml
 COPY ${config_file} /app
+
+RUN chown -R ${launch_user}:${launch_user} /app
 
 ENV SIMULATOR_SCENARIOS_DIR /app/simulation-scripts/
 ENV SIMULATOR_TF_DIR /app/terraform/deployments/AwsSimulatorStandalone
