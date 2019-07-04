@@ -3,30 +3,30 @@
 # VPC and Subnet creation
 #
 
-resource "aws_vpc" "securus_vpc" {
+resource "aws_vpc" "simulator_vpc" {
   cidr_block           = "${var.vpc_cidr}"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
-    Name = "Securus VPC"
+    Name = "Simulator VPC"
   }
 }
 
-resource "aws_subnet" "public_subnet" {
-   vpc_id            = "${aws_vpc.securus_vpc.id}"
+resource "aws_subnet" "simulator_public_subnet" {
+   vpc_id            = "${aws_vpc.simulator_vpc.id}"
    cidr_block        = "${var.public_subnet_cidr}"
    availability_zone = "${var.public_avail_zone}"
    tags = {
-     Name = "Securus Public subnet"   
+     Name = "Simulator Public subnet"
    }
 }
 
-resource "aws_subnet" "private_subnet" {
-   vpc_id            = "${aws_vpc.securus_vpc.id}"
+resource "aws_subnet" "simulator_private_subnet" {
+   vpc_id            = "${aws_vpc.simulator_vpc.id}"
    cidr_block        = "${var.private_subnet_cidr}"
    availability_zone = "${var.private_avail_zone}"
    tags = {
-     Name = "Securus Private subnet"   
+     Name = "Simulator Private subnet"
    }
 }
 
@@ -34,19 +34,19 @@ resource "aws_subnet" "private_subnet" {
 # Elastic IP creation
 #
 
-resource "aws_eip" "securus_eip" {
+resource "aws_eip" "simulator_eip" {
   vpc        = true
-  depends_on = ["aws_internet_gateway.securus_igw"]
+  depends_on = ["aws_internet_gateway.simulator_igw"]
 }
 
 ##################################################
 # Internet gateway
 #
 
-resource "aws_internet_gateway" "securus_igw" {
-  vpc_id = "${aws_vpc.securus_vpc.id}"
+resource "aws_internet_gateway" "simulator_igw" {
+  vpc_id = "${aws_vpc.simulator_vpc.id}"
   tags = {
-        Name = "Securus InternetGateway"
+        Name = "Simulator InternetGateway"
     }
 }
 
@@ -54,47 +54,47 @@ resource "aws_internet_gateway" "securus_igw" {
 # NAT gateway
 #
 
-resource "aws_nat_gateway" "securus_nat" {
-    allocation_id = "${aws_eip.securus_eip.id}"
-    subnet_id     = "${aws_subnet.public_subnet.id}"
-    depends_on    = ["aws_internet_gateway.securus_igw"]
+resource "aws_nat_gateway" "simulator_nat" {
+    allocation_id = "${aws_eip.simulator_eip.id}"
+    subnet_id     = "${aws_subnet.simulator_public_subnet.id}"
+    depends_on    = ["aws_internet_gateway.simulator_igw"]
 }
 
 ##################################################
 # Route tables and associations
 #
 
-resource "aws_route_table" "public_route_table" {
-  vpc_id = "${aws_vpc.securus_vpc.id}"
+resource "aws_route_table" "simulator_public_route_table" {
+  vpc_id = "${aws_vpc.simulator_vpc.id}"
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = "${aws_internet_gateway.securus_igw.id}"
+    gateway_id = "${aws_internet_gateway.simulator_igw.id}"
   }
   tags   = {
-    Name = "Securus Public internet route table"
+    Name = "Simulator Public internet route table"
   }
 }
 
-resource "aws_route_table" "private_nat_route_table" {
-  vpc_id = "${aws_vpc.securus_vpc.id}"
+resource "aws_route_table" "simulator_private_nat_route_table" {
+  vpc_id = "${aws_vpc.simulator_vpc.id}"
   route {
     cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = "${aws_nat_gateway.securus_nat.id}"
+    nat_gateway_id = "${aws_nat_gateway.simulator_nat.id}"
   }
   tags   = {
-    Name = "Securus Private NAT route table"
+    Name = "Simulator Private NAT route table"
   }
 }
 
 # Associate public subnet to public route table
-resource "aws_route_table_association" "public_rt_assoc" {
-  subnet_id      = "${aws_subnet.public_subnet.id}"
-  route_table_id = "${aws_route_table.public_route_table.id}"
+resource "aws_route_table_association" "simulator_public_rt_assoc" {
+  subnet_id      = "${aws_subnet.simulator_public_subnet.id}"
+  route_table_id = "${aws_route_table.simulator_public_route_table.id}"
 }
 
 # Associate private subnet to private route table
-resource "aws_route_table_association" "private_rt_assoc" {
-  subnet_id      = "${aws_subnet.private_subnet.id}"
-  route_table_id = "${aws_route_table.private_nat_route_table.id}"
+resource "aws_route_table_association" "simulator_private_rt_assoc" {
+  subnet_id      = "${aws_subnet.simulator_private_subnet.id}"
+  route_table_id = "${aws_route_table.simulator_private_nat_route_table.id}"
 }
 

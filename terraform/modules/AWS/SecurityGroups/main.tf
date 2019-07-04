@@ -1,5 +1,5 @@
-resource "aws_security_group" "bastion-sg" {
-  name   = "bastion-security-group"
+resource "aws_security_group" "simulator_bastion_sg" {
+  name   = "simulator-bastion-security-group"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -11,14 +11,14 @@ resource "aws_security_group" "bastion-sg" {
 
   egress {
     protocol    = -1
-    from_port   = 0 
-    to_port     = 0 
+    from_port   = 0
+    to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
-resource "aws_security_group" "controlplane-sg" {
-  name   = "controlplane-security-group"
+resource "aws_security_group" "simulator_controlplane_sg" {
+  name   = "simulator-controlplane-security-group"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -37,8 +37,8 @@ resource "aws_security_group" "controlplane-sg" {
 
   egress {
     protocol    = -1
-    from_port   = 0 
-    to_port     = 0 
+    from_port   = 0
+    to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
 }

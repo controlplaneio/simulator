@@ -17,8 +17,8 @@ resource "aws_s3_bucket" "k8sjoin" {
 # used to assign to instances to access S3 bucket
 #
 
-resource "aws_iam_role" "securus_s3_access_role" {
-  name = "securus_s3_host_access_role"
+resource "aws_iam_role" "simulator_s3_access_role" {
+  name = "simulator-s3-host-access-role"
 
   assume_role_policy = <<EOF
 {
@@ -38,9 +38,9 @@ EOF
 }
 
 
-resource "aws_iam_role_policy" "securus_s3_access_policy" {
-  name        = "securus_s3_host_access_policy"
-  role        = "${aws_iam_role.securus_s3_access_role.id}"
+resource "aws_iam_role_policy" "simulator_s3_access_policy" {
+  name        = "simulator-s3-host-access-policy"
+  role        = "${aws_iam_role.simulator_s3_access_role.id}"
 
   policy = <<EOF
 {
@@ -65,9 +65,9 @@ resource "aws_iam_role_policy" "securus_s3_access_policy" {
 EOF
 }
 
-resource "aws_iam_instance_profile" "instance_profile" {
-  name = "instance_profile"
-  role = "${aws_iam_role.securus_s3_access_role.name}"
+resource "aws_iam_instance_profile" "simulator_instance_profile" {
+  name = "simulator-instance-profile"
+  role = "${aws_iam_role.simulator_s3_access_role.name}"
 }
 
 

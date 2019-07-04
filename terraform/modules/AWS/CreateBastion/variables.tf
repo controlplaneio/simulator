@@ -13,7 +13,7 @@ variable "access_key" {
 
 variable "access_key_name" {
   description = "ssh key name"
-  default     = "ssh_access_key"
+  default     = "simulator_ssh_access_key"
 }
 
 variable "security_group" {
