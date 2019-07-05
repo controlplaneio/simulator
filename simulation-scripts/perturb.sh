@@ -88,7 +88,7 @@ main() {
   if [[ "${IS_TEST_ONLY:-}" != 1 ]]; then
     run_scenario "${SCENARIO_DIR}"
 
-    success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves) (user: ${AUTOPOPULATE_REGEX})"
+    success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
   fi
 
   if [[ "${IS_TEST_ONLY:-}" == 1 ]]; then
