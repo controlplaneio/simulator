@@ -20,7 +20,7 @@ variable "access_key" {
 
 variable "access_key_name" {
   description = "ssh key name"
-  default     = "bastion_access_key"
+  default     = "simulator_bastion_access_key"
 }
 
 variable "vpc_cidr" {

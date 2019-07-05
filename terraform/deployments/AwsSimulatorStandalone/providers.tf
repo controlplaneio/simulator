@@ -13,7 +13,7 @@ terraform {
     key = "simulator.tfstate"
     region = "eu-west-1"
     bucket = "simulator-standalone-terraform-state"
-    dynamodb_table = "simulator-standalone-terraform-state-locking"
+    #dynamodb_table = "simulator-terraform-state-locking"
     encrypt = true # Optional, S3 Bucket Server Side Encryption
   }
 }

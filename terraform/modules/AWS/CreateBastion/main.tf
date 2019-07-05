@@ -6,7 +6,6 @@ data "template_file" "init-script" {
 }
 
 data "template_cloudinit_config" "simulator_cloudinit_bastion" {
-
   gzip = false
   base64_encode = false
 
@@ -27,6 +26,7 @@ resource "aws_instance" "simulator_bastion" {
   subnet_id                   = "${var.subnet_id}"
   user_data                   = "${data.template_cloudinit_config.simulator_cloudinit_bastion.rendered}"
 }
+
 resource "aws_key_pair" "simulator_bastion_key" {
   key_name                    = "${var.access_key_name}"
   public_key                  = "${var.access_key}"

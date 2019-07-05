@@ -31,7 +31,7 @@ type TerraformOutput struct {
 
 var sshConfigTmplSrc = `Host {{.Hostname}}
   IdentityFile {{.KeyFilePath}}
-  ProxyCommand ssh ubuntu@{{.BastionIP}} -W %h:%p
+  ProxyCommand ssh root@{{.BastionIP}} -W %h:%p
 `
 
 // SSHConfig represents the values needed to produce a config block to allow

@@ -61,13 +61,13 @@ func Test_ToSSHConfig(t *testing.T) {
 	}
 	expected := `Host 127.0.0.1
   IdentityFile ~/.ssh/id_rsa.pub
-  ProxyCommand ssh ubuntu@8.8.8.8 -W %h:%p
+  ProxyCommand ssh root@8.8.8.8 -W %h:%p
 Host 127.0.0.2
   IdentityFile ~/.ssh/id_rsa.pub
-  ProxyCommand ssh ubuntu@8.8.8.8 -W %h:%p
+  ProxyCommand ssh root@8.8.8.8 -W %h:%p
 Host 127.0.0.3
   IdentityFile ~/.ssh/id_rsa.pub
-  ProxyCommand ssh ubuntu@8.8.8.8 -W %h:%p
+  ProxyCommand ssh root@8.8.8.8 -W %h:%p
 `
 
 	out, err := tfo.ToSSHConfig()
