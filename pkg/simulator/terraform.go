@@ -31,6 +31,10 @@ func PrepareTfArgs(cmd string) []string {
 func Terraform(wd, cmd string) (*string, error) {
 	args := PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1"}
+	if cmd == "output" {
+		return util.RunSilently(wd, env, "terraform", args...)
+	}
+
 	return util.Run(wd, env, "terraform", args...)
 }
 

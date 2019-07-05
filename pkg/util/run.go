@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bufio"
 	"bytes"
 	"github.com/pkg/errors"
 	"io"
@@ -60,4 +61,40 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 
 	out := string(buf.Bytes())
 	return &out, nil
+}
+
+// RunSilently runs a sub command silently
+func RunSilently(wd string, env []string, cmd string, args ...string) (*string, error) {
+	child := exec.Command(cmd, args...)
+
+	child.Env = append(os.Environ(), env...)
+
+	// Copy child stdout to stdout but also into a buffer to be returned
+	var outBuf, errBuf bytes.Buffer
+	child.Stdout = bufio.NewWriter(&outBuf)
+	child.Stderr = bufio.NewWriter(&errBuf)
+	dir := wdMust(wd)
+
+	child.Dir = dir
+
+	err := child.Start()
+	if err != nil {
+		Debug("Error starting child process: ", err)
+		return nil, errors.Wrapf(err, "Error starting child process")
+	}
+
+	err = child.Wait()
+	// TODO: (rem) make this parameterisable?
+	if err != nil && err.Error() != "exit status 127" {
+		Debug("Error waiting for child process", err)
+		return nil, err
+	}
+
+	childErrOutput := string(errBuf.Bytes())
+	childOutput := string(outBuf.Bytes())
+	if childErrOutput != "" {
+		return &childOutput, errors.Errorf("Child printed to stderr:\n%s\n", childErrOutput)
+	}
+
+	return &childOutput, nil
 }
