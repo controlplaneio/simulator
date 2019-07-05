@@ -5,7 +5,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
-	"os/user"
 	"testing"
 )
 
@@ -42,15 +41,6 @@ func Test_IsUsable(t *testing.T) {
 	assert.True(t, tfo.IsUsable(), "Complete TerraformOutput was not usable")
 }
 
-func currentUserName() string {
-	u, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
-
-	return u.Username
-}
-
 func Test_ToSSHConfig(t *testing.T) {
 	tfo := simulator.TerraformOutput{
 		BastionPublicIP: simulator.StringOutput{
@@ -69,16 +59,15 @@ func Test_ToSSHConfig(t *testing.T) {
 			Value:     []string{"127.0.0.2", "127.0.0.3"},
 		},
 	}
-	username := currentUserName()
 	expected := `Host 127.0.0.1
   IdentityFile ~/.ssh/id_rsa.pub
-  ProxyCommand ssh ` + username + `@8.8.8.8 -W %h:%p
+  ProxyCommand ssh ubuntu@8.8.8.8 -W %h:%p
 Host 127.0.0.2
   IdentityFile ~/.ssh/id_rsa.pub
-  ProxyCommand ssh ` + username + `@8.8.8.8 -W %h:%p
+  ProxyCommand ssh ubuntu@8.8.8.8 -W %h:%p
 Host 127.0.0.3
   IdentityFile ~/.ssh/id_rsa.pub
-  ProxyCommand ssh ` + username + `@8.8.8.8 -W %h:%p
+  ProxyCommand ssh ubuntu@8.8.8.8 -W %h:%p
 `
 
 	out, err := tfo.ToSSHConfig()

@@ -417,7 +417,7 @@ get_slave() {
 }
 
 get_connection_string() {
-  echo "root@${MASTER_HOST}"
+  echo "ubuntu@${MASTER_HOST}"
 }
 
 handle_arguments() {
