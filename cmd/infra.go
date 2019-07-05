@@ -29,8 +29,17 @@ func newStatusCommand() *cobra.Command {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
 			tfo, err := simulator.Status(tfDir, bucket)
+			if err != nil {
+				return err
+			}
 
-			fmt.Println(tfo)
+			if tfo.BastionPublicIP.Value == "" {
+				fmt.Println("No Infrastructure found")
+			} else {
+				fmt.Printf("Bastion IP: %s\n", tfo.BastionPublicIP.Value)
+				fmt.Printf("Master IPs: %v\n", tfo.MasterNodesPrivateIP.Value)
+				fmt.Printf("Cluster IPs: %v\n", tfo.ClusterNodesPrivateIP.Value)
+			}
 
 			return err
 		},
