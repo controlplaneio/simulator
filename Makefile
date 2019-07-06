@@ -103,6 +103,7 @@ doc: dep ## Generate documentation
 	godocdown pkg/simulator > docs/api/simulator.md
 	godocdown pkg/util > docs/api/util.md
 	./scripts/generate-docs-from-templates.sh
+	./scripts/tf-auto-doc ./terraform
 
 # --- MAKEFILE HELP
 
