@@ -1,5 +1,5 @@
 output "bastion_public_ip" {
-  value = "${module.CreateBastion.BastionPublicIp}"
+  value = "${module.Bastion.BastionPublicIp}"
 }
 output "master_nodes_private_ip" {
   value = "${module.CreateK8s.K8sMasterPrivateIp}"
