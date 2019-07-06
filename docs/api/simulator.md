@@ -5,10 +5,19 @@
 
 ## Usage
 
+#### func  Config
+
+```go
+func Config(tfDir, scenarioPath, bucketName string) (*string, error)
+```
+Config returns a pointer to string containing the stanzas to add to an ssh
+config file so that the kubernetes nodes are connectable directly via the
+bastion or an error if the infrastructure has not been created
+
 #### func  Create
 
 ```go
-func Create() error
+func Create(tfDir, bucketName string) error
 ```
 Create runs terraform init, plan, apply to create the necessary infratsructure
 to run scenarios
@@ -16,21 +25,21 @@ to run scenarios
 #### func  Destroy
 
 ```go
-func Destroy() error
+func Destroy(tfDir, bucketName string) error
 ```
 Destroy call terraform destroy to remove the infrastructure
 
 #### func  EnsureTfVarsFile
 
 ```go
-func EnsureTfVarsFile(tfDir, publicKey, accessCIDR string) error
+func EnsureTfVarsFile(tfDir, publicKey, accessCIDR, bucketName string) error
 ```
 EnsureTfVarsFile writes an tfvars file if one hasnt already been made
 
 #### func  InitIfNeeded
 
 ```go
-func InitIfNeeded() error
+func InitIfNeeded(tfDir, bucketName string) error
 ```
 InitIfNeeded checks if there is a terraform state folder and calls terraform
 init if not
@@ -38,7 +47,7 @@ init if not
 #### func  Launch
 
 ```go
-func Launch(id string) error
+func Launch(tfDir, scenariosDir, bucketName, id string) error
 ```
 Launch runs perturb.sh to setup a scenario with the supplied `id` assuming the
 infrastructure has been created. Returns an error if the infrastructure is not
@@ -63,7 +72,7 @@ to use when exec'ing terraform
 #### func  Terraform
 
 ```go
-func Terraform(cmd string) (*string, error)
+func Terraform(wd, cmd string) (*string, error)
 ```
 Terraform wraps running terraform as a child process
 
@@ -165,7 +174,7 @@ ParseTerraformOutput takes a string containing the stdout from `terraform output
 #### func  Status
 
 ```go
-func Status() (*TerraformOutput, error)
+func Status(tfDir, bucketName string) (*TerraformOutput, error)
 ```
 Status calls terraform output to get the state of the infrastruture and parses
 the output for programmatic use
@@ -191,6 +200,7 @@ ToSSHConfig produces the SSH config
 type TfVars struct {
 	PublicKey  string
 	AccessCIDR string
+	BucketName string
 }
 ```
 
@@ -200,7 +210,7 @@ infrastructure
 #### func  NewTfVars
 
 ```go
-func NewTfVars(publicKey string, accessCIDR string) TfVars
+func NewTfVars(publicKey, accessCIDR, bucketName string) TfVars
 ```
 NewTfVars creates a TfVars struct with all the defaults
 

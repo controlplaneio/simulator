@@ -78,6 +78,13 @@ Run runs a child process and returns its buffer stdout. Run also tees the output
 to stdout of this process, `env` will be appended to the current environment.
 `wd` is the working directory for the child
 
+#### func  RunSilently
+
+```go
+func RunSilently(wd string, env []string, cmd string, args ...string) (*string, error)
+```
+RunSilently runs a sub command silently
+
 #### func  Slurp
 
 ```go
