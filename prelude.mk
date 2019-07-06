@@ -7,7 +7,6 @@ else ifeq ($(DOCKER_HUB_ORG),)
 endif
 
 DOCKER_REGISTRY_FQDN ?= docker.io
-DOCKER_HUB_URL := $(DOCKER_REGISTRY_FQDN)/$(DOCKER_HUB_ORG)/$(NAME)
 
 SHELL := /usr/bin/env bash
 BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
