@@ -14,13 +14,13 @@ BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 GIT_MESSAGE := $(shell git -c log.showSignature=false \
 	log --max-count=1 --pretty=format:"%H")
 GIT_SHA := $(shell git -c log.showSignature=false rev-parse HEAD)
+# GIT_TAG is the tag corresponsing to the curent SHA for HEAD or "dev"
 GIT_TAG := $(shell bash -c 'TAG=$$(git -c log.showSignature=false \
 	describe --tags --exact-match --abbrev=0 $(GIT_SHA) 2>/dev/null); echo "$${TAG:-dev}"')
 GIT_UNTRACKED_CHANGES := $(shell git -c log.showSignature=false \
 	status --porcelain)
 
 ifneq ($(GIT_UNTRACKED_CHANGES),)
-  GIT_COMMIT := $(GIT_SHA)-dirty
   ifneq ($(GIT_TAG),dev)
     GIT_TAG := $(GIT_TAG)-dirty
   endif
