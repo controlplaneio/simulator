@@ -7,7 +7,6 @@ include prelude.mk
 
 SIMULATOR_AWS_CREDS_PATH := $(HOME)/.aws/
 SIMULATOR_KEY_PATH := $(HOME)/.ssh/
-SSH_AUTH_SOCK_DIR := $(shell dirname $(SSH_AUTH_SOCK))
 
 .DEFAULT_GOAL := help
 
@@ -17,6 +16,7 @@ all: test
 # --- DOCKER
 
 .PHONY: run
+run: SSH_AUTH_SOCK_DIR=$(shell dirname $(SSH_AUTH_SOCK))
 run: docker-build ## Runs the simulator - the build stage of the container runs all the cli tests
 	echo $(SSH_AUTH_SOCK_DIR)
 	docker run                                                          \
