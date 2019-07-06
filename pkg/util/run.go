@@ -69,7 +69,6 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 
 	child.Env = append(os.Environ(), env...)
 
-	// Copy child stdout to stdout but also into a buffer to be returned
 	var outBuf, errBuf bytes.Buffer
 	child.Stdout = bufio.NewWriter(&outBuf)
 	child.Stderr = bufio.NewWriter(&errBuf)
