@@ -18,8 +18,8 @@ module "Bastion" {
   subnet_id                   = "${module.Networking.PublicSubnetId}"
 }
 
-module "CreateK8s" {
-  source                      = "../../modules/AWS/CreateK8s"
+module "Kubernetes" {
+  source                      = "../../modules/AWS/Kubernetes"
   region                      = "${var.region}"
   number_of_master_instances  = "${var.number_of_master_instances}"
   ami_id                      = "${var.ami_id}"
