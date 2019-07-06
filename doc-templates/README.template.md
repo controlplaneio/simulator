@@ -57,7 +57,7 @@ ${make}
 * [Terraform Scripts for infrastructure provisioning](./terraform) - AWS infra
 * [Perturb.sh](./simulation-scripts/perturb.sh) - sets up a scenario on a cluster
 * [Scenarios](./simulation-scripts/scenario)
-* *TODO* [Attack container](./attack) - Runs on the bastion providing all the tools needed to attack a
+* [Attack container](./attack) - Runs on the bastion providing all the tools needed to attack a
 cluster in the given cloud provider
 
 ### Simulator API Documentation
