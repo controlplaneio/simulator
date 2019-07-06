@@ -12,6 +12,7 @@
 | number\_of\_master\_instances | number of master instances to create | string | `"1"` | no |
 | private\_subnet\_id | Private subnet id | string | n/a | yes |
 | region | aws region | string | `"eu-west-1"` | no |
+| s3\_bucket\_name | Name  of s3 bucket | string | n/a | yes |
 
 ## Outputs
 

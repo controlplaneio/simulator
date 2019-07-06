@@ -13,4 +13,5 @@
 |------|-------------|
 | BastionSecurityGroupID | Bastion security group id |
 | ControlPlaneSecurityGroupID | Controlplane (Kubernetes) security group id |
+| access\_cidr |  |
 
