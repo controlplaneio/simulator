@@ -27,6 +27,13 @@ to interact with.
 
 ### [Simulator CLI Usage](./docs/cli.md)
 
+## SSH Keys
+
+If using with <code>make run</code> the default RSA keypair on your host machine (I.E. <code>~/.ssh/id_rsa{,.pub}</code> will
+be setup as an authorised key on the infrastructure. If your key has a passphrase (it should :)) then you
+will need to make sure you have <code>ssh-add</code>ed to SSH agent.  The SSH agent sock is mounted in the container
+and SSH is configured to use it.
+
 ## Development Workflow
 
 Development targets are specified in the [Makefile](./Makefile).
