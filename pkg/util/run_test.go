@@ -28,7 +28,7 @@ func Test_Run_invalid_working_dir(t *testing.T) {
 
 func Test_Run_silently(t *testing.T) {
 	expected := util.MustSlurp(fixture("tf-help.txt"))
-	out, err := util.RunSilently("./", []string{}, "terraform", "help")
+	out, _, err := util.RunSilently("./", []string{}, "terraform", "help")
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "out was nil")

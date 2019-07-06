@@ -64,7 +64,7 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 }
 
 // RunSilently runs a sub command silently
-func RunSilently(wd string, env []string, cmd string, args ...string) (*string, error) {
+func RunSilently(wd string, env []string, cmd string, args ...string) (*string, *string, error) {
 	child := exec.Command(cmd, args...)
 
 	child.Env = append(os.Environ(), env...)
@@ -79,21 +79,18 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 	err := child.Start()
 	if err != nil {
 		Debug("Error starting child process: ", err)
-		return nil, errors.Wrapf(err, "Error starting child process")
+		return nil, nil, errors.Wrapf(err, "Error starting child process")
 	}
 
 	err = child.Wait()
 	// TODO: (rem) make this parameterisable?
 	if err != nil && err.Error() != "exit status 127" {
 		Debug("Error waiting for child process", err)
-		return nil, err
+		return nil, nil, err
 	}
 
-	childErrOutput := string(errBuf.Bytes())
-	childOutput := string(outBuf.Bytes())
-	if childErrOutput != "" {
-		return &childOutput, errors.Errorf("Child printed to stderr:\n%s\n", childErrOutput)
-	}
+	childErr := string(errBuf.Bytes())
+	childOut := string(outBuf.Bytes())
 
-	return &childOutput, nil
+	return &childOut, &childErr, nil
 }

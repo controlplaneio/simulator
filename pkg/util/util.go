@@ -65,13 +65,6 @@ func ExpandTilde(path string) (*string, error) {
 	}
 
 	p := filepath.Join(homedir, path)
-	exists, err := FileExists(p)
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error checking %s exists", p)
-	}
-	if !exists {
-		return nil, errors.Errorf("No file found at %s", p)
-	}
 
 	return &p, nil
 }

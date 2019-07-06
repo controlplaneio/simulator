@@ -29,6 +29,22 @@ func newSSHConfigCommand() *cobra.Command {
 	return cmd
 }
 
+func newSSHAttackCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   `attack`,
+		Short: "Connect to an attack container to complete the scenario",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			bucket := viper.GetString("bucket")
+			tfDir := viper.GetString("tf-dir")
+
+			return simulator.Attack(tfDir, bucket)
+		},
+	}
+
+	return cmd
+
+}
+
 func newSSHCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `ssh <command>`,
@@ -38,6 +54,7 @@ func newSSHCommand() *cobra.Command {
 	}
 
 	cmd.AddCommand(newSSHConfigCommand())
+	cmd.AddCommand(newSSHAttackCommand())
 
 	return cmd
 }
