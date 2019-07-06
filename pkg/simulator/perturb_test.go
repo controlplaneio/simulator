@@ -15,7 +15,7 @@ func Test_ToArguments_And_String(t *testing.T) {
 		Slaves: []net.IP{net.IPv4(8, 8, 8, 8), net.IPv4(127, 0, 0, 2)},
 	}
 
-	assert.Equal(t, po.String(), "--master 127.0.0.1 --slaves 8.8.8.8,127.0.0.2 --debug")
+	assert.Equal(t, po.String(), "--master 127.0.0.1 --slaves 8.8.8.8,127.0.0.2")
 }
 
 func Test_MakePerturbOptions(t *testing.T) {

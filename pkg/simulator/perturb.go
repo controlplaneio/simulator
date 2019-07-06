@@ -47,7 +47,6 @@ func (po *PerturbOptions) ToArguments() []string {
 	}
 	arguments = append(arguments, slaves)
 
-	arguments = append(arguments, "--debug")
 	arguments = append(arguments, po.ScenarioName)
 
 	return arguments
