@@ -36,7 +36,7 @@ debugging Kubernetes
 	cmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
 	viper.BindPFlag("loglevel", cmd.PersistentFlags().Lookup("loglevel"))
 
-	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AwsSimulatorStandalone",
+	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
 		"Path to a directory containing the infrastructure scripts")
 	viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir"))
 

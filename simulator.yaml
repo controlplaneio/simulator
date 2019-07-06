@@ -1,4 +1,4 @@
 loglevel: info
 scenarios-dir: "./simulation-scripts"
-tf-dir: "./terraform/deployments/AwsSimulatorStandalone"
+tf-dir: "./terraform/deployments/AWS"
 

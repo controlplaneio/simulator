@@ -166,8 +166,8 @@ COPY --chown=1000 ./terraform/ ./terraform/
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
 COPY --chown=1000 ./goss.yaml ${config_file} ./
 
-ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/                   \
-    SIMULATOR_TF_DIR=/app/terraform/deployments/AwsSimulatorStandalone
+ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
+    SIMULATOR_TF_DIR=/app/terraform/deployments/AWS
 
 USER ${launch_user}
 RUN ssh-keygen -f /home/${launch_user}/.ssh/id_rsa -t rsa -N ''

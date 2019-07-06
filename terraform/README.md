@@ -35,7 +35,7 @@ Refer to [settings documentation](./modules/AWS/CreateK8s/README-auto.md)
 
 
 * One, or more, K8s master nodes on the private network
-* One, or more, K8s nodes  on the private network 
+* One, or more, K8s nodes  on the private network
 
 Cloud init is used to installed k8s software and initialise the cluster.  This is separted into 2 configurations:
 
@@ -75,7 +75,7 @@ The following security groups are defined
 
 ## Settings
 
-Refer to [settings documentation](./deployments/AwsSimulatorStandalone/README-auto.md) for details on deployment settings required, and defaults provided.
+Refer to [settings documentation](./deployments/AWS/README-auto.md) for details on deployment settings required, and defaults provided.
 
 ## Remote State
 
