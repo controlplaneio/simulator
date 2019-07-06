@@ -1,0 +1,11 @@
+# Has the necessary system packages for launching a scenario
+package:
+{{- range mkSlice "hping3" "nmap" "curl"}}
+  {{.}}:
+    installed: true
+{{end}}
+
+command:
+# Has the necessary 3rd party packages for attacking a cluster
+  attack-motd:
+    exit-status: 0
