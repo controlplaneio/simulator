@@ -1,47 +1,4 @@
-data "template_file" "init_script_master" {
-  template = "${file("cloud-init/cloud-init-master.cfg")}"
-  vars = {
-    REGION = "${var.region}"
-    s3_bucket_name = "${var.s3_bucket_name}"
-  }
-}
-
-
-data "template_cloudinit_config" "simulator_cloudinit_master" {
-
-  gzip = false
-  base64_encode = false
-
-  part {
-    filename     = "cloud-init.cfg"
-    content_type = "text/cloud-config"
-    content      = "${data.template_file.init_script_master.rendered}"
-  }
-
-}
-
-data "template_file" "init_script_cluster" {
-  template = "${file("cloud-init/cloud-init.cfg")}"
-  vars = {
-    REGION = "${var.region}"
-    s3_bucket_name = "${var.s3_bucket_name}"
-  }
-}
-
-data "template_cloudinit_config" "simulator_cloudinit_cluster" {
-
-  gzip = false
-  base64_encode = false
-
-  part {
-    filename     = "cloud-init.cfg"
-    content_type = "text/cloud-config"
-    content      = "${data.template_file.init_script_cluster.rendered}"
-  }
-
-}
-
-resource "aws_instance" "simulator_controlplane_instances" {
+resource "aws_instance" "simulator_master_instances" {
   count                       = "${var.number_of_master_instances}"
   ami                         = "${var.ami_id}"
   key_name                    = "${var.key_pair_name}"
@@ -49,11 +6,11 @@ resource "aws_instance" "simulator_controlplane_instances" {
   security_groups             = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false
   subnet_id                   = "${var.private_subnet_id}"
-  user_data                   = "${data.template_cloudinit_config.simulator_cloudinit_master.rendered}"
+  user_data                   = "${data.template_file.master_cloud_config.rendered}"
   iam_instance_profile        = "${var.iam_instance_profile_id}"
 }
 
-resource "aws_instance" "simulator_cluster_instances" {
+resource "aws_instance" "simulator_node_instances" {
   count                       = "${var.number_of_cluster_instances}"
   ami                         = "${var.ami_id}"
   key_name                    = "${var.key_pair_name}"
@@ -61,8 +18,7 @@ resource "aws_instance" "simulator_cluster_instances" {
   security_groups             = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false
   subnet_id                   = "${var.private_subnet_id}"
-  user_data                   = "${data.template_cloudinit_config.simulator_cloudinit_cluster.rendered}"
-  depends_on                  = ["aws_instance.simulator_controlplane_instances"]
+  user_data                   = "${data.template_file.node_cloud_config.rendered}"
+  depends_on                  = ["aws_instance.simulator_master_instances"]
   iam_instance_profile        = "${var.iam_instance_profile_id}"
 }
-

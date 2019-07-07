@@ -5,7 +5,7 @@ resource "aws_instance" "simulator_bastion" {
   security_groups             = ["${var.security_group}"]
   associate_public_ip_address = true
   subnet_id                   = "${var.subnet_id}"
-  user_data                   = "${data.template_file.cloud-config.rendered}"
+  user_data                   = "${data.template_file.cloud_config.rendered}"
 }
 
 resource "aws_key_pair" "simulator_bastion_key" {
