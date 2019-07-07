@@ -9,12 +9,12 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    source      = "../scripts/run-goss.sh"
+    source      = "${ path.module }/../../scripts/run-goss.sh"
     destination = "/root/run-goss.sh"
   }
 
   provisioner "file" {
-    source      = "goss.yaml"
+    source      = "${ path.module }/goss.yaml"
     destination = "/root/goss.yaml"
   }
 
