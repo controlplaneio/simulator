@@ -11,6 +11,11 @@ runcmd:
   - 'systemctl restart docker'
   - 'docker pull controlplane/simulator-attack:latest'
 
+write_files:
+  - path: /home/ubuntu/.bash_login
+    content: |
+      sudo docker run -it controlplane/simulator-attack:latest
+
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
 
