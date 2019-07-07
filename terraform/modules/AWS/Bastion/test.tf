@@ -1,7 +1,7 @@
 resource "null_resource" "bastion_test" {
   # Ensure we can SSH as root for the goss tests and also for preturb.sh
   connection {
-    host    = "${var.bastion_public_ip}"
+    host    = "${aws_instance.simulator_bastion.public_ip}"
     type    = "ssh"
     user    = "root"
     # Increase the timeout so the server has time to reboot
@@ -9,12 +9,12 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    source      = "scripts/run-goss.sh"
+    source      = "../scripts/run-goss.sh"
     destination = "/root/run-goss.sh"
   }
 
   provisioner "file" {
-    source      = "test/bastion.yaml"
+    source      = "goss.yaml"
     destination = "/root/goss.yaml"
   }
 
