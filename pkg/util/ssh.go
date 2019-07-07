@@ -26,7 +26,7 @@ func agentSigners() ([]ssh.Signer, error) {
 
 func SSH(host string) error {
 	port := "22"
-	user := "root"
+	user := "ubuntu"
 
 	signers, err := agentSigners()
 	if err != nil {
