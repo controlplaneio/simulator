@@ -1,0 +1,21 @@
+# Chceck we're listening on port 22 (bit silly since we can' run this without it)
+port:
+  tcp:22:
+    listening: true
+    ip:
+      - 0.0.0.0
+
+# Check sshd and dockerd are running
+service:
+  sshd:
+    enabled: true
+    running: true
+  docker:
+    enabled: true
+    running: true
+
+# Check whether we have the latest simulator-attack pulled locally
+command:
+  docker:
+    exec: "docker image inspect controlplane/simulator-attack:latest"
+    exit-status: 0

@@ -44,5 +44,10 @@ module "SecurityGroups" {
   private_subnet_cidr_block   = "${module.Networking.PrivateSubnetCidrBlock}"
 }
 
+module "test" {
+  source                      = "./test"
+  bastion_public_ip           = "${module.Bastion.BastionPublicIp}"
+}
+
 
 
