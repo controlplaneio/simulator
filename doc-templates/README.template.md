@@ -27,6 +27,19 @@ to interact with.
 
 ### [Simulator CLI Usage](./docs/cli.md)
 
+### tldr;
+
+<pre>
+# Create the infra if it isn't there
+simulator infra create
+# Configure your SSH to perturb the cluster
+simulator ssh config > ~/.ssh/config
+# Launch a scenario (runs perturb.sh)
+simulator scenario launch database_compromise
+# Attack the cluster
+simulator ssh attack
+<pre>
+
 ## SSH Keys
 
 If using with <code>make run</code> the default RSA keypair on your host machine (I.E. <code>~/.ssh/id_rsa{,.pub}</code> will

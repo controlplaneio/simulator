@@ -5,6 +5,12 @@
 
 ## Usage
 
+#### func  Attack
+
+```go
+func Attack(tfDir, bucketName string) error
+```
+
 #### func  Config
 
 ```go

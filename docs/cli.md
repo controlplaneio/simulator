@@ -35,7 +35,7 @@ Flags:
   -h, --help                   help for simulator
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
-  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AwsSimulatorStandalone")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator [command] --help" for more information about a command.
 </pre>
@@ -61,7 +61,7 @@ Global Flags:
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
-  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AwsSimulatorStandalone")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator infra [command] --help" for more information about a command.
 </pre>
@@ -86,7 +86,7 @@ Global Flags:
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
-  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AwsSimulatorStandalone")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator scenario [command] --help" for more information about a command.
 </pre>
@@ -100,6 +100,7 @@ Usage:
   simulator ssh [command]
 
 Available Commands:
+  attack      Connect to an attack container to complete the scenario
   config      Prints the stanzas to add to ssh config to connect to your cluster
 
 Flags:
@@ -110,7 +111,7 @@ Global Flags:
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
-  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AwsSimulatorStandalone")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator ssh [command] --help" for more information about a command.
 </pre>
@@ -134,7 +135,7 @@ Global Flags:
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
-  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AwsSimulatorStandalone")
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator config [command] --help" for more information about a command.
 </pre>

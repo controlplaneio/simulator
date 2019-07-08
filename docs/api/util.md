@@ -81,9 +81,15 @@ to stdout of this process, `env` will be appended to the current environment.
 #### func  RunSilently
 
 ```go
-func RunSilently(wd string, env []string, cmd string, args ...string) (*string, error)
+func RunSilently(wd string, env []string, cmd string, args ...string) (*string, *string, error)
 ```
 RunSilently runs a sub command silently
+
+#### func  SSH
+
+```go
+func SSH(host string) error
+```
 
 #### func  Slurp
 
@@ -98,3 +104,9 @@ from the working directory.
 Note that this is slightly less efficient for zero-length files than
 `ioutil.Readfile` as it uses the default read buffer size of `bytes.MinRead`
 internally
+
+#### func  StartInteractiveShell
+
+```go
+func StartInteractiveShell(sshConfig *ssh.ClientConfig, network string, host string, port string) error
+```
