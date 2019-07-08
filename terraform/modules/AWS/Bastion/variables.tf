@@ -29,3 +29,10 @@ variable "region" {
   default     = "eu-west-1"
 }
 
+variable "master_ip_addresses" {
+  description = "Kubernetes master private IP addresses"
+}
+
+variable "node_ip_addresses" {
+  description = "Kubernetes node private IP addresses"
+}

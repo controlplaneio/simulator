@@ -16,6 +16,8 @@ module "Bastion" {
   access_key                  = "${var.access_key}"
   security_group              = "${module.SecurityGroups.BastionSecurityGroupID}"
   subnet_id                   = "${module.Networking.PublicSubnetId}"
+  master_ip_addresses         = "${ join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"
+  node_ip_addresses           = "${ join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
 }
 
 module "Kubernetes" {
