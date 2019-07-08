@@ -49,6 +49,8 @@ func agentSigners() ([]ssh.AuthMethod, error) {
 	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
 }
 
+// SSH establishes an interactive Secure Shell session to the supplied host as user ubuntu and on port 22. SSH uses
+// ssh-agent to get the key to use
 func SSH(host string) error {
 	port := "22"
 	user := "ubuntu"
@@ -84,21 +86,29 @@ func SSH(host string) error {
 		//HostKeyCallback: ssh.FixedHostKey(hostKey),
 	}
 
-	return StartInteractiveShell(&cfg, "tcp", host, port)
+	return StartInteractiveSSHShell(&cfg, "tcp", host, port)
 }
 
-func StartInteractiveShell(sshConfig *ssh.ClientConfig, network string, host string, port string) error {
+// StartInteractiveSSHShell starts an interactive SSH shell with the supplied ClientConfig
+func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string) error {
 	var (
 		session *ssh.Session
 		conn    *ssh.Client
 		err     error
 	)
-	if conn, err = getSSHConnection(sshConfig, network, host, port); err != nil {
+
+	addr := host + ":" + port
+	if conn, err = ssh.Dial(network, addr, sshConfig); err != nil {
 		fmt.Printf("Failed to dial: %s", err)
 		return err
 	}
 
-	if session, err = getSSHSession(conn); err != nil {
+	encodedkey, err := Base64PrivateKey("id_rsa")
+	if err != nil {
+		return err
+	}
+
+	if session, err = conn.NewSession(); err != nil {
 		fmt.Printf("Failed to create session: %s", err)
 		return err
 	}
@@ -113,23 +123,19 @@ func StartInteractiveShell(sshConfig *ssh.ClientConfig, network string, host str
 	session.Stdin = os.Stdin
 	session.Stderr = os.Stderr
 
+	if err = session.Setenv("BASE64_SSH_KEY", *encodedkey); err != nil {
+		fmt.Printf("Failed to send SetEnv request: %s", err)
+		return err
+	}
+
 	if err = session.Shell(); err != nil {
 		fmt.Printf("Failed to start interactive shell: %s", err)
 		return err
 	}
+
 	return session.Wait()
 }
 
-func getSSHConnection(config *ssh.ClientConfig, network string, host string, port string) (*ssh.Client, error) {
-	addr := host + ":" + port
-	return ssh.Dial(network, addr, config)
-}
-
-func getSSHSession(clientConnection *ssh.Client) (*ssh.Session, error) {
-	return clientConnection.NewSession()
-}
-
-// pty = pseudo terminal
 func setupPty(session *ssh.Session) error {
 	modes := ssh.TerminalModes{
 		ssh.ECHO:          0,     // disable echoing

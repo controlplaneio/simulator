@@ -33,5 +33,5 @@ docker-test: docker-build ## Run the attack container tests
 docker-push: docker-test ## pushes the last build docker image
 	@echo "+ $@"
 	docker push "${CONTAINER_NAME}"
-	docker push "${CONTAINER_NAME_LATEST}"
+	#docker push "${CONTAINER_NAME_LATEST}"
 

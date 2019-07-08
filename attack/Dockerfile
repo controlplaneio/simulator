@@ -4,6 +4,7 @@ RUN apt-get update                                                              
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     bash                                                                         \
     ca-certificates                                                              \
+    openssh-client                                                               \
     hping3                                                                       \
     nmap                                                                         \
     curl                                                                         \
@@ -25,4 +26,4 @@ COPY . .
 
 # This container is root intentionally
 
-CMD ["/bin/bash"]
+CMD ["./scripts/entrypoint.sh"]

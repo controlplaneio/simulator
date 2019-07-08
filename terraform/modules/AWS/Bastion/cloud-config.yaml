@@ -14,7 +14,10 @@ runcmd:
 write_files:
   - path: /home/ubuntu/.bash_login
     content: |
-      sudo MASTER_IP_ADDRESSES=${master_ip_addresses} NODE_IP_ADDRESSES=${node_ip_addresses} docker run -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
+      export MASTER_IP_ADDRESSES=${master_ip_addresses}
+      export NODE_IP_ADDRESSES=${node_ip_addresses}
+      sudo -E env > /home/ubuntu/login.log
+      sudo -E docker run -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
