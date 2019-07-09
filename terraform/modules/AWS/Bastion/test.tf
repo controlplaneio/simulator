@@ -4,6 +4,7 @@ resource "null_resource" "bastion_test" {
     host    = "${aws_instance.simulator_bastion.public_ip}"
     type    = "ssh"
     user    = "root"
+    private_key = "${file(pathexpand("~/.ssh/id_rsa"))}"
     # Increase the timeout so the server has time to reboot
     timeout = "10m"
   }
