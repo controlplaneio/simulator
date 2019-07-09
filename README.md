@@ -38,7 +38,7 @@ simulator ssh config > ~/.ssh/config
 simulator scenario launch database_compromise
 # Attack the cluster
 simulator ssh attack
-<pre>
+</pre>
 
 ## SSH Keys
 
