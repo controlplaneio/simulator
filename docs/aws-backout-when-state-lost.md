@@ -10,5 +10,5 @@ aws iam delete-instance-profile --instance-profile-name=simulator-instance-profi
 
 # Delete ssh key pair
 
-aws ec2 delete-key-pair --key-name [key name] --profile [aws profile if default not used] --region eu-west-2
+aws ec2 delete-key-pair --key-name [key name] --profile [aws profile if default not used] --region [region]
 
