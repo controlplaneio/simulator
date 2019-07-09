@@ -13,6 +13,7 @@ const (
 	timeout = 10 * time.Minute
 )
 
+// PublicKeyFile reads the public key at the path supplied and return the ssh.AuthMethod
 func PublicKeyFile(file string) ssh.AuthMethod {
 	buffer, err := Slurp(file)
 	if err != nil {
@@ -26,11 +27,29 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 	return ssh.PublicKeys(key)
 }
 
-func agentSigners() ([]ssh.AuthMethod, error) {
+// GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls back to reading the keyfile directly
+// in case of a missing SSH_AUTH_SOCK env var or an error dialing the unix socket
+func GetAuthMethods() ([]ssh.AuthMethod, error) {
+	// Check we have the ssh-agent AUTH SOCK and short circuit if we don't - just create a signer from the keyfile
+	authSock := os.Getenv("SSH_AUTH_SOCK")
+	if authSock == "" {
+		fmt.Println("SSH_AUTH_SOCK was not set - falling back to id_rsa keyfile - this will fail if you have a passphrase")
+		keypath, err := ExpandTilde("~/.ssh/id_rsa.pub")
+		if err != nil {
+			fmt.Println("Error reading id_rsa when falling back to key")
+
+			return nil, err
+		}
+
+		return []ssh.AuthMethod{PublicKeyFile(*keypath)}, nil
+	}
+
+	// Try to get a signer from ssh-agent
 	sock, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 	if err != nil {
-		fmt.Println("Error connecting to SSH agent falling back to key")
-		keypath, err := ExpandTilde("~/.ssh/id_rsa")
+		// Fallback to keyfile if we failed to connect
+		fmt.Println("Error dialing SSH_AUTH_SOCK - falling back to id_rsa key")
+		keypath, err := ExpandTilde("~/.ssh/id_rsa.pub")
 		if err != nil {
 			fmt.Println("Error reading id_rsa when falling back to key")
 			return nil, err
@@ -39,6 +58,7 @@ func agentSigners() ([]ssh.AuthMethod, error) {
 		return []ssh.AuthMethod{PublicKeyFile(*keypath)}, nil
 	}
 
+	// Use the signers from ssh-agent
 	agent := agent.NewClient(sock)
 
 	signers, err := agent.Signers()
@@ -55,7 +75,7 @@ func SSH(host string) error {
 	port := "22"
 	user := "ubuntu"
 
-	auths, err := agentSigners()
+	auths, err := GetAuthMethods()
 	if err != nil {
 		return err
 	}
