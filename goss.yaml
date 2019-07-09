@@ -6,7 +6,7 @@ file:
     exists: true
 {{end}}
 # Has an ssh keypair and simulator config file
-{{- range mkSlice "/home/launch/.ssh/id_rsa" "/home/launch/.ssh/id_rsa.pub" "/app/simulator.yaml"}}
+{{- range mkSlice "/app/simulator.yaml"}}
   {{.}}:
     exists: true
 {{end}}
