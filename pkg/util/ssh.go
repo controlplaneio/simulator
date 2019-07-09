@@ -13,22 +13,47 @@ const (
 	timeout = 10 * time.Minute
 )
 
-func agentSigners() ([]ssh.Signer, error) {
+func PublicKeyFile(file string) ssh.AuthMethod {
+	buffer, err := Slurp(file)
+	if err != nil {
+		return nil
+	}
+
+	key, err := ssh.ParsePrivateKey([]byte(*buffer))
+	if err != nil {
+		return nil
+	}
+	return ssh.PublicKeys(key)
+}
+
+func agentSigners() ([]ssh.AuthMethod, error) {
 	sock, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 	if err != nil {
-		return nil, err
+		fmt.Println("Error connecting to SSH agent falling back to key")
+		keypath, err := ExpandTilde("~/.ssh/id_rsa")
+		if err != nil {
+			fmt.Println("Error reading id_rsa when falling back to key")
+			return nil, err
+		}
+
+		return []ssh.AuthMethod{PublicKeyFile(*keypath)}, nil
 	}
 
 	agent := agent.NewClient(sock)
 
-	return agent.Signers()
+	signers, err := agent.Signers()
+	if err != nil {
+		return nil, err
+	}
+
+	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
 }
 
 func SSH(host string) error {
 	port := "22"
 	user := "ubuntu"
 
-	signers, err := agentSigners()
+	auths, err := agentSigners()
 	if err != nil {
 		return err
 	}
@@ -37,8 +62,6 @@ func SSH(host string) error {
 	// if err != nil {
 	//     log.Fatal(err)
 	// }
-
-	auths := []ssh.AuthMethod{ssh.PublicKeys(signers...)}
 
 	// get host public key
 	//hostKey := getHostKey(host)
