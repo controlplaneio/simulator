@@ -14,7 +14,7 @@ all: test
 # --- DOCKER
 
 .PHONY: docker-run
-docker-run: docker-build ## Runs the attack container
+docker-run: docker-test ## Runs the attack container
 	docker run                                  \
 		--rm --init -it $(CONTAINER_NAME_LATEST)  \
 		bash
@@ -30,7 +30,7 @@ docker-test: docker-build ## Run the attack container tests
 		goss validate
 
 .PHONY: docker-push
-docker-push: ## pushes the last build docker image
+docker-push: docker-test ## pushes the last build docker image
 	@echo "+ $@"
 	docker push "${CONTAINER_NAME}"
 	docker push "${CONTAINER_NAME_LATEST}"
