@@ -170,6 +170,5 @@ ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS
 
 USER ${launch_user}
-RUN ssh-keygen -f /home/${launch_user}/.ssh/id_rsa -t rsa -N ''
 
 CMD [ "/bin/bash" ]
