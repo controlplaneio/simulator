@@ -32,7 +32,8 @@ module "Kubernetes" {
   control_plane_sg_id         = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
   private_subnet_id           = "${module.Networking.PrivateSubnetId}"
   iam_instance_profile_id     = "${module.S3Storage.IamInstanceProfileId}"
-  s3_bucket_name              = "${var.s3_bucket_name}"
+#  s3_bucket_name              = "${var.s3_bucket_name}"
+  s3_bucket_name              = "${module.S3Storage.S3BucketName}"
 }
 module "S3Storage" {
   source                      = "../../modules/AWS/S3Storage"
