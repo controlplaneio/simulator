@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+
+! aws --version > /dev/null && { echo "Error: awscli missing or not in path"; exit 1; }
+
+while getopts "b:p:h" opt; do
+  case "$opt" in
+    b ) bucket="$OPTARG"	;;
+    p ) profile="$OPTARG"	;;
+    h ) echo "Usage: $0 [-b bucketname to create] [-p profile name]"
+        exit 0
+  esac
+done
+
+if [ -z ${profile} ]; then
+  cmdline="aws s3 mb s3://${bucket}"
+else
+  cmdline="aws s3 mb s3://${bucket} --profile ${profile}"
+fi
+
+echo -n "Creating Bucket....."
+$cmdline
+
+if [ $? -eq 0 ]; then
+   echo "Completed"
+   status=0
+else
+   echo "Failed"
+   status 1
+fi
+
+exit ${status}
+
+
