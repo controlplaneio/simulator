@@ -48,7 +48,7 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 	}
 
 	bastion := tfo.BastionPublicIP.Value
-	_, err = keyScan(bastion)
+	_, err = util.KeyScan(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error running ssh-keyscan host: %s", bastion)
 	}

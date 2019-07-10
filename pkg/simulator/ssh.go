@@ -3,7 +3,6 @@ package simulator
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
-	"os"
 )
 
 // Config returns a pointer to string containing the stanzas to add to an ssh config file so that the kubernetes nodes
@@ -21,6 +20,8 @@ func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
 	return tfo.ToSSHConfig()
 }
 
+// Attack establishes an SSH connection to the attack container running on the bastion host ready for the user to
+// attempt to complete a scenario
 func Attack(tfDir, bucketName string) error {
 	tfo, err := Status(tfDir, bucketName)
 	if err != nil {
@@ -34,7 +35,7 @@ func Attack(tfDir, bucketName string) error {
 	}
 
 	util.Debug("Running key scan")
-	hostkeys, err := keyScan(bastion)
+	hostkeys, err := util.KeyScan(bastion)
 	if err != nil {
 		return err
 	}
@@ -55,14 +56,4 @@ func Attack(tfDir, bucketName string) error {
 	util.Debug("Connecting to", bastion)
 	util.SSH(bastion)
 	return nil
-}
-
-func keyScan(bastion string) (*string, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, err
-	}
-
-	out, _, err := util.RunSilently(wd, os.Environ(), "ssh-keyscan", "-H", bastion)
-	return out, err
 }
