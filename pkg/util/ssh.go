@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"net"
@@ -37,20 +38,27 @@ func GenerateKey(keyname string) (*string, error) {
 	return out, err
 }
 
-// PublicKeyFile reads the public key at the path supplied and returns the ssh.AuthMethod to use or an error if any
-// occurredj
-func PublicKeyFile(file string) ssh.AuthMethod {
-	buffer, err := Slurp(file)
+// PrivateKeyFile reads the private key at the path supplied and returns the ssh.AuthMethod to use or an error if any
+// occurred
+func PrivateKeyFile(file string) (ssh.AuthMethod, error) {
+	abspath, err := ExpandTilde(keypath)
 	if err != nil {
-		return nil
+		return nil, errors.Wrap(err, "Error reading id_rsa when falling back to key")
+	}
+
+	buffer, err := Slurp(*abspath)
+	if err != nil {
+		return nil, err
 	}
 
 	key, err := ssh.ParsePrivateKey([]byte(*buffer))
 	if err != nil {
-		return nil
+		return nil, err
 	}
-	return ssh.PublicKeys(key)
+	return ssh.PublicKeys(key), nil
 }
+
+const keypath = "~/.ssh/id_rsa"
 
 // GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls back to reading the keyfile directly
 // in case of a missing SSH_AUTH_SOCK env var or an error dialing the unix socket
@@ -58,29 +66,26 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	// Check we have the ssh-agent AUTH SOCK and short circuit if we don't - just create a signer from the keyfile
 	authSock := os.Getenv("SSH_AUTH_SOCK")
 	if authSock == "" {
-		fmt.Println("SSH_AUTH_SOCK was not set - falling back to id_rsa keyfile - this will fail if you have a passphrase")
-		keypath, err := ExpandTilde("~/.ssh/id_rsa.pub")
+		keyFileAuth, err := PrivateKeyFile(keypath)
 		if err != nil {
-			fmt.Println("Error reading id_rsa when falling back to key")
-
 			return nil, err
 		}
 
-		return []ssh.AuthMethod{PublicKeyFile(*keypath)}, nil
+		fmt.Println("KeyFile")
+		fmt.Printf("%+v", keyFileAuth)
+		return []ssh.AuthMethod{keyFileAuth}, nil
 	}
 
 	// Try to get a signer from ssh-agent
 	sock, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 	if err != nil {
 		// Fallback to keyfile if we failed to connect
-		fmt.Println("Error dialing SSH_AUTH_SOCK - falling back to id_rsa key")
-		keypath, err := ExpandTilde("~/.ssh/id_rsa.pub")
+		keyFileAuth, err := PrivateKeyFile(keypath)
 		if err != nil {
-			fmt.Println("Error reading id_rsa when falling back to key")
 			return nil, err
 		}
 
-		return []ssh.AuthMethod{PublicKeyFile(*keypath)}, nil
+		return []ssh.AuthMethod{keyFileAuth}, nil
 	}
 
 	// Use the signers from ssh-agent
@@ -104,20 +109,12 @@ func SSH(host string) error {
 	if err != nil {
 		return err
 	}
-	// or get the signer from a private key file directly
-	// signer, err := ssh.ParsePrivateKey(pemBytes)
-	// if err != nil {
-	//     log.Fatal(err)
-	// }
-
-	// get host public key
-	//hostKey := getHostKey(host)
 
 	fmt.Printf("Connecting to %s\n", host)
+	fmt.Println(auths)
 	cfg := ssh.ClientConfig{
-		User: user,
-		Auth: auths,
-		// allow any host key to be used (non-prod)
+		User:            user,
+		Auth:            auths,
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		HostKeyAlgorithms: []string{
 			ssh.KeyAlgoRSA,
@@ -127,8 +124,6 @@ func SSH(host string) error {
 			ssh.KeyAlgoECDSA521,
 			ssh.KeyAlgoED25519,
 		},
-		// verify host public key
-		//HostKeyCallback: ssh.FixedHostKey(hostKey),
 	}
 
 	return StartInteractiveSSHShell(&cfg, "tcp", host, port)
