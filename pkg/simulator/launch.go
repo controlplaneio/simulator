@@ -47,6 +47,12 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 		fmt.Printf("Please add the following lines to your ssh config\n---\n%s\n---\n", *c)
 	}
 
+	bastion := tfo.BastionPublicIP.Value
+	_, err = keyScan(bastion)
+	if err != nil {
+		return errors.Wrapf(err, "Error running ssh-keyscan host: %s", bastion)
+	}
+
 	_, err = Perturb(&po)
 	if err != nil {
 		return errors.Wrapf(err, "Error running perturb with %#v", po)

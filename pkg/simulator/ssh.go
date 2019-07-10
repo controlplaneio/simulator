@@ -64,6 +64,5 @@ func keyScan(bastion string) (*string, error) {
 	}
 
 	out, _, err := util.RunSilently(wd, os.Environ(), "ssh-keyscan", "-H", bastion)
-	util.Debug(*out)
 	return out, err
 }
