@@ -13,11 +13,49 @@ runcmd:
 
 write_files:
   - path: /home/ubuntu/.bash_login
+    permissions: '0755'
     content: |
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
       sudo -E env > /home/ubuntu/login.log
       sudo -E docker run -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
+  - path: /etc/ssh/sshd_config
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # Defaults with comments removed
+      Port 22
+      Protocol 2
+      HostKey /etc/ssh/ssh_host_rsa_key
+      HostKey /etc/ssh/ssh_host_dsa_key
+      HostKey /etc/ssh/ssh_host_ecdsa_key
+      HostKey /etc/ssh/ssh_host_ed25519_key
+      UsePrivilegeSeparation yes
+      KeyRegenerationInterval 3600
+      ServerKeyBits 1024
+      SyslogFacility AUTH
+      LogLevel INFO
+      LoginGraceTime 120
+      PermitRootLogin prohibit-password
+      StrictModes yes
+      RSAAuthentication yes
+      PubkeyAuthentication yes
+      IgnoreRhosts yes
+      RhostsRSAAuthentication no
+      HostbasedAuthentication no
+      PermitEmptyPasswords no
+      ChallengeResponseAuthentication no
+      PasswordAuthentication no
+      X11Forwarding yes
+      X11DisplayOffset 10
+      PrintMotd no
+      PrintLastLog yes
+      TCPKeepAlive yes
+      # Allow SendEnv of BASE64_SSH_KEY to enable SSHing to the instances in the
+      # private subnet (the kubernetes master and nodes)
+      AcceptEnv BASE64_SSH_KEY LANG LC_*
+      Subsystem sftp /usr/lib/openssh/sftp-server
+      UsePAM yes
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
