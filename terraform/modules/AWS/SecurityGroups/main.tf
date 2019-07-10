@@ -1,5 +1,7 @@
+resource "random_uuid" "unique" {  }
+
 resource "aws_security_group" "simulator_bastion_sg" {
-  name   = "simulator-bastion-security-group"
+  name   = "simulator-bastion-sg-${random_uuid.unique.result}"
   vpc_id = "${var.vpc_id}"
 
   ingress {
@@ -18,7 +20,7 @@ resource "aws_security_group" "simulator_bastion_sg" {
 }
 
 resource "aws_security_group" "simulator_controlplane_sg" {
-  name   = "simulator-controlplane-security-group"
+  name   = "simulator-controlplane-sg-${random_uuid.unique.result}"
   vpc_id = "${var.vpc_id}"
 
   ingress {
