@@ -166,6 +166,28 @@ func EnsureFile(path, contents string) (bool, error) {
 	return true, nil
 }
 
+// OverwriteFile writes the supplied contents overwriting the path if it already exists.  It returns an error if any
+// occurred
+func OverwriteFile(path, contents string) error {
+	file, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = io.WriteString(file, contents)
+	if err != nil {
+		return err
+	}
+
+	err = file.Sync()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // EnvOrDefault tries to read an environment variable with the supplied key and returns its value.  EnvOrDefault returns
 // a default value if it is empty or unset
 func EnvOrDefault(key, def string) string {

@@ -60,13 +60,13 @@ func Test_ToSSHConfig(t *testing.T) {
 		},
 	}
 	expected := `Host 127.0.0.1
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/cp_simulator_rsa
   ProxyCommand ssh root@8.8.8.8 -W %h:%p
 Host 127.0.0.2
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/cp_simulator_rsa
   ProxyCommand ssh root@8.8.8.8 -W %h:%p
 Host 127.0.0.3
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/cp_simulator_rsa
   ProxyCommand ssh root@8.8.8.8 -W %h:%p
 `
 

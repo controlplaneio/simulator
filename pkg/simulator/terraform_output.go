@@ -59,7 +59,7 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 	for _, ip := range tfo.MasterNodesPrivateIP.Value {
 		c := SSHConfig{
 			Hostname:    ip,
-			KeyFilePath: "~/.ssh/id_rsa",
+			KeyFilePath: "~/.ssh/cp_simulator_rsa",
 			User:        u.Username,
 			BastionIP:   tfo.BastionPublicIP.Value,
 		}
@@ -73,7 +73,7 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 	for _, ip := range tfo.ClusterNodesPrivateIP.Value {
 		c := SSHConfig{
 			Hostname:    ip,
-			KeyFilePath: "~/.ssh/id_rsa",
+			KeyFilePath: "~/.ssh/cp_simulator_rsa",
 			User:        u.Username,
 			BastionIP:   tfo.BastionPublicIP.Value,
 		}

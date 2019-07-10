@@ -86,7 +86,8 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 	// TODO: (rem) make this parameterisable?
 	if err != nil && err.Error() != "exit status 127" {
 		Debug("Error waiting for child process", err)
-		return nil, nil, err
+		childErr := string(errBuf.Bytes())
+		return nil, &childErr, err
 	}
 
 	childErr := string(errBuf.Bytes())

@@ -21,7 +21,7 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	tfDir := fixture("tf-dir-with-settings")
 	varsFile := tfDir + "/settings/bastion.tfVars"
 
-	err := simulator.EnsureTfVarsFile(tfDir, "ssh-rsa", "10.0.0.1/16", "test")
+	err := simulator.EnsureLatestTfVarsFile(tfDir, "ssh-rsa", "10.0.0.1/16", "test")
 	assert.Nil(t, err, "Got an error")
 
 	assert.Equal(t, util.MustSlurp(varsFile), "test = true\n")

@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 )
@@ -42,24 +43,33 @@ func Terraform(wd, cmd string) (*string, error) {
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
 func InitIfNeeded(tfDir, bucketName string) error {
+	_, err := util.EnsureKey()
+	if err != nil {
+		return errors.Wrap(err, "Error ensuring SSH key")
+	}
+
+	ip, err := util.DetectPublicIP()
+	if err != nil {
+		return errors.Wrap(err, "Error detecting IP address")
+	}
+	accessCIDR := *ip + "/32"
+
+	publickey, err := util.PublicKey()
+	if err != nil {
+		return errors.Wrap(err, "Error reading public key")
+	}
+
+	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
+	if err != nil {
+		return errors.Wrap(err, "Error writing tfvars")
+		return err
+	}
+
 	stateDir := tfDir + tfStateDir
 	hasStateDir, err := util.FileExists(stateDir)
 	if err != nil || hasStateDir {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}
-
-	ip, err := util.DetectPublicIP()
-	if err != nil {
-		return err
-	}
-	accessCIDR := *ip + "/32"
-
-	publickey, err := util.PublicKey("~/.ssh/id_rsa.pub")
-	if err != nil {
-		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
-	}
-
-	err = EnsureTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
 
 	_, err = Terraform(tfDir, "init")
 	if err != nil {
@@ -87,11 +97,11 @@ func Create(tfDir, bucketName string) error {
 	return err
 }
 
-// Status calls terraform output to get the state of the infrastruture and parses the output for
-// programmatic use
+// Status calls terraform output to get the state of the infrastruture and parses the output for programmatic use
 func Status(tfDir, bucketName string) (*TerraformOutput, error) {
 	err := InitIfNeeded(tfDir, bucketName)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 

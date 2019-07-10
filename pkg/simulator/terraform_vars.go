@@ -24,11 +24,10 @@ func (tfv *TfVars) String() string {
 	return "access_key = \"" + tfv.PublicKey + "\"\n" + "access_cidr = \"" + tfv.AccessCIDR + "\"\n" + "s3_bucket_name = \"" + tfv.BucketName + "\"\n"
 }
 
-// EnsureTfVarsFile writes an tfvars file if one hasnt already been made
-func EnsureTfVarsFile(tfDir, publicKey, accessCIDR, bucketName string) error {
+// EnsureLatestTfVarsFile writes an tfvars file if one hasnt already been made
+func EnsureLatestTfVarsFile(tfDir, publicKey, accessCIDR, bucketName string) error {
 	filename := tfDir + "/settings/bastion.tfvars"
 	tfv := NewTfVars(publicKey, accessCIDR, bucketName)
 
-	_, err := util.EnsureFile(filename, tfv.String())
-	return err
+	return util.OverwriteFile(filename, tfv.String())
 }

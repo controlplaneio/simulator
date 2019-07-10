@@ -76,6 +76,7 @@ RUN apt-get update                                                              
     ca-certificates                                                              \
     git                                                                          \
     golang                                                                       \
+    openssh-client                                                               \
     unzip
 
 COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
@@ -88,14 +89,14 @@ RUN useradd -ms /bin/bash ${build_user}
 RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone
 
 # Create an empty public ssh key file for the tests
-RUN mkdir -p /home/${build_user}/.ssh && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/id_rsa.pub \
+RUN mkdir -p /home/${build_user}/.ssh && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
 # Create module cache and copy manifest files
     &&  mkdir -p /home/${build_user}/go/pkg/mod
 COPY ./go.* /go/src/github.com/controlplaneio/simulator-standalone/
 
 # Give ownership of module cache and src tree to build user
 RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone \
-    && chown -R ${build_user}:${build_user} /home/${build_user}/go
+    && chown -R ${build_user}:${build_user} /home/${build_user}
 
 # Run all build and test steps as build user
 USER ${build_user}
