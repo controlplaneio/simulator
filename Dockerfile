@@ -62,7 +62,8 @@ RUN ls -lasph
 RUN hadolint Dockerfile            \
     &&  hadolint attack/Dockerfile \
 # Lint shell scripts
-    && shellcheck scripts/*
+    && shellcheck scripts/*        \
+    && shellcheck attack/scripts/*
 
 #-----------------------#
 # Golang Build and Test #

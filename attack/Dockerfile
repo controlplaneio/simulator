@@ -18,7 +18,7 @@ RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION
 
 # Add login message
 COPY ./scripts/attack-motd /usr/local/bin/attack-motd
-RUN echo '[ ! -z "$TERM" ] && attack-motd' >> /etc/bash.bashrc
+COPY ./scripts/.bashrc /etc/bash.bashrc
 
 RUN mkdir /attack
 WORKDIR /attack
