@@ -57,7 +57,7 @@ export -f attack_node
 # Display info message
 #
 welcome() {
-  info "You have made it into the permiter of a private kubernetes cluster."
+  info "You have made it inside the perimiter of a private kubernetes cluster."
   info "There are ${BOLD}${#master[@]}${NORMAL} master "      \
        "and ${BOLD}${#node[@]}${NORMAL} nodes in the cluster"
   info "We have setup helpers to attack the master(s) and node(s)."
