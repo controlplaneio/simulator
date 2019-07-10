@@ -1,9 +1,12 @@
+resource "random_uuid" "s3_iam_role_uuid" {  }
+
 ############################
 # Create S3 bucket
 #
 
 resource "aws_s3_bucket" "k8sjoin" {
-  bucket        = "${var.s3_bucket_name}"
+#  bucket        = "${var.s3_bucket_name}"
+  bucket        = "k8sjoin-${random_uuid.s3_iam_role_uuid.result}"
   acl           = "private"
   force_destroy = true
 
@@ -18,7 +21,7 @@ resource "aws_s3_bucket" "k8sjoin" {
 #
 
 resource "aws_iam_role" "simulator_s3_access_role" {
-  name = "simulator-s3-host-access-role"
+  name = "simulator-s3-host-role-${random_uuid.s3_iam_role_uuid.result}"
 
   assume_role_policy = <<EOF
 {
@@ -39,7 +42,7 @@ EOF
 
 
 resource "aws_iam_role_policy" "simulator_s3_access_policy" {
-  name        = "simulator-s3-host-access-policy"
+  name        = "simulator-s3-host-policy-${random_uuid.s3_iam_role_uuid.result}"
   role        = "${aws_iam_role.simulator_s3_access_role.id}"
 
   policy = <<EOF
@@ -49,7 +52,7 @@ resource "aws_iam_role_policy" "simulator_s3_access_policy" {
     {
       "Effect": "Allow",
       "Action": ["s3:ListBucket"],
-      "Resource": ["arn:aws:s3:::${var.s3_bucket_name}"]
+      "Resource": ["${aws_s3_bucket.k8sjoin.arn}"]
     },
     {
       "Effect": "Allow",
@@ -58,7 +61,7 @@ resource "aws_iam_role_policy" "simulator_s3_access_policy" {
         "s3:GetObject",
         "s3:DeleteObject"
       ],
-      "Resource": ["arn:aws:s3:::${var.s3_bucket_name}/*"]
+      "Resource": ["${aws_s3_bucket.k8sjoin.arn}/*"]
     }
   ]
 }
@@ -66,7 +69,7 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "simulator_instance_profile" {
-  name = "simulator-instance-profile"
+  name = "simulator-instance-profile-${random_uuid.s3_iam_role_uuid.result}"
   role = "${aws_iam_role.simulator_s3_access_role.name}"
 }
 
