@@ -43,7 +43,7 @@ func GenerateKey(keyname string) (*string, error) {
 func PrivateKeyFile(file string) (ssh.AuthMethod, error) {
 	abspath, err := ExpandTilde(keypath)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error reading id_rsa when falling back to key")
+		return nil, errors.Wrapf(err, "Error reading %s when falling back to key", file)
 	}
 
 	buffer, err := Slurp(*abspath)
@@ -143,7 +143,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		return err
 	}
 
-	encodedkey, err := Base64PrivateKey("id_rsa")
+	encodedkey, err := Base64PrivateKey(keypath)
 	if err != nil {
 		return err
 	}

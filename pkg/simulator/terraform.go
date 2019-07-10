@@ -53,17 +53,13 @@ func InitIfNeeded(tfDir, bucketName string) error {
 		return err
 	}
 	accessCIDR := *ip + "/32"
-	publicKeyPath, err := util.ExpandTilde("~/.ssh/id_rsa.pub")
-	if err != nil {
-		return err
-	}
 
-	publicKey, err := util.Slurp(*publicKeyPath)
+	publickey, err := util.PublicKey("~/.ssh/id_rsa.pub")
 	if err != nil {
 		return errors.Wrap(err, "Error reading ~/.ssh/id_rsa.pub")
 	}
 
-	err = EnsureTfVarsFile(tfDir, *publicKey, accessCIDR, bucketName)
+	err = EnsureTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
 
 	_, err = Terraform(tfDir, "init")
 	if err != nil {
