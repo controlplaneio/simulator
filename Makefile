@@ -69,8 +69,8 @@ infra-destroy: infra-init infra-checkvars ## Teardown any infrastructure
 
 .PHONY: dep
 dep: ## Install dependencies for other targets
-	$(GO) get github.com/robertkrimen/godocdown/godocdown
-	$(GO) mod download
+	$(GO) get github.com/robertkrimen/godocdown/godocdown 2>&1
+	$(GO) mod download 2>&1
 
 .PHONY: build
 build: dep ## Run golang build for the CLI program
