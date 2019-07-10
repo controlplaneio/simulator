@@ -10,6 +10,8 @@
 ```go
 func Attack(tfDir, bucketName string) error
 ```
+Attack establishes an SSH connection to the attack container running on the
+bastion host ready for the user to attempt to complete a scenario
 
 #### func  Config
 
