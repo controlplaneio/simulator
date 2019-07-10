@@ -15,42 +15,20 @@ IFS=$'\n\t'
 unset CDPATH
 
 #
-# colours
+# Colours
 #
-export CLICOLOR=1
-export TERM=xterm-color
-COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
-COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
 COLOUR_WHITE=$(tput setaf 7 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
 #
 # Logging
 #
-success() {
-  [ "${*:-}" ] && RESPONSE="$*" || RESPONSE="Unknown Success"
-  printf "%s\\n" "$(log_message_prefix)${COLOUR_GREEN}${RESPONSE}${COLOUR_RESET}"
-} 1>&2
-readonly -f success
 
 info() {
   [ "${*:-}" ] && INFO="$*" || INFO="Unknown Info"
-  printf "%s\\n" "$(log_message_prefix)${COLOUR_WHITE}${INFO}${COLOUR_RESET}"
+  printf "%s\\n" "${COLOUR_WHITE}${INFO}${COLOUR_RESET}"
 } 1>&2
 readonly -f info
-
-warning() {
-  [ "${*:-}" ] && ERROR="$*" || ERROR="Unknown Warning"
-  printf "%s\\n" "$(log_message_prefix)${COLOUR_RED}${ERROR}${COLOUR_RESET}"
-} 1>&2
-readonly -f warning
-
-error() {
-  [ "${*:-}" ] && ERROR="$*" || ERROR="Unknown Error"
-  printf "%s\\n" "$(log_message_prefix)${COLOUR_RED}${ERROR}${COLOUR_RESET}"
-  exit 3
-} 1>&2
-readonly -f error
 
 #
 # Main function
