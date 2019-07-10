@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 ! aws --version > /dev/null && { echo "Error: awscli missing or not in path"; exit 1; }
 
