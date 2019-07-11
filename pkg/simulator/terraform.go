@@ -62,7 +62,6 @@ func InitIfNeeded(tfDir, bucketName string) error {
 	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
-		return err
 	}
 
 	stateDir := tfDir + tfStateDir

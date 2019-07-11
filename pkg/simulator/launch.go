@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
@@ -37,14 +36,9 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 		return err
 	}
 
-	// BUG: (rem) doesnt work when SSH config doesnt exist in docker container
-	written, err := util.EnsureFile(*cp, *c)
+	err = util.OverwriteFile(*cp, *c)
 	if err != nil {
 		return err
-	}
-
-	if !written {
-		fmt.Printf("Please add the following lines to your ssh config\n---\n%s\n---\n", *c)
 	}
 
 	bastion := tfo.BastionPublicIP.Value
