@@ -19,7 +19,7 @@ func newSSHConfigCommand() *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			cfg, err := simulator.Config(tfDir, scenariosDir, bucket)
 			if err != nil {
-				return err
+				return errors.Wrap(err, "Error getting SSH config")
 			}
 
 			shouldwrite, err := cmd.Flags().GetBool("write")
@@ -31,7 +31,7 @@ func newSSHConfigCommand() *cobra.Command {
 				fmt.Println(*cfg)
 			}
 
-			err = ssh.WriteSSHConfig(*cfg)
+			err = ssh.EnsureSSHConfig(*cfg)
 			if err != nil {
 				return errors.Wrapf(err, "Error writing SSH config")
 			}

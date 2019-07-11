@@ -11,7 +11,7 @@ import (
 func Launch(tfDir, scenariosDir, bucketName, id string) error {
 	manifest, err := scenario.LoadManifest(scenariosDir)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error loading scenario manifest file")
 	}
 
 	if !manifest.Contains(id) {
@@ -28,16 +28,16 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 	po := MakePerturbOptions(*tfo, scenarioPath)
 	cfg, err := tfo.ToSSHConfig()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error templating SSH config")
 	}
 
-	err = ssh.WriteSSHConfig(*cfg)
+	err = ssh.EnsureSSHConfig(*cfg)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error writing SSH config")
 	}
 
 	bastion := tfo.BastionPublicIP.Value
-	err = ssh.UpdateKnownHosts(bastion)
+	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s", bastion)
 	}
