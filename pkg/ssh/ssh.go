@@ -55,22 +55,6 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
 }
 
-// WriteSSHConfig writes the SSH config file for simulator that is needed for the `perturb.sh` scripts to
-// run succesfully via the bastion
-func WriteSSHConfig(cfg string) error {
-	abspath, err := util.ExpandTilde(SSHConfigPath)
-	if err != nil {
-		return errors.Wrap(err, "Error resolving SSH config path")
-	}
-
-	err = util.OverwriteFile(*abspath, cfg)
-	if err != nil {
-		return errors.Wrap(err, "Error overwriting SSH config")
-	}
-
-	return nil
-}
-
 // SSH establishes an interactive Secure Shell session to the supplied host as user ubuntu and on port 22. SSH uses
 // ssh-agent to get the key to use
 func SSH(host string) error {
