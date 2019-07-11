@@ -1,24 +1,19 @@
-resource "random_uuid" "s3_iam_role_uuid" {  }
+resource "random_uuid" "s3_iam_role_uuid" {}
 
-############################
-# Create S3 bucket
-#
+// Create S3 bucket
 
 resource "aws_s3_bucket" "k8sjoin" {
-#  bucket        = "${var.s3_bucket_name}"
   bucket        = "k8sjoin-${random_uuid.s3_iam_role_uuid.result}"
   acl           = "private"
   force_destroy = true
 
   tags = {
-    Name        = "K8S Config"
+    Name = "K8S Config"
   }
 }
 
-############################
-# Create IAM role, policy and instance profile
-# used to assign to instances to access S3 bucket
-#
+// Create IAM role, policy and instance profile
+// used to assign to instances to access S3 bucket
 
 resource "aws_iam_role" "simulator_s3_access_role" {
   name = "simulator-s3-host-role-${random_uuid.s3_iam_role_uuid.result}"
@@ -42,8 +37,8 @@ EOF
 
 
 resource "aws_iam_role_policy" "simulator_s3_access_policy" {
-  name        = "simulator-s3-host-policy-${random_uuid.s3_iam_role_uuid.result}"
-  role        = "${aws_iam_role.simulator_s3_access_role.id}"
+  name = "simulator-s3-host-policy-${random_uuid.s3_iam_role_uuid.result}"
+  role = "${aws_iam_role.simulator_s3_access_role.id}"
 
   policy = <<EOF
 {
