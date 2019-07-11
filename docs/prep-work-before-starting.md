@@ -8,8 +8,8 @@ You can either create a bucket via the AWS console, or use the aws cli, or use t
 
 The script takes the following command line arguments
 ```
--b [name for the bucket, which must be globally uniqic]
--p [name of aws profile - only required not using the default profile]
+-b [name for the bucket, which must be globally unique]
+-p [name of aws profile - only required if not using the default profile]
 ```
 
 # Configure Terraform backend storage
