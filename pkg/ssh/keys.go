@@ -51,7 +51,7 @@ func GenerateKey(privatekeypath string) (*string, error) {
 		return nil, err
 	}
 
-	out, stderr, err := util.RunSilently(wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C", "simulator-key", "-N", "''")
+	out, stderr, err := util.RunSilently(wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C", "simulator-key")
 	if *stderr != "" {
 		fmt.Println(*stderr)
 	}
