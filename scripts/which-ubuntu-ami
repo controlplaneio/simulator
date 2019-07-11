@@ -1,5 +1,7 @@
 #!/bin/bash
 
+region=$1
+
 # needed as json list returned by ubuntu site is mal-formed
 remove_last_comma() { sed '
         $x;$G;/\(.*\),/!H;//!{$!d
@@ -8,6 +10,6 @@ remove_last_comma() { sed '
 
 curl -s "https://cloud-images.ubuntu.com/locator/ec2/releasesTable" \
     | remove_last_comma \
-    | jq -c '.aaData[] | select(contains(["18.04 LTS", "amd64", "eu-west-1", "hvm:ebs-ssd"]))' \
+    | jq --arg REGION "$region" -c '.aaData[] | select(contains(["18.04 LTS", "amd64", $REGION, "hvm:ebs-ssd"]))' \
     | grep -o 'ami-[a-z0-9]\+' | head -1
 
