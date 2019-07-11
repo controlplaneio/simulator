@@ -11,7 +11,7 @@ import (
 func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
 	tfo, err := Status(tfDir, bucketName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error getting infrastructure status")
 	}
 
 	if !tfo.IsUsable() {
@@ -26,7 +26,7 @@ func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
 func Attack(tfDir, bucketName string) error {
 	tfo, err := Status(tfDir, bucketName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error getting infrastrucutre status")
 	}
 
 	bastion := tfo.BastionPublicIP.Value
@@ -36,9 +36,9 @@ func Attack(tfDir, bucketName string) error {
 	}
 
 	util.Debug("Running key scan")
-	err = ssh.UpdateKnownHosts(bastion)
+	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error writing known hosts")
 	}
 
 	util.Debug("Connecting to", bastion)

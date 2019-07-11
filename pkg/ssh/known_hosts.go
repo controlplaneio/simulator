@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-// UpdateKnownHosts scans the bastion host for its SSH keys and writes them to a custom known hosts location for
+// EnsureKnownHosts scans the bastion host for its SSH keys and writes them to a custom known hosts location for
 // promptless interaction with the infrastructure.  Return an error if any occurred
-func UpdateKnownHosts(bastion string) error {
+func EnsureKnownHosts(bastion string) error {
 	hostkeys, err := KeyScan(bastion)
 	if err != nil {
 		return errors.Wrap(err, "Error running ssh-keyscan")
