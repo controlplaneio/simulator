@@ -2,7 +2,7 @@ package simulator
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 )
 
@@ -26,23 +26,18 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 	scenarioPath := manifest.Find(id).Path
 
 	po := MakePerturbOptions(*tfo, scenarioPath)
-	c, err := tfo.ToSSHConfig()
+	cfg, err := tfo.ToSSHConfig()
 	if err != nil {
 		return err
 	}
 
-	cp, err := util.ExpandTilde("~/.ssh/config")
-	if err != nil {
-		return err
-	}
-
-	err = util.OverwriteFile(*cp, *c)
+	err = ssh.WriteSSHConfig(*cfg)
 	if err != nil {
 		return err
 	}
 
 	bastion := tfo.BastionPublicIP.Value
-	err = util.UpdateKnownHosts(bastion)
+	err = ssh.UpdateKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s", bastion)
 	}

@@ -1,7 +1,8 @@
-package util
+package ssh
 
 import (
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
@@ -57,12 +58,12 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 // WriteSSHConfig writes the SSH config file for simulator that is needed for the `perturb.sh` scripts to
 // run succesfully via the bastion
 func WriteSSHConfig(cfg string) error {
-	abspath, err := ExpandTilde(SSHConfigPath)
+	abspath, err := util.ExpandTilde(SSHConfigPath)
 	if err != nil {
 		return errors.Wrap(err, "Error resolving SSH config path")
 	}
 
-	err = OverwriteFile(*abspath, cfg)
+	err = util.OverwriteFile(*abspath, cfg)
 	if err != nil {
 		return errors.Wrap(err, "Error overwriting SSH config")
 	}
@@ -83,7 +84,7 @@ func SSH(host string) error {
 
 	fmt.Printf("Connecting to %s\n", host)
 
-	abspath, err := ExpandTilde(SSHKnownHostsPath)
+	abspath, err := util.ExpandTilde(SSHKnownHostsPath)
 	if err != nil {
 		return errors.Wrap(err, "Error resolving known_hosts path")
 	}

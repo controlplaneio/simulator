@@ -1,4 +1,4 @@
-package util
+package ssh
 
 // SSHKnownHostsPath is the path to write the simulator SSH config file
 const SSHKnownHostsPath = "~/.ssh/cp_simulator_known_hosts"

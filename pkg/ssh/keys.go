@@ -1,8 +1,9 @@
-package util
+package ssh
 
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"os"
@@ -11,12 +12,12 @@ import (
 
 // Base64PrivateKey returns a pointer to a string containing the base64 encoded private key or an error
 func Base64PrivateKey(name string) (*string, error) {
-	keypath, err := ExpandTilde(name)
+	keypath, err := util.ExpandTilde(name)
 	if err != nil {
 		return nil, err
 	}
 
-	keymaterial, err := Slurp(*keypath)
+	keymaterial, err := util.Slurp(*keypath)
 	if err != nil {
 		return nil, err
 	}
@@ -28,12 +29,12 @@ func Base64PrivateKey(name string) (*string, error) {
 
 // PublicKey reads the public key and return a pointer to a string with its contents or any error
 func PublicKey() (*string, error) {
-	publicKeyPath, err := ExpandTilde(PublicKeyPath)
+	publicKeyPath, err := util.ExpandTilde(PublicKeyPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error resolving %s", PublicKeyPath)
 	}
 
-	publickey, err := Slurp(*publicKeyPath)
+	publickey, err := util.Slurp(*publicKeyPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error reading %s", PublicKeyPath)
 	}
@@ -50,12 +51,12 @@ func UpdateKnownHosts(bastion string) error {
 		return errors.Wrap(err, "Error running ssh-keyscan")
 	}
 
-	abspath, err := ExpandTilde(SSHKnownHostsPath)
+	abspath, err := util.ExpandTilde(SSHKnownHostsPath)
 	if err != nil {
 		return errors.Wrap(err, "Error resolving SSH known hosts path")
 	}
 
-	err = OverwriteFile(*abspath, "# "+bastion+"\n"+*hostkeys)
+	err = util.OverwriteFile(*abspath, "# "+bastion+"\n"+*hostkeys)
 	if err != nil {
 		return errors.Wrap(err, "Error writing SSH known hosts file")
 	}
@@ -71,7 +72,7 @@ func KeyScan(bastion string) (*string, error) {
 		return nil, err
 	}
 
-	out, _, err := RunSilently(wd, os.Environ(), "ssh-keyscan", "-H", bastion)
+	out, _, err := util.RunSilently(wd, os.Environ(), "ssh-keyscan", "-H", bastion)
 	return out, err
 }
 
@@ -83,7 +84,7 @@ func GenerateKey(privatekeypath string) (*string, error) {
 		return nil, err
 	}
 
-	out, stderr, err := RunSilently(wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C", "simulator-key", "-N", "''")
+	out, stderr, err := util.RunSilently(wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C", "simulator-key", "-N", "''")
 	if *stderr != "" {
 		fmt.Println(*stderr)
 	}
@@ -94,12 +95,12 @@ func GenerateKey(privatekeypath string) (*string, error) {
 // EnsureKey ensures there is a well-known simulator key available and returns true if it generates a new one or an
 // error if any
 func EnsureKey() (bool, error) {
-	abspath, err := ExpandTilde(PrivateKeyPath)
+	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
 		return false, errors.Wrap(err, "Error resolving key path")
 	}
 
-	exists, err := FileExists(*abspath)
+	exists, err := util.FileExists(*abspath)
 	if err != nil {
 		return false, errors.Wrap(err, "Error checking if key already exists")
 	}
@@ -120,12 +121,12 @@ func EnsureKey() (bool, error) {
 // PrivateKeyFile reads the private key at the path supplied and returns the ssh.AuthMethod to use or an error if any
 // occurred
 func PrivateKeyFile() (ssh.AuthMethod, error) {
-	abspath, err := ExpandTilde(PrivateKeyPath)
+	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error reading private key")
 	}
 
-	buffer, err := Slurp(*abspath)
+	buffer, err := util.Slurp(*abspath)
 	if err != nil {
 		return nil, err
 	}

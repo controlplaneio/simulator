@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 )
@@ -35,12 +36,12 @@ func Attack(tfDir, bucketName string) error {
 	}
 
 	util.Debug("Running key scan")
-	err = util.UpdateKnownHosts(bastion)
+	err = ssh.UpdateKnownHosts(bastion)
 	if err != nil {
 		return err
 	}
 
 	util.Debug("Connecting to", bastion)
-	util.SSH(bastion)
+	ssh.SSH(bastion)
 	return nil
 }

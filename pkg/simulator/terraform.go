@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 )
@@ -43,7 +44,7 @@ func Terraform(wd, cmd string) (*string, error) {
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
 func InitIfNeeded(tfDir, bucketName string) error {
-	_, err := util.EnsureKey()
+	_, err := ssh.EnsureKey()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
@@ -54,7 +55,7 @@ func InitIfNeeded(tfDir, bucketName string) error {
 	}
 	accessCIDR := *ip + "/32"
 
-	publickey, err := util.PublicKey()
+	publickey, err := ssh.PublicKey()
 	if err != nil {
 		return errors.Wrap(err, "Error reading public key")
 	}
