@@ -10,10 +10,9 @@ provider "aws" {
 
 terraform {
   backend "s3" {
-    key = "simulator.tfstate"
-    region = "eu-west-1"
-    bucket = "simulator-standalone-terraform-state"
-    #dynamodb_table = "simulator-terraform-state-locking"
-    encrypt = true # Optional, S3 Bucket Server Side Encryption
+    key     = "simulator.tfstate"
+    region  = "eu-west-1"
+    bucket  = "simulator-standalone-terraform-state"
+    encrypt = true // Optional, S3 Bucket Server Side Encryption
   }
 }
