@@ -1,6 +1,6 @@
 variable "region" {
   description = "aws region"
-  default     = "eu-west-1"
+  default     = "eu-west-2"
 }
 
 variable "shared_credentials_file" {
@@ -42,13 +42,13 @@ variable "private_subnet_cidr" {
 }
 
 variable "ami_id" {
-  description = "ami to use with Bastion host"
-  default     = "ami-09d38086eb2b23925"
+  description = "ami to use"
+  default     = "ami-0c30afcb7ab02233d"
 }
 
 variable "instance_type" {
   description = "instance type for Baston host"
-  default     = "t1.micro"
+  default     = "t2.micro"
 }
 
 variable "master_instance_type" {
@@ -63,7 +63,7 @@ variable "number_of_master_instances" {
 
 variable "cluster_nodes_instance_type" {
   description = "instance type for k8s nodes"
-  default     = "t1.micro"
+  default     = "t2.medium"
 }
 
 variable "number_of_cluster_instances" {
@@ -73,12 +73,12 @@ variable "number_of_cluster_instances" {
 
 variable "private_avail_zone" {
   description = "availability zone for private subnet"
-  default     = "eu-west-1a"
+  default     = "eu-west-2a"
 }
 
 variable "public_avail_zone" {
   description = "availability zone for public subnet"
-  default     = "eu-west-1a"
+  default     = "eu-west-2a"
 }
 
 variable "s3_bucket_name" {
