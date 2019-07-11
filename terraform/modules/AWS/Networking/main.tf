@@ -1,7 +1,5 @@
 
-##################################################
-# VPC and Subnet creation
-#
+// VPC and Subnet creation
 
 resource "aws_vpc" "simulator_vpc" {
   cidr_block           = "${var.vpc_cidr}"
@@ -30,18 +28,14 @@ resource "aws_subnet" "simulator_private_subnet" {
    }
 }
 
-##################################################
-# Elastic IP creation
-#
+// Elastic IP creation
 
 resource "aws_eip" "simulator_eip" {
   vpc        = true
   depends_on = ["aws_internet_gateway.simulator_igw"]
 }
 
-##################################################
-# Internet gateway
-#
+// Internet gateway
 
 resource "aws_internet_gateway" "simulator_igw" {
   vpc_id = "${aws_vpc.simulator_vpc.id}"
@@ -50,9 +44,7 @@ resource "aws_internet_gateway" "simulator_igw" {
     }
 }
 
-##################################################
-# NAT gateway
-#
+// NAT gateway
 
 resource "aws_nat_gateway" "simulator_nat" {
     allocation_id = "${aws_eip.simulator_eip.id}"
@@ -60,9 +52,7 @@ resource "aws_nat_gateway" "simulator_nat" {
     depends_on    = ["aws_internet_gateway.simulator_igw"]
 }
 
-##################################################
-# Route tables and associations
-#
+// Route tables and associations
 
 resource "aws_route_table" "simulator_public_route_table" {
   vpc_id = "${aws_vpc.simulator_vpc.id}"
@@ -86,13 +76,13 @@ resource "aws_route_table" "simulator_private_nat_route_table" {
   }
 }
 
-# Associate public subnet to public route table
+// Associate public subnet to public route table
 resource "aws_route_table_association" "simulator_public_rt_assoc" {
   subnet_id      = "${aws_subnet.simulator_public_subnet.id}"
   route_table_id = "${aws_route_table.simulator_public_route_table.id}"
 }
 
-# Associate private subnet to private route table
+// Associate private subnet to private route table
 resource "aws_route_table_association" "simulator_private_rt_assoc" {
   subnet_id      = "${aws_subnet.simulator_private_subnet.id}"
   route_table_id = "${aws_route_table.simulator_private_nat_route_table.id}"
