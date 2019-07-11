@@ -11,21 +11,21 @@ resource "aws_vpc" "simulator_vpc" {
 }
 
 resource "aws_subnet" "simulator_public_subnet" {
-   vpc_id            = "${aws_vpc.simulator_vpc.id}"
-   cidr_block        = "${var.public_subnet_cidr}"
-   availability_zone = "${var.public_avail_zone}"
-   tags = {
-     Name = "Simulator Public subnet"
-   }
+  vpc_id            = "${aws_vpc.simulator_vpc.id}"
+  cidr_block        = "${var.public_subnet_cidr}"
+  availability_zone = "${var.public_avail_zone}"
+  tags = {
+    Name = "Simulator Public subnet"
+  }
 }
 
 resource "aws_subnet" "simulator_private_subnet" {
-   vpc_id            = "${aws_vpc.simulator_vpc.id}"
-   cidr_block        = "${var.private_subnet_cidr}"
-   availability_zone = "${var.private_avail_zone}"
-   tags = {
-     Name = "Simulator Private subnet"
-   }
+  vpc_id            = "${aws_vpc.simulator_vpc.id}"
+  cidr_block        = "${var.private_subnet_cidr}"
+  availability_zone = "${var.private_avail_zone}"
+  tags = {
+    Name = "Simulator Private subnet"
+  }
 }
 
 // Elastic IP creation
@@ -40,16 +40,16 @@ resource "aws_eip" "simulator_eip" {
 resource "aws_internet_gateway" "simulator_igw" {
   vpc_id = "${aws_vpc.simulator_vpc.id}"
   tags = {
-        Name = "Simulator InternetGateway"
-    }
+    Name = "Simulator InternetGateway"
+  }
 }
 
 // NAT gateway
 
 resource "aws_nat_gateway" "simulator_nat" {
-    allocation_id = "${aws_eip.simulator_eip.id}"
-    subnet_id     = "${aws_subnet.simulator_public_subnet.id}"
-    depends_on    = ["aws_internet_gateway.simulator_igw"]
+  allocation_id = "${aws_eip.simulator_eip.id}"
+  subnet_id     = "${aws_subnet.simulator_public_subnet.id}"
+  depends_on    = ["aws_internet_gateway.simulator_igw"]
 }
 
 // Route tables and associations
@@ -60,7 +60,7 @@ resource "aws_route_table" "simulator_public_route_table" {
     cidr_block = "0.0.0.0/0"
     gateway_id = "${aws_internet_gateway.simulator_igw.id}"
   }
-  tags   = {
+  tags = {
     Name = "Simulator Public internet route table"
   }
 }
@@ -71,7 +71,7 @@ resource "aws_route_table" "simulator_private_nat_route_table" {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = "${aws_nat_gateway.simulator_nat.id}"
   }
-  tags   = {
+  tags = {
     Name = "Simulator Private NAT route table"
   }
 }
