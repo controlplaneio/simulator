@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"net"
@@ -52,6 +53,25 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	}
 
 	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
+}
+
+// SSHConfigPath is the path to write the simulator SSH config file
+const SSHConfigPath = "~/.ssh/cp_simulator_config"
+
+// WriteSSHConfig writes the SSH config file for simulator that is needed for the `perturb.sh` scripts to
+// run succesfully via the bastion
+func WriteSSHConfig(cfg string) error {
+	abspath, err := ExpandTilde(SSHConfigPath)
+	if err != nil {
+		return errors.Wrap(err, "Error resolving SSH config path")
+	}
+
+	err = OverwriteFile(*abspath, cfg)
+	if err != nil {
+		return errors.Wrap(err, "Error overwriting SSH config")
+	}
+
+	return nil
 }
 
 // SSH establishes an interactive Secure Shell session to the supplied host as user ubuntu and on port 22. SSH uses

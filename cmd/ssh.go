@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -20,11 +21,21 @@ func newSSHConfigCommand() *cobra.Command {
 				return err
 			}
 
-			fmt.Println(*cfg)
+			shouldwrite, err := cmd.Flags().GetBool("write")
+			if err != nil {
+				return err
+			}
+
+			if !shouldwrite {
+				fmt.Println(*cfg)
+			}
+
+			util.WriteSSHConfig(*cfg)
 
 			return nil
 		},
 	}
+	cmd.PersistentFlags().Bool("write", true, "Write the ssh config - this is isolated from your default SSH config")
 
 	return cmd
 }

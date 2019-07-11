@@ -36,6 +36,7 @@ func newScenarioLaunchCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `launch <id>`,
 		Short: "Launches a scenario",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
 				return fmt.Errorf("scenario id is required")
