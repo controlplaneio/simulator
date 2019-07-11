@@ -14,6 +14,10 @@ If you need to include bsah code snippets you will need to change how the templa
 
 A distributed systems and infrastructure simulator for attacking and debugging Kubernetes
 
+## Preperation work
+
+Before starting the Simulator please refer to [the preparation](../docs/prep-work-before-starting.md) document
+
 ## Usage
 
 The quickest way to get up and running is to simply:
