@@ -42,9 +42,9 @@ func Launch(tfDir, scenariosDir, bucketName, id string) error {
 	}
 
 	bastion := tfo.BastionPublicIP.Value
-	_, err = util.KeyScan(bastion)
+	err = util.UpdateKnownHosts(bastion)
 	if err != nil {
-		return errors.Wrapf(err, "Error running ssh-keyscan host: %s", bastion)
+		return errors.Wrapf(err, "Error updating known hosts for bastion: %s", bastion)
 	}
 
 	_, err = Perturb(&po)

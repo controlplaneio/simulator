@@ -35,22 +35,9 @@ func Attack(tfDir, bucketName string) error {
 	}
 
 	util.Debug("Running key scan")
-	hostkeys, err := util.KeyScan(bastion)
+	err = util.UpdateKnownHosts(bastion)
 	if err != nil {
 		return err
-	}
-
-	knownhosts, err := util.ExpandTilde("~/.ssh/known_hosts")
-	if err != nil {
-		return err
-	}
-	written, err := util.EnsureFile(*knownhosts, "# "+bastion+"\n"+*hostkeys)
-	if err != nil {
-		return err
-	}
-
-	if !written {
-		util.Debug("Did not write ", *hostkeys)
 	}
 
 	util.Debug("Connecting to", bastion)

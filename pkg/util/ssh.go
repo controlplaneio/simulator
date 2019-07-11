@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
+	"golang.org/x/crypto/ssh/knownhosts"
 	"net"
 	"os"
 	"time"
@@ -81,11 +82,21 @@ func SSH(host string) error {
 	}
 
 	fmt.Printf("Connecting to %s\n", host)
-	fmt.Println(auths)
+
+	abspath, err := ExpandTilde(SSHKnownHostsPath)
+	if err != nil {
+		return errors.Wrap(err, "Error resolving known_hosts path")
+	}
+
+	knownHostsCallback, err := knownhosts.New(*abspath)
+	if err != nil {
+		return errors.Wrap(err, "Error configuring ssh client to use known_hosts file")
+	}
+
 	cfg := ssh.ClientConfig{
 		User:            user,
 		Auth:            auths,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback: knownHostsCallback,
 		HostKeyAlgorithms: []string{
 			ssh.KeyAlgoRSA,
 			ssh.KeyAlgoDSA,

@@ -1,2 +1,3 @@
-access_key = "ssh-rsa"
-access_cidr = "10.0.0.1/16"
+access_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDOMM71frFGoA+JPEhcNBRC+g4qcu84CUKCUBuoKLxRcyUVELeFhnpWFnhD4E3i8W9dJx9a0OWmCSYXOefsQm7xQqNMQP2Eu5dkTaROebXV6cIxqouNEYhD9J7PM4sHC77W0gdizgSISv/bataIpnWBNo15gCxQA8JuiLROTSInvhRPiN36ZieTr3bRbw5igNudVGbhTCWuJFRfM4uAdGuE8crPCsuUP1quAfqoGxz/P7AcmiBnTViJTIOqVviL+yhKKM49egd3YRF9+KF+uuLX2TW51zCJDIUyUu5E6LBCnqooO3fK6LfjhlmFj53Cn4f2wkjSt6M68qkc+52Q500ogy4hVGoq0bA9whcCCsHvnrLvV/u8dcQfwKRF+9HvTIR8ygoqwBi55BQoZnbcjggUYe/Lzg5iYICGs89KyLR/PUziNnasBcyCzt6XERs0JhXlbkHB5wrULv+PFFt55IXyKIOiQq/PCs5Dp1KoE/cpeDLbfDiaNnCcJlcQi0CNt08= simulator-key"
+access_cidr = "5.148.145.121/32"
+s3_bucket_name = "simulator-"
