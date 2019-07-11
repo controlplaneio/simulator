@@ -1,10 +1,12 @@
-package util
+package ssh
 
 import (
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
+	"golang.org/x/crypto/ssh/knownhosts"
 	"net"
 	"os"
 	"time"
@@ -53,22 +55,6 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
 }
 
-// WriteSSHConfig writes the SSH config file for simulator that is needed for the `perturb.sh` scripts to
-// run succesfully via the bastion
-func WriteSSHConfig(cfg string) error {
-	abspath, err := ExpandTilde(SSHConfigPath)
-	if err != nil {
-		return errors.Wrap(err, "Error resolving SSH config path")
-	}
-
-	err = OverwriteFile(*abspath, cfg)
-	if err != nil {
-		return errors.Wrap(err, "Error overwriting SSH config")
-	}
-
-	return nil
-}
-
 // SSH establishes an interactive Secure Shell session to the supplied host as user ubuntu and on port 22. SSH uses
 // ssh-agent to get the key to use
 func SSH(host string) error {
@@ -81,11 +67,21 @@ func SSH(host string) error {
 	}
 
 	fmt.Printf("Connecting to %s\n", host)
-	fmt.Println(auths)
+
+	abspath, err := util.ExpandTilde(SSHKnownHostsPath)
+	if err != nil {
+		return errors.Wrap(err, "Error resolving known_hosts path")
+	}
+
+	knownHostsCallback, err := knownhosts.New(*abspath)
+	if err != nil {
+		return errors.Wrap(err, "Error configuring ssh client to use known_hosts file")
+	}
+
 	cfg := ssh.ClientConfig{
 		User:            user,
 		Auth:            auths,
-		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+		HostKeyCallback: knownHostsCallback,
 		HostKeyAlgorithms: []string{
 			ssh.KeyAlgoRSA,
 			ssh.KeyAlgoDSA,

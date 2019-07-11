@@ -3,7 +3,8 @@ package cmd
 import (
 	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -23,14 +24,17 @@ func newSSHConfigCommand() *cobra.Command {
 
 			shouldwrite, err := cmd.Flags().GetBool("write")
 			if err != nil {
-				return err
+				return errors.Wrapf(err, "Error getting --write cli flag")
 			}
 
 			if !shouldwrite {
 				fmt.Println(*cfg)
 			}
 
-			util.WriteSSHConfig(*cfg)
+			err = ssh.WriteSSHConfig(*cfg)
+			if err != nil {
+				return errors.Wrapf(err, "Error writing SSH config")
+			}
 
 			return nil
 		},
