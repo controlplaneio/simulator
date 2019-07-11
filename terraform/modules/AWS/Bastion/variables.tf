@@ -7,9 +7,6 @@ variable "instance_type" {
   description = "instance type for Baston host"
   default     = "t1.micro"
 }
-variable "access_key" {
-  description = "ssh public key"
-}
 
 variable "access_key_name" {
   description = "ssh key name"

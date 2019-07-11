@@ -1,7 +1,7 @@
 resource "aws_instance" "simulator_master_instances" {
   count                       = "${var.number_of_master_instances}"
   ami                         = "${var.ami_id}"
-  key_name                    = "${module.Bastion.KeyPairName}"
+  key_name                    = "${var.access_key_name}"
   instance_type               = "${var.master_instance_type}"
   security_groups             = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false
@@ -13,7 +13,7 @@ resource "aws_instance" "simulator_master_instances" {
 resource "aws_instance" "simulator_node_instances" {
   count                       = "${var.number_of_cluster_instances}"
   ami                         = "${var.ami_id}"
-  key_name                    = "${module.Bastion.KeyPairName}"
+  key_name                    = "${var.access_key_name}"
   instance_type               = "${var.cluster_nodes_instance_type}"
   security_groups             = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false

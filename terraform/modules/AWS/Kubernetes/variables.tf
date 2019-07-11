@@ -22,7 +22,7 @@ variable "cluster_nodes_instance_type" {
   description = "instance type for k8s nodes"
   default     = "t1.micro"
 }
-variable "key_pair_name" {
+variable "access_key_name" {
   description = "Name of ssh key held in KMS"
 }
 variable "control_plane_sg_id" {
