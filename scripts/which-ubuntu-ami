@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# needed as json list returned by ubuntu site is mal-formed
+remove_last_comma() { sed '
+        $x;$G;/\(.*\),/!H;//!{$!d
+    };  $!x;$s//\1/;s/^\n//'
+}
+
+curl -s "https://cloud-images.ubuntu.com/locator/ec2/releasesTable" \
+    | remove_last_comma \
+    | jq -c '.aaData[] | select(contains(["18.04 LTS", "amd64", "eu-west-1", "hvm:ebs-ssd"]))' \
+    | grep -o 'ami-[a-z0-9]\+' | head -1
+
