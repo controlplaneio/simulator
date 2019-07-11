@@ -2,6 +2,7 @@ package util
 
 import (
 	"fmt"
+	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"net"
@@ -13,15 +14,13 @@ const (
 	timeout = 10 * time.Minute
 )
 
-const keypath = "~/.ssh/id_rsa"
-
 // GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls back to reading the keyfile directly
 // in case of a missing SSH_AUTH_SOCK env var or an error dialing the unix socket
 func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	// Check we have the ssh-agent AUTH SOCK and short circuit if we don't - just create a signer from the keyfile
 	authSock := os.Getenv("SSH_AUTH_SOCK")
 	if authSock == "" {
-		keyFileAuth, err := PrivateKeyFile(keypath)
+		keyFileAuth, err := PrivateKeyFile()
 		if err != nil {
 			return nil, err
 		}
@@ -35,7 +34,7 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	sock, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
 	if err != nil {
 		// Fallback to keyfile if we failed to connect
-		keyFileAuth, err := PrivateKeyFile(keypath)
+		keyFileAuth, err := PrivateKeyFile()
 		if err != nil {
 			return nil, err
 		}
@@ -52,6 +51,22 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	}
 
 	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
+}
+
+// WriteSSHConfig writes the SSH config file for simulator that is needed for the `perturb.sh` scripts to
+// run succesfully via the bastion
+func WriteSSHConfig(cfg string) error {
+	abspath, err := ExpandTilde(SSHConfigPath)
+	if err != nil {
+		return errors.Wrap(err, "Error resolving SSH config path")
+	}
+
+	err = OverwriteFile(*abspath, cfg)
+	if err != nil {
+		return errors.Wrap(err, "Error overwriting SSH config")
+	}
+
+	return nil
 }
 
 // SSH establishes an interactive Secure Shell session to the supplied host as user ubuntu and on port 22. SSH uses
@@ -98,7 +113,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		return err
 	}
 
-	encodedkey, err := Base64PrivateKey(keypath)
+	encodedkey, err := Base64PrivateKey(PrivateKeyPath)
 	if err != nil {
 		return err
 	}

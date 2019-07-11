@@ -37,7 +37,7 @@ to interact with.
 # Create the infra if it isn't there
 simulator infra create
 # Configure your SSH to perturb the cluster
-simulator ssh config > ~/.ssh/config
+simulator ssh config --write
 # Launch a scenario (runs perturb.sh)
 simulator scenario launch database_compromise
 # Attack the cluster

@@ -31,16 +31,18 @@ type TerraformOutput struct {
 
 var sshConfigTmplSrc = `Host {{.Hostname}}
   IdentityFile {{.KeyFilePath}}
+  UserKnownHostsFile {{.KnownHostsFilePath}}
   ProxyCommand ssh root@{{.BastionIP}} -W %h:%p
 `
 
 // SSHConfig represents the values needed to produce a config block to allow
 // SSH to the private kubernetes nodes via the bastion
 type SSHConfig struct {
-	Hostname    string
-	KeyFilePath string
-	User        string
-	BastionIP   string
+	Hostname           string
+	KeyFilePath        string
+	KnownHostsFilePath string
+	User               string
+	BastionIP          string
 }
 
 // ToSSHConfig produces the SSH config
@@ -58,10 +60,11 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 	var buf bytes.Buffer
 	for _, ip := range tfo.MasterNodesPrivateIP.Value {
 		c := SSHConfig{
-			Hostname:    ip,
-			KeyFilePath: "~/.ssh/cp_simulator_rsa",
-			User:        u.Username,
-			BastionIP:   tfo.BastionPublicIP.Value,
+			Hostname:           ip,
+			KeyFilePath:        "~/.ssh/cp_simulator_rsa",
+			KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
+			User:               u.Username,
+			BastionIP:          tfo.BastionPublicIP.Value,
 		}
 
 		err = sshConfigTmpl.Execute(&buf, c)
@@ -72,10 +75,11 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 
 	for _, ip := range tfo.ClusterNodesPrivateIP.Value {
 		c := SSHConfig{
-			Hostname:    ip,
-			KeyFilePath: "~/.ssh/cp_simulator_rsa",
-			User:        u.Username,
-			BastionIP:   tfo.BastionPublicIP.Value,
+			Hostname:           ip,
+			KeyFilePath:        "~/.ssh/cp_simulator_rsa",
+			KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
+			User:               u.Username,
+			BastionIP:          tfo.BastionPublicIP.Value,
 		}
 
 		err = sshConfigTmpl.Execute(&buf, c)

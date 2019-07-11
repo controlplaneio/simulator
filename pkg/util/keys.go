@@ -70,12 +70,6 @@ func GenerateKey(privatekeypath string) (*string, error) {
 	return out, err
 }
 
-// PrivateKeyPath is the path to the key to be generated and used by simulator
-const PrivateKeyPath = "~/.ssh/cp_simulator_rsa"
-
-// PublicKeyPath is the path to the key to be generated and used by simulator
-const PublicKeyPath = PrivateKeyPath + ".pub"
-
 // EnsureKey ensures there is a well-known simulator key available and returns true if it generates a new one or an
 // error if any
 func EnsureKey() (bool, error) {
@@ -104,10 +98,10 @@ func EnsureKey() (bool, error) {
 
 // PrivateKeyFile reads the private key at the path supplied and returns the ssh.AuthMethod to use or an error if any
 // occurred
-func PrivateKeyFile(file string) (ssh.AuthMethod, error) {
-	abspath, err := ExpandTilde(keypath)
+func PrivateKeyFile() (ssh.AuthMethod, error) {
+	abspath, err := ExpandTilde(PrivateKeyPath)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Error reading %s when falling back to key", file)
+		return nil, errors.Wrapf(err, "Error reading private key")
 	}
 
 	buffer, err := Slurp(*abspath)

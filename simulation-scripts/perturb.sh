@@ -40,6 +40,7 @@ DEBUG=0
 IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
 IS_SKIP_CHECK=0
+SSH_CONFIG_FILE="$HOME/.ssh/cp_simulator_config"
 
 # resolved directory and self
 declare -r DIR=$(cd "$(dirname "$0")" && pwd)
@@ -175,6 +176,7 @@ is_master_accessible() {
     return 0
   fi
   ssh \
+    -F "${$SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "ConnectTimeout 3" \
@@ -372,6 +374,7 @@ run_ssh() {
 # TODO: test everything with `set -ex`
 # (printf "%s\n\n" 'set -ex;' ; cat) | command ssh -q -t \
   (cat) | command ssh -q -t \
+    -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     root@"${@}"
