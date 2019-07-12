@@ -2,7 +2,6 @@ package util
 
 import (
 	"fmt"
-	"github.com/glendc/go-external-ip"
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
@@ -15,18 +14,6 @@ import (
 // Debug prints a debug message to stdout
 func Debug(msg ...interface{}) {
 	fmt.Println(msg...)
-}
-
-// DetectPublicIP detects your public IP address
-func DetectPublicIP() (*string, error) {
-	consensus := externalip.DefaultConsensus(nil, nil)
-	ip, err := consensus.ExternalIP()
-	if err != nil {
-		return nil, err
-	}
-
-	output := ip.String()
-	return &output, nil
 }
 
 var cache = struct {
