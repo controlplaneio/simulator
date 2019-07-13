@@ -6,9 +6,10 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
-func newScenarioListCommand() *cobra.Command {
+func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `list`,
 		Short: "Lists available scenarios",
@@ -32,7 +33,7 @@ func newScenarioListCommand() *cobra.Command {
 	return cmd
 }
 
-func newScenarioLaunchCommand() *cobra.Command {
+func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `launch <id>`,
 		Short: "Launches a scenario",
@@ -47,14 +48,14 @@ func newScenarioLaunchCommand() *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			scenarioID := args[0]
 
-			return simulator.Launch(tfDir, scenariosDir, bucket, scenarioID)
+			return simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID)
 		},
 	}
 
 	return cmd
 }
 
-func newScenarioCommand() *cobra.Command {
+func newScenarioCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `scenario <subcommand>`,
 		Short:         "Interact with scenarios",
@@ -62,8 +63,8 @@ func newScenarioCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	cmd.AddCommand(newScenarioListCommand())
-	cmd.AddCommand(newScenarioLaunchCommand())
+	cmd.AddCommand(newScenarioListCommand(logger))
+	cmd.AddCommand(newScenarioLaunchCommand(logger))
 
 	return cmd
 }

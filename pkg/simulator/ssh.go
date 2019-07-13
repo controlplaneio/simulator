@@ -4,12 +4,13 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 // Config returns a pointer to string containing the stanzas to add to an ssh config file so that the kubernetes nodes
 // are connectable directly via the bastion or an error if the infrastructure has not been created
-func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
-	tfo, err := Status(tfDir, bucketName)
+func Config(logger *zap.SugaredLogger, tfDir, scenarioPath, bucketName string) (*string, error) {
+	tfo, err := Status(logger, tfDir, bucketName)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting infrastructure status")
 	}
@@ -23,8 +24,8 @@ func Config(tfDir, scenarioPath, bucketName string) (*string, error) {
 
 // Attack establishes an SSH connection to the attack container running on the bastion host ready for the user to
 // attempt to complete a scenario
-func Attack(tfDir, bucketName string) error {
-	tfo, err := Status(tfDir, bucketName)
+func Attack(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+	tfo, err := Status(logger, tfDir, bucketName)
 	if err != nil {
 		return errors.Wrap(err, "Error getting infrastrucutre status")
 	}

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
-func newConfigGetCommand() *cobra.Command {
+func newConfigGetCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `get <key>`,
 		Short: "Gets the value of a setting",
@@ -25,7 +26,7 @@ func newConfigGetCommand() *cobra.Command {
 	return cmd
 }
 
-func newConfigCommand() *cobra.Command {
+func newConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `config`,
 		Short:         "Interact with simulator config",
@@ -33,7 +34,7 @@ func newConfigCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	cmd.AddCommand(newConfigGetCommand())
+	cmd.AddCommand(newConfigGetCommand(logger))
 
 	return cmd
 }

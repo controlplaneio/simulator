@@ -5,30 +5,31 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
-func newCreateCommand() *cobra.Command {
+func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			return simulator.Create(tfDir, bucket)
+			return simulator.Create(logger, tfDir, bucket)
 		},
 	}
 
 	return cmd
 }
 
-func newStatusCommand() *cobra.Command {
+func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			tfo, err := simulator.Status(tfDir, bucket)
+			tfo, err := simulator.Status(logger, tfDir, bucket)
 			if err != nil {
 				return err
 			}
@@ -48,21 +49,21 @@ func newStatusCommand() *cobra.Command {
 	return cmd
 }
 
-func newDestroyCommand() *cobra.Command {
+func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			return simulator.Destroy(tfDir, bucket)
+			return simulator.Destroy(logger, tfDir, bucket)
 		},
 	}
 
 	return cmd
 }
 
-func newInfraCommand() *cobra.Command {
+func newInfraCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `infra <subcommand>`,
 		Short:         "Interact with AWS to create, query and destroy the required infrastructure for scenarios",
@@ -70,9 +71,9 @@ func newInfraCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	cmd.AddCommand(newCreateCommand())
-	cmd.AddCommand(newStatusCommand())
-	cmd.AddCommand(newDestroyCommand())
+	cmd.AddCommand(newCreateCommand(logger))
+	cmd.AddCommand(newStatusCommand(logger))
+	cmd.AddCommand(newDestroyCommand(logger))
 
 	return cmd
 }

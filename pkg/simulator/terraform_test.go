@@ -3,8 +3,12 @@ package simulator_test
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
+
 	"testing"
 )
+
+var noopLogger = zap.NewNop().Sugar()
 
 var tfCommandArgumentsTests = []struct {
 	command   string
@@ -26,20 +30,20 @@ func Test_PrepareTfArgs(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
-	tfo, err := simulator.Status(fixture("noop-tf-dir"), "test")
+	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test")
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfo, "Got no terraform output")
 }
 
 func Test_Create(t *testing.T) {
-	err := simulator.Create(fixture("noop-tf-dir"), "test")
+	err := simulator.Create(noopLogger, fixture("noop-tf-dir"), "test")
 
 	assert.Nil(t, err)
 }
 
 func Test_Destroy(t *testing.T) {
-	err := simulator.Destroy(fixture("noop-tf-dir"), "test")
+	err := simulator.Destroy(noopLogger, fixture("noop-tf-dir"), "test")
 
 	assert.Nil(t, err)
 }
