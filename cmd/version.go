@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
 
 var (
@@ -12,7 +13,7 @@ var (
 	date    = "unknown"
 )
 
-func newVersionCommand() *cobra.Command {
+func newVersionCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `version`,
 		Short: "Prints simulator version",

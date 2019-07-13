@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Simple terraform variable documentee
+# Simple terraform variable documenter
 #
 set -e
 sourceDir="$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

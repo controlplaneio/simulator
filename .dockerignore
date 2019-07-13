@@ -3,6 +3,7 @@
 /features/
 /bin/
 /node_modules/
+.terraform/
 .editorconfig
 .gitattributes
 .gitignore
@@ -12,3 +13,4 @@ package.json
 package-lock.json
 security.txt
 tags
+*.md

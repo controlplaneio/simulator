@@ -57,3 +57,8 @@ teardown() {
   [ "${status}" -eq 0 ]
 }
 
+@test "simulator completion - prints something" {
+  run ${BIN_UNDER_TEST} completion
+  [ "${output}" != "" ]
+  [ "${status}" -eq 0 ]
+}

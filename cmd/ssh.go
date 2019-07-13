@@ -7,9 +7,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
 )
 
-func newSSHConfigCommand() *cobra.Command {
+func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
@@ -17,7 +18,7 @@ func newSSHConfigCommand() *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			cfg, err := simulator.Config(tfDir, scenariosDir, bucket)
+			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket)
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
@@ -44,7 +45,7 @@ func newSSHConfigCommand() *cobra.Command {
 	return cmd
 }
 
-func newSSHAttackCommand() *cobra.Command {
+func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `attack`,
 		Short: "Connect to an attack container to complete the scenario",
@@ -52,7 +53,7 @@ func newSSHAttackCommand() *cobra.Command {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
 
-			return simulator.Attack(tfDir, bucket)
+			return simulator.Attack(logger, tfDir, bucket)
 		},
 	}
 
@@ -60,7 +61,7 @@ func newSSHAttackCommand() *cobra.Command {
 
 }
 
-func newSSHCommand() *cobra.Command {
+func newSSHCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `ssh <command>`,
 		Short:         "Interact with the cluster",
@@ -68,8 +69,8 @@ func newSSHCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	cmd.AddCommand(newSSHConfigCommand())
-	cmd.AddCommand(newSSHAttackCommand())
+	cmd.AddCommand(newSSHConfigCommand(logger))
+	cmd.AddCommand(newSSHAttackCommand(logger))
 
 	return cmd
 }

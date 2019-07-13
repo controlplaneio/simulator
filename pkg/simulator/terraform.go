@@ -5,6 +5,7 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
+	"go.uber.org/zap"
 )
 
 const tfStateDir = "/.terraform"
@@ -43,7 +44,9 @@ func Terraform(wd, cmd string) (*string, error) {
 }
 
 // InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
-func InitIfNeeded(tfDir, bucketName string) error {
+func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+	logger.Debug("Terraform.InitIfNeeded() start")
+
 	_, err := ssh.EnsureKey()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
@@ -67,7 +70,10 @@ func InitIfNeeded(tfDir, bucketName string) error {
 
 	stateDir := tfDir + tfStateDir
 	hasStateDir, err := util.FileExists(stateDir)
-	if err != nil || hasStateDir {
+	if err == nil && hasStateDir {
+		err = fmt.Errorf("State directory already exists at %s", stateDir)
+	}
+	if err != nil {
 		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}
 
@@ -82,8 +88,9 @@ func InitIfNeeded(tfDir, bucketName string) error {
 // -#-
 
 // Create runs terraform init, plan, apply to create the necessary infratsructure to run scenarios
-func Create(tfDir, bucketName string) error {
-	err := InitIfNeeded(tfDir, bucketName)
+func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+	err := InitIfNeeded(logger, tfDir, bucketName)
+
 	if err != nil {
 		return err
 	}
@@ -98,8 +105,8 @@ func Create(tfDir, bucketName string) error {
 }
 
 // Status calls terraform output to get the state of the infrastruture and parses the output for programmatic use
-func Status(tfDir, bucketName string) (*TerraformOutput, error) {
-	err := InitIfNeeded(tfDir, bucketName)
+func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutput, error) {
+	err := InitIfNeeded(logger, tfDir, bucketName)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -119,8 +126,8 @@ func Status(tfDir, bucketName string) (*TerraformOutput, error) {
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy(tfDir, bucketName string) error {
-	err := InitIfNeeded(tfDir, bucketName)
+func Destroy(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+	err := InitIfNeeded(logger, tfDir, bucketName)
 	if err != nil {
 		return err
 	}

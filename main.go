@@ -2,27 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/controlplaneio/simulator-standalone/cmd"
-	"go.uber.org/zap"
-	"log"
 	"os"
 	"strings"
-)
 
-var (
-	logger *zap.SugaredLogger
+	"github.com/controlplaneio/simulator-standalone/cmd"
 )
 
 func main() {
-	var err error
-
-	// logger writes to stderr
-	logger, err = NewLogger("info", "console")
-	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
-	}
-
-	defer logger.Sync()
 
 	if err := cmd.Execute(); err != nil {
 		e := err.Error()

@@ -12,4 +12,7 @@ echo "$(tput setaf 1)
       ░  ░        ░     ░        ░  ░    ░  ░          ░ ░
 $(tput sgr0)"
 
+# shellcheck source=/dev/null
+source <(simulator completion)
+
 simulator help
