@@ -3,6 +3,7 @@
 /features/
 /bin/
 /node_modules/
+.terraform/
 .editorconfig
 .gitattributes
 .gitignore
