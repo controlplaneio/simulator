@@ -1,51 +1,53 @@
 package cmd
 
 import (
+	"os"
+	"strings"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var cfgFile string
-
-func NewCmdRoot() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "simulator",
-		Short: "Simulator command line",
-		Long: `
+var rootCmd = &cobra.Command{
+	Use:   "simulator",
+	Short: "Simulator command line",
+	Long: `
 A distributed systems and infrastructure simulator for attacking and
 debugging Kubernetes
 `,
-	}
+}
 
-	cmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "c", "", "Path to the simulator config file")
+func NewCmdRoot() *cobra.Command {
+	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "c", "", "Path to the simulator config file")
 	cobra.OnInitialize(initConfig)
 
-	cmd.AddCommand(newConfigCommand())
-	cmd.AddCommand(newInfraCommand())
-	cmd.AddCommand(newScenarioCommand())
-	cmd.AddCommand(newSSHCommand())
-	cmd.AddCommand(newVersionCommand())
+	rootCmd.AddCommand(newConfigCommand())
+	rootCmd.AddCommand(newInfraCommand())
+	rootCmd.AddCommand(newScenarioCommand())
+	rootCmd.AddCommand(newSSHCommand())
+	rootCmd.AddCommand(newVersionCommand())
+	rootCmd.AddCommand(completionCmd)
 
-	cmd.PersistentFlags().StringP("bucket", "b", "",
-		"The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'")
-	cmd.MarkFlagRequired("bucket")
-	viper.BindPFlag("bucket", cmd.PersistentFlags().Lookup("bucket"))
+	rootCmd.PersistentFlags().StringP("bucket", "b", "",
+		"The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'")
+	rootCmd.MarkFlagRequired("bucket")
+	viper.BindPFlag("bucket", rootCmd.PersistentFlags().Lookup("bucket"))
 
-	cmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
-	viper.BindPFlag("loglevel", cmd.PersistentFlags().Lookup("loglevel"))
+	rootCmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
+	viper.BindPFlag("loglevel", rootCmd.PersistentFlags().Lookup("loglevel"))
 
-	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
+	rootCmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
 		"Path to a directory containing the infrastructure scripts")
-	viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir"))
+	viper.BindPFlag("tf-dir", rootCmd.PersistentFlags().Lookup("tf-dir"))
 
 	// TODO: (rem) this is also used to locate the perturb.sh script which may be subsumed by this app
-	cmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
+	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
 		"Path to a directory containing a scenario manifest")
-	viper.BindPFlag("scenarios-dir", cmd.PersistentFlags().Lookup("scenarios-dir"))
+	viper.BindPFlag("scenarios-dir", rootCmd.PersistentFlags().Lookup("scenarios-dir"))
 
-	return cmd
+	return rootCmd
 }
 
 func initConfig() {
@@ -59,6 +61,7 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
+		// todo(ajm) this errors if not in the same dir as `simulator.yaml`. Move those vars here?
 		panic(errors.Wrapf(err, "Error reading config file"))
 	}
 
@@ -67,6 +70,24 @@ func initConfig() {
 	replacer := strings.NewReplacer("-", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	viper.AutomaticEnv()
+}
+
+// completionCmd represents the completion command
+var completionCmd = &cobra.Command{
+	Use:   "completion",
+	Short: "Generates Bash completion scripts",
+	Long: `To load completion run
+
+. <(simulator completion)
+
+To configure your Bash shell to load completions for each session add to your bashrc
+
+# ~/.bashrc or ~/.profile
+. <(simulator completion)
+`,
+	Run: func(cmd *cobra.Command, args []string) {
+		rootCmd.GenBashCompletion(os.Stdout)
+	},
 }
 
 func Execute() error {

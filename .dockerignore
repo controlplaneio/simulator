@@ -12,3 +12,4 @@ package.json
 package-lock.json
 security.txt
 tags
+*.md

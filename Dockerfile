@@ -129,6 +129,7 @@ RUN apt update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
     awscli                                                                   \
     bash                                                                     \
+    bash-completion                                                          \
     bzip2                                                                    \
     ca-certificates                                                          \
     curl                                                                     \
@@ -143,7 +144,7 @@ RUN apt update                                                               \
 
 # Add login message
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/scripts/launch-motd /usr/local/bin/launch-motd
-RUN echo '[ ! -z "$TERM" ] && launch-motd' >> /etc/bash.bashrc
+RUN echo '[ ! -z "$TERM" ] && source /usr/local/bin/launch-motd' >> /etc/bash.bashrc
 
 # Use 3rd party dependencies from build
 COPY --from=dependencies /usr/local/bin/jq /usr/local/bin/jq
