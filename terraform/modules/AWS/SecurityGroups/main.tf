@@ -1,5 +1,8 @@
 resource "random_uuid" "unique" {  }
 
+// Public subnet (Bastion) security group
+// restricts ingress to identifier ip address, egress open
+
 resource "aws_security_group" "simulator_bastion_sg" {
   name   = "simulator-bastion-sg-${random_uuid.unique.result}"
   vpc_id = "${var.vpc_id}"
@@ -18,6 +21,10 @@ resource "aws_security_group" "simulator_bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+// Private subnet security group
+// Restricts ingress from public subnet using ssh
+// Egress open (via NAT for internet)
 
 resource "aws_security_group" "simulator_controlplane_sg" {
   name   = "simulator-controlplane-sg-${random_uuid.unique.result}"
