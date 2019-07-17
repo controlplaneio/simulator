@@ -1,14 +1,11 @@
 package simulator
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
-
-const tfStateDir = "/.terraform"
 
 // PrepareTfArgs takes a string with the terraform command desired and returns a slice of strings
 // containing the complete list of arguments including the command to use when exec'ing terraform
@@ -43,7 +40,7 @@ func Terraform(wd, cmd string) (*string, error) {
 	return util.Run(wd, env, "terraform", args...)
 }
 
-// InitIfNeeded checks if there is a terraform state folder and calls terraform init if not
+// InitIfNeeded checks the IP address and SSH key and updates the tfvars if needed
 func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 	logger.Debug("Terraform.InitIfNeeded() start")
 
@@ -66,15 +63,6 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
-	}
-
-	stateDir := tfDir + tfStateDir
-	hasStateDir, err := util.FileExists(stateDir)
-	if err == nil && hasStateDir {
-		err = fmt.Errorf("State directory already exists at %s", stateDir)
-	}
-	if err != nil {
-		return errors.Wrapf(err, "Error checking if terraform state dir exists %s", stateDir)
 	}
 
 	_, err = Terraform(tfDir, "init")
