@@ -3,8 +3,8 @@ module "Networking" {
   vpc_cidr            = "${var.vpc_cidr}"
   public_subnet_cidr  = "${var.public_subnet_cidr}"
   private_subnet_cidr = "${var.private_subnet_cidr}"
-  public_avail_zone   = "${var.public_avail_zone}"
-  private_avail_zone  = "${var.private_avail_zone}"
+//  public_avail_zone   = "${var.public_avail_zone}"
+//  private_avail_zone  = "${var.private_avail_zone}"
 }
 
 module "Ami" {
@@ -19,7 +19,6 @@ module "SshKey" {
 
 module "Bastion" {
   source              = "../../modules/AWS/Bastion"
-//  ami_id              = "${var.ami_id}"
   ami_id              = "${module.Ami.AmiId}"
   instance_type       = "${var.instance_type}"
   access_key_name     = "${module.SshKey.KeyPairName}"
@@ -32,7 +31,6 @@ module "Bastion" {
 module "Kubernetes" {
   source                      = "../../modules/AWS/Kubernetes"
   number_of_master_instances  = "${var.number_of_master_instances}"
-//  ami_id                      = "${var.ami_id}"
   ami_id                      = "${module.Ami.AmiId}"
   master_instance_type        = "${var.master_instance_type}"
   number_of_cluster_instances = "${var.number_of_cluster_instances}"
