@@ -13,12 +13,3 @@ variable "private_subnet_cidr" {
   default     = "172.31.2.0/24"
 }
 
-//variable "private_avail_zone" {
-//  description = "availability zone for private subnet"
-//  default     = "eu-west-1a"
-//}
-
-//variable "public_avail_zone" {
-//  description = "availability zone for public subnet"
-//  default     = "eu-west-1a"
-//}
