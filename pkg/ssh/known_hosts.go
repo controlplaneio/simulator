@@ -32,7 +32,7 @@ func EnsureKnownHosts(bastion string) error {
 func KeyScan(bastion string) (*string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error getting process working directory")
 	}
 
 	out, _, err := util.RunSilently(wd, os.Environ(), "ssh-keyscan", "-H", bastion)

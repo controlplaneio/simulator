@@ -77,18 +77,18 @@ func FileExists(path string) (bool, error) {
 func Slurp(path string) (*string, error) {
 	fp, err := filepath.Abs(path)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "Error resolving %s to slurp", path)
 	}
 
 	file, err := os.Open(fp)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "Error opening %s to slurp", path)
 	}
 	defer file.Close()
 
 	b, err := ioutil.ReadAll(file)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "Error slurping %s", path)
 	}
 
 	output := string(b)

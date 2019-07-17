@@ -24,7 +24,7 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	if authSock == "" {
 		keyFileAuth, err := PrivateKeyFile()
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrap(err, "Error getting auth methods for private key")
 		}
 
 		fmt.Println("KeyFile")
@@ -63,7 +63,7 @@ func SSH(host string) error {
 
 	auths, err := GetAuthMethods()
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error getting auth methods")
 	}
 
 	fmt.Printf("Connecting to %s\n", host)
@@ -106,23 +106,23 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	addr := host + ":" + port
 	if conn, err = ssh.Dial(network, addr, sshConfig); err != nil {
 		fmt.Printf("Failed to dial: %s", err)
-		return err
+		return errors.Wrapf(err, "Error dialing %s", addr)
 	}
 
 	encodedkey, err := Base64PrivateKey(PrivateKeyPath)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error base 64 encoding the private key")
 	}
 
 	if session, err = conn.NewSession(); err != nil {
 		fmt.Printf("Failed to create session: %s", err)
-		return err
+		return errors.Wrap(err, "Error establishing SSH session")
 	}
 	defer session.Close()
 
 	if err = setupPty(session); err != nil {
 		fmt.Printf("Failed to set up pseudo terminal: %s", err)
-		return err
+		return errors.Wrap(err, "Error setting up pseudo terminal")
 	}
 
 	session.Stdout = os.Stdout
@@ -131,12 +131,12 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 
 	if err = session.Setenv("BASE64_SSH_KEY", *encodedkey); err != nil {
 		fmt.Printf("Failed to send SetEnv request: %s", err)
-		return err
+		return errors.Wrap(err, "Failed to send BASE_64_SSH_KEY env var using Setenv")
 	}
 
 	if err = session.Shell(); err != nil {
 		fmt.Printf("Failed to start interactive shell: %s", err)
-		return err
+		return errors.Wrap(err, "Failed to start interactive shell")
 	}
 
 	return session.Wait()
@@ -152,7 +152,7 @@ func setupPty(session *ssh.Session) error {
 	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
 		session.Close()
 		fmt.Printf("request for pseudo terminal failed: %s", err)
-		return err
+		return errors.Wrap(err, "Error sending pty request for an xtrem over ssh session")
 	}
 	return nil
 }

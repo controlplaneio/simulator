@@ -14,12 +14,12 @@ import (
 func Base64PrivateKey(name string) (*string, error) {
 	keypath, err := util.ExpandTilde(name)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Bad SSH private key name")
 	}
 
 	keymaterial, err := util.Slurp(*keypath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "Error reading SSH private key %s", name)
 	}
 
 	encodedkey := base64.StdEncoding.EncodeToString([]byte(*keymaterial))
@@ -48,7 +48,7 @@ func PublicKey() (*string, error) {
 func GenerateKey(privatekeypath string) (*string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error getting process working directory")
 	}
 
 	out, stderr, err := util.RunSilently(wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C",
@@ -91,17 +91,17 @@ func EnsureKey() (bool, error) {
 func PrivateKeyFile() (ssh.AuthMethod, error) {
 	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Error reading private key")
+		return nil, errors.Wrapf(err, "Error resolving private key path")
 	}
 
 	buffer, err := util.Slurp(*abspath)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error reading private key path")
 	}
 
 	key, err := ssh.ParsePrivateKey([]byte(*buffer))
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error parsing private key file")
 	}
 	return ssh.PublicKeys(key), nil
 }

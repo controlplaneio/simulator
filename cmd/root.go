@@ -23,7 +23,7 @@ debugging Kubernetes
 
 var logger *zap.SugaredLogger
 
-func NewCmdRoot(logger *zap.SugaredLogger) *cobra.Command {
+func newCmdRoot(logger *zap.SugaredLogger) *cobra.Command {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "c", "", "Path to the simulator config file")
 	cobra.OnInitialize(initConfig)
 
@@ -34,10 +34,10 @@ func NewCmdRoot(logger *zap.SugaredLogger) *cobra.Command {
 	rootCmd.AddCommand(newVersionCommand(logger))
 	rootCmd.AddCommand(newCompletionCmd(logger))
 
-	rootCmd.PersistentFlags().StringP("bucket", "b", "",
-		"The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'")
+	rootCmd.PersistentFlags().StringP("state-bucket", "b", "",
+		"The name of the s3 bucket to use for remote-state.  Must be globally unique")
 	rootCmd.MarkFlagRequired("bucket")
-	viper.BindPFlag("bucket", rootCmd.PersistentFlags().Lookup("bucket"))
+	viper.BindPFlag("state-bucket", rootCmd.PersistentFlags().Lookup("state-bucket"))
 
 	rootCmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
 	viper.BindPFlag("loglevel", rootCmd.PersistentFlags().Lookup("loglevel"))
@@ -96,9 +96,10 @@ To configure your Bash shell to load completions for each session add to your ba
 	return cmd
 }
 
+// Execute starts the aplication
 func Execute() error {
 	var err error
-	logger, err = NewLogger("debug", "console")
+	logger, err = newLogger("debug", "console")
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
 	}
@@ -109,7 +110,7 @@ func Execute() error {
 		var err error
 
 		// logger writes to stderr
-		logger, err = NewLogger(viper.GetString("loglevel"), "console")
+		logger, err = newLogger(viper.GetString("loglevel"), "console")
 		if err != nil {
 			log.Fatalf("can't re-initialize zap logger: %v", err)
 		}
@@ -121,7 +122,7 @@ func Execute() error {
 		// TODO(ajm) this doesn't propagate to subcommands. How to do the above on the logger object that's been passed to NewCmdRoot(logger)?
 	}
 
-	cmd := NewCmdRoot(logger)
+	cmd := newCmdRoot(logger)
 
 	return cmd.Execute()
 }
