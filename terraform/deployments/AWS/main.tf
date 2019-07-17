@@ -1,3 +1,5 @@
+
+// Setup networking
 module "Networking" {
   source              = "../../modules/AWS/Networking"
   vpc_cidr            = "${var.vpc_cidr}"
@@ -5,16 +7,19 @@ module "Networking" {
   private_subnet_cidr = "${var.private_subnet_cidr}"
 }
 
+// Discovery AMI Id to use for all instances
 module "Ami" {
   source          = "../../modules/AWS/Ami"
 }
 
+// Import ssh public key
 module "SshKey" {
   source          = "../../modules/AWS/SshKey"
   access_key_name = "${var.access_key_name}"
   access_key      = "${var.access_key}"
 }
 
+// Setup Bastion host
 module "Bastion" {
   source              = "../../modules/AWS/Bastion"
   ami_id              = "${module.Ami.AmiId}"
@@ -26,6 +31,7 @@ module "Bastion" {
   node_ip_addresses   = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
 }
 
+// Setup Kubernetes master and nodes
 module "Kubernetes" {
   source                      = "../../modules/AWS/Kubernetes"
   number_of_master_instances  = "${var.number_of_master_instances}"
@@ -39,10 +45,15 @@ module "Kubernetes" {
   iam_instance_profile_id     = "${module.S3Storage.IamInstanceProfileId}"
   s3_bucket_name              = "${module.S3Storage.S3BucketName}"
 }
+
+// Create S3 bucket to share Kubernetes join details between
+// master and nodes
 module "S3Storage" {
   source         = "../../modules/AWS/S3Storage"
   s3_bucket_name = "${var.s3_bucket_name}"
 }
+
+// Define security groups
 module "SecurityGroups" {
   source                    = "../../modules/AWS/SecurityGroups"
   access_cidr               = "${var.access_cidr}"
