@@ -1,10 +1,23 @@
-variable "shared_credentials_file" {
-  description = "location of aws credentials file"
-  default     = "~/.aws/credentials"
-}
+// Variable with no default to be place at the top of
+// this file as per coding standards
 
 variable "access_key" {
   description = "ssh public key"
+}
+
+variable "access_cidr" {
+  description = "cidr range of client connection"
+}
+
+variable "s3_bucket_name" {
+  description = "name of S3 bucket"
+}
+
+// Variables below are to have defined defaults
+
+variable "shared_credentials_file" {
+  description = "location of aws credentials file"
+  default     = "~/.aws/credentials"
 }
 
 variable "access_key_name" {
@@ -15,10 +28,6 @@ variable "access_key_name" {
 variable "vpc_cidr" {
   description = "cidr block for vpc"
   default     = "172.31.0.0/16"
-}
-
-variable "access_cidr" {
-  description = "cidr range of client connection"
 }
 
 variable "public_subnet_cidr" {
@@ -56,6 +65,3 @@ variable "number_of_cluster_instances" {
   default     = "2"
 }
 
-variable "s3_bucket_name" {
-  description = "name of S3 bucket"
-}
