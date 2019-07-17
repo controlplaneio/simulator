@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,11 +34,11 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 			}
 
 			if tfo.BastionPublicIP.Value == "" {
-				fmt.Println("No Infrastructure found")
+				logger.Error("No Infrastructure found")
 			} else {
-				fmt.Printf("Bastion IP: %s\n", tfo.BastionPublicIP.Value)
-				fmt.Printf("Master IPs: %v\n", tfo.MasterNodesPrivateIP.Value)
-				fmt.Printf("Cluster IPs: %v\n", tfo.ClusterNodesPrivateIP.Value)
+				logger.Infof("Bastion IP: %s\n", tfo.BastionPublicIP.Value)
+				logger.Infof("Master IPs: %v\n", tfo.MasterNodesPrivateIP.Value)
+				logger.Infof("Cluster IPs: %v\n", tfo.ClusterNodesPrivateIP.Value)
 			}
 
 			return err
@@ -63,12 +62,17 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newInfraCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newInfraCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `infra <subcommand>`,
 		Short:         "Interact with AWS to create, query and destroy the required infrastructure for scenarios",
 		SilenceUsage:  true,
 		SilenceErrors: false,
+	}
+
+	logger, err := newLogger(viper.GetString("loglevel"), "console")
+	if err != nil {
+		logger.Fatalf("can't re-initialize zap logger: %v", err)
 	}
 
 	cmd.AddCommand(newCreateCommand(logger))

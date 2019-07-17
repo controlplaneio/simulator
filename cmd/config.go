@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -13,11 +12,12 @@ func newConfigGetCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Gets the value of a setting",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
-				return fmt.Errorf("<key> is required")
+				logger.Fatal("<key> is required")
+				return nil
 			}
 
 			key := args[0]
-			fmt.Printf(`%s = %v\n`, key, viper.Get(key))
+			logger.Infof(`%s = %v\n`, key, viper.Get(key))
 
 			return nil
 		},
@@ -26,7 +26,7 @@ func newConfigGetCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newConfigCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `config`,
 		Short:         "Interact with simulator config",
@@ -34,6 +34,12 @@ func newConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 		SilenceErrors: false,
 	}
 
+	logger, err := newLogger(viper.GetString("loglevel"), "console")
+	if err != nil {
+		logger.Fatalf("can't re-initialize zap logger: %v", err)
+	}
+
+	defer logger.Sync()
 	cmd.AddCommand(newConfigGetCommand(logger))
 
 	return cmd

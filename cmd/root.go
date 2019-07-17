@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"log"
 	"os"
 	"strings"
 
@@ -23,16 +22,16 @@ debugging Kubernetes
 
 var logger *zap.SugaredLogger
 
-func newCmdRoot(logger *zap.SugaredLogger) *cobra.Command {
+func newCmdRoot() *cobra.Command {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "c", "", "Path to the simulator config file")
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.AddCommand(newConfigCommand(logger))
-	rootCmd.AddCommand(newInfraCommand(logger))
-	rootCmd.AddCommand(newScenarioCommand(logger))
-	rootCmd.AddCommand(newSSHCommand(logger))
-	rootCmd.AddCommand(newVersionCommand(logger))
-	rootCmd.AddCommand(newCompletionCmd(logger))
+	rootCmd.AddCommand(newConfigCommand())
+	rootCmd.AddCommand(newInfraCommand())
+	rootCmd.AddCommand(newScenarioCommand())
+	rootCmd.AddCommand(newSSHCommand())
+	rootCmd.AddCommand(newVersionCommand())
+	rootCmd.AddCommand(newCompletionCmd())
 
 	rootCmd.PersistentFlags().StringP("state-bucket", "b", "",
 		"The name of the s3 bucket to use for remote-state.  Must be globally unique")
@@ -76,7 +75,7 @@ func initConfig() {
 	viper.AutomaticEnv()
 }
 
-func newCompletionCmd(logger *zap.SugaredLogger) *cobra.Command {
+func newCompletionCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "completion",
 		Short: "Generates Bash completion scripts",
@@ -98,31 +97,7 @@ To configure your Bash shell to load completions for each session add to your ba
 
 // Execute starts the aplication
 func Execute() error {
-	var err error
-	logger, err = newLogger("debug", "console")
-	if err != nil {
-		log.Fatalf("can't initialize zap logger: %v", err)
-	}
-
-	// TODO(ajm) not working as expected
-	// flags aren't parsed until cmd.Execute() is called
-	rootCmd.PersistentPreRun = func(cmd *cobra.Command, args []string) {
-		var err error
-
-		// logger writes to stderr
-		logger, err = newLogger(viper.GetString("loglevel"), "console")
-		if err != nil {
-			log.Fatalf("can't re-initialize zap logger: %v", err)
-		}
-
-		defer logger.Sync()
-
-		logger.Debug("Starting CLI")
-
-		// TODO(ajm) this doesn't propagate to subcommands. How to do the above on the logger object that's been passed to NewCmdRoot(logger)?
-	}
-
-	cmd := newCmdRoot(logger)
+	cmd := newCmdRoot()
 
 	return cmd.Execute()
 }

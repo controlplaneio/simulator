@@ -1,9 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -13,12 +12,18 @@ var (
 	date    = "unknown"
 )
 
-func newVersionCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newVersionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `version`,
 		Short: "Prints simulator version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Printf("version %s\ngit commit %s\nbuild date %s\n", version, commit, date)
+			logger, err := newLogger(viper.GetString("loglevel"), "console")
+			if err != nil {
+				logger.Fatalf("can't re-initialize zap logger: %v", err)
+			}
+			defer logger.Sync()
+
+			logger.Infof("version %s\ngit commit %s\nbuild date %s\n", version, commit, date)
 			return nil
 		},
 	}

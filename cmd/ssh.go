@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
@@ -29,7 +28,7 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 			}
 
 			if !shouldwrite {
-				fmt.Println(*cfg)
+				logger.Info(*cfg)
 			}
 
 			err = ssh.EnsureSSHConfig(*cfg)
@@ -61,13 +60,19 @@ func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 }
 
-func newSSHCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newSSHCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `ssh <command>`,
 		Short:         "Interact with the cluster",
 		SilenceUsage:  true,
 		SilenceErrors: false,
 	}
+
+	logger, err := newLogger(viper.GetString("loglevel"), "console")
+	if err != nil {
+		logger.Fatalf("can't re-initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
 
 	cmd.AddCommand(newSSHConfigCommand(logger))
 	cmd.AddCommand(newSSHAttackCommand(logger))

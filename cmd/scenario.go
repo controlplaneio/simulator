@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
@@ -21,9 +20,9 @@ func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 				return err
 			}
 
-			fmt.Println("Available scenarios:")
+			logger.Info("Available scenarios:")
 			for _, s := range manifest.Scenarios {
-				fmt.Println("ID: " + s.Id + ", Name: " + s.DisplayName)
+				logger.Info("ID: " + s.Id + ", Name: " + s.DisplayName)
 			}
 
 			return nil
@@ -40,7 +39,8 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
-				return fmt.Errorf("scenario id is required")
+				logger.Fatalf("scenario id is required")
+				return nil
 			}
 
 			bucket := viper.GetString("bucket")
@@ -55,13 +55,19 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newScenarioCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newScenarioCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           `scenario <subcommand>`,
 		Short:         "Interact with scenarios",
 		SilenceUsage:  true,
 		SilenceErrors: false,
 	}
+
+	logger, err := newLogger(viper.GetString("loglevel"), "console")
+	if err != nil {
+		logger.Fatalf("can't re-initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
 
 	cmd.AddCommand(newScenarioListCommand(logger))
 	cmd.AddCommand(newScenarioLaunchCommand(logger))
