@@ -31,11 +31,6 @@ variable "private_subnet_cidr" {
   default     = "172.31.2.0/24"
 }
 
-variable "ami_id" {
-  description = "ami to use"
-  default     = "ami-0c30afcb7ab02233d"
-}
-
 variable "instance_type" {
   description = "instance type for Baston host"
   default     = "t2.micro"
@@ -59,16 +54,6 @@ variable "cluster_nodes_instance_type" {
 variable "number_of_cluster_instances" {
   description = "number of nodes to create"
   default     = "2"
-}
-
-variable "private_avail_zone" {
-  description = "availability zone for private subnet"
-  default     = "eu-west-1a"
-}
-
-variable "public_avail_zone" {
-  description = "availability zone for public subnet"
-  default     = "eu-west-1a"
 }
 
 variable "s3_bucket_name" {
