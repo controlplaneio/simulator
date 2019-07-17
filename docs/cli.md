@@ -22,6 +22,7 @@ Usage:
   simulator [command]
 
 Available Commands:
+  completion  Generates Bash completion scripts
   config      Interact with simulator config
   help        Help about any command
   infra       Interact with AWS to create, query and destroy the required infrastructure for scenarios
@@ -30,7 +31,7 @@ Available Commands:
   version     Prints simulator version
 
 Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'
+  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -h, --help                   help for simulator
   -l, --loglevel string        Level of detail in output logging (default "info")
@@ -57,7 +58,7 @@ Flags:
   -h, --help   help for infra
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'
+  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
@@ -82,7 +83,7 @@ Flags:
   -h, --help   help for scenario
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'
+  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
@@ -107,7 +108,7 @@ Flags:
   -h, --help   help for ssh
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'
+  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
@@ -131,7 +132,7 @@ Flags:
   -h, --help   help for config
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and ill be prefixed with 'simulator-'
+  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")

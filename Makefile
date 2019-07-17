@@ -34,7 +34,10 @@ run: docker-build ## Runs the simulator - the build stage of the container runs 
 		-v $(SSH_AUTH_SOCK_DIR):$(SSH_AUTH_SOCK_DIR)                      \
 		-e SSH_AUTH_SOCK                                                  \
 		-e AWS_ACCESS_KEY_ID                                              \
+		-e AWS_REGION                                                     \
 		-e AWS_DEFAULT_REGION                                             \
+		-e AWS_PROFILE                                                    \
+		-e AWS_DEFAULT_PROFILE                                            \
 		-e AWS_SECRET_ACCESS_KEY                                          \
 		--rm --init -it $(CONTAINER_NAME_LATEST)                          \
 		bash

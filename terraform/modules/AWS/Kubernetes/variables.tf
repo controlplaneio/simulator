@@ -1,7 +1,3 @@
-variable "region" {
-  description = "aws region"
-  default     = "eu-west-1"
-}
 variable "number_of_master_instances" {
   description = "number of master instances to create"
   default     = "1"

@@ -8,7 +8,7 @@
 #### func  Attack
 
 ```go
-func Attack(tfDir, bucketName string) error
+func Attack(logger *zap.SugaredLogger, tfDir, bucketName string) error
 ```
 Attack establishes an SSH connection to the attack container running on the
 bastion host ready for the user to attempt to complete a scenario
@@ -16,7 +16,7 @@ bastion host ready for the user to attempt to complete a scenario
 #### func  Config
 
 ```go
-func Config(tfDir, scenarioPath, bucketName string) (*string, error)
+func Config(logger *zap.SugaredLogger, tfDir, scenarioPath, bucketName string) (*string, error)
 ```
 Config returns a pointer to string containing the stanzas to add to an ssh
 config file so that the kubernetes nodes are connectable directly via the
@@ -25,7 +25,7 @@ bastion or an error if the infrastructure has not been created
 #### func  Create
 
 ```go
-func Create(tfDir, bucketName string) error
+func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error
 ```
 Create runs terraform init, plan, apply to create the necessary infratsructure
 to run scenarios
@@ -33,21 +33,21 @@ to run scenarios
 #### func  Destroy
 
 ```go
-func Destroy(tfDir, bucketName string) error
+func Destroy(logger *zap.SugaredLogger, tfDir, bucketName string) error
 ```
 Destroy call terraform destroy to remove the infrastructure
 
-#### func  EnsureTfVarsFile
+#### func  EnsureLatestTfVarsFile
 
 ```go
-func EnsureTfVarsFile(tfDir, publicKey, accessCIDR, bucketName string) error
+func EnsureLatestTfVarsFile(tfDir, publicKey, accessCIDR, bucketName string) error
 ```
-EnsureTfVarsFile writes an tfvars file if one hasnt already been made
+EnsureLatestTfVarsFile writes an tfvars file if one hasnt already been made
 
 #### func  InitIfNeeded
 
 ```go
-func InitIfNeeded(tfDir, bucketName string) error
+func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error
 ```
 InitIfNeeded checks if there is a terraform state folder and calls terraform
 init if not
@@ -55,7 +55,7 @@ init if not
 #### func  Launch
 
 ```go
-func Launch(tfDir, scenariosDir, bucketName, id string) error
+func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id string) error
 ```
 Launch runs perturb.sh to setup a scenario with the supplied `id` assuming the
 infrastructure has been created. Returns an error if the infrastructure is not
@@ -122,10 +122,11 @@ the command line options to pass to perturb
 
 ```go
 type SSHConfig struct {
-	Hostname    string
-	KeyFilePath string
-	User        string
-	BastionIP   string
+	Hostname           string
+	KeyFilePath        string
+	KnownHostsFilePath string
+	User               string
+	BastionIP          string
 }
 ```
 
@@ -182,7 +183,7 @@ ParseTerraformOutput takes a string containing the stdout from `terraform output
 #### func  Status
 
 ```go
-func Status(tfDir, bucketName string) (*TerraformOutput, error)
+func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutput, error)
 ```
 Status calls terraform output to get the state of the infrastruture and parses
 the output for programmatic use

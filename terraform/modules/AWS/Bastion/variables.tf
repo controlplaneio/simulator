@@ -21,11 +21,6 @@ variable "subnet_id" {
   description = "configure subnet id"
 }
 
-variable "region" {
-  description = "aws region"
-  default     = "eu-west-1"
-}
-
 variable "master_ip_addresses" {
   description = "Kubernetes master private IP addresses"
 }

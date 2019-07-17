@@ -26,7 +26,6 @@ module "Bastion" {
 
 module "Kubernetes" {
   source                      = "../../modules/AWS/Kubernetes"
-  region                      = "${var.region}"
   number_of_master_instances  = "${var.number_of_master_instances}"
   ami_id                      = "${var.ami_id}"
   master_instance_type        = "${var.master_instance_type}"
