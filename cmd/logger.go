@@ -6,7 +6,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger(logLevel string, zapEncoding string) (*zap.SugaredLogger, error) {
+func newLogger(logLevel string, zapEncoding string) (*zap.SugaredLogger, error) {
 	level := zap.NewAtomicLevelAt(zapcore.InfoLevel)
 	switch logLevel {
 	case "debug":
