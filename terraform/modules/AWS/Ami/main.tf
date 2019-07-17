@@ -1,20 +1,15 @@
 data "aws_ami" "find_ami" {
+  owners      = ["099720109477"]
   most_recent = true
 
-  // need to check the below
   filter {
     name   = "name"
-    values = ["18.04 LTS"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
   }
-  // should this be amd64, needs clarification
+
   filter {
     name   = "architecture"
     values = ["x86_64"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs-ssd"]
   }
 
   filter {
