@@ -18,7 +18,6 @@ resource "aws_vpc" "simulator_vpc" {
 resource "aws_subnet" "simulator_public_subnet" {
   vpc_id            = "${aws_vpc.simulator_vpc.id}"
   cidr_block        = "${var.public_subnet_cidr}"
-//  availability_zone = "${var.public_avail_zone}"
   availability_zone = "${data.aws_availability_zones.available.names[0]}"
   tags = {
     Name = "Simulator Public subnet"
@@ -28,7 +27,6 @@ resource "aws_subnet" "simulator_public_subnet" {
 resource "aws_subnet" "simulator_private_subnet" {
   vpc_id            = "${aws_vpc.simulator_vpc.id}"
   cidr_block        = "${var.private_subnet_cidr}"
-//  availability_zone = "${var.private_avail_zone}"
   availability_zone = "${data.aws_availability_zones.available.names[1]}"
   tags = {
     Name = "Simulator Private subnet"
