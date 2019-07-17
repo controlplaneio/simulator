@@ -9,7 +9,7 @@ module "Networking" {
 
 // Discovery AMI Id to use for all instances
 module "Ami" {
-  source          = "../../modules/AWS/Ami"
+  source = "../../modules/AWS/Ami"
 }
 
 // Import ssh public key
