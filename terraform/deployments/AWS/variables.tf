@@ -63,12 +63,12 @@ variable "number_of_cluster_instances" {
 
 variable "private_avail_zone" {
   description = "availability zone for private subnet"
-  default     = "eu-west-2a"
+  default     = "eu-west-1a"
 }
 
 variable "public_avail_zone" {
   description = "availability zone for public subnet"
-  default     = "eu-west-2a"
+  default     = "eu-west-1a"
 }
 
 variable "s3_bucket_name" {
