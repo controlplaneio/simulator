@@ -23,8 +23,6 @@ SSH_CONFIG_PATH := $(HOME)/.ssh/
 all: test
 
 # --- DOCKER
-
-.PHONY: run
 run: SSH_AUTH_SOCK_DIR=$(shell dirname $(SSH_AUTH_SOCK))
 run: docker-build ## Runs the simulator - the build stage of the container runs all the cli tests
 	echo $(SSH_AUTH_SOCK_DIR)
@@ -95,7 +93,12 @@ test: test-unit test-acceptance ## run all tests except goss tests
 .PHONY: test-acceptance
 test-acceptance: build ## Run bats acceptance tests for the CLI program
 	@echo "+ $@"
-	bash -xc 'cd test && ./bin/bats/bin/bats $(BATS_PARALLEL_JOBS) .'
+	bash -xc 'cd test && ./bin/bats/bin/bats $(BATS_PARALLEL_JOBS) cli.bats'
+
+.PHONY: test
+test-smoke: build ## Run bats acceptance tests for the CLI program
+	@echo "+ $@"
+	bash -xc 'cd test && ./bin/bats/bin/bats $(BATS_PARALLEL_JOBS) smoke.bats'
 
 .PHONY: test-unit
 test-unit: build ## Run golang unit tests for the CLI program
