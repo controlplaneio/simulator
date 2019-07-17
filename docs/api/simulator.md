@@ -49,8 +49,7 @@ EnsureLatestTfVarsFile writes an tfvars file if one hasnt already been made
 ```go
 func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error
 ```
-InitIfNeeded checks if there is a terraform state folder and calls terraform
-init if not
+InitIfNeeded checks the IP address and SSH key and updates the tfvars if needed
 
 #### func  Launch
 

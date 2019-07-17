@@ -14,31 +14,6 @@ If you need to include bsah code snippets you will need to change how the templa
 
 A distributed systems and infrastructure simulator for attacking and debugging Kubernetes
 
-## AWS Configuration
-
-Simulator uses terraform to provision its infrastructure.  Terraform in turn
-honours [all the rules for configuring the AWS
-CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-environment).
-Please follow these.
-
-You can provide your credentials via the <code>AWS_ACCESS_KEY_ID</code> and
-<code>AWS_SECRET_ACCESS_KEY</code>, environment variables, representing your AWS Access Key
-and AWS Secret Key, respectively. Note that setting your AWS credentials using
-either these (or legacy) environment variables will override the use of
-<code>AWS_SHARED_CREDENTIALS_FILE</code> and <code>AWS_PROFILE</code>. The <code>AWS_DEFAULT_REGION</code> and
-<code>AWS_SESSION_TOKEN</code> environment variables are also used, if applicable.
-
-https://www.terraform.io/docs/backends/types/s3.html
-
-**All the <code>AWS_*</code> configuration environment variables you have set will be propagated into the container**
-
-### Troubleshooting AWS
-
-- <code>AWS_REGION</code> vs <code>AWS_DEFAULT_REGION</code> - There have been
-[some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
-[Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
-- [Multi-account](https://www.terraform.io/docs/backends/types/s3.html#multi-account-aws-architecture)
-
 ## Before you start
 
 Create an S3 bucket to store the remote state which keeps track of what infrastructure has been provisioned.
@@ -70,13 +45,43 @@ simulator scenario launch database_compromise
 simulator ssh attack
 </pre>
 
-## SSH Keys
+## How It All Works
 
-If using with <code>make run</code> the default RSA keypair on your host
-machine (I.E. <code>~/.ssh/id_rsa{,.pub}</code> will be setup as an authorised
-key on the infrastructure. If your key has a passphrase (it should :)) then you
-will need to make sure you have <code>ssh-add</code>ed to SSH agent.  The SSH
-agent sock is mounted in the container and SSH is configured to use it.
+### AWS Configuration
+
+Simulator uses terraform to provision its infrastructure.  Terraform in turn
+honours [all the rules for configuring the AWS
+CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-environment).
+Please follow these.
+
+You can provide your credentials via the <code>AWS_ACCESS_KEY_ID</code> and
+<code>AWS_SECRET_ACCESS_KEY</code>, environment variables, representing your AWS Access Key
+and AWS Secret Key, respectively. Note that setting your AWS credentials using
+either these (or legacy) environment variables will override the use of
+<code>AWS_SHARED_CREDENTIALS_FILE</code> and <code>AWS_PROFILE</code>. The <code>AWS_DEFAULT_REGION</code> and
+<code>AWS_SESSION_TOKEN</code> environment variables are also used, if applicable.
+
+https://www.terraform.io/docs/backends/types/s3.html
+
+**All the <code>AWS_*</code> configuration environment variables you have set will be propagated into the container**
+
+#### Troubleshooting AWS
+
+- <code>AWS_REGION</code> vs <code>AWS_DEFAULT_REGION</code> - There have been
+[some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
+[Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
+- [Multi-account](https://www.terraform.io/docs/backends/types/s3.html#multi-account-aws-architecture)
+
+### SSH
+
+Simulator whether run in the launch container or on the host machine will generate its own SSH RSA key pair.  It will
+configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the
+bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config
+separate from any other configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and
+are files starting <code>cp_simulator_</code>
+
+If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
+next run**
 
 ## Development Workflow
 
@@ -96,6 +101,7 @@ dep                   Install dependencies for other targets
 build                 Run golang build for the CLI program
 test                  run all tests except goss tests
 test-acceptance       Run bats acceptance tests for the CLI program
+test-smoke            Run bats acceptance tests for the CLI program
 test-unit             Run golang unit tests for the CLI program
 coverage              Run golang unit tests with coverage and opens a browser with the results
 doc                   Generate documentation

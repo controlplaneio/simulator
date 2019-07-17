@@ -31,11 +31,11 @@ Available Commands:
   version     Prints simulator version
 
 Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -h, --help                   help for simulator
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
   -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator [command] --help" for more information about a command.
@@ -58,10 +58,10 @@ Flags:
   -h, --help   help for infra
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
   -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator infra [command] --help" for more information about a command.
@@ -83,10 +83,10 @@ Flags:
   -h, --help   help for scenario
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
   -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator scenario [command] --help" for more information about a command.
@@ -108,10 +108,10 @@ Flags:
   -h, --help   help for ssh
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
   -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator ssh [command] --help" for more information about a command.
@@ -132,10 +132,10 @@ Flags:
   -h, --help   help for config
 
 Global Flags:
-  -b, --bucket string          The name of the s3 bucket to use.  Must be globally unique and will be prefixed with 'simulator-'
   -c, --config-file string     Path to the simulator config file
   -l, --loglevel string        Level of detail in output logging (default "info")
   -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
   -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
 
 Use "simulator config [command] --help" for more information about a command.
