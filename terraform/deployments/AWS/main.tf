@@ -7,6 +7,10 @@ module "Networking" {
   private_avail_zone  = "${var.private_avail_zone}"
 }
 
+module "Ami" {
+  source          = "../../modules/AWS/Ami"
+}
+
 module "SshKey" {
   source          = "../../modules/AWS/SshKey"
   access_key_name = "${var.access_key_name}"
@@ -15,7 +19,8 @@ module "SshKey" {
 
 module "Bastion" {
   source              = "../../modules/AWS/Bastion"
-  ami_id              = "${var.ami_id}"
+//  ami_id              = "${var.ami_id}"
+  ami_id              = "${module.Ami.AmiId}"
   instance_type       = "${var.instance_type}"
   access_key_name     = "${module.SshKey.KeyPairName}"
   security_group      = "${module.SecurityGroups.BastionSecurityGroupID}"
@@ -27,7 +32,8 @@ module "Bastion" {
 module "Kubernetes" {
   source                      = "../../modules/AWS/Kubernetes"
   number_of_master_instances  = "${var.number_of_master_instances}"
-  ami_id                      = "${var.ami_id}"
+//  ami_id                      = "${var.ami_id}"
+  ami_id                      = "${module.Ami.AmiId}"
   master_instance_type        = "${var.master_instance_type}"
   number_of_cluster_instances = "${var.number_of_cluster_instances}"
   cluster_nodes_instance_type = "${var.cluster_nodes_instance_type}"
