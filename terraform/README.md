@@ -23,11 +23,17 @@ Terraform modules are segregated by Cloud Provider under the modules directory, 
 The Terraform modules for AWS ( located under ```modules/AWS/[module name]``` ) action the following:
 
 
-### Ssh
+### SshKey
 
-Refer to [settings documentation](./modules/AWS/Ssh/README-auto.md)
+Refer to [settings documentation](./modules/AWS/SshKey/README-auto.md)
 
 * Uploads Ssh key to be used for all instances
+
+### Ami
+
+This modules requires no settings to be provided at this moment
+
+* Identifies current Ubuntu 18.04 LTS AMI Id for region in use
 
 ### Bastion
 
