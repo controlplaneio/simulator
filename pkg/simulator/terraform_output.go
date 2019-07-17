@@ -47,9 +47,10 @@ type SSHConfig struct {
 
 // ToSSHConfig produces the SSH config
 func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
+	// TODO (rem): Use Must version
 	var sshConfigTmpl, err = template.New("ssh-config").Parse(sshConfigTmplSrc)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error parsing ssh config template")
 	}
 
 	u, err := user.Current()

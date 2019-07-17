@@ -108,18 +108,17 @@ func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutput, error) {
 	err := InitIfNeeded(logger, tfDir, bucketName)
 	if err != nil {
-		fmt.Println(err)
-		return nil, err
+		return nil, errors.Wrap(err, "Error initialising")
 	}
 
 	out, err := Terraform(tfDir, "output")
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
 
 	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error parsing terraform outputs")
 	}
 
 	return tfo, nil
@@ -129,7 +128,7 @@ func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutp
 func Destroy(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 	err := InitIfNeeded(logger, tfDir, bucketName)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Error initialising")
 	}
 
 	_, err = Terraform(tfDir, "destroy")

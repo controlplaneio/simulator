@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -51,7 +52,7 @@ func NewLogger(logLevel string, zapEncoding string) (*zap.SugaredLogger, error) 
 
 	logger, err := zapConfig.Build()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Error building logging config")
 	}
 	return logger.Sugar(), nil
 }
