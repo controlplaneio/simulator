@@ -23,19 +23,25 @@ Terraform modules are segregated by Cloud Provider under the modules directory, 
 The Terraform modules for AWS ( located under ```modules/AWS/[module name]``` ) action the following:
 
 
-### CreateBastion
+### Ssh
 
-Refer to [settings documentation](./modules/AWS/CreateBastion/README-auto.md)
+Refer to [settings documentation](./modules/AWS/Ssh/README-auto.md)
+
+* Uploads Ssh key to be used for all instances
+
+### Bastion
+
+Refer to [settings documentation](./modules/AWS/Bastion/README-auto.md)
 
 * A single bastion host on the public subnet
 
-### CreateK8s
+### Kubernetes
 
-Refer to [settings documentation](./modules/AWS/CreateK8s/README-auto.md)
+Refer to [settings documentation](./modules/AWS/Kubernetes/README-auto.md)
 
 
-* One, or more, K8s master nodes on the private network
-* One, or more, K8s nodes  on the private network
+* One, or more, Kubernetes master nodes on the private network
+* One, or more, Kubernetes nodes  on the private network
 
 Cloud init is used to installed k8s software and initialise the cluster.  This is separted into 2 configurations:
 
@@ -79,7 +85,7 @@ Refer to [settings documentation](./deployments/AWS/README-auto.md) for details 
 
 ## Remote State
 
-This Terraform code uses remote state storage and locking using S3 and DynamoDB. This is configured in `terraform/providers.tf` in the `terraform` block. The S3 bucket and DynamoDB table are assumed to have been created already.
+This Terraform code uses remote state storage using S3. This is configured in `terraform/providers.tf` in the `terraform` block. The S3 bucket is assumed to have been created already.
 
 ## Running the Terraform Code
 

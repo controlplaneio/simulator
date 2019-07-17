@@ -10,3 +10,7 @@ output "cluster_nodes_private_ip" {
 output "access_cidr" {
   value = "${var.access_cidr}"
 }
+output "ami_id" {
+  value =  "${module.Ami.AmiId}"
+}
+
