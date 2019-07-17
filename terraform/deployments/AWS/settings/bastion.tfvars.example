@@ -6,9 +6,7 @@
 # anything that supplies a default does not have to be defined if default
 # setting is of use, i.e remove setting from this file is you do not need to override
 
-region = "defaults to eu-west-1"
 shared_credentials_file = "defaults to ~/.aws"
-aws_profile = "defaults to default"
 access_key = "your ssh public key"
 vpc_cidr = "defaults to 172.31.0.0/16"
 access_cidr = "ip address/cidr range of your PC/network"

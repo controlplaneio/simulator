@@ -1,16 +1,6 @@
-variable "region" {
-  description = "aws region"
-  default     = "eu-west-2"
-}
-
 variable "shared_credentials_file" {
   description = "location of aws credentials file"
   default     = "~/.aws/credentials"
-}
-
-variable "aws_profile" {
-  description = "aws profile"
-  default     = "default"
 }
 
 variable "access_key" {

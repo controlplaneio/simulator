@@ -5,14 +5,6 @@
 
 ## Usage
 
-#### func  Base64PrivateKey
-
-```go
-func Base64PrivateKey(name string) (*string, error)
-```
-Base64PrivateKey returns a pointer to a string containing the base64 encoded
-private key or an error
-
 #### func  Debug
 
 ```go
@@ -25,7 +17,8 @@ Debug prints a debug message to stdout
 ```go
 func DetectPublicIP() (*string, error)
 ```
-DetectPublicIP detects your public IP address
+DetectPublicIP detects your public IP address and returns a pointer to a string
+containing the IP address or any error
 
 #### func  EnsureFile
 
@@ -60,33 +53,6 @@ func FileExists(path string) (bool, error)
 ```
 FileExists checks whether a path exists
 
-#### func  GenerateKey
-
-```go
-func GenerateKey(keyname string) (*string, error)
-```
-GenerateKey runs ssh-keygen silently to create an SSH key with the same provided
-using preconfigured settings It returns a pointer to a string containing the
-buffered stdout or an error if any occurred
-
-#### func  GetAuthMethods
-
-```go
-func GetAuthMethods() ([]ssh.AuthMethod, error)
-```
-GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls back
-to reading the keyfile directly in case of a missing SSH_AUTH_SOCK env var or an
-error dialing the unix socket
-
-#### func  KeyScan
-
-```go
-func KeyScan(bastion string) (*string, error)
-```
-KeyScan runs ssh-keyscan silently against the provided bastion address. It
-returns a pointer to a string containing its buffered stdout or an error if any
-occurred
-
 #### func  MustRemove
 
 ```go
@@ -104,13 +70,13 @@ MustSlurp is the panicky counterpart to Slurp. MustSlurp reads an entire file
 into a string in one operation and returns the contents or panics if it
 encouters and error
 
-#### func  PrivateKeyFile
+#### func  OverwriteFile
 
 ```go
-func PrivateKeyFile(file string) (ssh.AuthMethod, error)
+func OverwriteFile(path, contents string) error
 ```
-PrivateKeyFile reads the private key at the path supplied and returns the
-ssh.AuthMethod to use or an error if any occurred
+OverwriteFile writes the supplied contents overwriting the path if it already
+exists. It returns an error if any occurred
 
 #### func  Run
 
@@ -128,14 +94,6 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 ```
 RunSilently runs a sub command silently
 
-#### func  SSH
-
-```go
-func SSH(host string) error
-```
-SSH establishes an interactive Secure Shell session to the supplied host as user
-ubuntu and on port 22. SSH uses ssh-agent to get the key to use
-
 #### func  Slurp
 
 ```go
@@ -149,11 +107,3 @@ from the working directory.
 Note that this is slightly less efficient for zero-length files than
 `ioutil.Readfile` as it uses the default read buffer size of `bytes.MinRead`
 internally
-
-#### func  StartInteractiveSSHShell
-
-```go
-func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string) error
-```
-StartInteractiveSSHShell starts an interactive SSH shell with the supplied
-ClientConfig
