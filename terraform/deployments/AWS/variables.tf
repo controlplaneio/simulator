@@ -1,4 +1,4 @@
-// Variable with no default to be place at the top of
+// Variables with no default to be place at the top of
 // this file as per coding standards
 
 variable "access_key" {
