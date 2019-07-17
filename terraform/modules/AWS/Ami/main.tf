@@ -1,5 +1,5 @@
 data "aws_ami" "find_ami" {
-  owners      = ["099720109477"]
+  owners      = ["099720109477"] // this is Canonical's id
   most_recent = true
 
   filter {
