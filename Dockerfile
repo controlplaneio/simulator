@@ -12,7 +12,7 @@ RUN apt-get update                                                              
 
 # Install terraform
 # TODO: (rem) use `terraform-bundle`
-ENV TERRAFORM_VERSION 0.12.3
+ENV TERRAFORM_VERSION 0.12.4
 RUN curl -sLO                                                                                                      \
       https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
     && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip                                                        \
