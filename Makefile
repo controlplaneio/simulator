@@ -5,8 +5,17 @@ VERSION := 0.1-dev
 
 include prelude.mk
 
-SIMULATOR_AWS_CREDS_PATH := $(HOME)/.aws/
-SIMULATOR_KEY_PATH := $(HOME)/.ssh/
+# --- AWS
+
+ifeq ($(AWS_SHARED_CREDENTIALS_FILE),)
+	SIMULATOR_AWS_CREDS_PATH := $(HOME)/.aws/
+else
+	SIMULATOR_AWS_CREDS_PATH := $(shell dirname $(AWS_SHARED_CREDENTIALS_FILE))
+endif
+
+# --- AWS
+
+SSH_CONFIG_PATH := $(HOME)/.ssh/
 
 .DEFAULT_GOAL := help
 
@@ -21,7 +30,7 @@ run: docker-build ## Runs the simulator - the build stage of the container runs 
 	echo $(SSH_AUTH_SOCK_DIR)
 	docker run                                                          \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
-		-v $(SIMULATOR_KEY_PATH):/home/launch/.ssh                        \
+		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
 		-v $(SSH_AUTH_SOCK_DIR):$(SSH_AUTH_SOCK_DIR)                      \
 		-e SSH_AUTH_SOCK                                                  \
 		-e AWS_ACCESS_KEY_ID                                              \
