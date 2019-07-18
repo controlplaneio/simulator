@@ -132,7 +132,7 @@ resource "aws_security_group" "security_group" {
 ...
 ```
 
-__A resource's NAME should describe TYPE pre-pended with simulator, unique indent and minus the provider.__
+__A resource's NAME should describe TYPE pre-pended with simulator, unique ident and minus the provider.  Common shorthand for TYPE is fine here__
 
 ```
 resource "aws_security_group" "simulator_controlplane_sg" {
