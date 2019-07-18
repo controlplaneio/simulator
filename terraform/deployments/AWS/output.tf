@@ -15,7 +15,7 @@ output "access_cidr" {
   description = "Remote access IP"
 }
 output "ami_id" {
-  value       =  "${module.Ami.AmiId}"
+  value       = "${module.Ami.AmiId}"
   description = "AMI used for all instances"
 }
 

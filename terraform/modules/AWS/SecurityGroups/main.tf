@@ -1,4 +1,4 @@
-resource "random_uuid" "unique" {  }
+resource "random_uuid" "unique" {}
 
 // Public subnet (Bastion) security group
 // restricts ingress to identifier ip address, egress open
