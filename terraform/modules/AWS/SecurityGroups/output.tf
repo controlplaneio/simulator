@@ -7,6 +7,3 @@ output "ControlPlaneSecurityGroupID" {
   description = "Controlplane (Kubernetes) security group id"
 }
 
-output "access_cidr" {
-  value = "${var.access_cidr}"
-}
