@@ -106,12 +106,19 @@ providers.tf
 variables.tf
 ```
 
-### Parameter, Meta-parameter and Variable Naming
+### Parameter, Meta-parameter and User Variable Naming
 
- __Only use an underscore (`_`) when naming Terraform resources like TYPE/NAME parameters and variables.__
+ __Only use an underscore (`_`) when naming Terraform resources like TYPE/NAME parameters and user provided variables.__
  
- ```
+```
 resource "aws_security_group" "security_group" {
+...
+```
+
+__Variables provided as output from modules should following CamelCase convention to make module provided variables easy to identify__
+
+```
+output "ControlPlaneSecurityGroupID" {
 ...
 ```
 
@@ -119,35 +126,18 @@ resource "aws_security_group" "security_group" {
 
 __Only use a hyphen (`-`) when naming the component being created.__
 
- ```
+```
 resource "aws_security_group" "security_group" {
   name = "${var.resource_name}-security-group"
 ...
 ```
 
-__A resource's NAME should be the same as the TYPE minus the provider.__
+__A resource's NAME should describe TYPE pre-pended with simulator, unique indent and minus the provider.__
 
 ```
-resource "aws_autoscaling_group" "autoscaling_group" {
+resource "aws_security_group" "simulator_controlplane_sg" {
 ...
 ```
 
-If there are multiple resources of the same TYPE defined, add a minimalistic identifier to differentiate between the two resources. A blank line should sperate resource definitions contained in the same file.
 
-```
-// Create Data S3 Bucket
-resource "aws_s3_bucket" "data_s3_bucket" {
-  bucket = "${var.environment_name}-data-${var.aws_region}"
-  acl    = "private"
-  versioning {
-    enabled = true
-  }
-}
-
-// Create Images S3 Bucket
-resource "aws_s3_bucket" "images_s3_bucket" {
-  bucket = "${var.environment_name}-images-${var.aws_region}"
-  acl    = "private"
-}
-```
 
