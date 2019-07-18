@@ -5,26 +5,24 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 - [Introduction](#introduction)
-
-- [Introduction](#introduction)
 - [Directory Structure](#directory-structure)
 - [Syntax](#syntax)
   - [Spacing](#spacing)
   - [Resource Block Alignment](#resource-block-alignment)
   - [Comments](#comments)
   - [Organizing Variables](#organizing-variables)
-- [Naming Conventions](#naming-conventions)
-  - [File Names](#file-names)
-  - [Parameter, Meta-parameter and User Variable Naming](#parameter-meta-parameter-and-user-variable-naming)
-  - [Resource Naming](#resource-naming)
+  - [Naming Conventions](#naming-conventions)
+    - [File Names](#file-names)
+    - [Parameter, Meta-parameter and User Variable Naming](#parameter-meta-parameter-and-user-variable-naming)
+    - [Resource Naming](#resource-naming)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Introduction
+# Introduction
 
 This outlines coding conventions for Terraform's HashiCorp Configuration Language (HCL). Terraform allows infrastructure to be described as code. As such, we should adhere to a style guide to ensure readable and high quality code.
 
-## Directory Structure
+# Directory Structure
 
 Directories are split into __deployments__ and __modules__
 
@@ -33,11 +31,11 @@ __modules__ contains subdirectories for each cloud vendor as appropriate (i.e AW
 
 Taking __AWS__ as an example __modules__ subdirectory, the __AWS__ directory will then contains modules logically segregated into their core function (Networking, SecurityGroups etc).
 
-## Syntax
+# Syntax
 
 - Strings are in double-quotes.
 
-### Spacing
+## Spacing
 
 Use 2 spaces when defining resources except when defining inline policies or other inline resources.
 
@@ -62,7 +60,7 @@ EOF
 }
 ```
 
-### Resource Block Alignment
+## Resource Block Alignment
 
 Parameter definitions in a resource block should be aligned. The `terraform fmt` command can do this for you.
 
@@ -75,7 +73,7 @@ provider "aws" {
 ```
 
 
-### Comments
+## Comments
 
 When commenting use two "//" and a space in front of the comment.
 
@@ -84,7 +82,7 @@ When commenting use two "//" and a space in front of the comment.
 ...
 ```
 
-### Organizing Variables
+## Organizing Variables
 
 The `variables.tf` file should be broken down into three sections with each section arranged alphabetically. Starting at the top of the file:
 
