@@ -1,3 +1,6 @@
+// generate random uuid to append to all names of resources
+// to ensure unique
+
 resource "random_uuid" "unique" {}
 
 // Public subnet (Bastion) security group
