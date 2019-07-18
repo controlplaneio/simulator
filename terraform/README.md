@@ -1,11 +1,14 @@
+# Terraform environment  standup
+
+**Table of Contents**
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [Terraform environment  standup](#terraform-environment--standup)
+
 - [Terraform target infrastructure](#terraform-target-infrastructure)
-  - [Terraform Deployments structure](#terraform-deployments-structure)
-  - [Terraform Module structure](#terraform-module-structure)
+- [Terraform Deployments structure](#terraform-deployments-structure)
+- [Terraform Module structure](#terraform-module-structure)
 - [Current Terraform Modules](#current-terraform-modules)
   - [SshKey](#sshkey)
   - [Ami](#ami)
@@ -20,9 +23,8 @@
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Terraform environment  standup
 
-# Terraform target infrastructure
+## Terraform target infrastructure
 
 ![Terraform AWS infrastructure](./docs/aws-bastion-host-1.png)
 
@@ -40,30 +42,30 @@ Terraform modules are segregated by Cloud Provider under the modules directory, 
 
 ```modules/AWS```
 
-# Current Terraform Modules
+## Current Terraform Modules
 
 The Terraform modules for AWS ( located under ```modules/AWS/[module name]``` ) action the following:
 
 
-## SshKey
+### SshKey
 
 Refer to [settings documentation](./modules/AWS/SshKey/README-auto.md)
 
 * Uploads Ssh key to be used for all instances
 
-## Ami
+### Ami
 
 This modules requires no settings to be provided at this moment
 
 * Identifies current Ubuntu 18.04 LTS AMI Id for region in use
 
-## Bastion
+### Bastion
 
 Refer to [settings documentation](./modules/AWS/Bastion/README-auto.md)
 
 * A single bastion host on the public subnet
 
-## Kubernetes
+### Kubernetes
 
 Refer to [settings documentation](./modules/AWS/Kubernetes/README-auto.md)
 
@@ -76,7 +78,7 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 * cloud-init-master.cfg - run on master nodes and installs kubelet, kubectl, kubeadm, docker and crictl.  Initialises the cluster
 * cloud-init.cfg - runs on nodes and installs kubelet, kubectl, kubeadm, docker and crictl.
 
-## Networking
+### Networking
 
 Refer to [settings documentation](./modules/AWS/Networking/README-auto.md)
 
@@ -90,14 +92,14 @@ The following routes are defined
 * public_route_table - route to internet gateway, associated to public subnet
 * private_nat_route_table - route to NAT gateway, associated to private subnet
 
-## S3Storage
+### S3Storage
 
 Refer to [settings documentation](./modules/AWS/S3Storage/README-auto.md)
 
 * Create S3 bucket
 * Create IAM role/policy for k8s hosts to access S3 bucket
 
-## SecurityGroups
+### SecurityGroups
 
 Refer to [settings documentation](./modules/AWS/SecurityGroups/README-auto.md)
 
@@ -107,15 +109,15 @@ The following security groups are defined
 * controlplane-sg - Allows ingress from public subnet to private subnet (needs to be tighten up), open egress to internet (via NAT gateway)
 
 
-# Settings
+## Settings
 
 Refer to [settings documentation](./deployments/AWS/README-auto.md) for details on deployment settings required, and defaults provided.
 
-# Remote State
+## Remote State
 
 This Terraform code uses remote state storage using S3. This is configured in `terraform/providers.tf` in the `terraform` block. The S3 bucket is assumed to have been created already.
 
-# Running the Terraform Code
+## Running the Terraform Code
 
 To plan:
 
