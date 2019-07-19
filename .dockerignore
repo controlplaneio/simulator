@@ -3,6 +3,7 @@
 /features/
 /bin/
 /node_modules/
+/test/smoke.tcl
 .terraform/
 .editorconfig
 .gitattributes
