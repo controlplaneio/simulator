@@ -1,7 +1,6 @@
 #!/usr/bin/expect
 
 puts "smoke test"
-cd ..
 
 set timeout -1
 spawn make run
@@ -66,3 +65,5 @@ expect {
 }
 
 expect "Last login:"
+
+# vim: ft=tcl

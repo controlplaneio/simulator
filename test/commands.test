@@ -1,0 +1,67 @@
+#!/bin/sh
+# -*- tcl -*-
+# The next line is executed by /bin/sh, but not tcl \
+exec tclsh "$0" ${1+"$@"}
+
+if {[lsearch [namespace children] ::tcltest] == -1} {
+  package require tcltest
+  namespace import ::tcltest::*
+}
+
+if {[lsearch [info commands] expect] == -1} {
+  package require Expect
+}
+
+variable BEFORE {
+  puts "Test setup"
+  catch { unset result }
+  set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
+  set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
+  set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
+}
+
+variable AFTER {
+  puts "Test teardown"
+  unset env(SIMULATOR_SCENARIOS_DIR)
+  unset env(SIMULATOR_TF_DIR)
+  unset env(SIMULATOR_CLI_TEST_OUTPUT)
+}
+
+::tcltest::test version_prints_ok {
+  Test: simulator version
+} -body {
+  spawn "./dist/simulator" "version"
+  expect "build date" { set result 1 } default { set result 0 }
+} -setup $BEFORE -cleanup $AFTER -result 1
+
+::tcltest::test infra_create_prints_ok {
+  Test: simulator infra create
+} -body {
+  spawn "./dist/simulator" "infra" "create"
+  expect "testing = testing" { set result 1 } default { set result 0 }
+} -setup $BEFORE -cleanup $AFTER -result 1
+
+# TODO: (rem) Need to stub terraform output to make this pass
+::tcltest::configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
+::tcltest::test infra_status_prints_ok {
+  Test: simulator infra status
+} -body {
+  spawn "./dist/simulator" "infra" "status"
+  expect "testing = testing" { set result 1 } default { set result 0 }
+} -setup $BEFORE -cleanup $AFTER -result 1
+
+::tcltest::test scenario_list_prints_ok {
+  Test: simulator scenario list
+} -body {
+  spawn "./dist/simulator" "scenario" "list"
+  expect "Scenario 1" { set result 1 } default { set result 0 }
+} -setup $BEFORE -cleanup $AFTER -result 1
+
+::tcltest::test scenario_launch_prints_ok {
+  Test: simulator scenario launch scenario_1
+} -body {
+  spawn "./dist/simulator" "scenario" "launch" "scenario_1"
+  expect "Scenario 1" { set result 1 } default { set result 0 }
+} -setup $BEFORE -cleanup $AFTER -result 1
+
+::tcltest::cleanupTests 1

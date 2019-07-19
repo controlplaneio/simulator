@@ -77,6 +77,8 @@ RUN apt-get update                                                              
     git                                                                          \
     golang                                                                       \
     openssh-client                                                               \
+    tcl                                                                          \
+    tcl-expect                                                                   \
     unzip
 
 COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
