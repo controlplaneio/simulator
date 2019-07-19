@@ -19,11 +19,14 @@ func newVersionCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger, err := newLogger(viper.GetString("loglevel"), "console")
 			if err != nil {
-				logger.Fatalf("can't re-initialize zap logger: %v", err)
+				logger.Fatalf("Can't re-initialize zap logger: %v", err)
 			}
 			defer logger.Sync()
 
-			logger.Infof("version %s\ngit commit %s\nbuild date %s\n", version, commit, date)
+			logger.Infof("version %s\n", version)
+			logger.Infof("git commit %s\n", commit)
+			logger.Infof("build date %s\n", date)
+
 			return nil
 		},
 	}

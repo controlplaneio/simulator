@@ -17,6 +17,7 @@ func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 			manifest, err := scenario.LoadManifest(manifestPath)
 
 			if err != nil {
+				logger.Errorw("Error loading scenario manifest", err)
 				return err
 			}
 
@@ -48,7 +49,12 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			scenarioID := args[0]
 
-			return simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID)
+			err := simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID)
+			if err != nil {
+				logger.Errorw("Error launching scenario", err)
+			}
+
+			return err
 		},
 	}
 

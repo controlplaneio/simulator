@@ -14,7 +14,12 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			return simulator.Create(logger, tfDir, bucket)
+			err := simulator.Create(logger, tfDir, bucket)
+			if err != nil {
+				logger.Errorw("Error creating infrastructure", err)
+			}
+
+			return err
 		},
 	}
 
@@ -30,6 +35,7 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			tfo, err := simulator.Status(logger, tfDir, bucket)
 			if err != nil {
+				logger.Errorw("Error getting status of infrastructure", err)
 				return err
 			}
 
@@ -55,7 +61,13 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("bucket")
 			tfDir := viper.GetString("tf-dir")
-			return simulator.Destroy(logger, tfDir, bucket)
+
+			err := simulator.Destroy(logger, tfDir, bucket)
+			if err != nil {
+				logger.Errorw("Error destroying infrastructure", err)
+			}
+
+			return err
 		},
 	}
 
@@ -72,7 +84,7 @@ func newInfraCommand() *cobra.Command {
 
 	logger, err := newLogger(viper.GetString("loglevel"), "console")
 	if err != nil {
-		logger.Fatalf("can't re-initialize zap logger: %v", err)
+		logger.Fatalf("Can't re-initialize zap logger: %v", err)
 	}
 
 	cmd.AddCommand(newCreateCommand(logger))

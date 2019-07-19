@@ -38,6 +38,7 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id strin
 	}
 
 	bastion := tfo.BastionPublicIP.Value
+	logger.Infof("Keyscanning %s and updating known hosts", bastion)
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s", bastion)
