@@ -6,6 +6,8 @@ disable_root: 0
 
 packages: ['docker.io']
 
+hostname: "bastion"
+
 runcmd:
   - 'systemctl daemon-reload'
   - 'systemctl restart docker'
