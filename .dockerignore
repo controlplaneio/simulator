@@ -10,6 +10,7 @@
 .gitignore
 LICENSE
 README.md
+dive.log
 package.json
 package-lock.json
 security.txt

@@ -5,18 +5,26 @@ FROM debian:buster-slim AS dependencies
 
 RUN apt-get update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential                                                              \
     ca-certificates                                                              \
     curl                                                                         \
+    golang                                                                       \
+    git                                                                          \
     shellcheck                                                                   \
     unzip
 
 # Install terraform
-# TODO: (rem) use `terraform-bundle`
-ENV TERRAFORM_VERSION 0.12.4
-RUN curl -sLO                                                                                                      \
-      https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
-    && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip                                                        \
-    && mv terraform /usr/local/bin/
+ENV GOPATH /go
+ENV PATH $PATH:/go/bin
+RUN mkdir -p /go/ && \
+    chdir /go     && \
+    go get -d -v github.com/hashicorp/terraform && \
+    go install ./src/github.com/hashicorp/terraform/tools/terraform-bundle
+COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
+RUN terraform-bundle package terraform-bundle.hcl && \
+    mkdir -p terraform-bundle                     && \
+    unzip -d terraform-bundle terraform_*.zip
+RUN echo $PATH && pwd && ls -lasph terraform-bundle
 
 # Install JQ
 ENV JQ_VERSION 1.6
@@ -81,7 +89,7 @@ RUN apt-get update                                                              
     tcl-expect                                                                   \
     unzip
 
-COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
+COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 
 # Setup non-root build user
 ARG build_user=build
@@ -152,7 +160,7 @@ RUN echo '[ ! -z "$TERM" ] && source /usr/local/bin/launch-motd' >> /etc/bash.ba
 COPY --from=dependencies /usr/local/bin/jq /usr/local/bin/jq
 COPY --from=dependencies /usr/local/bin/yq /usr/local/bin/yq
 COPY --from=dependencies /usr/local/bin/goss /usr/local/bin/goss
-COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
+COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 
 # Copy statically linked simulator binary
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/dist/simulator /usr/local/bin/simulator
