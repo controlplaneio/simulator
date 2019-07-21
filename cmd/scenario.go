@@ -44,7 +44,7 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 				return nil
 			}
 
-			bucket := viper.GetString("bucket")
+			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 			scenariosDir := viper.GetString("scenarios-dir")
 			scenarioID := args[0]

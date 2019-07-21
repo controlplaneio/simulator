@@ -15,7 +15,7 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			scenariosDir := viper.GetString("scenarios-dir")
-			bucket := viper.GetString("bucket")
+			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket)
 			if err != nil {
@@ -49,7 +49,7 @@ func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `attack`,
 		Short: "Connect to an attack container to complete the scenario",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("bucket")
+			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 
 			return simulator.Attack(logger, tfDir, bucket)

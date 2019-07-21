@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo "$(tput setaf 2)
+echo "$(tput setaf 1)
 
       _/_/    _/_/_/_/_/  _/_/_/_/_/    _/_/      _/_/_/  _/    _/
    _/    _/      _/          _/      _/    _/  _/        _/  _/

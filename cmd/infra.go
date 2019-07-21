@@ -12,7 +12,7 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("bucket")
+			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 			err := simulator.Create(logger, tfDir, bucket)
 			if err != nil {
@@ -31,7 +31,7 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("bucket")
+			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 			tfo, err := simulator.Status(logger, tfDir, bucket)
 			if err != nil {
@@ -59,7 +59,7 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("bucket")
+			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 
 			err := simulator.Destroy(logger, tfDir, bucket)

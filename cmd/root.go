@@ -35,7 +35,7 @@ func newCmdRoot() *cobra.Command {
 
 	rootCmd.PersistentFlags().StringP("state-bucket", "b", "",
 		"The name of the s3 bucket to use for remote-state.  Must be globally unique")
-	rootCmd.MarkFlagRequired("bucket")
+	rootCmd.MarkFlagRequired("state-bucket")
 	viper.BindPFlag("state-bucket", rootCmd.PersistentFlags().Lookup("state-bucket"))
 
 	rootCmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
