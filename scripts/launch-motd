@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 echo "$(tput setaf 1)
   ██████ ██▓███▄ ▄███▓█    ██ ██▓   ▄▄▄    ▄▄▄█████▓▒█████  ██▀███
@@ -16,3 +16,5 @@ $(tput sgr0)"
 source <(simulator completion)
 
 simulator help
+
+# vim: ft=bash

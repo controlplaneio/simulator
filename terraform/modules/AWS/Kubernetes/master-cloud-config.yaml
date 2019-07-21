@@ -4,7 +4,39 @@ package_update: true
 package_upgrade: true
 disable_root: false
 
+packages: [ 'figlet' ]
 hostname: "${hostname}"
+
+write_files:
+  - path: /etc/bash.bashrc
+    permissions: '0755'
+    content: |
+      [ -z "$PS1" ] && return
+      echo "$(tput setaf 2)$(figlet $(hostname))$(tput sgr0)"
+  - path: /etc/default/motd-news
+    owner: root:root
+    permissions: '0644'
+    content: |
+      ENABLED=0
+  - path: /etc/pam.d/sshd
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # Defaults with comments removed and motd disabled
+      @include common-auth
+      account    required     pam_nologin.so
+      @include common-account
+      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so close
+      session    required     pam_loginuid.so
+      session    optional     pam_keyinit.so force revoke
+      @include common-session
+      session    optional     pam_mail.so standard noenv # [1]
+      session    required     pam_limits.so
+      session    required     pam_env.so # [1]
+      session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
+      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
+      @include common-password
+
 
 runcmd:
   - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
