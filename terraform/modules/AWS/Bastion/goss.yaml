@@ -19,3 +19,6 @@ command:
   docker:
     exec: "docker image inspect controlplane/simulator-attack:latest"
     exit-status: 0
+  hostname:
+    exec: "hostname | grep bastion"
+    exit-status: 0
