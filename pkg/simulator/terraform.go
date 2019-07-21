@@ -75,7 +75,7 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 
 // -#-
 
-// Create runs terraform init, plan, apply to create the necessary infratsructure to run scenarios
+// Create runs terraform init, plan, apply to create the necessary infrastructure to run scenarios
 func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 	err := InitIfNeeded(logger, tfDir, bucketName)
 
