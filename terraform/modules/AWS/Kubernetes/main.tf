@@ -6,7 +6,7 @@ resource "aws_instance" "simulator_master_instances" {
   vpc_security_group_ids      = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false
   subnet_id                   = "${var.private_subnet_id}"
-  user_data                   = "${data.template_file.master_cloud_config.rendered}"
+  user_data                   =  "${element(data.template_file.master_cloud_config.*.rendered, count.index)}"
   iam_instance_profile        = "${var.iam_instance_profile_id}"
 }
 
@@ -18,7 +18,7 @@ resource "aws_instance" "simulator_node_instances" {
   vpc_security_group_ids      = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false
   subnet_id                   = "${var.private_subnet_id}"
-  user_data                   = "${data.template_file.node_cloud_config.rendered}"
+  user_data                   =  "${element(data.template_file.node_cloud_config.*.rendered, count.index)}"
   depends_on                  = ["aws_instance.simulator_master_instances"]
   iam_instance_profile        = "${var.iam_instance_profile_id}"
 }
