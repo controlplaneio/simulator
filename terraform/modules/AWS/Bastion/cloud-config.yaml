@@ -33,9 +33,9 @@ write_files:
                                                    ||:   |
                                                    ||: . |
                     __                            _||_   |
-           ____----    \\----__            __ ----     -----\\              ___
+      $(tput setaf 4)     ____----    \\----__            __ ----     -----\\              ___
       -~--~                   ----____---/                  ------_____---    -----~~
-      $(figlet $(hostname))
+      $(tput setaf 3)$(figlet $(hostname))
       $(tput sgr0)"
   - path: /home/ubuntu/.bash_login
     permissions: '0755'
