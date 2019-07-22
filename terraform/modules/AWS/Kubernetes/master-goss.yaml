@@ -1,0 +1,45 @@
+package:
+  awscli:
+    installed: true
+    versions:
+    - 1.14.44-1ubuntu1
+  kubeadm:
+    installed: true
+    versions:
+    - 1.15.1-00
+  kubectl:
+    installed: true
+    versions:
+    - 1.15.1-00
+  kubelet:
+    installed: true
+    versions:
+    - 1.15.1-00
+port:
+  tcp:10248:
+    listening: true
+    ip:
+    - 127.0.0.1
+  tcp:41537:
+    listening: true
+    ip:
+    - 127.0.0.1
+  tcp6:10250:
+    listening: true
+    ip:
+    - '::'
+service:
+  docker:
+    enabled: true
+    running: true
+  kubelet:
+    enabled: true
+    running: true
+group:
+  docker:
+    exists: true
+    gid: 115
+process:
+  kubelet:
+    running: true
+

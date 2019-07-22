@@ -39,6 +39,7 @@ module "Kubernetes" {
   master_instance_type        = "${var.master_instance_type}"
   number_of_cluster_instances = "${var.number_of_cluster_instances}"
   cluster_nodes_instance_type = "${var.cluster_nodes_instance_type}"
+  bastion_public_ip           = "${module.Bastion.BastionPublicIp}"
   access_key_name             = "${module.SshKey.KeyPairName}"
   control_plane_sg_id         = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
   private_subnet_id           = "${module.Networking.PrivateSubnetId}"
