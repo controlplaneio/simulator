@@ -176,7 +176,7 @@ is_master_accessible() {
     return 0
   fi
   ssh \
-    -F "${$SSH_CONFIG_FILE}"  \
+    -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "ConnectTimeout 3" \
