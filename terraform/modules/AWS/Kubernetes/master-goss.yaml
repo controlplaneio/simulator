@@ -20,10 +20,6 @@ port:
     listening: true
     ip:
     - 127.0.0.1
-  tcp:41537:
-    listening: true
-    ip:
-    - 127.0.0.1
   tcp6:10250:
     listening: true
     ip:
