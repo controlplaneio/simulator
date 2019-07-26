@@ -22,19 +22,11 @@ info() {
 readonly -f info
 
 #
-# IP Addresses for node(s) and master(s)
-#
-# shellcheck disable=SC2086
-IFS=', ' read -r -a master  <<< $MASTER_IP_ADDRESSES
-export master
-# shellcheck disable=SC2086
-IFS=', ' read -r -a node  <<< $NODE_IP_ADDRESSES
-export node
-
-#
 # SSH helpers
 #
 attack_master() {
+  # shellcheck disable=SC2086
+  IFS=', ' read -r -a master  <<< "${MASTER_IP_ADDRESSES}"
   [[ $# = 0 ]] && warning "need a number"
   [[ "$1" -gt "${#master[@]}" ]] && "master does not exist"
 
@@ -44,6 +36,8 @@ readonly -f attack_master
 export -f attack_master
 
 attack_node() {
+  IFS=', ' read -r -a node  <<< "${NODE_IP_ADDRESSES}"
+  export node
   [[ $# = 0 ]] && warning "need a number"
   [[ "$1" -gt "${#node[@]}" ]] && "node does not exist"
 
