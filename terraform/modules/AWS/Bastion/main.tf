@@ -7,5 +7,6 @@ resource "aws_instance" "simulator_bastion" {
   associate_public_ip_address = true
   subnet_id                   = "${var.subnet_id}"
   user_data                   = "${data.template_file.cloud_config.rendered}"
+  tags                        = "${merge(var.default_tags, map("Name", "Bastion Host"))}"
 }
 

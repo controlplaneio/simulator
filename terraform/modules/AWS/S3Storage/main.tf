@@ -7,9 +7,8 @@ resource "aws_s3_bucket" "k8sjoin" {
   acl           = "private"
   force_destroy = true
 
-  tags = {
-    Name = "K8S Config"
-  }
+  tags = "${merge(var.default_tags, map("Name", "Simulation Kubernetes S3 Bucket"))}"
+
 }
 
 // Create IAM role, policy and instance profile
@@ -33,6 +32,7 @@ resource "aws_iam_role" "simulator_s3_access_role" {
   ]
 }
 EOF
+  tags = "${merge(var.default_tags, map("Name", "Simulation S3 Bucket Role"))}"
 }
 
 

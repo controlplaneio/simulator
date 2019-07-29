@@ -27,3 +27,9 @@ variable "master_ip_addresses" {
 variable "node_ip_addresses" {
   description = "Kubernetes node private IP addresses"
 }
+
+variable "default_tags" {
+  description = "Default tags for all resources"
+  type        = "map"
+}
+

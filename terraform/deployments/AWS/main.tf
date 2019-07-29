@@ -30,6 +30,7 @@ module "Bastion" {
   subnet_id           = "${module.Networking.PublicSubnetId}"
   master_ip_addresses = "${join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"
   node_ip_addresses   = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
+  default_tags        = "${var.default_tags}"
 }
 
 // Setup Kubernetes master and nodes
@@ -46,6 +47,7 @@ module "Kubernetes" {
   private_subnet_id           = "${module.Networking.PrivateSubnetId}"
   iam_instance_profile_id     = "${module.S3Storage.IamInstanceProfileId}"
   s3_bucket_name              = "${module.S3Storage.S3BucketName}"
+  default_tags                = "${var.default_tags}"
 }
 
 // Create S3 bucket to share Kubernetes join details between
@@ -53,6 +55,7 @@ module "Kubernetes" {
 module "S3Storage" {
   source         = "../../modules/AWS/S3Storage"
   s3_bucket_name = "${var.s3_bucket_name}"
+  default_tags   = "${var.default_tags}"
 }
 
 // Define security groups
@@ -62,5 +65,6 @@ module "SecurityGroups" {
   vpc_id                    = "${module.Networking.VpcId}"
   public_subnet_cidr_block  = "${module.Networking.PublicSubnetCidrBlock}"
   private_subnet_cidr_block = "${module.Networking.PrivateSubnetCidrBlock}"
+  default_tags              = "${var.default_tags}"
 }
 
