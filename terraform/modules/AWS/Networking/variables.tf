@@ -13,3 +13,8 @@ variable "private_subnet_cidr" {
   default     = "172.31.2.0/24"
 }
 
+variable "default_tags" {
+  description = "Default tags for all resources"
+  type        = "map"
+}
+
