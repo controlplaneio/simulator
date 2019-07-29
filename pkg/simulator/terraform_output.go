@@ -3,8 +3,8 @@ package simulator
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/pkg/errors"
-	"os/user"
 	"text/template"
 )
 
@@ -29,63 +29,76 @@ type TerraformOutput struct {
 	MasterNodesPrivateIP  StringSliceOutput `json:"master_nodes_private_ip"`
 }
 
-var sshConfigTmplSrc = `Host {{.Hostname}}
+var bastionConfigTmplSrc = `Host bastion {{.Hostname}}
+  Hostname {{.Hostname}}
+  User root
   IdentityFile {{.KeyFilePath}}
   UserKnownHostsFile {{.KnownHostsFilePath}}
-  ProxyCommand ssh root@{{.BastionIP}} -W %h:%p
+`
+var k8sConfigTmplSrc = `Host {{.Alias}} {{.Hostname}}
+  Hostname {{.Hostname}}
+  User root
+  IdentityFile {{.KeyFilePath}}
+  UserKnownHostsFile {{.KnownHostsFilePath}}
+  ProxyJump bastion
 `
 
 // SSHConfig represents the values needed to produce a config block to allow
 // SSH to the private kubernetes nodes via the bastion
 type SSHConfig struct {
+	Alias              string
 	Hostname           string
 	KeyFilePath        string
 	KnownHostsFilePath string
-	User               string
 	BastionIP          string
 }
 
 // ToSSHConfig produces the SSH config
 func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
-	// TODO (rem): Use Must version
-	var sshConfigTmpl, err = template.New("ssh-config").Parse(sshConfigTmplSrc)
+	bastionConfigTmpl, err := template.New("bastion-ssh-config").Parse(bastionConfigTmplSrc)
+	k8sConfigTmpl, err := template.New("k8s-ssh-config").Parse(k8sConfigTmplSrc)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error parsing ssh config template")
 	}
 
-	u, err := user.Current()
-	if err != nil {
-		return nil, errors.Wrap(err, "Unable to get current user for generating sshconfig")
-	}
-
 	var buf bytes.Buffer
-	for _, ip := range tfo.MasterNodesPrivateIP.Value {
+	bastionCfg := SSHConfig{
+		Alias:              "bastion",
+		Hostname:           tfo.BastionPublicIP.Value,
+		KeyFilePath:        "~/.ssh/cp_simulator_rsa",
+		KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
+	}
+	err = bastionConfigTmpl.Execute(&buf, bastionCfg)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error populating ssh bastion config template with %+v", bastionCfg)
+	}
+
+	for i, ip := range tfo.MasterNodesPrivateIP.Value {
 		c := SSHConfig{
+			Alias:              fmt.Sprintf("master-%d", i),
 			Hostname:           ip,
 			KeyFilePath:        "~/.ssh/cp_simulator_rsa",
 			KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
-			User:               u.Username,
 			BastionIP:          tfo.BastionPublicIP.Value,
 		}
 
-		err = sshConfigTmpl.Execute(&buf, c)
+		err = k8sConfigTmpl.Execute(&buf, c)
 		if err != nil {
-			return nil, errors.Wrapf(err, "Error populating ssh config template with %+v", c)
+			return nil, errors.Wrapf(err, "Error populating ssh master config template with %+v", c)
 		}
 	}
 
-	for _, ip := range tfo.ClusterNodesPrivateIP.Value {
+	for i, ip := range tfo.ClusterNodesPrivateIP.Value {
 		c := SSHConfig{
+			Alias:              fmt.Sprintf("node-%d", i),
 			Hostname:           ip,
 			KeyFilePath:        "~/.ssh/cp_simulator_rsa",
 			KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
-			User:               u.Username,
 			BastionIP:          tfo.BastionPublicIP.Value,
 		}
-
-		err = sshConfigTmpl.Execute(&buf, c)
+		err = k8sConfigTmpl.Execute(&buf, c)
 		if err != nil {
-			return nil, errors.Wrapf(err, "Error populating ssh config template with %+v", c)
+			return nil, errors.Wrapf(err, "Error populating ssh node config template with %+v", c)
 		}
 	}
 
