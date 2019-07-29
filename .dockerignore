@@ -4,6 +4,7 @@
 /bin/
 /node_modules/
 /test/smoke.tcl
+/doc-templates/
 .terraform/
 .editorconfig
 .gitattributes

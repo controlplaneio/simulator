@@ -67,6 +67,9 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 #### Troubleshooting AWS
 
+- If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
+is probably running slowly.  You must run <code>simulator infra destroy</code> and then retry <code>simulator infra
+create</code>
 - <code>AWS_REGION</code> vs <code>AWS_DEFAULT_REGION</code> - There have been
 [some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
 [Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
