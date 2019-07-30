@@ -1,0 +1,5 @@
+- repo: git://github.com/antonbabenko/pre-commit-terraform
+  rev: v1.7.3
+  hooks:
+    - id: terraform_fmt
+    - id: terraform_validate_with_variables
