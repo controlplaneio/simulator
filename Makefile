@@ -141,7 +141,7 @@ doc: dep ## Generate documentation
 
 .PHONY: help
 help: ## parse jobs and descriptions from this Makefile
-	set -x;
+	@set -x;
 	@grep -E '^[ a-zA-Z0-9_-]+:([^=]|$$)' Makefile \
     | grep -Ev '^(help|all|help-no-color)\b[[:space:]]*:' \
     | awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
