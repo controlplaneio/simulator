@@ -16,8 +16,13 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 
 ## Before you start
 
-Create an S3 bucket to store the remote state which keeps track of what infrastructure has been provisioned.
-[There are instructions here](./docs/remote-state.md)
+### Git hooks
+
+To ensure all Git hooks are in place run the following
+
+<pre>
+make setup-dev
+</pre>
 
 ## Usage
 
@@ -35,6 +40,10 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 ### tldr;
 
 <pre>
+# Setup Git hooks
+make setup-dev
+# Define AWS region (using eu-west-1 as example)
+export AWS_REGION=eu-west-1
 # Create the infra if it isn't there
 simulator infra create
 # Configure your SSH to perturb the cluster
