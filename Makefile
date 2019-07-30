@@ -51,6 +51,10 @@ docker-test: docker-build ## Run the tests
 		--rm -t $(CONTAINER_NAME_LATEST)                                  \
 		goss validate
 
+# --- Setup environment
+.PHONY: setup-dev
+setup-dev: ## Initialise simulation tree with git hooks
+	@ln -s ./setup/hooks/pre-commit .git/hooks/pre-commit
 
 # --- INFRA
 
