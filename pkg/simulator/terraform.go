@@ -44,27 +44,32 @@ func Terraform(wd, cmd string) (*string, error) {
 func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 	logger.Debug("Terraform.InitIfNeeded() start")
 
+	logger.Info("Ensuring there is a simulator keypair")
 	_, err := ssh.EnsureKey()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
 
+	logger.Info("Detecting your public IP address")
 	ip, err := util.DetectPublicIP()
 	if err != nil {
 		return errors.Wrap(err, "Error detecting IP address")
 	}
 	accessCIDR := *ip + "/32"
 
+	logger.Debug("Reading public key")
 	publickey, err := ssh.PublicKey()
 	if err != nil {
 		return errors.Wrap(err, "Error reading public key")
 	}
 
+	logger.Debug("Writing terraform tfvars")
 	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}
 
+	logger.Info("Running terraform init")
 	_, err = Terraform(tfDir, "init")
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
@@ -83,11 +88,13 @@ func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 		return err
 	}
 
+	logger.Info("Running terraform plan")
 	_, err = Terraform(tfDir, "plan")
 	if err != nil {
 		return err
 	}
 
+	logger.Info("Running terraform plan")
 	_, err = Terraform(tfDir, "apply")
 	return err
 }
@@ -99,11 +106,15 @@ func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutp
 		return nil, errors.Wrap(err, "Error initialising")
 	}
 
+	logger.Info("Running terraform output")
 	out, err := Terraform(tfDir, "output")
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
 
+	logger.Debug(out)
+
+	logger.Debug("Parsing terraform output")
 	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error parsing terraform outputs")
@@ -119,6 +130,7 @@ func Destroy(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 		return errors.Wrap(err, "Error initialising")
 	}
 
+	logger.Info("Running terrraform destroy")
 	_, err = Terraform(tfDir, "destroy")
 	return err
 }
