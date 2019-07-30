@@ -2,11 +2,11 @@ resource "null_resource" "master_test" {
   count = "${var.number_of_master_instances}"
 
   connection {
-    bastion_host = "${var.bastion_public_ip}"
+    bastion_host        = "${var.bastion_public_ip}"
     bastion_private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
-    host = "${element(aws_instance.simulator_master_instances.*.private_ip, count.index)}"
-    type = "ssh"
-    user = "root"
+    host                = "${element(aws_instance.simulator_master_instances.*.private_ip, count.index)}"
+    type                = "ssh"
+    user                = "root"
     // disable ssh-agent support
     agent       = "false"
     private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
