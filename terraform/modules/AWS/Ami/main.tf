@@ -1,3 +1,6 @@
+// Simply search for AMIs in region own by Canonical
+// Restrict search to x86_64, ssd and hvm virt type
+
 data "aws_ami" "find_ami" {
   owners      = ["099720109477"] // this is Canonical's id
   most_recent = true
