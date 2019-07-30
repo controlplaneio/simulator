@@ -1,4 +1,4 @@
 output "testing" {
-    value = "testing"
-  }
+  value = "testing"
+}
 
