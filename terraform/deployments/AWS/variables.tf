@@ -68,7 +68,7 @@ variable "number_of_cluster_instances" {
 variable "default_tags" {
   description = "Default tags for all resources"
   type        = "map"
-  default     = {
+  default = {
     Product = "simulation-standalone"
   }
 }
