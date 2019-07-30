@@ -16,8 +16,13 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 
 ## Before you start
 
-Create an S3 bucket to store the remote state which keeps track of what infrastructure has been provisioned.
-[There are instructions here](./docs/remote-state.md)
+### Git hooks
+
+To ensure all Git hooks are in place run the following
+
+<pre>
+make setup-dev
+</pre>
 
 ## Usage
 
@@ -35,6 +40,10 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 ### tldr;
 
 <pre>
+# Setup Git hooks
+make setup-dev
+# Define AWS region (using eu-west-1 as example)
+export AWS_REGION=eu-west-1
 # Create the infra if it isn't there
 simulator infra create
 # Configure your SSH to perturb the cluster
@@ -67,6 +76,9 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 #### Troubleshooting AWS
 
+- If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
+is probably running slowly.  You must run <code>simulator infra destroy</code> and then retry <code>simulator infra
+create</code>
 - <code>AWS_REGION</code> vs <code>AWS_DEFAULT_REGION</code> - There have been
 [some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
 [Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
@@ -92,6 +104,7 @@ run: SSH_AUTH_SOCK_DIR=$(shell dirname $(SSH_AUTH_SOCK))
 run                   Runs the simulator - the build stage of the container runs all the cli tests
 docker-build          Builds the launch container
 docker-test           Run the tests
+setup-dev             Initialise simulation tree with git hooks
 infra-init            Initialisation needed before interacting with the infra
 infra-checkvars       Check the tfvars file exists before interacting with the infra
 infra-plan            Show what changes will be applied to the infrastructure
