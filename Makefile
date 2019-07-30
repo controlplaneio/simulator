@@ -54,7 +54,7 @@ docker-test: docker-build ## Run the tests
 # --- Setup environment
 .PHONY: setup-dev
 setup-dev: ## Initialise simulation tree with git hooks
-	@ln -s ./setup/hooks/pre-commit .git/hooks/pre-commit
+	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
 
 # --- INFRA
 
