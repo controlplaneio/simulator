@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/pkg/errors"
 	"io"
 	"io/ioutil"
@@ -10,11 +9,6 @@ import (
 	"path/filepath"
 	"sync"
 )
-
-// Debug prints a debug message to stdout
-func Debug(msg ...interface{}) {
-	fmt.Println(msg...)
-}
 
 var cache = struct {
 	sync.RWMutex

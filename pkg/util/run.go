@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 )
 
-func wdMust(wd string) string {
+func MustResolve(wd string) string {
 	// only errors if syscall to get parent's wd fails in which case something
 	// really bad happened
 	absPath, err := filepath.Abs(wd)
@@ -35,7 +35,7 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 	defer childErr.Close()
 	defer childOut.Close()
 
-	dir := wdMust(wd)
+	dir := MustResolve(wd)
 
 	child.Dir = dir
 
@@ -70,7 +70,7 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 	var outBuf, errBuf bytes.Buffer
 	child.Stdout = bufio.NewWriter(&outBuf)
 	child.Stderr = bufio.NewWriter(&errBuf)
-	dir := wdMust(wd)
+	dir := MustResolve(wd)
 
 	child.Dir = dir
 
@@ -82,7 +82,7 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 	err = child.Wait()
 	// TODO: (rem) make this parameterisable?
 	if err != nil && err.Error() != "exit status 127" {
-		Debug("Error waiting for child process", err)
+		//Debug("Error waiting for child process", err)
 		childErr := string(errBuf.Bytes())
 		return nil, &childErr, err
 	}

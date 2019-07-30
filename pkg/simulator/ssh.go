@@ -2,7 +2,6 @@ package simulator
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
@@ -25,6 +24,7 @@ func Config(logger *zap.SugaredLogger, tfDir, scenarioPath, bucketName string) (
 // Attack establishes an SSH connection to the attack container running on the bastion host ready for the user to
 // attempt to complete a scenario
 func Attack(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+	logger.Debugf("Checking status of infrastructure")
 	tfo, err := Status(logger, tfDir, bucketName)
 	if err != nil {
 		return errors.Wrap(err, "Error getting infrastrucutre status")
@@ -32,17 +32,18 @@ func Attack(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 
 	bastion := tfo.BastionPublicIP.Value
 
+	logger.Debugf("Checking infrastructure is usable")
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}
 
-	util.Debug("Running key scan")
+	logger.Infof("Keyscanning %s and updating known hosts", bastion)
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrap(err, "Error writing known hosts")
 	}
 
-	util.Debug("Connecting to", bastion)
+	logger.Infof("Connecting to", bastion)
 	ssh.SSH(bastion)
 	return nil
 }
