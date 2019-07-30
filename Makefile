@@ -57,6 +57,7 @@ docker-test: docker-build ## Run the tests
 		goss validate
 
 # --- Setup environment
+
 .PHONY: setup-dev
 setup-dev: ## Initialise simulation tree with git hooks
 	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
@@ -83,6 +84,13 @@ infra-apply: infra-init infra-checkvars ## Apply any changes needed to the infra
 .PHONY: infra-destroy
 infra-destroy: infra-init infra-checkvars ## Teardown any infrastructure
 	@cd terraform/deployments/AWS; terraform destroy -var-file=settings/bastion.tfvars;
+
+# -- Reset environment
+
+.PHONY: reset
+reset: ## Clean up files left over by simulator
+	@rm -rf ~/.ssh/cp_simulator_*
+
 
 # -- SIMULATOR CLI
 
