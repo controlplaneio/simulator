@@ -123,3 +123,4 @@ test.debug
 /coverage.txt
 /test/fixtures/.ignored
 /test/fixtures/noop-tf-dir/settings/bastion.tfvars
+tfplan
