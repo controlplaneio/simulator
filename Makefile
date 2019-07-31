@@ -32,6 +32,7 @@ run: docker-build ## Runs the simulator - the build stage of the container runs 
 
 	echo $(SSH_AUTH_SOCK_DIR)
 	docker run                                                          \
+		-h launch                                                         \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
 		-v $(SSH_AUTH_SOCK_DIR):$(SSH_AUTH_SOCK_DIR)                      \
