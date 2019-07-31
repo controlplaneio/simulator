@@ -321,7 +321,8 @@ run_cleanup() {
     fi
 
     TEMP_FILE=$(mktemp)
-    echo "echo '$(cat "${SCENARIO_DIR}/challenge.txt")' > /opt/challenge.txt" | tee "${TEMP_FILE}"
+#    echo "echo '$(cat "${SCENARIO_DIR}/challenge.txt")' > /opt/challenge.txt" | tee "${TEMP_FILE}"
+    echo "echo 'cat "${SCENARIO_DIR}/challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
 
@@ -399,7 +400,7 @@ run_file_on_host() {
     set -x
     get_file_to_run "${FILE}"
   ) | run_ssh ${HOST}
-  hr
+#  hr
 }
 
 get_master() {
