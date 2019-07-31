@@ -9,10 +9,6 @@ variable "access_cidr" {
   description = "cidr range of client connection"
 }
 
-variable "s3_bucket_name" {
-  description = "name of S3 bucket"
-}
-
 // Variables below are to have defined defaults
 
 variable "shared_credentials_file" {

@@ -1,4 +1,5 @@
 loglevel: debug
 scenarios-dir: "./simulation-scripts"
 tf-dir: "./terraform/deployments/AWS"
+state-bucket: "raoul-simulator-state"
 

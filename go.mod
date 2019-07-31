@@ -3,9 +3,11 @@ module github.com/controlplaneio/simulator-standalone
 require (
 	9fans.net/go v0.0.2 // indirect
 	cloud.google.com/go v0.40.0 // indirect
+	github.com/AlecAivazis/survey/v2 v2.0.2
 	github.com/OpenPeeDeeP/depguard v1.0.0 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/alecthomas/gometalinter v3.0.0+incompatible // indirect
+	github.com/aws/aws-sdk-go v1.21.7
 	github.com/coreos/bbolt v1.3.3 // indirect
 	github.com/coreos/etcd v3.3.13+incompatible // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
@@ -50,7 +52,6 @@ require (
 	github.com/kr/pty v1.1.5 // indirect
 	github.com/logrusorgru/aurora v0.0.0-20190428105938-cea283e61946 // indirect
 	github.com/magiconair/properties v1.8.1 // indirect
-	github.com/mattn/go-colorable v0.1.2 // indirect
 	github.com/mattn/go-runewidth v0.0.4 // indirect
 	github.com/mdempsky/gocode v0.0.0-20190203001940-7fb65232883f // indirect
 	github.com/nbutton23/zxcvbn-go v0.0.0-20180912185939-ae427f1e4c1d // indirect
@@ -78,6 +79,7 @@ require (
 	github.com/stamblerre/gocode v0.0.0-20190327203809-810592086997 // indirect
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.3.0
+	github.com/uber-go/zap v1.10.0
 	github.com/ugorji/go v1.1.5-pre // indirect
 	github.com/valyala/fasthttp v1.3.0 // indirect
 	github.com/zmb3/gogetdoc v0.0.0-20190228002656-b37376c5da6a // indirect
