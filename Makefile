@@ -13,9 +13,9 @@ else
 	SIMULATOR_AWS_CREDS_PATH := $(shell dirname $(AWS_SHARED_CREDENTIALS_FILE))
 endif
 
-ifndef AWS_REGION
-$(error "AWS_REGION is not defined")
-endif
+#ifndef AWS_REGION
+#$(error "AWS_REGION is not defined")
+#endif
 
 # --- AWS
 
