@@ -16,6 +16,7 @@ all: test
 .PHONY: docker-run
 docker-run: docker-test ## Runs the attack container
 	docker run                                  \
+		-h attack                                 \
 		--rm --init -it $(CONTAINER_NAME_LATEST)  \
 		bash
 
