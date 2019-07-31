@@ -14,11 +14,11 @@ var tfCommandArgumentsTests = []struct {
 	command   string
 	arguments []string
 }{
-	{"init", []string{"init", "--var-file=settings/bastion.tfvars"}},
 	{"output", []string{"output", "-json"}},
-	{"plan", []string{"plan", "--var-file=settings/bastion.tfvars"}},
-	{"apply", []string{"apply", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
-	{"destroy", []string{"destroy", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
+	{"init", []string{"init", "-input=false"}},
+	{"plan", []string{"plan", "-input=false", "--var-file=settings/bastion.tfvars", "-out=tfplan"}},
+	{"apply", []string{"apply", "-input=false", "-auto-approve", "tfplan"}},
+	{"destroy", []string{"destroy", "-input=false", "-auto-approve"}},
 }
 
 func Test_PrepareTfArgs(t *testing.T) {

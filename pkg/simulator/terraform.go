@@ -15,13 +15,22 @@ func PrepareTfArgs(cmd string) []string {
 	if cmd == "output" {
 		arguments = append(arguments, "-json")
 	}
-	if cmd == "apply" || cmd == "destroy" {
+
+	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
+		arguments = append(arguments, "-input=false")
+	}
+
+	if cmd == "plan" {
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
+		arguments = append(arguments, "-out=tfplan")
+	}
+
+	if cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-auto-approve")
 	}
 
-	if cmd == "init" || cmd == "plan" {
-		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
+	if cmd == "apply" {
+		arguments = append(arguments, "tfplan")
 	}
 
 	return arguments
@@ -94,7 +103,7 @@ func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 		return err
 	}
 
-	logger.Info("Running terraform plan")
+	logger.Info("Running terraform apply")
 	_, err = Terraform(tfDir, "apply")
 	return err
 }
