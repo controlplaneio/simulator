@@ -26,6 +26,7 @@
 # exit on error or pipe failure
 set -eo pipefail
 # error on unset variable
+# shellcheck disable=SC2016
 if test "$BASH" = "" || "$BASH" -uc 'a=();true "${a[@]}"' 2>/dev/null; then
   set -o nounset
 fi
@@ -35,7 +36,7 @@ set -o noclobber
 shopt -s nullglob globstar
 
 # user defaults
-DESCRIPTION="Perturb Kubernetes Clusters"
+# DESCRIPTION="Perturb Kubernetes Clusters" - commented out as not used anywhere
 DEBUG=0
 IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
@@ -43,8 +44,10 @@ IS_SKIP_CHECK=0
 SSH_CONFIG_FILE="$HOME/.ssh/cp_simulator_config"
 
 # resolved directory and self
-declare -r DIR=$(cd "$(dirname "$0")" && pwd)
-declare -r THIS_SCRIPT="${DIR}/$(basename "$0")"
+#declare -r DIR=$(cd "$(dirname "$0")" && pwd) - readonly perhaps overkill here
+#declare -r THIS_SCRIPT="${DIR}/$(basename "$0")"
+DIR=$(cd "$(dirname "$0")" && pwd)
+THIS_SCRIPT="${DIR}/$(basename "$0")"
 
 # required defaults
 declare -a ARGUMENTS
@@ -322,13 +325,14 @@ run_cleanup() {
 
     TEMP_FILE=$(mktemp)
 #    echo "echo '$(cat "${SCENARIO_DIR}/challenge.txt")' > /opt/challenge.txt" | tee "${TEMP_FILE}"
-    echo "echo 'cat "${SCENARIO_DIR}/challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
+    echo "echo 'cat ""${SCENARIO_DIR}"/challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
 
   if [[ -f "${SCENARIO_DIR}/flag.txt" ]]; then
     TEMP_FILE=$(mktemp)
-    echo "echo '$(cat "${SCENARIO_DIR}/flag.txt" | base64 -w0)' | base64 -d > /root/flag.txt" | tee "${TEMP_FILE}"
+    #echo "echo '$(cat "${SCENARIO_DIR}/flag.txt" | base64 -w0)' | base64 -d > /root/flag.txt" | tee "${TEMP_FILE}"
+    echo "echo '$(base64 -w0 < "${SCENARIO_DIR}/flag.txt")' | base64 -d > /root/flag.txt" | tee "${TEMP_FILE}"
     warning "Flag"
     cat "${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
@@ -355,7 +359,8 @@ run_cleanup() {
 }
 
 get_flag() {
-  local SALT=$(get_salt)
+#  local SALT=$(get_salt) - this does not need to be defined as local
+  SALT=$(get_salt)
   FLAG=$({ get_flag_raw; echo "${SALT}"; } | sha256sum)
   echo "${FLAG}"
 }
@@ -571,8 +576,10 @@ error_env_var() {
 }
 
 log_message_prefix() {
-  local TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]"
-  local THIS_SCRIPT_SHORT=${THIS_SCRIPT/$DIR/.}
+#  local TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]" - local not required here
+  TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]"
+#  local THIS_SCRIPT_SHORT=${THIS_SCRIPT/$DIR/.}
+  THIS_SCRIPT_SHORT=${THIS_SCRIPT/$DIR/.}
   tput bold 2>/dev/null
   echo -n "${TIMESTAMP} ${THIS_SCRIPT_SHORT}: "
 }
