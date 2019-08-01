@@ -20,8 +20,10 @@ func PrepareTfArgs(cmd string) []string {
 		arguments = append(arguments, "-input=false")
 	}
 
-	if cmd == "plan" {
+	if cmd == "plan" || cmd == "destroy" {
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
+	}
+	if cmd == "plan" {
 		arguments = append(arguments, "-out=tfplan")
 	}
 
