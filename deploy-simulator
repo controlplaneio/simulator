@@ -34,7 +34,7 @@ fi
 
 echo -n "Checking for old ssh keys.."
 
-if [[ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) ]]; then
+if [[ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) -eq 0 ]]; then
 	echo "existing keys found, please delete"
 	exit 1
 else
