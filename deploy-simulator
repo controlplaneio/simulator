@@ -6,7 +6,10 @@
 set -e
 set -o pipefail
 
-[ -z "$1" ] && { echo "Missing target"; exit 1; } || target=$1
+##------------------------------------------------------------------
+# start of functions
+
+validate_aws() {
 
 if [ "${target}" = "aws" ]; then
 
@@ -15,7 +18,7 @@ if [ "${target}" = "aws" ]; then
 	if [[ $(command -v aws) ]]; then
 		echo "available"
 	else
-		echo "not available"
+		echo "not available, check PATH"
 		exit 1
 	fi
 
@@ -31,15 +34,46 @@ if [ "${target}" = "aws" ]; then
 		exit 1
 	fi
 fi
+}
 
-echo -n "Checking for old ssh keys.."
+validate_keys() {
+if [ -z "${ignoreKeys}" ]; then
+	echo -n "Checking for old ssh keys.."
 
-if [[ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) -eq 0 ]]; then
-	echo "existing keys found, please delete"
-	exit 1
-else
-	echo "None found"
+	if [[ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) -eq 0 ]]; then
+		echo "existing keys found, please delete"
+		exit 1
+	else
+		echo "None found"
+	fi
 fi
+
+}
+
+## end of functions
+##------------------------------------------------------------------
+
+## Main body
+
+while getopts "t:ih" opt; do
+	case "$opt" in
+		t) target="$OPTARG"	;;
+		i) ignoreKeys=1		;;
+		h|*) echo "Usage:"
+		   echo "$0 -t -i -h"
+		   echo "-t target to build against, i.e aws"
+		   echo "-i ignore ssh key checking, useful when starting container againt existing envionment"
+		   echo "-h this help"
+		   echo "examples:"
+		   echo "$0 -t aws"
+		   echo "$0 -t aws -i"
+		   exit
+	esac
+done
+
+[ "${target}" = "aws" ] && validate_aws
+
+validate_keys
 
 make run
 
