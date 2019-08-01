@@ -37,7 +37,7 @@ shopt -s nullglob globstar
 
 # user defaults
 # DESCRIPTION="Perturb Kubernetes Clusters" - commented out as not used anywhere
-DEBUG=0
+# DEBUG=0 - not referenced anywhere
 IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
 IS_SKIP_CHECK=0
@@ -183,7 +183,7 @@ is_master_accessible() {
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "ConnectTimeout 3" \
-    $(get_connection_string) \
+    "$(get_connection_string)" \
     true
 }
 
@@ -197,7 +197,7 @@ validate_instructions() {
   shopt -s extglob
   for FILE in "${SCENARIO_DIR%/}/"*.{sh,do}; do
     echo "${FILE}"
-    local TYPE="$(basename "${FILE}")"
+    local TYPE; TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
       *worker-any.sh) ;;
       *workers-every.sh) ;;
@@ -222,11 +222,12 @@ validate_instructions() {
 }
 
 run_kubectl_yaml() {
-  local SCENARIO_DIR="${1}"
-  local HOST=$(get_master)
+  local SCENARIO_DIR; SCENARIO_DIR="${1}"
+  local HOST; HOST=$(get_master)
   local FILES
   local FILES_STRING
 
+  # shellcheck disable=SC2044
   for ACTION in $(find "${SCENARIO_DIR%/}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;); do
 
     if [[ "${ACTION:0:1}" == '_' ]]; then
@@ -235,6 +236,7 @@ run_kubectl_yaml() {
 
     (
       cd "${SCENARIO_DIR%/}/${ACTION}/"
+      # shellcheck disable=SC2185
       FILES=$(find -regex '.*.ya?ml')
 
       info "running remotely: kubectl ${ACTION} -f ${FILES}"
@@ -257,7 +259,7 @@ run_scripts() {
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
     echo "${FILE}"
-    local TYPE="$(basename "${FILE}")"
+    local TYPE; TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
 
       *worker-any.sh)
@@ -324,7 +326,7 @@ run_cleanup() {
     fi
 
     TEMP_FILE=$(mktemp)
-#    echo "echo '$(cat "${SCENARIO_DIR}/challenge.txt")' > /opt/challenge.txt" | tee "${TEMP_FILE}"
+    # shellcheck disable=SC2140
     echo "echo 'cat ""${SCENARIO_DIR}"/challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
@@ -379,6 +381,7 @@ get_salt() {
 run_ssh() {
 # TODO: test everything with `set -ex`
 # (printf "%s\n\n" 'set -ex;' ; cat) | command ssh -q -t \
+  # shellcheck disable=SC2145
   (cat) | command ssh -q -t \
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
@@ -454,10 +457,10 @@ parse_arguments() {
       --dry-run)
         IS_DRY_RUN=1
         ;;
-      --debug)
-        DEBUG=1
-        set -xe
-        ;;
+#      --debug) - there is no reference to DEBUG in the script
+#        DEBUG=1
+#        set -xe
+#        ;;
       --auto-populate)
         shift
         not_empty_or_usage "${1:-}"
@@ -602,7 +605,7 @@ check_number_of_expected_arguments() {
 }
 
 hr() {
-  printf '=%.0s' $(seq $(tput cols))
+  printf '=%.0s' $(seq "$(tput cols)")
   echo
 }
 
@@ -613,16 +616,13 @@ wait_safe() {
   done
 }
 
-export CLICOLOR=1
-export TERM="xterm-color"
-export COLOUR_BLACK=$(tput setaf 0 :-"" 2>/dev/null)
-export COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
-export COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
-export COLOUR_YELLOW=$(tput setaf 3 :-"" 2>/dev/null)
-export COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
-export COLOUR_MAGENTA=$(tput setaf 5 :-"" 2>/dev/null)
-export COLOUR_CYAN=$(tput setaf 6 :-"" 2>/dev/null)
-export COLOUR_WHITE=$(tput setaf 7 :-"" 2>/dev/null)
-export COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
+# removed export from the vars below
+
+#CLICOLOR=1 - not referenced - tbd
+TERM="xterm-color"
+COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
+COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
+COLOUR_WHITE=$(tput setaf 7 :-"" 2>/dev/null)
+COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
 main "$@"
