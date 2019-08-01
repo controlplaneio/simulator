@@ -241,8 +241,8 @@ run_kubectl_yaml() {
         echo '---'
       done)
 
-      echo "${FILES_STRING}" | run_ssh ${HOST} kubectl "${ACTION}" --dry-run -f -
-      echo "${FILES_STRING}" | run_ssh ${HOST} kubectl "${ACTION}" -f -
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f -
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f -
     )
   done
 }
@@ -399,7 +399,7 @@ run_file_on_host() {
   (
     set -x
     get_file_to_run "${FILE}"
-  ) | run_ssh ${HOST}
+  ) | run_ssh "${HOST}"
 #  hr
 }
 
