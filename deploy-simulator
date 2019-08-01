@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Run various checks before starting deployment
+#
+
+set -e
+set -o pipefail
+
+[ -z "$1" ] && { echo "Missing target"; exit 1; } || target=$1
+
+if [ "${target}" = "aws" ]; then
+
+	echo -n "Checking aws cli available.."
+
+	if [[ $(command -v aws) ]]; then
+		echo "available"
+	else
+		echo "not available"
+		exit 1
+	fi
+
+	echo -n "Checking AWS Region.."
+
+	if [[ $(aws configure get region) ]]; then
+		echo "defined"
+	elif [ -z "${AWS_REGION}" ]; then
+		echo "not defined"
+		exit 1
+	else
+		echo "not defined"
+		exit 1
+	fi
+fi
+
+echo -n "Checking for old ssh keys.."
+
+if [[ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) ]]; then
+	echo "existing keys found, please delete"
+	exit 1
+else
+	echo "None found"
+fi
+
+make run
+
