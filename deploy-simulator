@@ -3,8 +3,7 @@
 # Run various checks before starting deployment
 #
 
-set -e
-set -o pipefail
+set -eo pipefail
 
 ##------------------------------------------------------------------
 # start of functions
@@ -40,11 +39,11 @@ validate_keys() {
 if [ -z "${ignoreKeys}" ]; then
 	echo -n "Checking for old ssh keys.."
 
-	if [[ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) -eq 0 ]]; then
+	if [ $(ls ~/.ssh/cp_simulator_* > /dev/null 2>&1) ]; then
+		echo "None found"
+	else
 		echo "existing keys found, please delete"
 		exit 1
-	else
-		echo "None found"
 	fi
 fi
 
@@ -75,5 +74,5 @@ done
 
 validate_keys
 
-make run
+#make run
 
