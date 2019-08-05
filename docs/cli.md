@@ -15,28 +15,129 @@ If you need to include bsah code snippets you will need to change how the templa
 
 <pre>
 
+A distributed systems and infrastructure simulator for attacking and
+debugging Kubernetes
+
+Usage:
+  simulator [command]
+
+Available Commands:
+  completion  Generates Bash completion scripts
+  config      Interact with simulator config
+  help        Help about any command
+  infra       Interact with AWS to create, query and destroy the required infrastructure for scenarios
+  init        Creates and configures a bucket for remote state
+  scenario    Interact with scenarios
+  ssh         Interact with the cluster
+  version     Prints simulator version
+
+Flags:
+  -c, --config-file string     Path to the simulator config file
+  -h, --help                   help for simulator
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
+
+Use "simulator [command] --help" for more information about a command.
 </pre>
 
 ### Infrastructure
 
 <pre>
+Interact with AWS to create, query and destroy the required infrastructure for scenarios
 
+Usage:
+  simulator infra [command]
+
+Available Commands:
+  create      Runs terraform to create the required infrastructure for scenarios
+  destroy     Tears down the infrastructure created for scenarios
+  status      Gets the status of the infrastructure
+
+Flags:
+  -h, --help   help for infra
+
+Global Flags:
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
+
+Use "simulator infra [command] --help" for more information about a command.
 </pre>
 
 ### Scenarios
 
 <pre>
+Interact with scenarios
 
+Usage:
+  simulator scenario [command]
+
+Available Commands:
+  launch      Launches a scenario
+  list        Lists available scenarios
+
+Flags:
+  -h, --help   help for scenario
+
+Global Flags:
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
+
+Use "simulator scenario [command] --help" for more information about a command.
 </pre>
 
 ### SSH
 
 <pre>
+Interact with the cluster
 
+Usage:
+  simulator ssh [command]
+
+Available Commands:
+  attack      Connect to an attack container to complete the scenario
+  config      Prints the stanzas to add to ssh config to connect to your cluster
+
+Flags:
+  -h, --help   help for ssh
+
+Global Flags:
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
+
+Use "simulator ssh [command] --help" for more information about a command.
 </pre>
 
 ### Config
 
 <pre>
+Interact with simulator config
 
+Usage:
+  simulator config [command]
+
+Available Commands:
+  get         Gets the value of a setting
+
+Flags:
+  -h, --help   help for config
+
+Global Flags:
+  -c, --config-file string     Path to the simulator config file
+  -l, --loglevel string        Level of detail in output logging (default "info")
+  -s, --scenarios-dir string   Path to a directory containing a scenario manifest (default "./simulation-scripts")
+  -b, --state-bucket string    The name of the s3 bucket to use for remote-state.  Must be globally unique
+  -t, --tf-dir string          Path to a directory containing the infrastructure scripts (default "./terraform/deployments/AWS")
+
+Use "simulator config [command] --help" for more information about a command.
 </pre>

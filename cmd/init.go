@@ -28,6 +28,7 @@ func newInitCommand() *cobra.Command {
 				survey.AskOne(prompt, &bucket)
 				logger.Info("Saving state bucket name to config")
 				viper.Set("state-bucket", bucket)
+				viper.WriteConfig()
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
 				simulator.CreateRemoteStateBucket(logger, bucket)
 				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)

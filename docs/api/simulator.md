@@ -25,29 +25,36 @@ bastion or an error if the infrastructure has not been created
 #### func  Create
 
 ```go
-func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error
+func Create(logger *zap.SugaredLogger, tfDir, bucket string) error
 ```
-Create runs terraform init, plan, apply to create the necessary infratsructure
+Create runs terraform init, plan, apply to create the necessary infrastructure
 to run scenarios
+
+#### func  CreateRemoteStateBucket
+
+```go
+func CreateRemoteStateBucket(logger *zap.SugaredLogger, bucket string) error
+```
+CreateRemoteStateBucket initialises a remote-state bucket
 
 #### func  Destroy
 
 ```go
-func Destroy(logger *zap.SugaredLogger, tfDir, bucketName string) error
+func Destroy(logger *zap.SugaredLogger, tfDir, bucket string) error
 ```
 Destroy call terraform destroy to remove the infrastructure
 
 #### func  EnsureLatestTfVarsFile
 
 ```go
-func EnsureLatestTfVarsFile(tfDir, publicKey, accessCIDR, bucketName string) error
+func EnsureLatestTfVarsFile(tfDir, publicKey, accessCIDR, bucket string) error
 ```
 EnsureLatestTfVarsFile writes an tfvars file if one hasnt already been made
 
 #### func  InitIfNeeded
 
 ```go
-func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error
+func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket string) error
 ```
 InitIfNeeded checks the IP address and SSH key and updates the tfvars if needed
 
@@ -79,7 +86,7 @@ to use when exec'ing terraform
 #### func  Terraform
 
 ```go
-func Terraform(wd, cmd string) (*string, error)
+func Terraform(wd, cmd, bucket string) (*string, error)
 ```
 Terraform wraps running terraform as a child process
 
@@ -121,10 +128,10 @@ the command line options to pass to perturb
 
 ```go
 type SSHConfig struct {
+	Alias              string
 	Hostname           string
 	KeyFilePath        string
 	KnownHostsFilePath string
-	User               string
 	BastionIP          string
 }
 ```
@@ -182,7 +189,7 @@ ParseTerraformOutput takes a string containing the stdout from `terraform output
 #### func  Status
 
 ```go
-func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutput, error)
+func Status(logger *zap.SugaredLogger, tfDir, bucket string) (*TerraformOutput, error)
 ```
 Status calls terraform output to get the state of the infrastruture and parses
 the output for programmatic use
