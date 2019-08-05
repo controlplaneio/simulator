@@ -16,14 +16,6 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 
 ## Before you start
 
-### Git hooks
-
-To ensure all Git hooks are in place run the following
-
-<pre>
-make setup-dev
-</pre>
-
 ## Usage
 
 The quickest way to get up and running is to simply:
@@ -40,10 +32,8 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 ### tldr;
 
 <pre>
-# Setup Git hooks
-make setup-dev
-# Define AWS region (using eu-west-1 as example)
-export AWS_REGION=eu-west-1
+# Create a remote state bucket for terraform
+simulator init
 # Create the infra if it isn't there
 simulator infra create
 # Configure your SSH to perturb the cluster
@@ -97,6 +87,14 @@ next run**
 
 ## Development Workflow
 
+### Git hooks
+
+To ensure all Git hooks are in place run the following
+
+<pre>
+make setup-dev
+</pre>
+
 Development targets are specified in the [Makefile](./Makefile).
 
 <pre>
@@ -110,6 +108,7 @@ infra-checkvars       Check the tfvars file exists before interacting with the i
 infra-plan            Show what changes will be applied to the infrastructure
 infra-apply           Apply any changes needed to the infrastructure before running a scenario
 infra-destroy         Teardown any infrastructure
+reset                 Clean up files left over by simulator
 dep                   Install dependencies for other targets
 build                 Run golang build for the CLI program
 test                  run all tests except goss tests
