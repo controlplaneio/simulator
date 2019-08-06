@@ -34,8 +34,6 @@ run: docker-build ## Runs the simulator - the build stage of the container runs 
 		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
-		-v $(SSH_AUTH_SOCK_DIR):$(SSH_AUTH_SOCK_DIR)                      \
-		-e SSH_AUTH_SOCK                                                  \
 		-e AWS_ACCESS_KEY_ID                                              \
 		-e AWS_REGION                                                     \
 		-e AWS_DEFAULT_REGION                                             \
