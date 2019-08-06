@@ -5,13 +5,6 @@
 
 ## Usage
 
-#### func  Debug
-
-```go
-func Debug(msg ...interface{})
-```
-Debug prints a debug message to stdout
-
 #### func  DetectPublicIP
 
 ```go
@@ -60,6 +53,12 @@ func MustRemove(path string)
 ```
 MustRemove removes a file or empty directory. MustRemove will ignore an error if
 the path doesn't exist or panic for any other error
+
+#### func  MustResolve
+
+```go
+func MustResolve(wd string) string
+```
 
 #### func  MustSlurp
 

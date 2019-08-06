@@ -28,6 +28,7 @@ func newCmdRoot() *cobra.Command {
 
 	rootCmd.AddCommand(newConfigCommand())
 	rootCmd.AddCommand(newInfraCommand())
+	rootCmd.AddCommand(newInitCommand())
 	rootCmd.AddCommand(newScenarioCommand())
 	rootCmd.AddCommand(newSSHCommand())
 	rootCmd.AddCommand(newVersionCommand())

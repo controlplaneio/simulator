@@ -15,9 +15,9 @@ var tfCommandArgumentsTests = []struct {
 	arguments []string
 }{
 	{"output", []string{"output", "-json"}},
-	{"init", []string{"init", "-input=false"}},
-	{"plan", []string{"plan", "-input=false", "--var-file=settings/bastion.tfvars", "-out=tfplan"}},
-	{"apply", []string{"apply", "-input=false", "-auto-approve", "tfplan"}},
+	{"init", []string{"init", "-input=false", "--var-file=settings/bastion.tfvars"}},
+	{"plan", []string{"plan", "-input=false", "--var-file=settings/bastion.tfvars"}},
+	{"apply", []string{"apply", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 	{"destroy", []string{"destroy", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 }
 

@@ -54,7 +54,6 @@ module "Kubernetes" {
 // master and nodes
 module "S3Storage" {
   source         = "../../modules/AWS/S3Storage"
-  s3_bucket_name = "${var.s3_bucket_name}"
   default_tags   = "${var.default_tags}"
 }
 

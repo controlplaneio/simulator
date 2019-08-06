@@ -12,7 +12,6 @@ func Test_TfVars_String(t *testing.T) {
 	tfv := simulator.NewTfVars("ssh-rsa", "10.0.0.1/16", "test")
 	expected := `access_key = "ssh-rsa"
 access_cidr = "10.0.0.1/16"
-s3_bucket_name = "simulator-test"
 `
 	assert.Equal(t, tfv.String(), expected)
 }

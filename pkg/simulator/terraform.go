@@ -18,30 +18,20 @@ func PrepareTfArgs(cmd string) []string {
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
-	}
-
-	if cmd == "plan" || cmd == "destroy" {
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
-	}
-	if cmd == "plan" {
-		arguments = append(arguments, "-out=tfplan")
 	}
 
 	if cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-auto-approve")
 	}
 
-	if cmd == "apply" {
-		arguments = append(arguments, "tfplan")
-	}
-
 	return arguments
 }
 
 // Terraform wraps running terraform as a child process
-func Terraform(wd, cmd string) (*string, error) {
+func Terraform(wd, cmd, bucket string) (*string, error) {
 	args := PrepareTfArgs(cmd)
-	env := []string{"TF_IS_IN_AUTOMATION=1"}
+	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
 	if cmd == "output" {
 		// TODO: (rem) deal with non-empty stderr?
 		out, _, err := util.RunSilently(wd, env, "terraform", args...)
@@ -52,7 +42,7 @@ func Terraform(wd, cmd string) (*string, error) {
 }
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if needed
-func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket string) error {
 	logger.Debug("Terraform.InitIfNeeded() start")
 
 	logger.Info("Ensuring there is a simulator keypair")
@@ -74,14 +64,18 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 		return errors.Wrap(err, "Error reading public key")
 	}
 
+	logger.Debugf("terraform Directory: %s", tfDir)
+	logger.Debugf("Public Key:\n%s", publickey)
+	logger.Debugf("Access CIDR: %s", accessCIDR)
+	logger.Debugf("Remote State Bucket Name: %s", bucket)
 	logger.Debug("Writing terraform tfvars")
-	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucketName)
+	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucket)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}
 
 	logger.Info("Running terraform init")
-	_, err = Terraform(tfDir, "init")
+	_, err = Terraform(tfDir, "init", bucket)
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
 	}
@@ -92,33 +86,33 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucketName string) error {
 // -#-
 
 // Create runs terraform init, plan, apply to create the necessary infrastructure to run scenarios
-func Create(logger *zap.SugaredLogger, tfDir, bucketName string) error {
-	err := InitIfNeeded(logger, tfDir, bucketName)
+func Create(logger *zap.SugaredLogger, tfDir, bucket string) error {
+	err := InitIfNeeded(logger, tfDir, bucket)
 
 	if err != nil {
 		return err
 	}
 
 	logger.Info("Running terraform plan")
-	_, err = Terraform(tfDir, "plan")
+	_, err = Terraform(tfDir, "plan", bucket)
 	if err != nil {
 		return err
 	}
 
 	logger.Info("Running terraform apply")
-	_, err = Terraform(tfDir, "apply")
+	_, err = Terraform(tfDir, "apply", bucket)
 	return err
 }
 
 // Status calls terraform output to get the state of the infrastruture and parses the output for programmatic use
-func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutput, error) {
-	err := InitIfNeeded(logger, tfDir, bucketName)
+func Status(logger *zap.SugaredLogger, tfDir, bucket string) (*TerraformOutput, error) {
+	err := InitIfNeeded(logger, tfDir, bucket)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error initialising")
 	}
 
 	logger.Info("Running terraform output")
-	out, err := Terraform(tfDir, "output")
+	out, err := Terraform(tfDir, "output", bucket)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
@@ -135,13 +129,13 @@ func Status(logger *zap.SugaredLogger, tfDir, bucketName string) (*TerraformOutp
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy(logger *zap.SugaredLogger, tfDir, bucketName string) error {
-	err := InitIfNeeded(logger, tfDir, bucketName)
+func Destroy(logger *zap.SugaredLogger, tfDir, bucket string) error {
+	err := InitIfNeeded(logger, tfDir, bucket)
 	if err != nil {
 		return errors.Wrap(err, "Error initialising")
 	}
 
 	logger.Info("Running terrraform destroy")
-	_, err = Terraform(tfDir, "destroy")
+	_, err = Terraform(tfDir, "destroy", bucket)
 	return err
 }
