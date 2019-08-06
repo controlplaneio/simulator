@@ -1,7 +1,7 @@
 NAME := simulator
 GITHUB_ORG := controlplaneio
 DOCKER_HUB_ORG := controlplane
-VERSION := 0.1-dev
+VERSION := 0.7-pre
 
 include prelude.mk
 
@@ -25,10 +25,8 @@ SSH_CONFIG_PATH := $(HOME)/.ssh/
 all: test
 
 # --- DOCKER
-run: SSH_AUTH_SOCK_DIR=$(shell dirname $(SSH_AUTH_SOCK))
 run: docker-build ## Runs the simulator - the build stage of the container runs all the cli tests
 
-	echo $(SSH_AUTH_SOCK_DIR)
 	docker run                                                          \
 		-h launch                                                         \
 		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
@@ -62,26 +60,26 @@ setup-dev: ## Initialise simulation tree with git hooks
 
 # --- INFRA
 
-.PHONY: infra-init
-infra-init: ## Initialisation needed before interacting with the infra
-	@pushd terraform/deployments/AWS; terraform init; popd
+#.PHONY: infra-init
+#infra-init: ## Initialisation needed before interacting with the infra
+#	@pushd terraform/deployments/AWS; terraform init; popd
 
-.PHONY: infra-checkvars
-infra-checkvars: ## Check the tfvars file exists before interacting with the infra
-	@test -f terraform/deployments/AWS/settings/bastion.tfvars || \
-		(echo Please create terraform/settings/bastion.tfvars && exit 1)
+#.PHONY: infra-checkvars
+#infra-checkvars: ## Check the tfvars file exists before interacting with the infra
+#	@test -f terraform/deployments/AWS/settings/bastion.tfvars || \
+#		(echo Please create terraform/settings/bastion.tfvars && exit 1)
 
-.PHONY: infra-plan
-infra-plan: infra-init infra-checkvars ## Show what changes will be applied to the infrastructure
-	@cd terraform/deployments/AWS; terraform plan -var-file=settings/bastion.tfvars;
+#.PHONY: infra-plan
+#infra-plan: infra-init infra-checkvars ## Show what changes will be applied to the infrastructure
+#	@cd terraform/deployments/AWS; terraform plan -var-file=settings/bastion.tfvars;
 
-.PHONY: infra-apply
-infra-apply: infra-init infra-checkvars ## Apply any changes needed to the infrastructure before running a scenario
-	@cd terraform/deployments/AWS; terraform apply -var-file=settings/bastion.tfvars -auto-approve;
+#.PHONY: infra-apply
+#infra-apply: infra-init infra-checkvars ## Apply any changes needed to the infrastructure before running a scenario
+#	@cd terraform/deployments/AWS; terraform apply -var-file=settings/bastion.tfvars -auto-approve;
 
-.PHONY: infra-destroy
-infra-destroy: infra-init infra-checkvars ## Teardown any infrastructure
-	@cd terraform/deployments/AWS; terraform destroy -var-file=settings/bastion.tfvars;
+#.PHONY: infra-destroy
+#infra-destroy: infra-init infra-checkvars ## Teardown any infrastructure
+#	@cd terraform/deployments/AWS; terraform destroy -var-file=settings/bastion.tfvars;
 
 # -- Reset environment
 
