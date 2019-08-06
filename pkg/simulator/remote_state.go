@@ -10,9 +10,7 @@ import (
 
 // CreateRemoteStateBucket initialises a remote-state bucket
 func CreateRemoteStateBucket(logger *zap.SugaredLogger, bucket string) error {
-	sess, err := session.NewSession(&aws.Config{
-		Region: aws.String("eu-west-1")},
-	)
+	sess, err := session.NewSession(&aws.Config{})
 
 	svc := s3.New(sess)
 

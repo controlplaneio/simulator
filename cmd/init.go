@@ -32,6 +32,7 @@ func newInitCommand() *cobra.Command {
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
 				simulator.CreateRemoteStateBucket(logger, bucket)
 				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
+				return nil
 			}
 
 			logger.Warnf("Simulator is already configured to use an S3 bucket named %s", bucket)

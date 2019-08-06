@@ -6,15 +6,15 @@ package:
   kubeadm:
     installed: true
     versions:
-    - 1.15.1-00
+    - 1.15.2-00
   kubectl:
     installed: true
     versions:
-    - 1.15.1-00
+    - 1.15.2-00
   kubelet:
     installed: true
     versions:
-    - 1.15.1-00
+    - 1.15.2-00
 port:
   tcp:10248:
     listening: true
