@@ -88,6 +88,7 @@ infra-destroy: infra-init infra-checkvars ## Teardown any infrastructure
 .PHONY: reset
 reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*
+	@git checkout simulator.yaml
 
 
 # -- SIMULATOR CLI
