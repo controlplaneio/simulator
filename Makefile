@@ -13,9 +13,7 @@ else
 	SIMULATOR_AWS_CREDS_PATH := $(shell dirname $(AWS_SHARED_CREDENTIALS_FILE))
 endif
 
-#ifndef AWS_REGION
-#$(error "AWS_REGION is not defined")
-#endif
+SIMULATOR_CONFIG_FILE := $(PWD)/simulator.yaml
 
 # --- AWS
 
@@ -33,6 +31,7 @@ run: docker-build ## Runs the simulator - the build stage of the container runs 
 	echo $(SSH_AUTH_SOCK_DIR)
 	docker run                                                          \
 		-h launch                                                         \
+		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
 		-v $(SSH_AUTH_SOCK_DIR):$(SSH_AUTH_SOCK_DIR)                      \
