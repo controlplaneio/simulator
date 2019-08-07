@@ -1,0 +1,26 @@
+#!/bin/bash
+# This is horrible, but its just a poc
+# will be made nicer later
+
+# poc-ssh [scenario name]
+# e.g
+# ./poc-ssh lazy_AWS
+
+if [ -z "$1" ]; then
+	echo "Missing scenario name"
+	exit 1
+fi
+
+scenarioDir="./scenario/$1"
+configFile=${scenarioDir}/MANIFEST.yaml
+attackType=$(grep attack ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
+instanceType=$(grep instance ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
+containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
+
+
+if [ ${attackType} == "container" ]; then
+	nodeIp=$(grep ${containerName} /tmp/docker-${instanceType}-* | awk '{print$1}')
+	dockerContainer=$(grep ${containerName} /tmp/docker-${instanceType}-* | awk '{print$2}')
+	echo "docker exec -it ${dockerContainer} bash" |ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp}
+fi
+
