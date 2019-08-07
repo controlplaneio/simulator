@@ -117,6 +117,7 @@ run_test_loop() {
 
   local IS_SUCCESS=0
   local TEST_RESULT=0
+  local NO_TEST=0
   local LOCAL_SCENARIO="${1:-}"
 
   while true; do
@@ -131,6 +132,7 @@ run_test_loop() {
       if [[ "${TEST_RESULT}" -eq 99 ]]; then
         warning "No tests found"
         IS_SUCCESS=0
+        NO_TEST=1
         break
       fi
     fi
@@ -142,7 +144,7 @@ run_test_loop() {
 
   if [[ "${IS_SUCCESS:-}" == 1 ]]; then
     success "finished"
-  else
+  elif [[ "${NO_TEST}" -eq 0 ]]; then
     warning "tests failed"
   fi
 }
@@ -161,7 +163,9 @@ run_scenario() {
 
   run_cleanup "${SCENARIO_DIR}"
 
-  add_github_keys
+#  add_github_keys
+
+  get_containers
 }
 
 add_github_keys() {
@@ -172,6 +176,26 @@ add_github_keys() {
     (cat "${FILE}"; echo "write_keys ${GITHUB_KEY_USERS//,/ }") | run_ssh "$(get_slave 1)"
     (cat "${FILE}"; echo "write_keys ${GITHUB_KEY_USERS//,/ }") | run_ssh "$(get_slave 2)"
   fi
+}
+
+get_containers() {
+  local QUERY_DOCKER="docker ps"
+  local TMP_FILE="/tmp/docker-"
+  local SLAVE_1
+  local SLAVE_2
+  local MASTER_1
+
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" > "${TMP_FILE}"master
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" > "${TMP_FILE}"slave-2
+
+  MASTER_1="$(get_master)"
+  SLAVE_1="$(get_slave 1)"
+  SLAVE_2="$(get_slave 2)"
+
+  sed -i 's/^/'${MASTER_1}' /' "${TMP_FILE}"master
+  sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
+  sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
 }
 
 is_master_accessible() {
