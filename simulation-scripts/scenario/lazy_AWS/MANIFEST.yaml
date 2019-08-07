@@ -1,0 +1,4 @@
+attack: container
+instance: slave
+container-name: nginx
+
