@@ -2,6 +2,9 @@
 # This is horrible, but its just a poc
 # will be made nicer later
 
+# requires the following setting for all hosts defined in ssh_config
+# RequestTTY force
+
 # poc-ssh [scenario name]
 # e.g
 # ./poc-ssh lazy_AWS
@@ -21,6 +24,7 @@ containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/
 if [ ${attackType} = "container" ]; then
 	nodeIp=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$1}')
 	dockerContainer=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$2}')
-	echo "docker exec -it ${dockerContainer} bash" | ssh -T -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp}
+#	echo "docker exec -it ${dockerContainer} bash" | ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp}
+	ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp} docker exec -it ${dockerContainer} bash
 fi
 
