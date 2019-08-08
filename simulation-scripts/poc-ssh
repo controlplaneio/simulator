@@ -18,9 +18,9 @@ instanceType=$(grep instance ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 
 
-if [ ${attackType} == "container" ]; then
-	nodeIp=$(grep ${containerName} /tmp/docker-${instanceType}-* | awk '{print$1}')
-	dockerContainer=$(grep ${containerName} /tmp/docker-${instanceType}-* | awk '{print$2}')
-	echo "docker exec -it ${dockerContainer} bash" |ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp}
+if [ ${attackType} = "container" ]; then
+	nodeIp=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$1}')
+	dockerContainer=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$2}')
+	echo "docker exec -it ${dockerContainer} bash" | ssh -T -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp}
 fi
 
