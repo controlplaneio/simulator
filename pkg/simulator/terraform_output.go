@@ -32,12 +32,14 @@ type TerraformOutput struct {
 var bastionConfigTmplSrc = `Host bastion {{.Hostname}}
   Hostname {{.Hostname}}
   User root
+  RequestTTY force
   IdentityFile {{.KeyFilePath}}
   UserKnownHostsFile {{.KnownHostsFilePath}}
 `
 var k8sConfigTmplSrc = `Host {{.Alias}} {{.Hostname}}
   Hostname {{.Hostname}}
   User root
+  RequestTTY force
   IdentityFile {{.KeyFilePath}}
   UserKnownHostsFile {{.KnownHostsFilePath}}
   ProxyJump bastion
