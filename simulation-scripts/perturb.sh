@@ -163,22 +163,11 @@ run_scenario() {
 
   run_cleanup "${SCENARIO_DIR}"
 
-#  add_github_keys
-
   get_containers
 }
 
-add_github_keys() {
-  if [[ "${GITHUB_KEY_USERS:-}" != "" ]]; then
-    local FILE
-    FILE="scenario/authorized_keys.sh"
-    (cat "${FILE}"; echo "write_keys ${GITHUB_KEY_USERS//,/ }") | run_ssh "$(get_master)"
-    (cat "${FILE}"; echo "write_keys ${GITHUB_KEY_USERS//,/ }") | run_ssh "$(get_slave 1)"
-    (cat "${FILE}"; echo "write_keys ${GITHUB_KEY_USERS//,/ }") | run_ssh "$(get_slave 2)"
-  fi
-}
-
 get_containers() {
+  sleep 30
   local QUERY_DOCKER="docker ps"
   local TMP_FILE="/tmp/docker-"
   local SLAVE_1
@@ -481,10 +470,6 @@ parse_arguments() {
       --dry-run)
         IS_DRY_RUN=1
         ;;
-#      --debug) - there is no reference to DEBUG in the script
-#        DEBUG=1
-#        set -xe
-#        ;;
       --auto-populate)
         shift
         not_empty_or_usage "${1:-}"
@@ -509,11 +494,6 @@ parse_arguments() {
         shift
         not_empty_or_usage "${1:-}"
         SLAVE_HOSTS="${1}"
-        ;;
-      --add-keys)
-        shift
-        not_empty_or_usage "${1:-}"
-        GITHUB_KEY_USERS="${1}"
         ;;
       --)
         shift
