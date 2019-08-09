@@ -16,6 +16,11 @@ fi
 
 scenarioDir="./scenario/$1"
 configFile=${scenarioDir}/MANIFEST.yaml
+
+[ ! -d ${scenarioDir} ] && { echo "Scenario directory not found, check name"; exit 1; }
+
+[ ! -f ${configFile} ] && { echo "Missing Manifest file, cannot continue"; exit 1; }
+
 attackType=$(grep attack ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 instanceType=$(grep instance ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
@@ -24,7 +29,12 @@ containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/
 if [ ${attackType} = "container" ]; then
 	nodeIp=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$1}')
 	dockerContainer=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$2}')
-#	echo "docker exec -it ${dockerContainer} bash" | ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp}
+
+	echo "Connecting to ${containerName} via host ${nodeIp}"
+
 	ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp} docker exec -it ${dockerContainer} bash
+else
+	echo "Connecting to attack container"
+	simulator ssh attack
 fi
 
