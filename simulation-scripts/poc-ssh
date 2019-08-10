@@ -9,6 +9,9 @@
 # e.g
 # ./poc-ssh lazy_AWS
 
+#set -euxo pipefail
+set -euo pipefail
+
 if [ -z "$1" ]; then
 	echo "Missing scenario name"
 	exit 1
@@ -24,7 +27,6 @@ configFile=${scenarioDir}/MANIFEST.yaml
 attackType=$(grep attack ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 instanceType=$(grep instance ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
-
 
 if [ ${attackType} = "container" ]; then
 	nodeIp=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$1}')
