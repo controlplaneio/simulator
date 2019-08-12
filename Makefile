@@ -25,7 +25,7 @@ SSH_CONFIG_PATH := $(HOME)/.ssh/
 all: test
 
 # --- DOCKER
-run: reset docker-build ## Run the simulator - the build stage of the container runs all the cli tests
+run: validate-requirements reset docker-build ## Run the simulator - the build stage of the container runs all the cli tests
 
 	docker run                                                          \
 		-h launch                                                         \
@@ -65,6 +65,11 @@ reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*
 	@git checkout simulator.yaml
 
+# -- Check build requirements are met
+
+.PHONY: validate-requirements
+validate-requirements: ## Verify all requirements are met
+	@$(shell pwd)/scripts/validate_requirements
 
 # -- SIMULATOR CLI
 
