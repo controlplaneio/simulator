@@ -29,9 +29,9 @@ run: validate-requirements reset docker-build ## Run the simulator - the build s
 
 	docker run                                                          \
 		-h launch                                                         \
-		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
-		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
-		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
+		-v "$(SIMULATOR_CONFIG_FILE)":/app/simulator.yaml                   \
+		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws                  \
+		-v "$(SSH_CONFIG_PATH)":/home/launch/.ssh                           \
 		-e AWS_ACCESS_KEY_ID                                              \
 		-e AWS_REGION                                                     \
 		-e AWS_DEFAULT_REGION                                             \
