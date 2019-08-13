@@ -1,15 +1,15 @@
 #!/bin/bash
 
-echo -n "Checking aws cli available.."
+echo -n "Checking AWS cli installed.."
 
 if [[ $(command -v aws) ]]; then
-	echo "available"
+	echo "installed"
 else
 	echo "not available, check PATH"
 	exit 1
 fi
 
-echo -n "Checking AWS Region defined.."
+echo -n "Checking AWS region defined.."
 
 if [[ $(aws configure get region) ]]; then
 	echo "defined"
@@ -24,10 +24,18 @@ fi
 echo -n "Checking Terraform installed.."
 
 if [[ $(command -v terraform) ]]; then
-	echo "available"
+	echo "installed"
 else
 	echo "not available, check PATH"
 	exit 1
 fi
 
+echo -n "Checking Docker is running.."
+
+if [[ $(docker version) ]]; then
+	echo "running"
+else
+	echo "not running"
+	exit 1
+fi
 
