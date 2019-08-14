@@ -1,27 +1,30 @@
 #!/bin/bash
-# This is horrible, but its just a poc
-# will be made nicer later
-
-# requires the following setting for all hosts defined in ssh_config
-# RequestTTY force
+# Proof of concept direct connect to container
+# rather than use attack container
+#
+# Author: Jon Kent
 
 # poc-ssh [scenario name]
 # e.g
 # ./poc-ssh lazy_AWS
 
-#set -euxo pipefail
+#set -euxo pipefail # debug
 set -euo pipefail
 
-if [ -z "$1" ]; then
-	echo "Missing scenario name"
+scenarioName=${1:-1}
+
+if [ "${scenarioName}" == 1 ]; then
+	echo "Missing scenario name, e.g."
+	echo "${0} lazy_AWS"
 	exit 1
 fi
 
-scenarioDir="./scenario/$1"
+dirName="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
+belowDir=$(echo ${dirName} | sed -e 's/simulation-scripts//g')
+scenarioDir="${dirName}/scenario/$1"
 configFile=${scenarioDir}/MANIFEST.yaml
 
 [ ! -d ${scenarioDir} ] && { echo "Scenario directory not found, check name"; exit 1; }
-
 [ ! -f ${configFile} ] && { echo "Missing Manifest file, cannot continue"; exit 1; }
 
 attackType=$(grep attack ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
@@ -37,6 +40,8 @@ if [ ${attackType} = "container" ]; then
 	ssh -F ~/.ssh/cp_simulator_config  -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" root@${nodeIp} docker exec -it ${dockerContainer} bash
 else
 	echo "Connecting to attack container"
+	pushd ${belowDir} > /dev/null
 	simulator ssh attack
+	popd > /dev/null
 fi
 
