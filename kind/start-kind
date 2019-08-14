@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+# Kind start wrapper script
+#
+# Author : Jon Kent
+
+set -euo pipefail
+
+
+[ -x "$(command -v curl)" ] || { echo "curl not installed, please install"; exit 1; }
+
+if [[ ${OSTYPE} =~ ^darwin* ]]; then
+	kindType="kind-darwin-amd64"
+elif [[ ${OSTYPE} =~ ^linux-gnu* ]]; then
+	kindType="kind-linux-amd64"
+else
+	echo "OS not currently supported"
+fi
+
+dirName="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
+
+config="${dirName}/config"
+binaries="${dirName}/bin"
+
+curl -Lo ./"${kindType}" https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/"${kindType}"
+chmod +x ./"${kindType}"
+mv ./"${kindType}" "${binaries}"/kind
+
+export PATH="${binaries}":"${PATH}"
+
+kind create cluster --config "${config}"/simple-cluster.yaml
+
+# shellcheck disable=SC2155
+export KUBECONFIG="$(kind get kubeconfig-path --name="kind")"
+
+kubectl cluster-info
+kubectl get nodes
+
+echo "Run export KUBECONFIG="\"\$\(kind get kubeconfig-path --name=\"kind\"\)\""""
+echo "To access the cluster with kubectl"
+
