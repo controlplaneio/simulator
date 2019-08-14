@@ -36,6 +36,6 @@ export KUBECONFIG="$(kind get kubeconfig-path --name="kind")"
 kubectl cluster-info
 kubectl get nodes
 
-echo "Run export KUBECONFIG="\"\$\(kind get kubeconfig-path --name=\"kind\"\)\""""
+echo "Run export KUBECONFIG="\"\$\(kind get kubeconfig-path --name=\"kind\"\)\"""
 echo "To access the cluster with kubectl"
 
