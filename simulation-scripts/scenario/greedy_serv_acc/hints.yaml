@@ -1,0 +1,15 @@
+--- 
+- 
+  general_overview: 
+    objective: "Get flag from ETCD - subpath exploitation and etcd v2"
+    starting-point: "none"
+    num-hints: "6"
+- 
+  hints: 
+    hint-1: "Find open SSH port in workload"
+    hint-2: "host - SSH default password - brute force"
+    hint-3: "exploit workload SA creds"
+    hint-4: "misconfigured RBAC - allows scheduling"
+    hint-5: "CVE subpath - exploit"
+    hint-6: "Hopefully at this point you are root on a node, and can use the kubelet's credentials to communicate with the master (as there is no node RBAC enabled)"
+

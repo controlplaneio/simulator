@@ -1,1 +1,3 @@
+Welcome to the shadow secret challenge!
+
 You are a corporate spy trying to access a competitors customer database so you can profile their users. You have found a node running a workload that connects to the DB. You have socially engineered your way into a non-root account on the node. How would you access the DB from here?
