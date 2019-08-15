@@ -69,7 +69,7 @@ reset: ## Clean up files left over by simulator
 
 .PHONY: validate-requirements
 validate-requirements: ## Verify all requirements are met
-	@./scripts/validate_requirements
+	@./scripts/validate-requirements
 
 # -- SIMULATOR CLI
 
