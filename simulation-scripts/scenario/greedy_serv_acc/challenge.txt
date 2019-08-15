@@ -1,1 +1,4 @@
 Welcome to the pod creation challenge!
+
+You are a script-kiddie trying to hack random clusters for lolz. Your online friend h4ckz0r has pointed you to an IP that runs a kubernetes NodePort service. Your challenge is to prove cluster access by spinning up a hello-world pod in the cluster https://hub.docker.com/_/hello-world/
+
