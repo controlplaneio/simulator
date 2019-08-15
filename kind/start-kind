@@ -6,6 +6,13 @@
 
 set -euo pipefail
 
+scenarioName=${1:-1}
+
+if [ "${scenarioName}" == 1 ]; then
+	echo "Missing scenario name, e.g."
+	echo "${0} shadow_secret"
+	exit 1
+fi
 
 [ -x "$(command -v curl)" ] || { echo "curl not installed, please install"; exit 1; }
 
@@ -18,24 +25,48 @@ else
 fi
 
 dirName="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
+# shellcheck disable=SC2001
+# shellcheck disable=SC2086
+belowDir="$(echo ${dirName} | sed -e 's/kind//g')"
+scenarioDir="${belowDir}/simulation-scripts/scenario/${scenarioName}/apply"
 
 config="${dirName}/config"
 binaries="${dirName}/bin"
 
+echo "Downloading kind "$'\342\254\207'
 curl -Lo ./"${kindType}" https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/"${kindType}"
 chmod +x ./"${kindType}"
 mv ./"${kindType}" "${binaries}"/kind
 
 export PATH="${binaries}":"${PATH}"
 
+echo "Starting kind "$'\360\237\220\263'
 kind create cluster --config "${config}"/simple-cluster.yaml
 
 # shellcheck disable=SC2155
 export KUBECONFIG="$(kind get kubeconfig-path --name="kind")"
 
+echo -n "Waiting for cluster to initialise"
+
+for i in $(seq 1 30); do
+	echo -n $'\342\232\231'"  "
+	sleep 1
+done
+
+echo; echo "Hopefully running"
+
+echo "Applying scenario ${scenarioName}"
+
+# shellcheck disable=SC2045
+for i in $(ls "${scenarioDir}"); do
+	echo "Applying ${i}" $'\360\237\222\243'
+	kubectl apply -f "${scenarioDir}/${i}"
+done 
+
 kubectl cluster-info
 kubectl get nodes
+kubectl get pods --all-namespaces
 
 echo "Run export KUBECONFIG="\"\$\(kind get kubeconfig-path --name=\"kind\"\)\"""
-echo "To access the cluster with kubectl"
+echo "to access the cluster with kubectl"
 
