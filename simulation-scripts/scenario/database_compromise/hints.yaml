@@ -1,19 +1,17 @@
 --- 
 - 
   general_overview: 
-    detail: |
-        Access mounted socket in nginx (used for reverse proxying for other containers).
-        `docker inspect` the postgres container for passed env vars.
-    task: "Get postgres password"
+    objective: "Get postgres password"
+    starting-point: "kubectl pod exec"
+    num-hints: "6"
 - 
   hints: 
-    hint1: |
+    hint-1: |
         What mounts do we have?
         Anything which might help expose other containers to us?
-    hint2: "kubectl pod exec"
-    hint3: "kubectl exec into workload"
-    hint4: "workload is nginx-proxy with mounted docker.socket"
-    hint5: "workload - enumerate r/o mounted docker.socket"
-    hint6: "pull env vars from local docker inspect"
-    hint7: "postgres containers password as env var"
+    hint-2: "kubectl exec into workload"
+    hint-3: "workload is nginx-proxy with mounted docker.socket"
+    hint-4: "workload - enumerate r/o mounted docker.socket"
+    hint-5: "pull env vars from local docker inspect"
+    hint-6: "postgres containers password as env var"
 

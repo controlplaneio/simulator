@@ -1,0 +1,18 @@
+--- 
+- 
+  general_overview: 
+    objective: "Node escalation to workload compromise"
+    starting-point: "SSH node-any non-root"
+    num-hints: "9"
+- 
+  hints: 
+    hint-1: "How would you escalate yourself on this node?"
+    hint-2: "Is there a file in /etc/ you can manipulate?"
+    hint-3: "Where do pods store their secrets?"
+    hint-4: "incorrect permissions on /etc/shadow"
+    hint-5: "/etc/shadow manipulation"
+    hint-6: "set root password for host"
+    hint-7: "login as root"
+    hint-8: "df -h as host root to see tmpfs mounts"
+    hint-9: "read creds from tmpfs volume"
+
