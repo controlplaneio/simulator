@@ -1,1 +1,2 @@
 Welcome to Lazy AWS
+You are trying to run bitcoin miners in a corporations infrastructure. You have already compromised one of their workloads, lets see if it has anything useful to you!
