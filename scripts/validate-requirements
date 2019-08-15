@@ -13,11 +13,12 @@ echo -n "Checking AWS region defined.."
 
 if [[ $(aws configure get region) ]]; then
 	echo "defined"
-elif [ -z "${AWS_REGION}" ]; then
-	echo "not defined"
-	exit 1
+elif [[ -n "${AWS_REGION}" ]]; then
+	echo "defined"
+elif [[ -n "${AWS_DEFAULT_REGION}" ]]; then
+	echo "defined"
 else
-	echo "not defined"
+  echo "not defined"
 	exit 1
 fi
 
