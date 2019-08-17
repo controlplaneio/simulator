@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/knownhosts"
+	"golang.org/x/crypto/ssh/terminal"
 	"net"
 	"os"
 	"time"
@@ -120,7 +121,16 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	}
 	defer session.Close()
 
-	if err = setupPty(session); err != nil {
+	fileDescriptor := int(os.Stdin.Fd())
+	if terminal.IsTerminal(fileDescriptor) {
+		originalState, err := terminal.MakeRaw(fileDescriptor)
+		if err != nil {
+			return errors.Wrap(err, "Error setting stdin terminal to raw mode")
+		}
+		defer terminal.Restore(fileDescriptor, originalState)
+	}
+
+	if err = setupPty(fileDescriptor, session); err != nil {
 		fmt.Printf("Failed to set up pseudo terminal: %s", err)
 		return errors.Wrap(err, "Error setting up pseudo terminal")
 	}
@@ -142,17 +152,22 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	return session.Wait()
 }
 
-func setupPty(session *ssh.Session) error {
+func setupPty(stdinFd int, session *ssh.Session) error {
 	modes := ssh.TerminalModes{
-		ssh.ECHO:          0,     // disable echoing
+		ssh.ECHO:          1,     // enable echoing
 		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 
-	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
-		session.Close()
-		fmt.Printf("request for pseudo terminal failed: %s", err)
-		return errors.Wrap(err, "Error sending pty request for an xtrem over ssh session")
+	termWidth, termHeight, err := terminal.GetSize(stdinFd)
+	if err != nil {
+		return errors.Wrap(err, "Error getting size of stdin terminal")
 	}
+
+	if err := session.RequestPty("xterm", termHeight, termWidth, modes); err != nil {
+		session.Close()
+		return errors.Wrap(err, "Error sending pty request for an xterm over ssh session")
+	}
+
 	return nil
 }
