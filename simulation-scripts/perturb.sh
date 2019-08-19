@@ -60,7 +60,6 @@ IS_TEST_ONLY=0
 IS_FORCE=0
 
 main() {
-#  handle_arguments "$@"
 
   [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
 
@@ -101,7 +100,6 @@ main() {
 
   if ! is_master_accessible; then
     error "Cannot connect to ${MASTER_HOST}"
-#  elif ! is_scenario_dir_accessible; then
   elif [[ ! -d "${SCENARIO_DIR}" ]]; then
     error "Scenario directory not found at ${SCENARIO_DIR}"
   fi
@@ -216,10 +214,6 @@ is_master_accessible() {
     "$(get_connection_string)" \
     true
 }
-
-#is_scenario_dir_accessible() {
-#  [[ -d "${SCENARIO_DIR}" ]]
-#}
 
 validate_instructions() {
   local SCENARIO_DIR="${1}"
@@ -382,8 +376,6 @@ run_cleanup() {
 }
 
 run_ssh() {
-# TODO: test everything with `set -ex`
-# (printf "%s\n\n" 'set -ex;' ; cat) | command ssh -q -t \
   # shellcheck disable=SC2145
   (cat) | command ssh -q -t \
     -F "${SSH_CONFIG_FILE}" \
@@ -433,24 +425,6 @@ get_slave() {
 get_connection_string() {
   echo "root@${MASTER_HOST}"
 }
-
-#handle_arguments() {
-#  [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
-#
-#  parse_arguments "$@"
-#  validate_arguments "$@"
-#
-#  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
-#    if ! command doctl >/dev/null; then
-#      error "Please install doctl from https://github.com/digitalocean/doctl"
-#    fi
-#
-#    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
-#      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
-#      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
-#    fi
-#  fi
-#}
 
 parse_arguments() {
   while [ $# -gt 0 ]; do
@@ -567,14 +541,8 @@ error() {
   exit 3
 } 1>&2
 
-#error_env_var() {
-#  error "${1} environment variable required"
-#}
-
 log_message_prefix() {
-#  local TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]" - local not required here
   TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]"
-#  local THIS_SCRIPT_SHORT=${THIS_SCRIPT/$DIR/.}
   THIS_SCRIPT_SHORT=${THIS_SCRIPT/$DIR/.}
   tput bold 2>/dev/null
   echo -n "${TIMESTAMP} ${THIS_SCRIPT_SHORT}: "
@@ -587,27 +555,6 @@ is_empty() {
 not_empty_or_usage() {
   is_empty "${1-}" && usage "Non-empty value required" || return 0
 }
-
-#check_number_of_expected_arguments() {
-#  [[ "${EXPECTED_NUM_ARGUMENTS}" != "${#ARGUMENTS[@]}" ]] && {
-#    ARGUMENTS_STRING="argument"
-#    [[ "${EXPECTED_NUM_ARGUMENTS}" -gt 1 ]] && ARGUMENTS_STRING="${ARGUMENTS_STRING}"s
-#    usage "${EXPECTED_NUM_ARGUMENTS} ${ARGUMENTS_STRING} expected, ${#ARGUMENTS[@]} found"
-#  }
-#  return 0
-#}
-
-#hr() {
-#  printf '=%.0s' $(seq "$(tput cols)")
-#  echo
-#}
-
-#wait_safe() {
-#  local PIDS="${1}"
-#  for JOB in ${PIDS}; do
-#    wait "${JOB}"
-#  done
-#}
 
 ###########################################
 #
