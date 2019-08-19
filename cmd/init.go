@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,12 +27,17 @@ func newInitCommand() *cobra.Command {
 					Message: "Please choose a globally unique name for an S3 bucket to store the terraform state",
 				}
 				survey.AskOne(prompt, &bucket)
+				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
+				err = simulator.CreateRemoteStateBucket(logger, bucket)
+				if err != nil {
+					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
+				}
+
+				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
+
 				logger.Info("Saving state bucket name to config")
 				viper.Set("state-bucket", bucket)
 				viper.WriteConfig()
-				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
-				simulator.CreateRemoteStateBucket(logger, bucket)
-				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 				return nil
 			}
 
