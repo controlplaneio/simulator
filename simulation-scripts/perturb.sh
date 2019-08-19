@@ -60,7 +60,23 @@ IS_TEST_ONLY=0
 IS_FORCE=0
 
 main() {
-  handle_arguments "$@"
+#  handle_arguments "$@"
+
+  [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
+
+  parse_arguments "$@"
+  validate_arguments "$@"
+
+  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
+    if ! command doctl >/dev/null; then
+      error "Please install doctl from https://github.com/digitalocean/doctl"
+    fi
+
+    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
+      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
+      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
+    fi
+  fi
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
@@ -85,7 +101,8 @@ main() {
 
   if ! is_master_accessible; then
     error "Cannot connect to ${MASTER_HOST}"
-  elif ! is_scenario_dir_accessible; then
+#  elif ! is_scenario_dir_accessible; then
+  elif [[ ! -d "${SCENARIO_DIR}" ]]; then
     error "Scenario directory not found at ${SCENARIO_DIR}"
   fi
 
@@ -200,9 +217,9 @@ is_master_accessible() {
     true
 }
 
-is_scenario_dir_accessible() {
-  [[ -d "${SCENARIO_DIR}" ]]
-}
+#is_scenario_dir_accessible() {
+#  [[ -d "${SCENARIO_DIR}" ]]
+#}
 
 validate_instructions() {
   local SCENARIO_DIR="${1}"
@@ -394,7 +411,6 @@ run_file_on_host() {
     set -x
     get_file_to_run "${FILE}"
   ) | run_ssh "${HOST}"
-#  hr
 }
 
 get_master() {
@@ -418,23 +434,23 @@ get_connection_string() {
   echo "root@${MASTER_HOST}"
 }
 
-handle_arguments() {
-  [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
-
-  parse_arguments "$@"
-  validate_arguments "$@"
-
-  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
-    if ! command doctl >/dev/null; then
-      error "Please install doctl from https://github.com/digitalocean/doctl"
-    fi
-
-    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
-      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
-      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
-    fi
-  fi
-}
+#handle_arguments() {
+#  [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
+#
+#  parse_arguments "$@"
+#  validate_arguments "$@"
+#
+#  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
+#    if ! command doctl >/dev/null; then
+#      error "Please install doctl from https://github.com/digitalocean/doctl"
+#    fi
+#
+#    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
+#      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
+#      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
+#    fi
+#  fi
+#}
 
 parse_arguments() {
   while [ $# -gt 0 ]; do
@@ -551,9 +567,9 @@ error() {
   exit 3
 } 1>&2
 
-error_env_var() {
-  error "${1} environment variable required"
-}
+#error_env_var() {
+#  error "${1} environment variable required"
+#}
 
 log_message_prefix() {
 #  local TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]" - local not required here
@@ -572,30 +588,33 @@ not_empty_or_usage() {
   is_empty "${1-}" && usage "Non-empty value required" || return 0
 }
 
-check_number_of_expected_arguments() {
-  [[ "${EXPECTED_NUM_ARGUMENTS}" != "${#ARGUMENTS[@]}" ]] && {
-    ARGUMENTS_STRING="argument"
-    [[ "${EXPECTED_NUM_ARGUMENTS}" -gt 1 ]] && ARGUMENTS_STRING="${ARGUMENTS_STRING}"s
-    usage "${EXPECTED_NUM_ARGUMENTS} ${ARGUMENTS_STRING} expected, ${#ARGUMENTS[@]} found"
-  }
-  return 0
-}
+#check_number_of_expected_arguments() {
+#  [[ "${EXPECTED_NUM_ARGUMENTS}" != "${#ARGUMENTS[@]}" ]] && {
+#    ARGUMENTS_STRING="argument"
+#    [[ "${EXPECTED_NUM_ARGUMENTS}" -gt 1 ]] && ARGUMENTS_STRING="${ARGUMENTS_STRING}"s
+#    usage "${EXPECTED_NUM_ARGUMENTS} ${ARGUMENTS_STRING} expected, ${#ARGUMENTS[@]} found"
+#  }
+#  return 0
+#}
 
-hr() {
-  printf '=%.0s' $(seq "$(tput cols)")
-  echo
-}
+#hr() {
+#  printf '=%.0s' $(seq "$(tput cols)")
+#  echo
+#}
 
-wait_safe() {
-  local PIDS="${1}"
-  for JOB in ${PIDS}; do
-    wait "${JOB}"
-  done
-}
+#wait_safe() {
+#  local PIDS="${1}"
+#  for JOB in ${PIDS}; do
+#    wait "${JOB}"
+#  done
+#}
 
-# removed export from the vars below
+###########################################
+#
+# main section
+#
+###########################################
 
-#CLICOLOR=1 - not referenced - tbd
 TERM="xterm-color"
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
