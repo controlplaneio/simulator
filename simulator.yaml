@@ -1,4 +1,3 @@
 loglevel: debug
-scenarios-dir: "./simulation-scripts"
-tf-dir: "./terraform/deployments/AWS"
-
+scenarios-dir: /app/simulation-scripts/
+tf-dir: /app/terraform/deployments/AWS

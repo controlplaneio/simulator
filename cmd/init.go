@@ -3,9 +3,18 @@ package cmd
 import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/zap"
+	"strings"
 )
+
+func saveBucketConfig(logger *zap.SugaredLogger, bucket string) {
+	logger.Info("Saving state bucket name to config")
+	viper.Set("state-bucket", bucket)
+	viper.WriteConfig()
+}
 
 func newInitCommand() *cobra.Command {
 	cmd := &cobra.Command{
@@ -26,12 +35,20 @@ func newInitCommand() *cobra.Command {
 					Message: "Please choose a globally unique name for an S3 bucket to store the terraform state",
 				}
 				survey.AskOne(prompt, &bucket)
-				logger.Info("Saving state bucket name to config")
-				viper.Set("state-bucket", bucket)
-				viper.WriteConfig()
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
-				simulator.CreateRemoteStateBucket(logger, bucket)
+				err = simulator.CreateRemoteStateBucket(logger, bucket)
+				if err != nil && strings.HasPrefix(errors.Cause(err).Error(), "BucketAlreadyOwnedByYou") {
+					logger.Infof("%s already exists and you own it", bucket)
+					saveBucketConfig(logger, bucket)
+					return nil
+				}
+				if err != nil {
+					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
+				}
+
 				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
+				saveBucketConfig(logger, bucket)
+
 				return nil
 			}
 
