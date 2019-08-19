@@ -344,15 +344,6 @@ run_cleanup() {
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
 
-  if [[ -f "${SCENARIO_DIR}/flag.txt" ]]; then
-    TEMP_FILE=$(mktemp)
-    #echo "echo '$(cat "${SCENARIO_DIR}/flag.txt" | base64 -w0)' | base64 -d > /root/flag.txt" | tee "${TEMP_FILE}"
-    echo "echo '$(base64 -w0 < "${SCENARIO_DIR}/flag.txt")' | base64 -d > /root/flag.txt" | tee "${TEMP_FILE}"
-    warning "Flag"
-    cat "${TEMP_FILE}"
-    SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
-  fi
-
   warning "Running script '${SCRIPTS_TO_RUN}'"
 
   for FILE_TO_RUN in ${SCRIPTS_TO_RUN}; do
@@ -371,24 +362,6 @@ run_cleanup() {
     get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_slave 1)" || true
     get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_slave 2)" || true
   fi
-}
-
-get_flag() {
-#  local SALT=$(get_salt) - this does not need to be defined as local
-  SALT=$(get_salt)
-  FLAG=$({ get_flag_raw; echo "${SALT}"; } | sha256sum)
-  echo "${FLAG}"
-}
-
-get_flag_raw() {
-  if [[ ! -f "${SCENARIO_DIR}/flag.txt" ]]; then
-    error "${SCENARIO_DIR}/flag.txt not found"
-  fi
-  cat "${SCENARIO_DIR}/flag.txt"
-}
-
-get_salt() {
-  date +%Y-%m%Y-%m%Y-%m%Y-%m%Y-%m%Y-%m
 }
 
 run_ssh() {
