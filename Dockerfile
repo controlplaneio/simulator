@@ -177,11 +177,13 @@ WORKDIR /app
 ARG config_file=./simulator.yaml
 COPY --chown=1000 ./terraform/ ./terraform/
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
-COPY --chown=1000 ./goss.yaml ${config_file} ./
+COPY --chown=1000 ./goss.yaml ./entrypoint.sh ${config_file} ./
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS
 
 USER ${launch_user}
 
-CMD [ "/bin/bash" ]
+STOPSIGNAL SIGTERM
+
+ENTRYPOINT [ "./entrypoint.sh" ]

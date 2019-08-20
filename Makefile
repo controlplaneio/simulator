@@ -37,8 +37,8 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 		-e AWS_PROFILE                                                    \
 		-e AWS_DEFAULT_PROFILE                                            \
 		-e AWS_SECRET_ACCESS_KEY                                          \
-		--rm --init -it $(CONTAINER_NAME_LATEST)                          \
-		bash
+		--rm --init -it $(CONTAINER_NAME_LATEST)
+
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
