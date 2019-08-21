@@ -5,7 +5,7 @@
 /node_modules/
 /test/smoke.tcl
 /doc-templates/
-.terraform/
+/terraform/**/.terraform/
 .editorconfig
 .gitattributes
 .gitignore
