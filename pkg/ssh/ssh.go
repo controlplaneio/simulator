@@ -152,7 +152,9 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	return session.Wait()
 }
 
+// See http://www.tldp.org/HOWTO/Text-Terminal-HOWTO-7.html#ss7.2 for more info on pseudo terminals
 func setupPty(stdinFd int, session *ssh.Session) error {
+	// https://tools.ietf.org/html/rfc4254#section-8 for more information about terminal modes
 	modes := ssh.TerminalModes{
 		ssh.ECHO:          1,     // enable echoing
 		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
