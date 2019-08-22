@@ -123,6 +123,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 
 	fileDescriptor := int(os.Stdin.Fd())
 	if terminal.IsTerminal(fileDescriptor) {
+		// See this for more information http://www.linusakesson.net/programming/tty/
 		originalState, err := terminal.MakeRaw(fileDescriptor)
 		if err != nil {
 			return errors.Wrap(err, "Error setting stdin terminal to raw mode")
