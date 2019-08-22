@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -13,10 +15,21 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
+			scenariosDir := viper.GetString("scenarios-dir")
 			tfDir := viper.GetString("tf-dir")
 			err := simulator.Create(logger, tfDir, bucket)
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
+			}
+
+			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket)
+			if err != nil {
+				return errors.Wrap(err, "Error getting SSH config")
+			}
+
+			err = ssh.EnsureSSHConfig(*cfg)
+			if err != nil {
+				return errors.Wrapf(err, "Error writing SSH config")
 			}
 
 			return err

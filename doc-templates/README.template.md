@@ -36,8 +36,6 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 simulator init
 # Create the infra if it isn't there
 simulator infra create
-# Configure your SSH to perturb the cluster
-simulator ssh config --write
 # Launch a scenario (runs perturb.sh)
 simulator scenario launch database_compromise
 # Attack the cluster
