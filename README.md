@@ -36,8 +36,6 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 simulator init
 # Create the infra if it isn't there
 simulator infra create
-# Configure your SSH to perturb the cluster
-simulator ssh config --write
 # Launch a scenario (runs perturb.sh)
 simulator scenario launch database_compromise
 # Attack the cluster
@@ -98,17 +96,12 @@ make setup-dev
 Development targets are specified in the [Makefile](./Makefile).
 
 <pre>
-run: SSH_AUTH_SOCK_DIR=$(shell dirname $(SSH_AUTH_SOCK)) 
-run                   Runs the simulator - the build stage of the container runs all the cli tests
+run                   Run the simulator - the build stage of the container runs all the cli tests
 docker-build          Builds the launch container
 docker-test           Run the tests
 setup-dev             Initialise simulation tree with git hooks
-infra-init            Initialisation needed before interacting with the infra
-infra-checkvars       Check the tfvars file exists before interacting with the infra
-infra-plan            Show what changes will be applied to the infrastructure
-infra-apply           Apply any changes needed to the infrastructure before running a scenario
-infra-destroy         Teardown any infrastructure
 reset                 Clean up files left over by simulator
+validate-requirements  Verify all requirements are met
 dep                   Install dependencies for other targets
 build                 Run golang build for the CLI program
 test                  run all tests except goss tests
