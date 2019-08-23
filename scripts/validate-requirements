@@ -22,15 +22,6 @@ else
 	exit 1
 fi
 
-echo -n "Checking Terraform installed.."
-
-if [[ $(command -v terraform) ]]; then
-	echo "installed"
-else
-	echo "not available, check PATH"
-	exit 1
-fi
-
 echo -n "Checking Docker is running.."
 
 if [[ $(docker version) ]]; then
