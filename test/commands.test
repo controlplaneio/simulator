@@ -12,9 +12,14 @@ if {[lsearch [info commands] expect] == -1} {
   package require Expect
 }
 
+set TEST_BUCKET_NAME "controlplane-simulator-state-automated-test"
+# Careful if you adjust this it will be clobbered with an empty file before every test
+set TEST_CONFIG_NAME "simulator-automated-test.yaml"
+
 variable BEFORE {
   puts "Test setup"
   catch { unset result }
+  close [open $TEST_CONFIG_NAME w]
   set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
   set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
   set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
@@ -42,7 +47,8 @@ variable AFTER {
 } -setup $BEFORE -cleanup $AFTER -result 1
 
 # TODO: (rem) Need to stub terraform output to make this pass
-::tcltest::configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
+::tcltest::configure -skip "scenario_launch_prints_ok infra_status_prints_ok init_with_valid_bucket"
+
 ::tcltest::test infra_status_prints_ok {
   Test: simulator infra status
 } -body {
@@ -63,5 +69,29 @@ variable AFTER {
   spawn "./dist/simulator" "scenario" "launch" "scenario_1"
   expect "Scenario 1" { set result 1 } default { set result 0 }
 } -setup $BEFORE -cleanup $AFTER -result 1
+
+::tcltest::test init_with_valid_bucket {
+  Test: simulator init with valid unused bucket name
+} -body {
+  spawn "./dist/simulator" "init" "-c" $TEST_CONFIG_NAME
+  expect {
+    "Please choose a globally unique name for an S3 bucket" {
+      send_user "Typing " $TEST_BUCKET_NAME
+      send $TEST_BUCKET_NAME "\r"
+    }
+  }
+  expect {
+    "successfully created"
+  }
+  expect {
+    "Saving state bucket name to config" {
+      set result 1
+    } default {
+      set result 0
+    }
+  }
+} -setup $BEFORE -cleanup {
+  spawn aws s3 rb s3://$TEST_BUCKET_NAME --force
+} -result 1
 
 ::tcltest::cleanupTests 1

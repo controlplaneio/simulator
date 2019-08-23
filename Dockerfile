@@ -24,28 +24,27 @@ COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
 RUN terraform-bundle package terraform-bundle.hcl && \
     mkdir -p terraform-bundle                     && \
     unzip -d terraform-bundle terraform_*.zip
-RUN echo $PATH && pwd && ls -lasph terraform-bundle
 
 # Install JQ
-ENV JQ_VERSION 1.6
+ARG JQ_VERSION=1.6
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
       -o /usr/local/bin/jq                                                                \
     && chmod +x /usr/local/bin/jq
 
 ## Install YQ
-ENV YQ_VERSION 2.7.2
+ARG YQ_VERSION=2.7.2
 RUN curl -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
       -o /usr/local/bin/yq                                                                  \
     && chmod +x /usr/local/bin/yq
 
 ## Install Goss
-ENV GOSS_VERSION v0.3.7
+ARG GOSS_VERSION=v0.3.7
 RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
          -o /usr/local/bin/goss                                                                    \
     && chmod +rx /usr/local/bin/goss
 
 # Install Hadolint
-ENV HADOLINT_VERSION v1.16.3
+ARG HADOLINT_VERSION=v1.16.3
 RUN curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
         -o /usr/local/bin/hadolint                                                                            \
     && chmod +x /usr/local/bin/hadolint
@@ -64,8 +63,6 @@ COPY --chown=1000 attack/ ./attack/
 
 USER ${lint_user}
 
-RUN ls -lasph
-
 # Lint Dockerfiles
 RUN hadolint Dockerfile            \
     &&  hadolint attack/Dockerfile \
@@ -80,6 +77,7 @@ FROM debian:buster-slim AS build-and-test
 
 RUN apt-get update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    awscli                                                                       \
     build-essential                                                              \
     ca-certificates                                                              \
     git                                                                          \
@@ -135,21 +133,21 @@ RUN make test
 #------------------#
 FROM debian:buster-slim
 
-RUN apt update                                                               \
-    && DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends \
-    awscli                                                                   \
-    bash                                                                     \
-    bash-completion                                                          \
-    bzip2                                                                    \
-    ca-certificates                                                          \
-    curl                                                                     \
-    file                                                                     \
-    gettext-base                                                             \
-    gnupg                                                                    \
-    golang                                                                   \
-    lsb-release                                                              \
-    make                                                                     \
-    openssh-client                                                           \
+RUN apt-get update                                                               \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    awscli                                                                       \
+    bash                                                                         \
+    bash-completion                                                              \
+    bzip2                                                                        \
+    ca-certificates                                                              \
+    curl                                                                         \
+    file                                                                         \
+    gettext-base                                                                 \
+    gnupg                                                                        \
+    golang                                                                       \
+    lsb-release                                                                  \
+    make                                                                         \
+    openssh-client                                                               \
  && rm -rf /var/lib/apt/lists/*
 
 # Add login message
