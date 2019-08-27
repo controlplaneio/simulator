@@ -47,9 +47,10 @@ docker-build: ## Builds the launch container
 .PHONY: docker-test
 docker-test: docker-build ## Run the tests
 	@docker run                                                         \
-		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws                  \
+		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws                \
+		--entrypoint goss                                                 \
 		--rm -t $(CONTAINER_NAME_LATEST)                                  \
-		goss validate
+		validate
 
 # --- Setup environment
 
