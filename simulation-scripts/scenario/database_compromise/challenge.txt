@@ -1,16 +1,5 @@
-Welcome to the database compromise challenge!
+Task1: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.  This
+could potentially lead to the expose of sensitive data in the attached databases.  Demonstrate whether this is possible
+by retrieving x data from the database.
 
-To Start:
-1. ssh -i <path to private key> root@<master host>
-
-2. Get the name of the jenkins pod in the data namespace:
-kubectl get po -n data
-
-3. Exec into it
-kubectl exec -ti <pod name> bash -c jenkins -n data
-
-Your cake decorating business is failing, and it's certainly due to a rival competitor. You have managed to find your way into their proxy container. Gain access to their database, to wreck havoc in their stock repetoire. (get the password)
-
-For the purpose of the exercise, pretend that you have breached your way into jenkins (without the use of kubectl).
-- You may not `exit` the container or return to the host
-- You may not use `kubectl`
+Task 2: Update the deployment to prevent this issue from occuring.
