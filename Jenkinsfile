@@ -23,9 +23,9 @@ pipeline {
 
   environment {
     ENVIRONMENT = 'ops'
-      DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
-      AWS_REGION = "eu-west-1"
-      AWS_DEFAULT_REGION = "eu-west-1"
+    DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
+    AWS_REGION = "eu-west-1"
+    AWS_DEFAULT_REGION = "eu-west-1"
   }
 
   stages {
@@ -49,7 +49,7 @@ pipeline {
 
       steps {
         ansiColor('xterm') {
-          sh 'make docker-test'
+          sh 'env && make docker-test'
         }
       }
     }
