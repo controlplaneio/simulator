@@ -24,6 +24,9 @@ pipeline {
   environment {
     ENVIRONMENT = 'ops'
     DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
+    TMP_AWS_CREDENTIALS = credentials("${ENVIRONMENT}_aws_credentials")
+    AWS_ACCESS_KEY_ID = "${TMP_AWS_CREDENTIALS_USR}"
+    AWS_SECRET_ACCESS_KEY = "${TMP_AWS_CREDENTIALS_PSW}"
     AWS_REGION = "eu-west-1"
     AWS_DEFAULT_REGION = "eu-west-1"
   }
