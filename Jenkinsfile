@@ -14,7 +14,7 @@ pipeline {
       failure {
         emailext (
             subject: "Simulator build on '${env.GIT_BRANCH} branch failed",
-            body: "<p>Simulator build failed.</p> <ul><li>Branch: '${env.GIT_BRANCH}'</li><li>Commit: '${env.GIT_COMMIT}'</li><li>Build No: '${env.BUILD_NUMBER}'</li><ul><p>${env.CHANGES}</p><p>n${BUILD_LOG, maxLines=1000, escapeHtml=false}</p>",
+            body: "<p>Simulator build failed.</p> <ul><li>Branch: '${env.GIT_BRANCH}'</li><li>Commit: '${env.GIT_COMMIT}'</li><li>Build No: '${env.BUILD_NUMBER}'</li><ul><p>${env.CHANGES}</p><p>n${env.BUILD_LOG, maxLines=1000, escapeHtml=false}</p>",
             to: "raoul@control-plane.io",
             from: "jenkins@control-plane.io"
             )
