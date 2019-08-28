@@ -52,7 +52,7 @@ pipeline {
 
       steps {
         ansiColor('xterm') {
-          sh 'env && make docker-test'
+          sh 'make docker-test'
         }
       }
     }
