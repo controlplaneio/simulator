@@ -15,6 +15,8 @@ namespace eval ::simulator::test {
     set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
     set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
     set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
+    set env(AWS_REGION) "eu-west-1"
+    set env(AWS_DEFAULT_REGION) "eu-west-1"
   }
 
   variable AFTER {
