@@ -13,9 +13,9 @@ pipeline {
     post {
       failure {
         emailext (
-            subject: "Simulator build on '${env.GIT_BRANCH} branch failed",
-            body: "<p>Simulator build failed.</p> <ul><li>Branch: '${env.GIT_BRANCH}'</li><li>Commit: '${env.GIT_COMMIT}'</li><li>Build No: '${env.BUILD_NUMBER}'</li><ul><p>${env.CHANGES}</p><p>n${currentBuild.rawBuild.getLog(100)}</p>",
-            to: "raoul@control-plane.io",
+            subject: "Simulator build failed:  '${env.BUILD_NUMBER}'",
+            body: "${currentBuild.rawBuild.getLog(100)}",
+            to: "kubernetes-simulator-build-notifications@googlegroups.com",
             from: "jenkins@control-plane.io"
             )
       }
