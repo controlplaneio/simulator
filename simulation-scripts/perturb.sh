@@ -184,10 +184,12 @@ run_scenario() {
 get_containers() {
   sleep 30
   local QUERY_DOCKER="docker ps"
-  local TMP_FILE="/tmp/docker-"
+  local TMP_FILE="/app/tmp/docker-"
   local SLAVE_1
   local SLAVE_2
   local MASTER_1
+
+  [ ! -d /app/tmp ] && mkdir -p /app/tmp
 
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" > "${TMP_FILE}"master
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1

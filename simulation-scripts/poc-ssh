@@ -24,6 +24,7 @@ belowDir=$(echo ${dirName} | sed -e 's/simulation-scripts//g')
 scenarioDir="${dirName}/scenario/$1"
 configFile=${scenarioDir}/MANIFEST.yaml
 challenge="${scenarioDir}/challenge.txt"
+tmpDir="/app/tmp"
 
 [ ! -d "${scenarioDir}" ] && { echo "Scenario directory not found, check name"; exit 1; }
 [ ! -f "${configFile}" ] && { echo "Missing Manifest file, cannot continue"; exit 1; }
@@ -34,8 +35,8 @@ instanceType=$(grep instance ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 containerName=$(grep container-name ${configFile} |awk -F: '{print$2}' | sed 's/ //g')
 
 if [ "${attackType}" = "container" ]; then
-	nodeIp=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$1}')
-	dockerContainer=$(grep -h ${containerName} /tmp/docker-${instanceType}-* | grep -v pause | awk '{print$2}')
+	nodeIp=$(grep -h ${containerName} ${tmpDir}/docker-${instanceType}-* | grep -v pause | awk '{print$1}')
+	dockerContainer=$(grep -h ${containerName} ${tmpDir}/docker-${instanceType}-* | grep -v pause | awk '{print$2}')
 
 	[ -f "$challenge" ] && cat "$challenge"
 
