@@ -39,7 +39,7 @@ namespace eval ::simulator::test {
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   # TODO: (rem) Need to stub terraform output to make this pass
-  configure -skip "scenario_launch_prints_ok infra_status_prints_ok init_with_valid_bucket"
+  configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
 
   test infra_status_prints_ok {
     Test: simulator infra status
@@ -66,22 +66,20 @@ namespace eval ::simulator::test {
     Test: simulator init with valid unused bucket name
   } -body {
     spawn "./dist/simulator" "init" "-c" $TEST_CONFIG_NAME
-    exp_internal 1
-    expect {
-      "Please choose a globally unique name for an S3 bucket to store terraform state " {
-        send_user "Typing " $TEST_BUCKET_NAME
-        send $TEST_BUCKET_NAME "\r"
+
+    expect  {
+      timeout { send_user "Timed out getting S3 bucket name prompt" }
+      eof { send_user "simulator init failed" }
+      "name for an S3 bucket to store the terraform state: " {
+        send "${TEST_BUCKET_NAME}\r"
       }
     }
+
     expect {
-      "successfully created"
-    }
-    expect {
-      "Saving state bucket name to config" {
-        set result 1
-      } default {
-        set result 0
-      }
+      timeout { exp_continue }
+      eof { set result 0 }
+      "Saving state bucket name to config" { set result 1 }
+      default { set result 0 }
     }
   } -setup $BEFORE -cleanup {
     spawn aws s3 rb s3://$TEST_BUCKET_NAME --force
