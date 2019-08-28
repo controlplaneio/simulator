@@ -10,11 +10,22 @@ def getDockerImageTag() {
 pipeline {
   agent none
 
+    post {
+      failure {
+        emailext (
+            subject: "Simulator build on '${env.GIT_BRANCH} branch failed",
+            body: "<p>Simulator build failed.</p> <ul><li>Branch: '${env.GIT_BRANCH}'</li><li>Commit: '${env.GIT_COMMIT}'</li><li>Build No: '${env.BUILD_NUMBER}'</li><ul><p>${env.CHANGES}</p>",
+            to: "kubernetes-simulator-build-notifications@googlegroups.com",
+            from: "jenkins@control-plane.io"
+            )
+      }
+    }
+
   environment {
     ENVIRONMENT = 'ops'
-    DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
-    AWS_REGION = "eu-west-1"
-    AWS_DEFAULT_REGION = "eu-west-1"
+      DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
+      AWS_REGION = "eu-west-1"
+      AWS_DEFAULT_REGION = "eu-west-1"
   }
 
   stages {
@@ -23,7 +34,7 @@ pipeline {
       agent {
         docker {
           image 'docker.io/controlplane/gcloud-sdk:latest'
-          args '-v /var/run/docker.sock:/var/run/docker.sock ' +
+            args '-v /var/run/docker.sock:/var/run/docker.sock ' +
             '--user=root ' +
             '--cap-drop=ALL ' +
             '--cap-add=DAC_OVERRIDE'
@@ -32,8 +43,8 @@ pipeline {
 
       options {
         timeout(time: 15, unit: 'MINUTES')
-        retry(1)
-        timestamps()
+          retry(1)
+          timestamps()
       }
 
       steps {
