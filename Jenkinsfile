@@ -14,7 +14,7 @@ pipeline {
       failure {
         emailext (
             subject: "Simulator build failed:  '${env.BUILD_NUMBER}'",
-            body: "${currentBuild.rawBuild.getLog(100)}",
+            body: "${currentBuild.rawBuild.getLog(100).join("\n")}",
             to: "kubernetes-simulator-build-notifications@googlegroups.com",
             from: "jenkins@control-plane.io"
             )
