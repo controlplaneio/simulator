@@ -101,6 +101,11 @@ test-unit: build ## Run golang unit tests for the CLI program
 	@echo "+ $@"
 	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
+.PHONY: test-cleanup
+test-cleanup: ## cleans up automated test artefacts if you ctrl-c abort a test run
+	@aws s3 rb s3://controlplane-simulator-state-automated-test || true
+	@truncate -s 0 simulator-automated-test.yaml
+
 .PHONY: coverage
 coverage:  ## Run golang unit tests with coverage and opens a browser with the results
 	@echo "" > count.out
