@@ -13,6 +13,8 @@ pipeline {
   environment {
     ENVIRONMENT = 'ops'
     DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
+    AWS_REGION = "eu-west-1"
+    AWS_DEFAULT_REGION = "eu-west-1"
   }
 
   stages {
