@@ -89,12 +89,12 @@ test: test-unit test-acceptance ## run all tests except goss tests
 .PHONY: test-acceptance
 test-acceptance: build ## Run bats acceptance tests for the CLI program
 	@echo "+ $@"
-	./test/commands.test
+	./test/run-tests.tcl
 
 .PHONY: test
 test-smoke: build ## Run bats acceptance tests for the CLI program
 	@echo "+ $@"
-	./test/smoke.test
+	./test/smoke.expect
 
 .PHONY: test-unit
 test-unit: build ## Run golang unit tests for the CLI program

@@ -1,97 +1,94 @@
-#!/bin/sh
-# -*- tcl -*-
-# The next line is executed by /bin/sh, but not tcl \
-exec tclsh "$0" ${1+"$@"}
+package require tcltest
+package require Expect
 
-if {[lsearch [namespace children] ::tcltest] == -1} {
-  package require tcltest
+namespace eval ::simulator::test {
   namespace import ::tcltest::*
-}
 
-if {[lsearch [info commands] expect] == -1} {
-  package require Expect
-}
+  variable TEST_BUCKET_NAME "controlplane-simulator-state-automated-test"
+  # Careful if you adjust this it will be clobbered with an empty file before every test
+  variable TEST_CONFIG_NAME "simulator-automated-test.yaml"
 
-set TEST_BUCKET_NAME "controlplane-simulator-state-automated-test"
-# Careful if you adjust this it will be clobbered with an empty file before every test
-set TEST_CONFIG_NAME "simulator-automated-test.yaml"
+  variable BEFORE {
+    puts "Test setup"
+    catch { unset result }
+    close [open $TEST_CONFIG_NAME w]
+    set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
+    set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
+    set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
+  }
 
-variable BEFORE {
-  puts "Test setup"
-  catch { unset result }
-  close [open $TEST_CONFIG_NAME w]
-  set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
-  set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
-  set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
-}
+  variable AFTER {
+    puts "Test teardown"
+    unset env(SIMULATOR_SCENARIOS_DIR)
+    unset env(SIMULATOR_TF_DIR)
+    unset env(SIMULATOR_CLI_TEST_OUTPUT)
+  }
 
-variable AFTER {
-  puts "Test teardown"
-  unset env(SIMULATOR_SCENARIOS_DIR)
-  unset env(SIMULATOR_TF_DIR)
-  unset env(SIMULATOR_CLI_TEST_OUTPUT)
-}
+  test version_prints_ok {
+    Test: simulator version
+  } -body {
+    spawn "./dist/simulator" "version"
+    expect "build date" { set result 1 } default { set result 0 }
+  } -setup $BEFORE -cleanup $AFTER -result 1
 
-::tcltest::test version_prints_ok {
-  Test: simulator version
-} -body {
-  spawn "./dist/simulator" "version"
-  expect "build date" { set result 1 } default { set result 0 }
-} -setup $BEFORE -cleanup $AFTER -result 1
+  test infra_create_prints_ok {
+    Test: simulator infra create
+  } -body {
+    spawn "./dist/simulator" "infra" "create"
+    expect "testing = testing" { set result 1 } default { set result 0 }
+  } -setup $BEFORE -cleanup $AFTER -result 1
 
-::tcltest::test infra_create_prints_ok {
-  Test: simulator infra create
-} -body {
-  spawn "./dist/simulator" "infra" "create"
-  expect "testing = testing" { set result 1 } default { set result 0 }
-} -setup $BEFORE -cleanup $AFTER -result 1
+  # TODO: (rem) Need to stub terraform output to make this pass
+  configure -skip "scenario_launch_prints_ok infra_status_prints_ok init_with_valid_bucket"
 
-# TODO: (rem) Need to stub terraform output to make this pass
-::tcltest::configure -skip "scenario_launch_prints_ok infra_status_prints_ok init_with_valid_bucket"
+  test infra_status_prints_ok {
+    Test: simulator infra status
+  } -body {
+    spawn "./dist/simulator" "infra" "status"
+    expect "testing = testing" { set result 1 } default { set result 0 }
+  } -setup $BEFORE -cleanup $AFTER -result 1
 
-::tcltest::test infra_status_prints_ok {
-  Test: simulator infra status
-} -body {
-  spawn "./dist/simulator" "infra" "status"
-  expect "testing = testing" { set result 1 } default { set result 0 }
-} -setup $BEFORE -cleanup $AFTER -result 1
+  test scenario_list_prints_ok {
+    Test: simulator scenario list
+  } -body {
+    spawn "./dist/simulator" "scenario" "list"
+    expect "Scenario 1" { set result 1 } default { set result 0 }
+  } -setup $BEFORE -cleanup $AFTER -result 1
 
-::tcltest::test scenario_list_prints_ok {
-  Test: simulator scenario list
-} -body {
-  spawn "./dist/simulator" "scenario" "list"
-  expect "Scenario 1" { set result 1 } default { set result 0 }
-} -setup $BEFORE -cleanup $AFTER -result 1
+  test scenario_launch_prints_ok {
+    Test: simulator scenario launch scenario_1
+  } -body {
+    spawn "./dist/simulator" "scenario" "launch" "scenario_1"
+    expect "Scenario 1" { set result 1 } default { set result 0 }
+  } -setup $BEFORE -cleanup $AFTER -result 1
 
-::tcltest::test scenario_launch_prints_ok {
-  Test: simulator scenario launch scenario_1
-} -body {
-  spawn "./dist/simulator" "scenario" "launch" "scenario_1"
-  expect "Scenario 1" { set result 1 } default { set result 0 }
-} -setup $BEFORE -cleanup $AFTER -result 1
-
-::tcltest::test init_with_valid_bucket {
-  Test: simulator init with valid unused bucket name
-} -body {
-  spawn "./dist/simulator" "init" "-c" $TEST_CONFIG_NAME
-  expect {
-    "Please choose a globally unique name for an S3 bucket" {
-      send_user "Typing " $TEST_BUCKET_NAME
-      send $TEST_BUCKET_NAME "\r"
+  test init_with_valid_bucket {
+    Test: simulator init with valid unused bucket name
+  } -body {
+    spawn "./dist/simulator" "init" "-c" $TEST_CONFIG_NAME
+    exp_internal 1
+    expect {
+      "Please choose a globally unique name for an S3 bucket to store terraform state " {
+        send_user "Typing " $TEST_BUCKET_NAME
+        send $TEST_BUCKET_NAME "\r"
+      }
     }
-  }
-  expect {
-    "successfully created"
-  }
-  expect {
-    "Saving state bucket name to config" {
-      set result 1
-    } default {
-      set result 0
+    expect {
+      "successfully created"
     }
-  }
-} -setup $BEFORE -cleanup {
-  spawn aws s3 rb s3://$TEST_BUCKET_NAME --force
-} -result 1
+    expect {
+      "Saving state bucket name to config" {
+        set result 1
+      } default {
+        set result 0
+      }
+    }
+  } -setup $BEFORE -cleanup {
+    spawn aws s3 rb s3://$TEST_BUCKET_NAME --force
+  } -result 1
 
-::tcltest::cleanupTests 1
+  cleanupTests 1
+}
+namespace delete ::simulator::test
+
+# vim: ft=tcl
