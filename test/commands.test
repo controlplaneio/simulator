@@ -41,7 +41,7 @@ namespace eval ::simulator::test {
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   # TODO: (rem) Need to stub terraform output to make this pass
-  configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
+  configure -skip "scenario_launch_prints_ok infra_status_prints_ok init_with_valid_bucket"
 
   test infra_status_prints_ok {
     Test: simulator infra status
