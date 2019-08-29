@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 # -*- tcl -*-
 # The next line is executed by /bin/sh, but not tcl \
 exec tclsh "$0" ${1+"$@"}
@@ -8,6 +8,9 @@ namespace import ::tcltest::*
 
 ::tcltest::verbose {pass body error}
 ::tcltest::configure -testdir [file dirname [file normalize [info script]]]
+# Expect is not compatible with multi-interp so run all the tests in the same process - unfortunately this dsiables
+# test parallelism
+::tcltest::configure -singleproc
 eval ::tcltest::configure $argv
 
 # Workaround to make tcltest exit with a non-zero status code when a test fails

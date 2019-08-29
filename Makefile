@@ -26,7 +26,7 @@ all: test
 
 # --- DOCKER
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
-	docker run                                                          \
+	@docker run                                                          \
 		-h launch                                                         \
 		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
