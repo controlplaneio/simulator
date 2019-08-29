@@ -5,11 +5,9 @@ DOCKER_HUB_ORG := controlplane
 VERSION := 0.7-pre
 
 # --- Boilerplate
-
 include prelude.mk
 
 # --- Mount paths
-
 ifeq ($(AWS_SHARED_CREDENTIALS_FILE),)
 	SIMULATOR_AWS_CREDS_PATH := $(HOME)/.aws/
 else
@@ -20,11 +18,24 @@ SIMULATOR_CONFIG_FILE := $(PWD)/simulator.yaml
 SSH_CONFIG_PATH := $(HOME)/.ssh/
 
 # --- Make
-#
 .DEFAULT_GOAL := help
 
 .PHONY: all
 all: test
+
+# --- Setup and helpers
+.PHONY: setup-dev
+setup-dev: ## Initialise simulation tree with git hooks
+	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
+
+.PHONY: reset
+reset: ## Clean up files left over by simulator
+	@rm -rf ~/.ssh/cp_simulator_*
+	@git checkout simulator.yaml
+
+.PHONY: validate-requirements
+validate-requirements: ## Verify all requirements are met
+	@./scripts/validate-requirements
 
 # --- DOCKER
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
@@ -40,7 +51,6 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 		-e AWS_DEFAULT_PROFILE                                            \
 		-e AWS_SECRET_ACCESS_KEY                                          \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
-
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
@@ -61,23 +71,7 @@ docker-test: docker-build ## Run the tests
 		--rm -t $(CONTAINER_NAME_LATEST)                                  \
 		validate
 
-# --- Setup and helpers
-
-.PHONY: setup-dev
-setup-dev: ## Initialise simulation tree with git hooks
-	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
-
-.PHONY: reset
-reset: ## Clean up files left over by simulator
-	@rm -rf ~/.ssh/cp_simulator_*
-	@git checkout simulator.yaml
-
-.PHONY: validate-requirements
-validate-requirements: ## Verify all requirements are met
-	@./scripts/validate-requirements
-
 # -- SIMULATOR CLI
-
 .PHONY: dep
 dep: ## Install dependencies for other targets
 	$(GO) get github.com/robertkrimen/godocdown/godocdown 2>&1
@@ -127,7 +121,6 @@ docs: dep ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 # --- MAKEFILE HELP
-
 .PHONY: help
 help: ## parse jobs and descriptions from this Makefile
 	@set -x;
