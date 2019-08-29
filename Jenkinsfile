@@ -52,7 +52,7 @@ pipeline {
 
       steps {
         ansiColor('xterm') {
-          sh 'make docker-test'
+          sh 'mkdir -p ~/.ssh && make docker-test'
         }
       }
     }
