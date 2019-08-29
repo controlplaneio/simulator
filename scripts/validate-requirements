@@ -31,3 +31,12 @@ else
 	exit 1
 fi
 
+echo -n "Checking persistent directory exists.."
+
+if [[ -d "${HOME}"/.kubesim ]]; then
+	echo "exists"
+else
+	mkdir -p "${HOME}"/.kubesim
+	echo "created"
+fi
+

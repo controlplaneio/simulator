@@ -18,6 +18,7 @@ SIMULATOR_CONFIG_FILE := $(PWD)/simulator.yaml
 # --- AWS
 
 SSH_CONFIG_PATH := $(HOME)/.ssh/
+KUBE_SIM_TMP := $(HOME)/.kubesim/
 
 .DEFAULT_GOAL := help
 
@@ -31,6 +32,7 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
+		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                          \
 		-e AWS_ACCESS_KEY_ID                                              \
 		-e AWS_REGION                                                     \
 		-e AWS_DEFAULT_REGION                                             \

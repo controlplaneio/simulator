@@ -184,7 +184,7 @@ run_scenario() {
 get_containers() {
   sleep 30
   local QUERY_DOCKER="docker ps"
-  local TMP_FILE="/app/tmp/docker-"
+  local TMP_FILE="/home/launch/.kubesim/docker-"
   local SLAVE_1
   local SLAVE_2
   local MASTER_1

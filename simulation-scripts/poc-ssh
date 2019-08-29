@@ -24,7 +24,7 @@ belowDir=$(echo ${dirName} | sed -e 's/simulation-scripts//g')
 scenarioDir="${dirName}/scenario/$1"
 configFile=${scenarioDir}/MANIFEST.yaml
 challenge="${scenarioDir}/challenge.txt"
-tmpDir="/app/tmp"
+tmpDir="/home/launch/.kubesim"
 
 [ ! -d "${scenarioDir}" ] && { echo "Scenario directory not found, check name"; exit 1; }
 [ ! -f "${configFile}" ] && { echo "Missing Manifest file, cannot continue"; exit 1; }

@@ -167,7 +167,9 @@ COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalon
 ARG launch_user=launch
 RUN useradd -ms /bin/bash ${launch_user} \
     && mkdir /app                        \
-    && chown -R ${launch_user}:${launch_user} /app
+    && chown -R ${launch_user}:${launch_user} /app \
+    && mkdir -p /home/${launch_user}/.kubesim \
+    && chown -R ${launch_user}:${launch_user} /home/${launch_user}/.kubesim
 
 WORKDIR /app
 
