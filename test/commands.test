@@ -29,45 +29,45 @@ namespace eval ::simulator::test {
   test version_prints_ok {
     Test: simulator version
   } -body {
-    spawn "./dist/simulator" "version"
+    spawn "simulator" "version"
     expect "build date" { set result 1 } default { set result 0 }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   test infra_create_prints_ok {
     Test: simulator infra create
   } -body {
-    spawn "./dist/simulator" "infra" "create"
+    spawn "simulator" "infra" "create"
     expect "testing = testing" { set result 1 } default { set result 0 }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   # TODO: (rem) Need to stub terraform output to make this pass
-  configure -skip "scenario_launch_prints_ok infra_status_prints_ok init_with_valid_bucket"
+  configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
 
   test infra_status_prints_ok {
     Test: simulator infra status
   } -body {
-    spawn "./dist/simulator" "infra" "status"
+    spawn "simulator" "infra" "status"
     expect "testing = testing" { set result 1 } default { set result 0 }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   test scenario_list_prints_ok {
     Test: simulator scenario list
   } -body {
-    spawn "./dist/simulator" "scenario" "list"
+    spawn "simulator" "scenario" "list"
     expect "Scenario 1" { set result 1 } default { set result 0 }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   test scenario_launch_prints_ok {
     Test: simulator scenario launch scenario_1
   } -body {
-    spawn "./dist/simulator" "scenario" "launch" "scenario_1"
+    spawn "simulator" "scenario" "launch" "scenario_1"
     expect "Scenario 1" { set result 1 } default { set result 0 }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   test init_with_valid_bucket {
     Test: simulator init with valid unused bucket name
   } -body {
-    spawn "./dist/simulator" "init" "-c" $TEST_CONFIG_NAME
+    spawn "simulator" "init" "-c" $TEST_CONFIG_NAME
 
     expect  {
       timeout { send_user "Timed out getting S3 bucket name prompt" }
