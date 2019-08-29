@@ -55,7 +55,7 @@ docker-build: ## Builds the launch container
 
 .PHONY: docker-test
 docker-test: docker-build ## Run the tests
-	@mkdir -p $(SSH_CONFIG_PATH)                                        \
+	@mkdir -p $(SSH_CONFIG_PATH)
 	@docker run                                                         \
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                     \
