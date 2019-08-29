@@ -125,3 +125,4 @@ test.debug
 /test/fixtures/noop-tf-dir/settings/bastion.tfvars
 tfplan
 simulator-automated-test.yaml
+/test-ssh/
