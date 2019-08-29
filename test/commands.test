@@ -43,12 +43,12 @@ namespace eval ::simulator::test {
   # TODO: (rem) Need to stub terraform output to make this pass
   configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
 
-  test infra_status_prints_ok {
-    Test: simulator infra status
-  } -body {
-    spawn "simulator" "infra" "status"
-    expect "testing = testing" { set result 1 } default { set result 0 }
-  } -setup $BEFORE -cleanup $AFTER -result 1
+  # test infra_status_prints_ok {
+  #   Test: simulator infra status
+  # } -body {
+  #   spawn "simulator" "infra" "status"
+  #   expect "testing = testing" { set result 1 } default { set result 0 }
+  # } -setup $BEFORE -cleanup $AFTER -result 1
 
   test scenario_list_prints_ok {
     Test: simulator scenario list
@@ -57,12 +57,12 @@ namespace eval ::simulator::test {
     expect "Scenario 1" { set result 1 } default { set result 0 }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
-  test scenario_launch_prints_ok {
-    Test: simulator scenario launch scenario_1
-  } -body {
-    spawn "simulator" "scenario" "launch" "scenario_1"
-    expect "Scenario 1" { set result 1 } default { set result 0 }
-  } -setup $BEFORE -cleanup $AFTER -result 1
+  # test scenario_launch_prints_ok {
+  #   Test: simulator scenario launch scenario_1
+  # } -body {
+  #   spawn "simulator" "scenario" "launch" "scenario_1"
+  #   expect "Scenario 1" { set result 1 } default { set result 0 }
+  # } -setup $BEFORE -cleanup $AFTER -result 1
 
   test init_with_valid_bucket {
     Test: simulator init with valid unused bucket name
