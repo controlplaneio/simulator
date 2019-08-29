@@ -83,8 +83,6 @@ RUN apt-get update                                                              
     git                                                                          \
     golang                                                                       \
     openssh-client                                                               \
-    tcl                                                                          \
-    tcl-expect                                                                   \
     unzip
 
 COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
@@ -126,7 +124,7 @@ USER ${build_user}
 # Golang build and test
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
 ENV GO111MODULE=on
-RUN make test
+RUN make test-unit
 
 #------------------#
 # Launch Container #
@@ -148,6 +146,8 @@ RUN apt-get update                                                              
     lsb-release                                                                  \
     make                                                                         \
     openssh-client                                                               \
+    tcl                                                                          \
+    tcl-expect                                                                   \
  && rm -rf /var/lib/apt/lists/*
 
 # Add login message
@@ -169,13 +169,17 @@ RUN useradd -ms /bin/bash ${launch_user} \
     && mkdir /app                        \
     && chown -R ${launch_user}:${launch_user} /app
 
+# Copy acceptance and smoke tests
+COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/test/ /app/test/
+
+
 WORKDIR /app
 
 # Add terraform and perturb/scenario scripts to the image and goss.yaml to verify the container
 ARG config_file=./simulator.yaml
 COPY --chown=1000 ./terraform/ ./terraform/
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
-COPY --chown=1000 ./goss.yaml ./entrypoint.sh ${config_file} ./
+COPY --chown=1000 ./goss.yaml ./launch-entrypoint.sh ./acceptance.sh ${config_file} ./
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS

@@ -40,11 +40,11 @@ validate-requirements: ## Verify all requirements are met
 # --- DOCKER
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
 	@docker run                                                         \
-		-h launch                                                         \
-		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
-		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
-		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
-		--env-file launch-environment                                     \
+		-h launch                                                   \
+		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml             \
+		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws            \
+		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                     \
+		--env-file launch-environment                               \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
 
 .PHONY: docker-build
@@ -54,12 +54,11 @@ docker-build: ## Builds the launch container
 .PHONY: docker-test
 docker-test: docker-build ## Run the tests
 	@docker run                                                         \
-		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws                \
-		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
-		--env-file launch-environment                                     \
-		--entrypoint goss                                                 \
-		--rm -t $(CONTAINER_NAME_LATEST)                                  \
-		validate
+		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
+		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                     \
+		--env-file launch-environment                               \
+		--entrypoint ./acceptance.sh                                \
+		--rm -t $(CONTAINER_NAME_LATEST)
 
 # -- SIMULATOR CLI
 .PHONY: dep
