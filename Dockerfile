@@ -186,4 +186,4 @@ USER ${launch_user}
 
 STOPSIGNAL SIGTERM
 
-ENTRYPOINT [ "./entrypoint.sh" ]
+ENTRYPOINT [ "./launch-entrypoint.sh" ]

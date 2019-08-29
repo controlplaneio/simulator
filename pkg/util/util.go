@@ -15,8 +15,10 @@ var cache = struct {
 	homedir string
 }{}
 
-// ExpandTilde returns the fully qualified path to a file in the user's home directory. I.E. it expands a path beginning with
-// `~/`) and checks the file exists. ExpandTilde will cache the user's home directory to amortise the cost of the syscall
+// ExpandTilde returns the fully qualified path to a file in the user's home
+// directory. I.E. it expands a path beginning with `~/`) and checks the file
+// exists. ExpandTilde will cache the user's home directory to amortise the
+// cost of the syscall
 func ExpandTilde(path string) (*string, error) {
 	if len(path) == 0 || path[0:2] != "~/" {
 		return nil, errors.Errorf(`Path was empty or did not start with a tilde and a slash: "%s"`, path)
@@ -27,7 +29,8 @@ func ExpandTilde(path string) (*string, error) {
 
 	var homedir string
 
-	// Lock and read the cache to see if we already resolved the current user's home directory
+	// Lock and read the cache to see if we already resolved the current user's
+	// home directory
 	cache.RLock()
 	homedir = cache.homedir
 	cache.RUnlock()
@@ -62,12 +65,14 @@ func FileExists(path string) (bool, error) {
 	return true, err
 }
 
-// Slurp reads an entire file into a string in one operation and returns a pointer to the file's content or an error if
-// any.  Similar to `ioutil.ReadFile` but it calls `filepath.Abs` first which cleans the path and resolves relative
-// paths from the working directory.
+// Slurp reads an entire file into a string in one operation and returns a
+// pointer to the file's content or an error if any.  Similar to
+// `ioutil.ReadFile` but it calls `filepath.Abs` first which cleans the path
+// and resolves relative paths from the working directory.
 //
-// Note that this is slightly less efficient for zero-length files than `ioutil.Readfile` as it uses the default
-// read buffer size of `bytes.MinRead` internally
+// Note that this is slightly less efficient for zero-length files than
+// `ioutil.Readfile` as it uses the default read buffer size of `bytes.MinRead`
+// internally
 func Slurp(path string) (*string, error) {
 	fp, err := filepath.Abs(path)
 	if err != nil {
@@ -89,8 +94,9 @@ func Slurp(path string) (*string, error) {
 	return &output, nil
 }
 
-// MustSlurp is the panicky counterpart to Slurp. MustSlurp reads an entire file into a string in one operation and
-// returns the contents or panics if it encouters and error
+// MustSlurp is the panicky counterpart to Slurp. MustSlurp reads an entire
+// file into a string in one operation and returns the contents or panics if it
+// encouters and error
 func MustSlurp(path string) string {
 	file, err := os.Open(path)
 	if err != nil {
@@ -106,8 +112,8 @@ func MustSlurp(path string) string {
 	return string(b)
 }
 
-// MustRemove removes a file or empty directory.  MustRemove will ignore an error if the path doesn't exist or panic for
-// any other error
+// MustRemove removes a file or empty directory.  MustRemove will ignore an
+// error if the path doesn't exist or panic for any other error
 func MustRemove(path string) {
 	err := os.Remove(path)
 	if err != nil && os.IsNotExist(err) {
@@ -120,8 +126,8 @@ func MustRemove(path string) {
 	return
 }
 
-// EnsureFile checks a file exists and writes the supplied contents if not.  returns a boolean indicating whether it
-// wrote a file or not and any error
+// EnsureFile checks a file exists and writes the supplied contents if not.
+// returns a boolean indicating whether it wrote a file or not and any error
 func EnsureFile(path, contents string) (bool, error) {
 	exists, err := FileExists(path)
 	if err != nil || exists {
@@ -147,8 +153,8 @@ func EnsureFile(path, contents string) (bool, error) {
 	return true, nil
 }
 
-// OverwriteFile writes the supplied contents overwriting the path if it already exists.  It returns an error if any
-// occurred
+// OverwriteFile writes the supplied contents overwriting the path if it
+// already exists.  It returns an error if any occurred
 func OverwriteFile(path, contents string) error {
 	file, err := os.Create(path)
 	if err != nil {
@@ -169,8 +175,9 @@ func OverwriteFile(path, contents string) error {
 	return nil
 }
 
-// EnvOrDefault tries to read an environment variable with the supplied key and returns its value.  EnvOrDefault returns
-// a default value if it is empty or unset
+// EnvOrDefault tries to read an environment variable with the supplied key and
+// returns its value.  EnvOrDefault returns a default value if it is empty or
+// unset
 func EnvOrDefault(key, def string) string {
 	var d = os.Getenv(key)
 	if d == "" {

@@ -7,8 +7,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// Launch runs perturb.sh to setup a scenario with the supplied `id` assuming the infrastructure has been created.
-// Returns an error if the infrastructure is not ready or something goes wrong
+// Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
+// the infrastructure has been created.  Returns an error if the infrastructure
+// is not ready or something goes wrong
 func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id string) error {
 	logger.Debugf("Loading scenario manifest from %s", scenariosDir)
 	manifest, err := scenario.LoadManifest(scenariosDir)

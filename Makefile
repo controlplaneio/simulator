@@ -1,12 +1,13 @@
+# --- Project configuration
 NAME := simulator
 GITHUB_ORG := controlplaneio
 DOCKER_HUB_ORG := controlplane
 VERSION := 0.7-pre
 
+# --- Boilerplate
 include prelude.mk
 
-# --- AWS
-
+# --- Mount paths
 ifeq ($(AWS_SHARED_CREDENTIALS_FILE),)
 	SIMULATOR_AWS_CREDS_PATH := $(HOME)/.aws/
 else
@@ -14,33 +15,39 @@ else
 endif
 
 SIMULATOR_CONFIG_FILE := $(PWD)/simulator.yaml
-
-# --- AWS
-
 SSH_CONFIG_PATH := $(HOME)/.ssh/
 KUBE_SIM_TMP := $(HOME)/.kubesim/
 
+# --- Make
 .DEFAULT_GOAL := help
 
 .PHONY: all
 all: test
 
+# --- Setup and helpers
+.PHONY: setup-dev
+setup-dev: ## Initialise simulation tree with git hooks
+	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
+
+.PHONY: reset
+reset: ## Clean up files left over by simulator
+	@rm -rf ~/.ssh/cp_simulator_*
+	@git checkout simulator.yaml
+
+.PHONY: validate-requirements
+validate-requirements: ## Verify all requirements are met
+	@./scripts/validate-requirements
+
 # --- DOCKER
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
-	docker run                                                          \
+	@docker run                                                         \
 		-h launch                                                         \
 		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                          \
-		-e AWS_ACCESS_KEY_ID                                              \
-		-e AWS_REGION                                                     \
-		-e AWS_DEFAULT_REGION                                             \
-		-e AWS_PROFILE                                                    \
-		-e AWS_DEFAULT_PROFILE                                            \
-		-e AWS_SECRET_ACCESS_KEY                                          \
+		--env-file launch-environment                                     \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
-
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
@@ -51,37 +58,12 @@ docker-test: docker-build ## Run the tests
 	@docker run                                                         \
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws                \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
-		-e AWS_ACCESS_KEY_ID                                              \
-		-e AWS_REGION                                                     \
-		-e AWS_DEFAULT_REGION                                             \
-		-e AWS_PROFILE                                                    \
-		-e AWS_DEFAULT_PROFILE                                            \
-		-e AWS_SECRET_ACCESS_KEY                                          \
+		--env-file launch-environment                                     \
 		--entrypoint goss                                                 \
 		--rm -t $(CONTAINER_NAME_LATEST)                                  \
 		validate
 
-# --- Setup environment
-
-.PHONY: setup-dev
-setup-dev: ## Initialise simulation tree with git hooks
-	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
-
-# -- Reset environment
-
-.PHONY: reset
-reset: ## Clean up files left over by simulator
-	@rm -rf ~/.ssh/cp_simulator_*
-	@git checkout simulator.yaml
-
-# -- Check build requirements are met
-
-.PHONY: validate-requirements
-validate-requirements: ## Verify all requirements are met
-	@./scripts/validate-requirements
-
 # -- SIMULATOR CLI
-
 .PHONY: dep
 dep: ## Install dependencies for other targets
 	$(GO) get github.com/robertkrimen/godocdown/godocdown 2>&1
@@ -96,12 +78,12 @@ build: dep ## Run golang build for the CLI program
 test: test-unit test-acceptance ## run all tests except goss tests
 
 .PHONY: test-acceptance
-test-acceptance: build ## Run bats acceptance tests for the CLI program
+test-acceptance: build ## Run tcl acceptance tests for the CLI program
 	@echo "+ $@"
 	./test/run-tests.tcl
 
 .PHONY: test
-test-smoke: build ## Run bats acceptance tests for the CLI program
+test-smoke: build ## Run expect smoke test to check happy path works end-to-end
 	@echo "+ $@"
 	./test/smoke.expect
 
@@ -111,18 +93,18 @@ test-unit: build ## Run golang unit tests for the CLI program
 	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 .PHONY: test-cleanup
-test-cleanup: ## cleans up automated test artefacts if you ctrl-c abort a test run
+test-cleanup: ## cleans up automated test artefacts if e.g. you ctrl-c abort a test run
 	@aws s3 rb s3://controlplane-simulator-state-automated-test || true
-	@truncate -s 0 simulator-automated-test.yaml
+	@truncate -s 0 simulator-automated-test.yaml || true
 
 .PHONY: coverage
-coverage:  ## Run golang unit tests with coverage and opens a browser with the results
+test-coverage:  ## Run golang unit tests with coverage and opens a browser with the results
 	@echo "" > count.out
 	$(GO) test -covermode=count -coverprofile=count.out ./...
 	$(GO) tool cover -html=count.out
 
-.PHONY: doc
-doc: dep ## Generate documentation
+.PHONY: docs
+docs: dep ## Generate documentation
 	@echo "+ $@"
 	godocdown pkg/scenario > docs/api/scenario.md
 	godocdown pkg/simulator > docs/api/simulator.md
@@ -131,7 +113,6 @@ doc: dep ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 # --- MAKEFILE HELP
-
 .PHONY: help
 help: ## parse jobs and descriptions from this Makefile
 	@set -x;

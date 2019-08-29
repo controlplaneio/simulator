@@ -12,14 +12,15 @@ import (
 type Manifest struct {
 	// Name - the name of the manifest e.g. scenarios
 	Name string `yaml:"name"`
-	// Kind - unique name and version string idenitfying the schema of this document
+	// Kind - unique name and version string idenitfying the schema of this
+	// document
 	Kind string `yaml:"kind"`
 	// Scenarios - a list of Scenario structs representing the scenarios
 	Scenarios []Scenario `yaml:"scenarios"`
 }
 
-// Contains returns a boolean indicating whether a ScenarioManifest contains a Scenario
-// with the supplied id
+// Contains returns a boolean indicating whether a ScenarioManifest contains a
+// Scenario with the supplied id
 func (m *Manifest) Contains(id string) bool {
 	for _, a := range m.Scenarios {
 		if a.Id == id {

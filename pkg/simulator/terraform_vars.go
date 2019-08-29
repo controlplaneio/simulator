@@ -9,7 +9,8 @@ import (
 	"strings"
 )
 
-// TfVars struct representing the input variables for terraform to create the infrastructure
+// TfVars struct representing the input variables for terraform to create the
+// infrastructure
 type TfVars struct {
 	PublicKey  string
 	AccessCIDR string

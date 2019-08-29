@@ -13,7 +13,8 @@ type PerturbOptions struct {
 	ScenarioName string
 }
 
-// MakePerturbOptions takes a TerraformOutput and a path to a scenario and makes a struct of PerturbOptions
+// MakePerturbOptions takes a TerraformOutput and a path to a scenario and
+// makes a struct of PerturbOptions
 func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 	po := PerturbOptions{
 		Master: net.ParseIP(tfo.MasterNodesPrivateIP.Value[0]),
@@ -25,7 +26,8 @@ func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 	}
 
 	// TODO: (rem) just use the path and get perturb to do the right thing
-	// BUG: (rem) pertrb should be able to handle an arbitrary path to a scenario dir
+	// BUG: (rem) pertrb should be able to handle an arbitrary path to a scenario
+	// dir
 	startOfScenarioName := strings.LastIndex(path, "/") + 1
 
 	po.ScenarioName = path[startOfScenarioName:]
@@ -33,8 +35,8 @@ func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 	return po
 }
 
-// ToArguments converts a PerturbOptions struct into a slice of strings containing the command line options to pass to
-// perturb
+// ToArguments converts a PerturbOptions struct into a slice of strings
+// containing the command line options to pass to perturb
 func (po *PerturbOptions) ToArguments() []string {
 	arguments := []string{"--master", po.Master.String()}
 	arguments = append(arguments, "--slaves")

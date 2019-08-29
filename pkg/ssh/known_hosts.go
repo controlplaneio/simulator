@@ -6,8 +6,9 @@ import (
 	"os"
 )
 
-// EnsureKnownHosts scans the bastion host for its SSH keys and writes them to a custom known hosts location for
-// promptless interaction with the infrastructure.  Return an error if any occurred
+// EnsureKnownHosts scans the bastion host for its SSH keys and writes them to
+// a custom known hosts location for promptless interaction with the
+// infrastructure.  Return an error if any occurred
 func EnsureKnownHosts(bastion string) error {
 	hostkeys, err := KeyScan(bastion)
 	if err != nil {
@@ -27,8 +28,9 @@ func EnsureKnownHosts(bastion string) error {
 	return nil
 }
 
-// KeyScan runs ssh-keyscan silently against the provided bastion address. It returns a pointer to a string containing
-// its buffered stdout or an error if any occurred
+// KeyScan runs ssh-keyscan silently against the provided bastion address. It
+// returns a pointer to a string containing its buffered stdout or an error if
+// any occurred
 func KeyScan(bastion string) (*string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
