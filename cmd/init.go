@@ -44,13 +44,13 @@ func newInitCommand() *cobra.Command {
 				bucket = strings.TrimSpace(bucket)
 
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
-				err = simulator.CreateRemoteStateBucket(logger, bucket)
-				if err != nil && strings.HasPrefix(errors.Cause(err).Error(), "BucketAlreadyOwnedByYou") {
-					logger.Infof("%s already exists and you own it", bucket)
-					saveBucketConfig(logger, bucket)
-					return nil
-				}
-				if err != nil {
+				if err = simulator.CreateRemoteStateBucket(logger, bucket); err != nil {
+					if strings.HasPrefix(errors.Cause(err).Error(), "BucketAlreadyOwnedByYou") {
+						logger.Infof("%s already exists and you own it", bucket)
+						saveBucketConfig(logger, bucket)
+						return nil
+					}
+
 					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
 				}
 
