@@ -17,10 +17,12 @@ const (
 	timeout = 10 * time.Minute
 )
 
-// GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls back to reading the keyfile directly
-// in case of a missing SSH_AUTH_SOCK env var or an error dialing the unix socket
+// GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls
+// back to reading the keyfile directly in case of a missing SSH_AUTH_SOCK env
+// var or an error dialing the unix socket
 func GetAuthMethods() ([]ssh.AuthMethod, error) {
-	// Check we have the ssh-agent AUTH SOCK and short circuit if we don't - just create a signer from the keyfile
+	// Check we have the ssh-agent AUTH SOCK and short circuit if we don't - just
+	// create a signer from the keyfile
 	authSock := os.Getenv("SSH_AUTH_SOCK")
 	if authSock == "" {
 		keyFileAuth, err := PrivateKeyFile()
@@ -56,8 +58,8 @@ func GetAuthMethods() ([]ssh.AuthMethod, error) {
 	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
 }
 
-// SSH establishes an interactive Secure Shell session to the supplied host as user ubuntu and on port 22. SSH uses
-// ssh-agent to get the key to use
+// SSH establishes an interactive Secure Shell session to the supplied host as
+// user ubuntu and on port 22. SSH uses ssh-agent to get the key to use
 func SSH(host string) error {
 	port := "22"
 	user := "ubuntu"
@@ -96,7 +98,8 @@ func SSH(host string) error {
 	return StartInteractiveSSHShell(&cfg, "tcp", host, port)
 }
 
-// StartInteractiveSSHShell starts an interactive SSH shell with the supplied ClientConfig
+// StartInteractiveSSHShell starts an interactive SSH shell with the supplied
+// ClientConfig
 func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string) error {
 	var (
 		session *ssh.Session
@@ -153,9 +156,11 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	return session.Wait()
 }
 
-// See http://www.tldp.org/HOWTO/Text-Terminal-HOWTO-7.html#ss7.2 for more info on pseudo terminals
+// See http://www.tldp.org/HOWTO/Text-Terminal-HOWTO-7.html#ss7.2 for more info
+// on pseudo terminals
 func setupPty(stdinFd int, session *ssh.Session) error {
-	// https://tools.ietf.org/html/rfc4254#section-8 for more information about terminal modes
+	// https://tools.ietf.org/html/rfc4254#section-8 for more information about
+	// terminal modes
 	modes := ssh.TerminalModes{
 		ssh.ECHO:          1,     // enable echoing of characters as you type
 		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud

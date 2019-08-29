@@ -59,6 +59,7 @@ the path doesn't exist or panic for any other error
 ```go
 func MustResolve(wd string) string
 ```
+MustResolve returns an absolute path or panics if the underlying sys call fails
 
 #### func  MustSlurp
 

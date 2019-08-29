@@ -2,7 +2,7 @@
 --
     import "."
 
-Package scnenario is a package for loading scenario manifests from a
+Package scenario is a package for loading scenario manifests from a
 `scenarios.yaml` file and accessing and manipulating them programmatically.
 
 ## Usage
@@ -13,7 +13,8 @@ Package scnenario is a package for loading scenario manifests from a
 type Manifest struct {
 	// Name - the name of the manifest e.g. scenarios
 	Name string `yaml:"name"`
-	// Kind - unique name and version string idenitfying the schema of this document
+	// Kind - unique name and version string idenitfying the schema of this
+	// document
 	Kind string `yaml:"kind"`
 	// Scenarios - a list of Scenario structs representing the scenarios
 	Scenarios []Scenario `yaml:"scenarios"`

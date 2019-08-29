@@ -46,7 +46,8 @@ func newCmdRoot() *cobra.Command {
 		"Path to a directory containing the infrastructure scripts")
 	viper.BindPFlag("tf-dir", rootCmd.PersistentFlags().Lookup("tf-dir"))
 
-	// TODO: (rem) this is also used to locate the perturb.sh script which may be subsumed by this app
+	// TODO: (rem) this is also used to locate the perturb.sh script which may be
+	// subsumed by this app
 	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
 		"Path to a directory containing a scenario manifest")
 	viper.BindPFlag("scenarios-dir", rootCmd.PersistentFlags().Lookup("scenarios-dir"))
@@ -65,7 +66,8 @@ func initConfig() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		// todo(ajm) this errors if not in the same dir as `simulator.yaml`. Move those vars here?
+		// todo(ajm) this errors if not in the same dir as `simulator.yaml`. Move
+		// those vars here?
 		panic(errors.Wrapf(err, "Error reading config file"))
 	}
 

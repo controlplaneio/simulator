@@ -5,7 +5,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DetectPublicIP detects your public IP address and returns a pointer to a string containing the IP address or any error
+// DetectPublicIP detects your public IP address and returns a pointer to a
+// string containing the IP address or any error
 func DetectPublicIP() (*string, error) {
 	consensus := externalip.DefaultConsensus(nil, nil)
 	ip, err := consensus.ExternalIP()

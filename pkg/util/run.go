@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 )
 
+// MustResolve returns an absolute path or panics if the underlying sys call
+// fails
 func MustResolve(wd string) string {
-	// only errors if syscall to get parent's wd fails in which case something
-	// really bad happened
 	absPath, err := filepath.Abs(wd)
 	if err != nil {
 		panic(err)
@@ -21,8 +21,9 @@ func MustResolve(wd string) string {
 	return absPath
 }
 
-// Run runs a child process and returns its buffer stdout.  Run also tees the output to stdout of this process, `env` will
-// be appended to the current environment.  `wd` is the working directory for the child
+// Run runs a child process and returns its buffer stdout.  Run also tees the
+// output to stdout of this process, `env` will be appended to the current
+// environment.  `wd` is the working directory for the child
 func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 	child := exec.Command(cmd, args...)
 

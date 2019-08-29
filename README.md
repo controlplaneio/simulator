@@ -96,20 +96,21 @@ make setup-dev
 Development targets are specified in the [Makefile](./Makefile).
 
 <pre>
-run                   Run the simulator - the build stage of the container runs all the cli tests
-docker-build          Builds the launch container
-docker-test           Run the tests
 setup-dev             Initialise simulation tree with git hooks
 reset                 Clean up files left over by simulator
 validate-requirements  Verify all requirements are met
+run                   Run the simulator - the build stage of the container runs all the cli tests
+docker-build          Builds the launch container
+docker-test           Run the tests
 dep                   Install dependencies for other targets
 build                 Run golang build for the CLI program
 test                  run all tests except goss tests
-test-acceptance       Run bats acceptance tests for the CLI program
-test-smoke            Run bats acceptance tests for the CLI program
+test-acceptance       Run tcl acceptance tests for the CLI program
+test-smoke            Run expect smoke test to check happy path works end-to-end
 test-unit             Run golang unit tests for the CLI program
-coverage              Run golang unit tests with coverage and opens a browser with the results
-doc                   Generate documentation
+test-cleanup          cleans up automated test artefacts if e.g. you ctrl-c abort a test run
+test-coverage         Run golang unit tests with coverage and opens a browser with the results
+docs                  Generate documentation
 </pre>
 
 ## Architecture

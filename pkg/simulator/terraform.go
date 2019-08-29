@@ -7,8 +7,9 @@ import (
 	"go.uber.org/zap"
 )
 
-// PrepareTfArgs takes a string with the terraform command desired and returns a slice of strings
-// containing the complete list of arguments including the command to use when exec'ing terraform
+// PrepareTfArgs takes a string with the terraform command desired and returns
+// a slice of strings containing the complete list of arguments including the
+// command to use when exec'ing terraform
 func PrepareTfArgs(cmd string) []string {
 	arguments := []string{cmd}
 
@@ -41,7 +42,8 @@ func Terraform(wd, cmd, bucket string) (*string, error) {
 	return util.Run(wd, env, "terraform", args...)
 }
 
-// InitIfNeeded checks the IP address and SSH key and updates the tfvars if needed
+// InitIfNeeded checks the IP address and SSH key and updates the tfvars if
+// needed
 func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket string) error {
 	logger.Debug("Terraform.InitIfNeeded() start")
 
@@ -85,7 +87,8 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket string) error {
 
 // -#-
 
-// Create runs terraform init, plan, apply to create the necessary infrastructure to run scenarios
+// Create runs terraform init, plan, apply to create the necessary
+// infrastructure to run scenarios
 func Create(logger *zap.SugaredLogger, tfDir, bucket string) error {
 	err := InitIfNeeded(logger, tfDir, bucket)
 
@@ -104,7 +107,8 @@ func Create(logger *zap.SugaredLogger, tfDir, bucket string) error {
 	return err
 }
 
-// Status calls terraform output to get the state of the infrastruture and parses the output for programmatic use
+// Status calls terraform output to get the state of the infrastruture and
+// parses the output for programmatic use
 func Status(logger *zap.SugaredLogger, tfDir, bucket string) (*TerraformOutput, error) {
 	err := InitIfNeeded(logger, tfDir, bucket)
 	if err != nil {

@@ -10,7 +10,8 @@ import (
 	"strings"
 )
 
-// Base64PrivateKey returns a pointer to a string containing the base64 encoded private key or an error
+// Base64PrivateKey returns a pointer to a string containing the base64 encoded
+// private key or an error
 func Base64PrivateKey(name string) (*string, error) {
 	keypath, err := util.ExpandTilde(name)
 	if err != nil {
@@ -27,7 +28,8 @@ func Base64PrivateKey(name string) (*string, error) {
 	return &encodedkey, nil
 }
 
-// PublicKey reads the public key and return a pointer to a string with its contents or any error
+// PublicKey reads the public key and return a pointer to a string with its
+// contents or any error
 func PublicKey() (*string, error) {
 	publicKeyPath, err := util.ExpandTilde(PublicKeyPath)
 	if err != nil {
@@ -43,8 +45,9 @@ func PublicKey() (*string, error) {
 	return &ret, nil
 }
 
-// GenerateKey runs ssh-keygen silently to create an SSH key with the same provided using preconfigured settings
-// It returns a pointer to a string containing the buffered stdout or an error if any occurred
+// GenerateKey runs ssh-keygen silently to create an SSH key with the same
+// provided using preconfigured settings It returns a pointer to a string
+// containing the buffered stdout or an error if any occurred
 func GenerateKey(privatekeypath string) (*string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
@@ -60,8 +63,8 @@ func GenerateKey(privatekeypath string) (*string, error) {
 	return out, err
 }
 
-// EnsureKey ensures there is a well-known simulator key available and returns true if it generates a new one or an
-// error if any
+// EnsureKey ensures there is a well-known simulator key available and returns
+// true if it generates a new one or an error if any
 func EnsureKey() (bool, error) {
 	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
@@ -86,8 +89,8 @@ func EnsureKey() (bool, error) {
 	return true, nil
 }
 
-// PrivateKeyFile reads the private key at the path supplied and returns the ssh.AuthMethod to use or an error if any
-// occurred
+// PrivateKeyFile reads the private key at the path supplied and returns the
+// ssh.AuthMethod to use or an error if any occurred
 func PrivateKeyFile() (ssh.AuthMethod, error) {
 	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
