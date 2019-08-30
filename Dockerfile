@@ -172,7 +172,7 @@ RUN useradd -ms /bin/bash ${launch_user} \
     && chown -R ${launch_user}:${launch_user} /home/${launch_user}/.kubesim
 
 # Copy acceptance and smoke tests
-COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/test/ /app/test/
+COPY --chown=1000 --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/test/ /app/test/
 
 
 WORKDIR /app
