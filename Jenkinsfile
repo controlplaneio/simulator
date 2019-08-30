@@ -52,7 +52,10 @@ pipeline {
 
       steps {
         ansiColor('xterm') {
-          sh 'make docker-test'
+          sh """#!/bin/bash
+            ls -lasp
+            make docker-test
+          """
         }
       }
     }
