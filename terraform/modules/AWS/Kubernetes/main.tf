@@ -8,7 +8,7 @@ resource "aws_instance" "simulator_master_instances" {
   subnet_id                   = "${var.private_subnet_id}"
   user_data                   = "${element(data.template_file.master_cloud_config.*.rendered, count.index)}"
   iam_instance_profile        = "${var.iam_instance_profile_id}"
-  tags                        = "${merge(var.default_tags, map("Name", "Kubernetes Master"))}"
+  tags                        = "${merge(var.default_tags, map("Name", "Simulator Kubernetes Master"))}"
 }
 
 resource "aws_instance" "simulator_node_instances" {
@@ -22,5 +22,5 @@ resource "aws_instance" "simulator_node_instances" {
   user_data                   = "${element(data.template_file.node_cloud_config.*.rendered, count.index)}"
   depends_on                  = ["aws_instance.simulator_master_instances"]
   iam_instance_profile        = "${var.iam_instance_profile_id}"
-  tags                        = "${merge(var.default_tags, map("Name", "Kubernetes Node"))}"
+  tags                        = "${merge(var.default_tags, map("Name", "Simulator Kubernetes Node"))}"
 }

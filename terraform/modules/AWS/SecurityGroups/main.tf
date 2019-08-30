@@ -24,7 +24,7 @@ resource "aws_security_group" "simulator_bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(var.default_tags, map("Name", "Bastion Security Group"))}"
+  tags = "${merge(var.default_tags, map("Name", "Simulator Bastion Security Group"))}"
 }
 
 // Private subnet security group
@@ -56,7 +56,7 @@ resource "aws_security_group" "simulator_controlplane_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(var.default_tags, map("Name", "ControlPlane Security Group"))}"
+  tags = "${merge(var.default_tags, map("Name", "simulator Controlplane Security Group"))}"
 }
 
 
