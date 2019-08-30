@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "Running acceptance tests"
-ls -lasp
+mkdir -p ~/.ssh
 goss validate
 ./test/run-tests.tcl
 

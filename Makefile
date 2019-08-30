@@ -55,14 +55,8 @@ docker-build: ## Builds the launch container
 
 .PHONY: docker-test
 docker-test: docker-build ## Run the tests
-	@echo "Running make docker-test"
-	@mkdir -p ./test-ssh
-	@chmod 777 -R ./test-ssh
-	@chown 1000 ./test-ssh
-	@ls -lasp
 	@docker run                                                         \
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
-		-v $(shell pwd)/test-ssh/:/home/launch/.ssh                  \
 		--env-file launch-environment                               \
 		--entrypoint ./acceptance.sh                                \
 		--rm -t $(CONTAINER_NAME_LATEST)

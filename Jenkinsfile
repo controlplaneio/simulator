@@ -53,7 +53,6 @@ pipeline {
       steps {
         ansiColor('xterm') {
           sh """#!/bin/bash
-            ls -lasp
             make docker-test
           """
         }
