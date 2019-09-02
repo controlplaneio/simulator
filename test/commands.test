@@ -19,22 +19,8 @@ namespace eval ::simulator::test {
     unset env(SIMULATOR_CLI_TEST_OUTPUT)
   }
 
-  test infra_create_prints_ok {
-    Test: simulator infra create
-  } -body {
-    spawn "simulator" "infra" "create"
-    expect "testing = testing" { set result 1 } default { set result 0 }
-  } -setup $BEFORE -cleanup $AFTER -result 1
-
   # TODO: (rem) Need to stub terraform output to make this pass
   configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
-
-  # test infra_status_prints_ok {
-  #   Test: simulator infra status
-  # } -body {
-  #   spawn "simulator" "infra" "status"
-  #   expect "testing = testing" { set result 1 } default { set result 0 }
-  # } -setup $BEFORE -cleanup $AFTER -result 1
 
   test scenario_list_prints_ok {
     Test: simulator scenario list

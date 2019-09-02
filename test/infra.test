@@ -1,0 +1,39 @@
+package require tcltest
+package require Expect
+
+namespace eval ::simulator::test {
+  namespace import ::tcltest::*
+
+  variable BEFORE {
+    puts "Test setup"
+    catch { unset result }
+    set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
+    set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
+  }
+
+  variable AFTER {
+    puts "Test teardown"
+    unset env(SIMULATOR_TF_DIR)
+    unset env(SIMULATOR_CLI_TEST_OUTPUT)
+  }
+
+  test infra_create_prints_ok {
+    Test: simulator infra create
+  } -body {
+    spawn "simulator" "infra" "create"
+    expect "testing = testing" { set result 1 } default { set result 0 }
+  } -setup $BEFORE -cleanup $AFTER -result 1
+
+  # test infra_status_prints_ok {
+  #   Test: simulator infra status
+  # } -body {
+  #   spawn "simulator" "infra" "status"
+  #   expect "testing = testing" { set result 1 } default { set result 0 }
+  # } -setup $BEFORE -cleanup $AFTER -result 1
+
+
+  cleanupTests 1
+}
+
+# vim: ft=tcl
+
