@@ -17,6 +17,7 @@ endif
 SIMULATOR_CONFIG_FILE := $(PWD)/simulator.yaml
 SSH_CONFIG_PATH := $(HOME)/.ssh/
 KUBE_SIM_TMP := $(HOME)/.kubesim/
+HOST := $(shell hostname)
 
 # --- Make
 .DEFAULT_GOAL := help
@@ -72,11 +73,15 @@ build: dep ## Run golang build for the CLI program
 	@echo "+ $@"
 	$(GO) build -a -o ./dist/simulator
 
+.PHONY: is-in-launch-container
+is-in-launch-container: 
+	[ $(HOST) == "launch" ]
+
 .PHONY: test
-test: test-unit test-acceptance ## run all tests except goss tests
+test:  test-unit test-acceptance ## run all tests except goss tests
 
 .PHONY: test-acceptance
-test-acceptance: build ## Run tcl acceptance tests for the CLI program
+test-acceptance: is-in-launch-container build ## Run tcl acceptance tests for the CLI program
 	@echo "+ $@"
 	./test/run-tests.tcl
 
@@ -87,6 +92,7 @@ test-smoke: build ## Run expect smoke test to check happy path works end-to-end
 
 .PHONY: test-unit
 test-unit: build ## Run golang unit tests for the CLI program
+	@echo "NOTE YOU SHOULD RUN THESE WITH make docker-test"
 	@echo "+ $@"
 	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
