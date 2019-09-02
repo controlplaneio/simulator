@@ -15,7 +15,6 @@ docker pull ${CONTAINER_NAME}
 
 docker run                                                          \
   -h launch                                                         \
-  -v ${SIMULATOR_CONFIG_FILE}:/app/simulator.yaml                   \
   -v ${SIMULATOR_AWS_CREDS_PATH}:/home/launch/.aws                  \
   -v ${SSH_CONFIG_PATH}:/home/launch/.ssh                           \
   -v ${KUBE_SIM_TMP}:/home/launch/.kubesim                          \
