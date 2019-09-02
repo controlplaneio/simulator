@@ -1,0 +1,71 @@
+package require tcltest
+package require Expect
+
+namespace eval ::simulator::test {
+  namespace import ::tcltest::*
+
+  variable EXISTING_TEST_BUCKET_NAME "do-not-delete-simulator-automated-test"
+  variable TEST_BUCKET_NAME "controlplane-simulator-state-automated-test"
+  # Careful if you adjust this it will be clobbered with an empty file before every test
+  variable TEST_CONFIG_NAME "simulator-automated-test.yaml"
+
+  variable BEFORE {
+    puts "Test setup"
+    catch { unset result }
+    close [open $TEST_CONFIG_NAME w]
+    set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
+    set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
+    set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
+    set env(AWS_REGION) "eu-west-1"
+    set env(AWS_DEFAULT_REGION) "eu-west-1"
+  }
+
+  test init_with_valid_bucket {
+    Test: simulator init with valid unused bucket name
+  } -body {
+    spawn "simulator" "init" "-c" $TEST_CONFIG_NAME
+
+    expect  {
+      timeout { send_user "Timed out getting S3 bucket name prompt" }
+      eof { send_user "simulator init failed" }
+      "name for an S3 bucket to store the terraform state: " {
+        send "${TEST_BUCKET_NAME}\r"
+      }
+    }
+
+    expect {
+      timeout { exp_continue }
+      eof { set result 0 }
+      "Saving state bucket name to config" { set result 1 }
+      default { set result 0 }
+    }
+  } -setup $BEFORE -cleanup {
+    spawn aws s3 rb s3://$TEST_BUCKET_NAME --force
+  } -result 1
+
+  test init_with_existing_bucket {
+    Test: simulator init with valid unused bucket name
+  } -body {
+    spawn "simulator" "init" "-c" $TEST_CONFIG_NAME
+
+    expect  {
+      timeout { send_user "Timed out getting S3 bucket name prompt" }
+      eof { send_user "simulator init failed" }
+      "name for an S3 bucket to store the terraform state: " {
+        send "${EXISTING_TEST_BUCKET_NAME}\r"
+      }
+    }
+
+    expect {
+      timeout { exp_continue }
+      eof { set result 0 }
+      "already exists and you own it" { set result 1 }
+      default { set result 0 }
+    }
+  } -setup $BEFORE -cleanup {
+    spawn aws s3 rb s3://$TEST_BUCKET_NAME --force
+  } -result 1
+  cleanupTests 1
+}
+
+# vim: ft=tcl
