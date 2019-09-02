@@ -113,6 +113,13 @@ test-coverage         Run golang unit tests with coverage and opens a browser wi
 docs                  Generate documentation
 </pre>
 
+### Git commits
+
+We follow [the conventional commit specification](https://www.conventionalcommits.org/en/v1.0.0-beta.4/).
+Please ensure your commit messages adhere to this spec.  If you submit a pull request 
+without following them be aware we will squash and merge your work with a message
+that does.
+
 ## Architecture
 
 ### [Launching a scenario](./docs/launch.md)
