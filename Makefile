@@ -74,7 +74,7 @@ build: dep ## Run golang build for the CLI program
 	$(GO) build -a -o ./dist/simulator
 
 .PHONY: is-in-launch-container
-is-in-launch-container: 
+is-in-launch-container: ## checks you are running in the launch container
 	[ $(HOST) == "launch" ]
 
 .PHONY: test
