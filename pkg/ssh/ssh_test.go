@@ -6,8 +6,10 @@ import (
 	"testing"
 )
 
-func Test_GetAuthMethods(t *testing.T) {
+func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {
 	t.Parallel()
+	_, err := ssh.EnsureKey()
+	assert.Nil(t, err, "Expected no error ensure keypair")
 	auths, err := ssh.GetAuthMethods()
 
 	assert.Nil(t, err)
