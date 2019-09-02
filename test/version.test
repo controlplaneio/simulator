@@ -1,0 +1,18 @@
+package require tcltest
+package require Expect
+
+namespace eval ::simulator::test {
+  namespace import ::tcltest::*
+
+  test version_prints_ok {
+    Test: simulator version
+  } -body {
+    spawn "simulator" "version"
+    expect "build date" { set result 1 } default { set result 0 }
+  } -result 1
+
+  cleanupTests 1
+}
+
+# vim: ft=tcl
+

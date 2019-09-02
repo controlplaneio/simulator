@@ -19,13 +19,6 @@ namespace eval ::simulator::test {
     unset env(SIMULATOR_CLI_TEST_OUTPUT)
   }
 
-  test version_prints_ok {
-    Test: simulator version
-  } -body {
-    spawn "simulator" "version"
-    expect "build date" { set result 1 } default { set result 0 }
-  } -setup $BEFORE -cleanup $AFTER -result 1
-
   test infra_create_prints_ok {
     Test: simulator infra create
   } -body {
