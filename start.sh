@@ -11,8 +11,6 @@ KUBE_SIM_TMP=${HOME}/.kubesim/
 SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
 touch ${SIMULATOR_CONFIG_FILE}
 
-curl https://raw.githubusercontent.com/controlplaneio/simulator-standalone/master/scripts/validate-requirements | bash
-
 docker pull ${CONTAINER_NAME}
 
 docker run                                                          \
@@ -21,4 +19,10 @@ docker run                                                          \
   -v ${SIMULATOR_AWS_CREDS_PATH}:/home/launch/.aws                  \
   -v ${SSH_CONFIG_PATH}:/home/launch/.ssh                           \
   -v ${KUBE_SIM_TMP}:/home/launch/.kubesim                          \
+  -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"                         \
+  -e "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"                 \
+  -e "AWS_REGION=$AWS_REGION"                                       \
+  -e "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION"                       \
+  -e "AWS_PROFILE=$AWS_PROFILE"                                     \
+  -e "AWS_DEFAULT_PROFILE=$AWS_DEFAULT_PROFILE"                     \
   --rm --init -it ${CONTAINER_NAME}
