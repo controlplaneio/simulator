@@ -60,7 +60,7 @@ func initConfig() {
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
-		viper.AddConfigPath(".")
+		viper.AddConfigPath("$HOME/.kubesim")
 		viper.SetConfigName("simulator")
 	}
 
