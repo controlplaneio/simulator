@@ -21,6 +21,12 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 The quickest way to get up and running is to simply:
 
 <pre>
+source <(curl https://raw.githubusercontent.com/controlplaneio/simulator-standalone/wrapper-script/start.sh)
+<pre>
+
+or (inside your local version of this repository)
+
+<pre>
 make run
 </pre>
 
