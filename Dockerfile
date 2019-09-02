@@ -60,6 +60,7 @@ WORKDIR /app
 COPY --chown=1000 Dockerfile .hadolint.yaml ./
 COPY --chown=1000 scripts/ ./scripts/
 COPY --chown=1000 attack/ ./attack/
+COPY --chown=1000 kubesim ./kubesim
 
 USER ${lint_user}
 
@@ -68,7 +69,8 @@ RUN hadolint Dockerfile            \
     &&  hadolint attack/Dockerfile \
 # Lint shell scripts
     && shellcheck scripts/*        \
-    && shellcheck attack/scripts/*
+    && shellcheck attack/scripts/* \
+    && shellcheck kubesim
 
 #-----------------------#
 # Golang Build and Test #
