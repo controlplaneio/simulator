@@ -14,9 +14,9 @@ else
 	SIMULATOR_AWS_CREDS_PATH := $(shell dirname $(AWS_SHARED_CREDENTIALS_FILE))
 endif
 
-SIMULATOR_CONFIG_FILE := $(PWD)/simulator.yaml
 SSH_CONFIG_PATH := $(HOME)/.ssh/
 KUBE_SIM_TMP := $(HOME)/.kubesim/
+SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
 
 # --- Make
@@ -43,7 +43,6 @@ validate-requirements: ## Verify all requirements are met
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
 	@docker run                                                         \
 		-h launch                                                         \
-		-v $(SIMULATOR_CONFIG_FILE):/app/simulator.yaml                   \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                  \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                           \
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                          \

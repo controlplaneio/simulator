@@ -181,7 +181,8 @@ WORKDIR /app
 ARG config_file=./simulator.yaml
 COPY --chown=1000 ./terraform/ ./terraform/
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
-COPY --chown=1000 ./goss.yaml ./launch-entrypoint.sh ./acceptance.sh ${config_file} ./
+COPY --chown=1000 ./goss.yaml ./launch-entrypoint.sh ./acceptance.sh ./
+COPY --chown=1000 ${config_file} /home/launch/.kubesim/
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS

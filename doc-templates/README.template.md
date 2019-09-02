@@ -21,11 +21,32 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 The quickest way to get up and running is to simply:
 
 <pre>
+source <(curl https://raw.githubusercontent.com/controlplaneio/simulator-standalone/kubesim)
+</pre>
+
+or (inside your local version of this repository)
+
+<pre>
 make run
 </pre>
 
 This will drop you into a bash shell in a launch container.  You will have a
 program on the <code>PATH</code> named <code>simulator</code> to interact with.
+
+### The <code>kubesim</code> script
+
+<code>kubesim</code> is a small script written in BASH for getting users up and running with simulator as fast as possible. It pulls the latest version of the simulator container and sets up some options for running the image. It can be installed with the following steps:
+
+<pre>
+# cURL the script from GitHub
+curl -O https://raw.githubusercontent.com/controlplaneio/simulator-standalone/kubesim
+# Make it executeable
+chmod a+x kubesim
+# Place the script on your path
+cp kubesim /usr/local/bin
+</pre>
+
+Feel free to modify and/or extend the script if you wish.
 
 ### [Simulator CLI Usage](./docs/cli.md)
 
@@ -102,7 +123,7 @@ ${make}
 ### Git commits
 
 We follow [the conventional commit specification](https://www.conventionalcommits.org/en/v1.0.0-beta.4/).
-Please ensure your commit messages adhere to this spec.  If you submit a pull request 
+Please ensure your commit messages adhere to this spec.  If you submit a pull request
 without following them be aware we will squash and merge your work with a message
 that does.
 
