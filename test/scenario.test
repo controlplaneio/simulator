@@ -5,7 +5,6 @@ namespace eval ::simulator::test {
   namespace import ::tcltest::*
 
   variable BEFORE {
-    puts "Test setup"
     catch { unset result }
     set env(SIMULATOR_SCENARIOS_DIR) "./test/fixtures/valid"
     set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
@@ -13,14 +12,10 @@ namespace eval ::simulator::test {
   }
 
   variable AFTER {
-    puts "Test teardown"
     unset env(SIMULATOR_SCENARIOS_DIR)
     unset env(SIMULATOR_TF_DIR)
     unset env(SIMULATOR_CLI_TEST_OUTPUT)
   }
-
-  # TODO: (rem) Need to stub terraform output to make this pass
-  configure -skip "scenario_launch_prints_ok infra_status_prints_ok"
 
   test scenario_list_prints_ok {
     Test: simulator scenario list
