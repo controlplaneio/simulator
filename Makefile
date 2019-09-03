@@ -39,6 +39,13 @@ reset: ## Clean up files left over by simulator
 validate-requirements: ## Verify all requirements are met
 	@./scripts/validate-requirements
 
+.PHONY: previous-tag
+previous-tag:
+	@echo The previously released tag was $$(git describe --abbrev=0 --tags)
+
+#previous-tag and release-tag need to be seperate due to $(eval ...) evaluating before any other commands in the recipe no matter the command ordering.
+#Otherwise the prompt is displayed before the prev-tag info is echoed
+
 .PHONY: release-tag
 release-tag:
 	$(eval RELEASE_TAG := $(shell read -p "Tag to release: " tag; echo $$tag))
@@ -122,11 +129,12 @@ docs: dep ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 .PHONY: release
-release: release-tag docker-build
+release: previous-tag release-tag docker-test docker-build build
+	git tag --sign -m $(RELEASE_TAG) $(RELEASE_TAG)
+	git push origin $(RELEASE_TAG)
+	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
-	git tag $(RELEASE_TAG)
-	git push origin $(RELEASE_TAG)
 
 
 # --- MAKEFILE HELP
