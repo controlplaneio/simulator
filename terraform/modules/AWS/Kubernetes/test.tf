@@ -33,7 +33,7 @@ resource "null_resource" "master_test" {
 }
 
 resource "null_resource" "node_test" {
-  count = "${var.number_of_node_instances}"
+  count = "${var.number_of_cluster_instances}"
 
   connection {
     bastion_host        = "${var.bastion_public_ip}"
