@@ -51,7 +51,7 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
-	@mkfir -p ~/.kubesim
+	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
 	@docker build -t $(CONTAINER_NAME_LATEST) .
 
