@@ -21,7 +21,7 @@ A distributed systems and infrastructure simulator for attacking and debugging K
 The quickest way to get up and running is to simply:
 
 <pre>
-source <(curl https://raw.githubusercontent.com/controlplaneio/simulator-standalone/kubesim)
+source <(curl https://raw.githubusercontent.com/controlplaneio/simulator-standalone/master/kubesim)
 </pre>
 
 or (inside your local version of this repository)
@@ -39,7 +39,7 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 
 <pre>
 # cURL the script from GitHub
-curl -O https://raw.githubusercontent.com/controlplaneio/simulator-standalone/kubesim
+curl -o kubesim https://raw.githubusercontent.com/controlplaneio/simulator-standalone/master/kubesim
 # Make it executeable
 chmod a+x kubesim
 # Place the script on your path
