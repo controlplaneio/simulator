@@ -18,6 +18,7 @@ write_files:
     permissions: '0755'
     content: |
       [ -z "$PS1" ] && return
+      PS1='\u@\h $'
       echo "$(tput setaf 3)
                                                       |>>>
                                                       |

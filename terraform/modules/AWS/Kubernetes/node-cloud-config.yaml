@@ -12,6 +12,7 @@ write_files:
     permissions: '0755'
     content: |
       [ -z "$PS1" ] && return
+      PS1='\u@\h $'
       echo "$(tput setaf 2)$(figlet $(hostname))$(tput sgr0)"
   - path: /etc/default/motd-news
     owner: root:root
