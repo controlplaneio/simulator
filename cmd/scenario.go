@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
+	"strings"
 )
 
 func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
@@ -49,12 +50,15 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			scenarioID := args[0]
 
-			err := simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID)
-			if err != nil {
+			if err := simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID); err != nil {
+				if strings.HasPrefix(err.Error(), "Scenario not found") {
+					logger.Warn(err.Error())
+					return nil
+				}
 				logger.Errorw("Error launching scenario", zap.Error(err))
 			}
 
-			return err
+			return nil
 		},
 	}
 

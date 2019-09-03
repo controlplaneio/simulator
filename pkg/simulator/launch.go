@@ -19,7 +19,7 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id strin
 
 	logger.Debugf("Checking manifest contains %s", id)
 	if !manifest.Contains(id) {
-		return errors.Errorf("scenario %s not found", id)
+		return errors.Errorf("Scenario not found: %s", id)
 	}
 
 	logger.Debugf("Checking status of infrastructure")
