@@ -40,11 +40,6 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Launches a scenario",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) < 1 {
-				logger.Fatalf("scenario id is required")
-				return nil
-			}
-
 			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
 			scenariosDir := viper.GetString("scenarios-dir")
