@@ -33,7 +33,8 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id strin
 	s := manifest.Find(id)
 	logger.Debug(s)
 
-	logger.Debugf("Making options to pass to perturb from terraorm output and scnenario")
+	logger.Debugf(
+		"Making options to pass to perturb from terraorm output and scnenario")
 	po := MakePerturbOptions(*tfo, s.Path)
 	logger.Debug(po)
 
@@ -53,7 +54,8 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id strin
 	logger.Infof("Keyscanning %s and updating known hosts", bastion)
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
-		return errors.Wrapf(err, "Error updating known hosts for bastion: %s", bastion)
+		return errors.Wrapf(err, "Error updating known hosts for bastion: %s",
+			bastion)
 	}
 
 	logger.Infof("Setting up the \"%s\" scenario on the cluster", s.DisplayName)
