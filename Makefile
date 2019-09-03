@@ -50,6 +50,10 @@ previous-tag:
 release-tag:
 	$(eval RELEASE_TAG := $(shell read -p "Tag to release: " tag; echo $$tag))
 
+.PHONY: gpg-preflight
+gpg-preflight:
+	@echo Your gpg key for git is $$(git config user.signingkey)
+
 # --- DOCKER
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
 	@docker run                                                 \
@@ -129,7 +133,7 @@ docs: dep ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 .PHONY: release
-release: previous-tag release-tag docker-test docker-build build
+release: gpg-preflight previous-tag release-tag docker-test docker-build build
 	git tag --sign -m $(RELEASE_TAG) $(RELEASE_TAG)
 	git push origin $(RELEASE_TAG)
 	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
