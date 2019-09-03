@@ -39,6 +39,10 @@ reset: ## Clean up files left over by simulator
 validate-requirements: ## Verify all requirements are met
 	@./scripts/validate-requirements
 
+.PHONY: release-tag
+release-tag:
+	$(eval RELEASE_TAG := $(shell read -p "Tag to release: " tag; echo $$tag))
+
 # --- DOCKER
 run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
 	@docker run                                                 \
@@ -116,6 +120,14 @@ docs: dep ## Generate documentation
 	godocdown pkg/util > docs/api/util.md
 	./scripts/generate-docs-from-templates.sh
 	./scripts/tf-auto-doc ./terraform
+
+.PHONY: release
+release: release-tag docker-build
+	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
+	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
+	git tag $(RELEASE_TAG)
+	git push origin $(RELEASE_TAG)
+
 
 # --- MAKEFILE HELP
 .PHONY: help
