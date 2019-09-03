@@ -1,8 +1,6 @@
 package:
   awscli:
     installed: true
-    versions:
-    - 1.14.44-1ubuntu1
   kubeadm:
     installed: true
   kubectl:
