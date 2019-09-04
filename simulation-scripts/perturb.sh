@@ -5,7 +5,7 @@
 # Andrew Martin, 2018-05-10 21:52:47
 # sublimino@gmail.com
 #
-## Usage: %SCRIPT_NAME% [options] scenario
+## Usage: perturb.sh [options] scenario
 ##
 ## Options:
 ##   --auto-populate [regex]    Pull master and slaves from doctl
@@ -15,7 +15,6 @@
 ##
 ##   --force                    Ignore consistency and overwrite checks
 ##   --skip-check               Skips remote host connectivity check
-##   --add-keys [user,user...]  GitHub user keys to add (comma delimited)
 ##
 ##   --dry-run                  Dry run
 ##   --debug                    More debug
@@ -33,19 +32,19 @@ fi
 # error on clobber
 set -o noclobber
 # disable passglob
-shopt -s nullglob globstar
+if [[ "${BASH_VERSINFO:-0}" -ge 4 ]];  then
+  shopt -s nullglob globstar
+else
+  shopt -s nullglob
+fi
 
 # user defaults
-# DESCRIPTION="Perturb Kubernetes Clusters" - commented out as not used anywhere
-# DEBUG=0 - not referenced anywhere
 IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
 IS_SKIP_CHECK=0
 SSH_CONFIG_FILE="$HOME/.ssh/cp_simulator_config"
 
 # resolved directory and self
-#declare -r DIR=$(cd "$(dirname "$0")" && pwd) - readonly perhaps overkill here
-#declare -r THIS_SCRIPT="${DIR}/$(basename "$0")"
 DIR=$(cd "$(dirname "$0")" && pwd)
 THIS_SCRIPT="${DIR}/$(basename "$0")"
 
@@ -71,10 +70,10 @@ main() {
       error "Please install doctl from https://github.com/digitalocean/doctl"
     fi
 
-    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
-      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
-      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
-    fi
+#    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
+#      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
+#      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
+#    fi
   fi
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
@@ -520,7 +519,8 @@ validate_arguments() {
 
 usage() {
   [ "$*" ] && echo "${THIS_SCRIPT}: ${COLOUR_RED}$*${COLOUR_RESET}" && echo
-  sed -n '/^##/,/^$/s/^## \{0,1\}//p' "${THIS_SCRIPT}" | sed "s/%SCRIPT_NAME%/$(basename "${THIS_SCRIPT}")/g"
+  #sed -n '/^##/,/^$/s/^## \{0,1\}//p' "${THIS_SCRIPT}" | sed "s/%SCRIPT_NAME%/$(basename "${THIS_SCRIPT}")/g"
+  sed -n '/^##/p' "${THIS_SCRIPT}"
   exit 2
 } 2>/dev/null
 
