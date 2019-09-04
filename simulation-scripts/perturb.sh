@@ -178,18 +178,18 @@ run_scenario() {
 
   run_cleanup "${SCENARIO_DIR}"
 
-  get_containers
+  get_pods
 }
 
-get_containers() {
+get_pods() {
+  # sleep to ensure all pods are initialised
   sleep 30
   local QUERY_DOCKER="docker ps"
-  local TMP_FILE="/home/launch/.kubesim/docker-"
+  local TMP_DIR="/home/launch/.kubesim"
+  local TMP_FILE="${TMP_DIR}/docker-"
   local SLAVE_1
   local SLAVE_2
   local MASTER_1
-
-  [ ! -d /app/tmp ] && mkdir -p /app/tmp
 
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" > "${TMP_FILE}"master
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
@@ -202,6 +202,8 @@ get_containers() {
   sed -i 's/^/'${MASTER_1}' /' "${TMP_FILE}"master
   sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
   sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
+
+  #tail +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
 
 is_master_accessible() {
