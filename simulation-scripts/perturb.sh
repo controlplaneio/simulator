@@ -11,6 +11,7 @@
 ##   --auto-populate [regex]    Pull master and slaves from doctl
 ##   -m, --master [string]      A Kubernetes API master host or IP (multi-master not supported)
 ##   -s, --slaves [string]      Kubernetes slave hosts or IPs, comma-separated
+##   -b, --bastion [string]     Publicly accessible bastion server
 ##   --test                     Only run tests, do not deploy
 ##
 ##   --force                    Ignore consistency and overwrite checks
@@ -55,6 +56,7 @@ ARGUMENTS=()
 SCENARIO=''
 MASTER_HOST=""
 SLAVE_HOSTS=""
+BASTION_HOST=""
 IS_TEST_ONLY=0
 IS_FORCE=0
 
@@ -171,6 +173,8 @@ run_scenario() {
 
   validate_instructions "${SCENARIO_DIR}"
 
+  copy_challenge_text "${SCENARIO_DIR}"
+
   run_kubectl_yaml "${SCENARIO_DIR}"
 
   run_scripts "${SCENARIO_DIR}"
@@ -194,6 +198,7 @@ get_pods() {
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" > "${TMP_FILE}"slave-2
 
+  #BUG(rem): dont hardcode indexes of slaves - this ties us to the exact number
   MASTER_1="$(get_master)"
   SLAVE_1="$(get_slave 1)"
   SLAVE_2="$(get_slave 2)"
@@ -209,6 +214,7 @@ is_master_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
+  #bug(rem): dont disable strict host checking - `simulator` performs a keyscan
   ssh \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
@@ -218,11 +224,24 @@ is_master_accessible() {
     true
 }
 
+copy_challenge_text() {
+  local SCENARIO_DIR="${1}"
+
+  info "Copying challeng.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  pushd "${SCENARIO_DIR}"
+  scp \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    challenge.txt root@${BASTION_HOST}:~
+  popd
+}
+
 validate_instructions() {
   local SCENARIO_DIR="${1}"
 
   shopt -s extglob
-  for FILE in "${SCENARIO_DIR%/}/"*.{sh,do}; do
+  for FILE in "${SCENARIO_DIR%/}/"*.{sh,do,txt}; do
     echo "${FILE}"
     local TYPE; TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
@@ -240,6 +259,7 @@ validate_instructions() {
       *reboot-master.do) ;;
 
       no-cleanup.do) ;;
+      challenge.txt) ;;
       *)
         error "${TYPE}: type not recognised"
         ;;
@@ -460,6 +480,11 @@ parse_arguments() {
         shift
         not_empty_or_usage "${1:-}"
         SLAVE_HOSTS="${1}"
+        ;;
+      -b | --bastion)
+        shift
+        not_empty_or_usage "${1:-}"
+        BASTION_HOST="${1}"
         ;;
       --)
         shift

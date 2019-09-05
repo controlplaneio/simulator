@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"net"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 // PerturbOptions represents the parameters required by the perturb.sh script
 type PerturbOptions struct {
+	Bastion      net.IP
 	Master       net.IP
 	Slaves       []net.IP
 	ScenarioName string
@@ -30,6 +32,7 @@ func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 	// dir
 	startOfScenarioName := strings.LastIndex(path, "/") + 1
 
+	po.Bastion = net.ParseIP(tfo.BastionPublicIP.Value)
 	po.ScenarioName = path[startOfScenarioName:]
 
 	return po
@@ -39,6 +42,8 @@ func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 // containing the command line options to pass to perturb
 func (po *PerturbOptions) ToArguments() []string {
 	arguments := []string{"--master", po.Master.String()}
+	arguments = append(arguments, "--bastion")
+	arguments = append(arguments, po.Bastion.String())
 	arguments = append(arguments, "--slaves")
 	slaves := ""
 	for index, slave := range po.Slaves {
@@ -51,6 +56,7 @@ func (po *PerturbOptions) ToArguments() []string {
 
 	arguments = append(arguments, po.ScenarioName)
 
+	fmt.Println(arguments)
 	return arguments
 }
 
