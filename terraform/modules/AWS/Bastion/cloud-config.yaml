@@ -43,7 +43,12 @@ write_files:
     content: |
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
-      sudo -E docker run -h attack -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
+      sudo -E docker run -h attack -v /home/ubuntu/challenge.txt:challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
+  - path: /home/ubuntu/challenge.txt
+    owner: ubuntu:ubuntu
+    permissions: '0755'
+    content: |
+      No scenario instructions found
   - path: /etc/default/motd-news
     owner: root:root
     permissions: '0644'
