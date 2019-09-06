@@ -14,6 +14,18 @@ service:
     enabled: true
     running: true
 
+# SSH is configured to allow well-known env vars to be sent
+/etc/ssh/sshd_config:
+  exists: true
+  mode: "0644"
+  size: 876
+  owner: root
+  group: root
+  filetype: file
+  contains: 
+    - "/AcceptEnv BASE64_SSH_KEY/"
+
+
 # Check whether we have the latest simulator-attack pulled locally
 command:
   docker:
