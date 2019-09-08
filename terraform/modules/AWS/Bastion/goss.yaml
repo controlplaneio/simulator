@@ -23,7 +23,7 @@ service:
   group: root
   filetype: file
   contains: 
-    - "/AcceptEnv BASE64_SSH_KEY/"
+    - /AcceptEnv BASE64_SSH_KEY/
 
 
 # Check whether we have the latest simulator-attack pulled locally
