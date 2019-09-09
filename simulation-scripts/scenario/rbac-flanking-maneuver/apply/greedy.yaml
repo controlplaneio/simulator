@@ -1,27 +1,27 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: greedy
+  name: rbac-flanking-maneuver
 
 ---
 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: greedy
-  namespace: greedy
+  name: rbac-flanking-maneuver
+  namespace: rbac-flanking-maneuver
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: greedy
-  namespace: greedy
+  name: rbac-flanking-maneuver
+  namespace: rbac-flanking-maneuver
 subjects:
 - apiGroup: ""
   kind: ServiceAccount
-  name: greedy
+  name: rbac-flanking-maneuver
 roleRef:
   apiGroup: ""
   kind: ClusterRole
@@ -33,7 +33,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: jumpbox
-  namespace: greedy
+  namespace: rbac-flanking-maneuver
 spec:
   selector:
     name: jumpbox
@@ -51,7 +51,7 @@ metadata:
   labels:
     name: jumpbox
   name: jumpbox
-  namespace: greedy
+  namespace: rbac-flanking-maneuver
 spec:
   replicas: 1
   selector:
@@ -62,7 +62,7 @@ spec:
       labels:
         name: jumpbox
     spec:
-      serviceAccountName: greedy
+      serviceAccountName: rbac-flanking-maneuver
       containers:
       - image: unnerup/insecure-ssh
         imagePullPolicy: IfNotPresent

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: data
+  name: container-ambush
 
 ---
 
@@ -9,7 +9,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: postgres
-  namespace: data
+  namespace: container-ambush
 type: Opaque
 data:
   password: c3VwZXJTZWNyZXRQYXNzd29yZAo=
@@ -22,7 +22,7 @@ metadata:
   labels:
     name: jenkins
   name: jenkins
-  namespace: data
+  namespace: container-ambush
 spec:
   replicas: 1
   selector:

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: lazy
+  name: secret-tank-desant
 
 ---
 
@@ -9,7 +9,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: aws-creds
-  namespace: lazy
+  namespace: secret-tank-desant
 type: Opaque
 data:
    credentials: W2RlZmF1bHRdCmF3c19hY2Nlc3Nfa2V5X2lkPUFLSUFJT1NGT0ROTjdFWEFNUExFCmF3c19zZWNyZXRfYWNjZXNzX2tleT13SmFsclhVdG5GRU1JL0s3TURFTkcvYlB4UmZpQ1lFWEFNUExFS0VZCg==
@@ -22,7 +22,7 @@ metadata:
   labels:
     name: nginx
   name: nginx
-  namespace: lazy
+  namespace: secret-tank-desant
 spec:
   replicas: 1
   selector:

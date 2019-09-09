@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: shadow
+  name: node-shock-tactics
 
 ---
 
@@ -9,7 +9,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: passwd
-  namespace: shadow
+  namespace: node-shock-tactics
 type: Opaque
 data:
    password: RGFyaXVzaXNiYWQ=
@@ -22,7 +22,7 @@ metadata:
   labels:
     name: nginx
   name: nginx
-  namespace: shadow
+  namespace: node-shock-tactics
 spec:
   replicas: 3
   selector:

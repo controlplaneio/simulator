@@ -16,3 +16,6 @@ scenarios:
   - name: Node Shock Tactics
     path: ./scenario/node-shock-tactics
     id: node-shock-tactics
+  - name: Network Feint
+    path: ./scenario/network-feint
+    id: network-feint
