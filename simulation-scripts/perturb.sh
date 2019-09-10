@@ -227,13 +227,13 @@ is_master_accessible() {
 copy_challenge_text() {
   local SCENARIO_DIR="${1}"
 
-  info "Copying challeng.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
   pushd "${SCENARIO_DIR}"
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    challenge.txt root@${BASTION_HOST}:~
+    challenge.txt root@${BASTION_HOST}:/home/ubuntu/challenge.txt
   popd
 }
 
