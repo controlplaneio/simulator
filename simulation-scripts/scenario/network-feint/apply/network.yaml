@@ -4,7 +4,7 @@ metadata:
   name: network-feint
 
 ---
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-deployment
@@ -74,6 +74,21 @@ spec:
       port: 80
       targetPort: "external"
       nodePort: 32123
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: network-feint
+spec:
+  type: ClusterIP
+  selector:
+    project: webdb
+    app: postgres
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: "external"
 ---
 apiVersion: v1
 kind: Secret
