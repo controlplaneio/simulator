@@ -5,7 +5,7 @@ if [[ -z ${AWS_SHARED_CREDENTIALS_FILE} ]]; then
 else
   SIMULATOR_AWS_CREDS_PATH="$(dirname "${AWS_SHARED_CREDENTIALS_FILE}")"
 fi
-CONTAINER_NAME=s1rvine/kubesim:test
+CONTAINER_NAME=controlplane/simulator:latest
 SSH_CONFIG_PATH=${HOME}/.ssh/
 KUBE_SIM_TMP=${HOME}/.kubesim/
 SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
