@@ -53,17 +53,29 @@ Feel free to modify and/or extend the script if you wish.
 
 ### [Simulator CLI Usage](./docs/cli.md)
 
-### tldr;
+
+### End-to-end usage
 
 <pre>
 # Create a remote state bucket for terraform
 simulator init
 # Create the infra if it isn't there
 simulator infra create
-# Launch a scenario (runs perturb.sh)
-simulator scenario launch database_compromise
+# List available scenarios
+simulator scenario list
+# Launch a scenario (sets up your cluster)
+simulator scenario launch node-shock-tactics
 # Attack the cluster
 simulator ssh attack
+# ... Complete the scenario :)
+# Destroy your cluster when you are done
+simulator infar destroy
+</pre>
+
+Current list of scenarios:
+
+<pre>
+${scenarios}
 </pre>
 
 ## How It All Works
@@ -104,7 +116,7 @@ bastion on your behalf using custom SSH config and known_hosts files.  This keep
 separate from any other configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and
 are files starting <code>cp_simulator_</code>
 
-If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
+**If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
 next run**
 
 ## Development Workflow

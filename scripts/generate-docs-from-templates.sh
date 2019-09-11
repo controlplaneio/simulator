@@ -24,7 +24,7 @@ readonly -f main
 generate_readme() {
   local -r template="$(cat ./doc-templates/README.template.md)"
   local -r make="$(make -s help-no-color)"
-
+  local -r scenarios="$(./dist/simulator scenario list -s ./simulation-scripts 2>&1 >/dev/null | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g')"
   eval "echo \"${template}\"" > ./README.md
   return 0
 }
