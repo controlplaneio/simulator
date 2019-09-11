@@ -12,7 +12,10 @@ If you need to include bsah code snippets you will need to change how the templa
 
 # Simulator
 
-A distributed systems and infrastructure simulator for attacking and debugging Kubernetes
+A distributed systems and infrastructure simulator for attacking and debugging
+Kubernetes: `simulator` creates a kuberntes cluster for you in your AWS
+account; runs scenarios which misconfigure it and/or leave it vulnerable to
+compromise and trains you in mitigating against these vulnerabilities.
 
 ## Before you start
 

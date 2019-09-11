@@ -94,6 +94,7 @@ Terraform wraps running terraform as a child process
 
 ```go
 type PerturbOptions struct {
+	Bastion      net.IP
 	Master       net.IP
 	Slaves       []net.IP
 	ScenarioName string

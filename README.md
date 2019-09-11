@@ -12,7 +12,10 @@ If you need to include bsah code snippets you will need to change how the templa
 
 # Simulator
 
-A distributed systems and infrastructure simulator for attacking and debugging Kubernetes
+A distributed systems and infrastructure simulator for attacking and debugging
+Kubernetes:  creates a kuberntes cluster for you in your AWS
+account; runs scenarios which misconfigure it and/or leave it vulnerable to
+compromise and trains you in mitigating against these vulnerabilities.
 
 ## Before you start
 
@@ -120,6 +123,9 @@ Development targets are specified in the [Makefile](./Makefile).
 setup-dev             Initialise simulation tree with git hooks
 reset                 Clean up files left over by simulator
 validate-requirements  Verify all requirements are met
+previous-tag:        
+release-tag:         
+gpg-preflight:       
 run                   Run the simulator - the build stage of the container runs all the cli tests
 docker-build          Builds the launch container
 docker-test           Run the tests
@@ -133,6 +139,7 @@ test-unit             Run golang unit tests for the CLI program
 test-cleanup          cleans up automated test artefacts if e.g. you ctrl-c abort a test run
 test-coverage         Run golang unit tests with coverage and opens a browser with the results
 docs                  Generate documentation
+release: gpg-preflight previous-tag release-tag docker-test docker-build build 
 </pre>
 
 ### Git commits
