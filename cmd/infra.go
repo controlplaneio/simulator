@@ -55,9 +55,9 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 			if tfo.BastionPublicIP.Value == "" {
 				logger.Error("No Infrastructure found")
 			} else {
-				logger.Infof("Bastion IP: %s\n", tfo.BastionPublicIP.Value)
-				logger.Infof("Master IPs: %v\n", tfo.MasterNodesPrivateIP.Value)
-				logger.Infof("Cluster IPs: %v\n", tfo.ClusterNodesPrivateIP.Value)
+				logger.Infof("Bastion IP: %s", tfo.BastionPublicIP.Value)
+				logger.Infof("Master IPs: %v", tfo.MasterNodesPrivateIP.Value)
+				logger.Infof("Cluster IPs: %v", tfo.ClusterNodesPrivateIP.Value)
 			}
 
 			return err
