@@ -194,6 +194,8 @@ get_pods() {
   local SLAVE_2
   local MASTER_1
 
+  rm -rf "${TMP_FILE}*"
+
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" > "${TMP_FILE}"master
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" > "${TMP_FILE}"slave-2
