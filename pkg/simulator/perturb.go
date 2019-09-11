@@ -1,7 +1,6 @@
 package simulator
 
 import (
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"net"
 	"strings"
@@ -56,7 +55,6 @@ func (po *PerturbOptions) ToArguments() []string {
 
 	arguments = append(arguments, po.ScenarioName)
 
-	fmt.Println(arguments)
 	return arguments
 }
 
