@@ -53,7 +53,6 @@ Feel free to modify and/or extend the script if you wish.
 
 ### [Simulator CLI Usage](./docs/cli.md)
 
-
 ### End-to-end usage
 
 <pre>
@@ -69,7 +68,7 @@ simulator scenario launch node-shock-tactics
 simulator ssh attack
 # ... Complete the scenario :)
 # Destroy your cluster when you are done
-simulator infar destroy
+simulator infra destroy
 </pre>
 
 Current list of scenarios:
