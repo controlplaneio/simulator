@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: network-swarming
+  name: network-hammer-and-anvil
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
-  namespace: network-swarming
+  namespace: network-hammer-and-anvil
 spec:
   selector:
     matchLabels:
@@ -32,32 +32,8 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: api
-  namespace: network-swarming
-spec:
-  selector:
-    matchLabels:
-      app: api
-      project: webapidb
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: api
-        project: webapidb
-    spec:
-      containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-          name: api
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
   name: db
-  namespace: network-swarming
+  namespace: network-hammer-and-anvil
 spec:
   selector:
     matchLabels:
@@ -80,47 +56,32 @@ spec:
         - name: db
           mountPath: "/docker-entrypoint-initdb.d"
           readOnly: true
+        - name: file
+          mountPath: "/backups"
+      initContainers:
+      - name: file
+        image: ubuntu
+        command:
+        - dd
+        - "if=/dev/zero"
+        - "of=/work-dir/database.txt"
+        - "count=512"
+        - "bs=1048576"
+        volumeMounts:
+        - name: file
+          mountPath: "/work-dir"
       volumes:
       - name: db
         secret:
           secretName: database
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  namespace: network-swarming
-spec:
-  type: NodePort
-  selector:
-    project: webapidb
-    app: frontend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: "external"
-      nodePort: 32222
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: api
-  namespace: network-swarming
-spec:
-  type: ClusterIP
-  selector:
-    project: webapidb
-    app: api
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: "api"
+      - name: file
+        emptyDir: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: database
-  namespace: network-swarming
+  namespace: network-hammer-and-anvil
 spec:
   type: ClusterIP
   selector:
@@ -135,7 +96,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: database
-  namespace: network-swarming
+  namespace: network-hammer-and-anvil
 type: Opaque
 data:
-  secrets.sql: Q1JFQVRFIFRBQkxFIHNlY3JldHMgKHNlY3JldCAgICAgQ0hBUig1MCkgICAgICAgTk9UIE5VTEwpOwpJTlNFUlQgSU5UTyBzZWNyZXRzIFZBTFVFUyAoJzEwMDBjcmVkaXRjYXJkbnVtYmVycycpOwo=
+  secrets.sql: Q1JFQVRFIFRBQkxFIHNlY3JldHMgKHNlY3JldCAgICAgQ0hBUig1MCkgICAgICAgTk9UIE5VTEwpOwpJTlNFUlQgSU5UTyBzZWNyZXRzIFZBTFVFUyAoJ25vdHRoZXNlY3JldHN5b3VhcmVsb29raW5nZm9yJyk7Cg==

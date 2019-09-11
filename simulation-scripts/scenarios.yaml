@@ -19,3 +19,9 @@ scenarios:
   - name: Network Feint
     path: ./scenario/network-feint
     id: network-feint
+  - name: Network Swarming
+    path: ./scenario/network-swarming
+    id: network-swarming
+  # - name: Network Hammer and Anvil
+  #   path: ./scenario/network-hammer-and-anvil
+  #   id: network-hammer-and-anvil
