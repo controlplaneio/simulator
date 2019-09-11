@@ -24,7 +24,7 @@ compromise and trains you in mitigating against these vulnerabilities.
 The quickest way to get up and running is to simply:
 
 <pre>
-source <(curl https://raw.githubusercontent.com/controlplaneio/simulator-standalone/master/kubesim)
+source <(curl https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim)
 </pre>
 
 or (inside your local version of this repository)
@@ -42,7 +42,7 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 
 <pre>
 # cURL the script from GitHub
-curl -o kubesim https://raw.githubusercontent.com/controlplaneio/simulator-standalone/master/kubesim
+curl -o kubesim https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim
 # Make it executeable
 chmod a+x kubesim
 # Place the script on your path
