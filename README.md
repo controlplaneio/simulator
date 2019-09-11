@@ -53,7 +53,6 @@ Feel free to modify and/or extend the script if you wish.
 
 ### [Simulator CLI Usage](./docs/cli.md)
 
-
 ### End-to-end usage
 
 <pre>
@@ -69,19 +68,19 @@ simulator scenario launch node-shock-tactics
 simulator ssh attack
 # ... Complete the scenario :)
 # Destroy your cluster when you are done
-simulator infar destroy
+simulator infra destroy
 </pre>
 
 Current list of scenarios:
 
 <pre>
-1.568203561090278e+09	INFO	cmd/scenario.go:25	Available scenarios:
-1.5682035610903168e+09	INFO	cmd/scenario.go:27	ID: container-ambush, Name: Container Ambush
-1.5682035610903301e+09	INFO	cmd/scenario.go:27	ID: rbac-flanking-maneuver, Name: RBAC Flanking Maneuver
-1.5682035610903492e+09	INFO	cmd/scenario.go:27	ID: secret-tank-desant, Name: Secret Tank Desant
-1.5682035610903556e+09	INFO	cmd/scenario.go:27	ID: network-siege, Name: Network Siege
-1.5682035610903623e+09	INFO	cmd/scenario.go:27	ID: node-shock-tactics, Name: Node Shock Tactics
-1.5682035610903788e+09	INFO	cmd/scenario.go:27	ID: network-feint, Name: Network Feint
+1.5682037678385196e+09	INFO	cmd/scenario.go:25	Available scenarios:
+1.568203767838556e+09	INFO	cmd/scenario.go:27	ID: container-ambush, Name: Container Ambush
+1.5682037678385653e+09	INFO	cmd/scenario.go:27	ID: rbac-flanking-maneuver, Name: RBAC Flanking Maneuver
+1.568203767838575e+09	INFO	cmd/scenario.go:27	ID: secret-tank-desant, Name: Secret Tank Desant
+1.5682037678385787e+09	INFO	cmd/scenario.go:27	ID: network-siege, Name: Network Siege
+1.5682037678385825e+09	INFO	cmd/scenario.go:27	ID: node-shock-tactics, Name: Node Shock Tactics
+1.5682037678385894e+09	INFO	cmd/scenario.go:27	ID: network-feint, Name: Network Feint
 </pre>
 
 ## How It All Works
