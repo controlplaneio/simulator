@@ -415,7 +415,7 @@ get_file_to_run() {
   else
     cat "${FILE}"
   fi
-  echo "echo PERTURBANCE COMPLETE ON \$(hostname) AT \$(date)"
+  echo "echo PERTURBANCE COMPLETE FOR ${FILE} ON \$(hostname) AT \$(date)"
   echo
 }
 
