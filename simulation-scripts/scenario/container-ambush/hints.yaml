@@ -1,17 +1,16 @@
---- 
-- 
-  general_overview: 
+---
+-
+  general_overview:
     objective: "Get postgres password"
     starting-point: "kubectl pod exec"
     num-hints: "6"
-- 
-  hints: 
+-
+  hints:
     hint-1: |
         What mounts do we have?
         Anything which might help expose other containers to us?
     hint-2: "kubectl exec into workload"
-    hint-3: "workload is nginx-proxy with mounted docker.socket"
-    hint-4: "workload - enumerate r/o mounted docker.socket"
+    hint-3: "workload is jenkins with mounted docker.sock"
+    hint-4: "workload - enumerate r/o mounted docker.sock"
     hint-5: "pull env vars from local docker inspect"
     hint-6: "postgres containers password as env var"
-
