@@ -43,8 +43,6 @@ mv ./"${kindType}" "${binaries}"/kind
 
 export PATH="${binaries}":"${PATH}"
 
-exit
-
 echo "Starting kind "$'\360\237\220\263'
 kind create cluster --config "${config}"/simple-cluster.yaml
 
