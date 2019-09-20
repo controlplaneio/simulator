@@ -8,7 +8,7 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: postgres
+  name: db
   namespace: container-ambush
 type: Opaque
 data:
@@ -44,17 +44,17 @@ spec:
         - name: dockersock
           mountPath: "/var/run/docker.sock"
           readOnly: true
-      - image: postgres
+      - image: ubuntu:16.04
         imagePullPolicy: IfNotPresent
-        name: postgres
+        name: db
         volumeMounts:
-        - name: postgres
+        - name: db
           readOnly: true
           mountPath: "/etc/secret-volume"
       volumes:
       - name: dockersock
         hostPath:
           path: /var/run/docker.sock
-      - name: postgres
+      - name: db
         secret:
-          secretName: postgres
+          secretName: db

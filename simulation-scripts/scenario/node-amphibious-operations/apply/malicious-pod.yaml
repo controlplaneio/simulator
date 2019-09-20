@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: malicious-pod
+  name: malicious-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: malicious-pod
+  template:
+    metadata:
+      labels:
+        name: malicious-pod
+    spec:
+      containers:
+      - image: alpine:3.7
+        # image: vulnerables/cve-2014-6271
+        imagePullPolicy: IfNotPresent
+        name: malicious-pod
