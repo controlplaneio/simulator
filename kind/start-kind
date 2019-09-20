@@ -33,8 +33,11 @@ scenarioDir="${belowDir}/simulation-scripts/scenario/${scenarioName}/apply"
 config="${dirName}/config"
 binaries="${dirName}/bin"
 
-echo "Downloading kind "$'\342\254\207'
-curl -Lo ./"${kindType}" https://github.com/kubernetes-sigs/kind/releases/download/v0.4.0/"${kindType}"
+latestKind="$(curl -sX GET https://api.github.com/repos/kubernetes-sigs/kind/releases | grep '"tag_name":' |sed -E 's/.*"([^"]+)".*/\1/'|head -1)"
+
+echo "Downloading kind version ${latestKind} "$'\342\254\207'
+
+curl -sLo ./"${kindType}" https://github.com/kubernetes-sigs/kind/releases/download/"${latestKind}"/"${kindType}"
 chmod +x ./"${kindType}"
 mv ./"${kindType}" "${binaries}"/kind
 

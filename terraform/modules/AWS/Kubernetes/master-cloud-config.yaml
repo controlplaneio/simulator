@@ -53,7 +53,7 @@ runcmd:
   - 'systemctl restart docker'
   - 'systemctl restart kubelet'
   - 'wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml -O /run/download/rbac-kdd.yaml'
-  - 'wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml -O /run/download/calico.yaml'
+  - 'wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml -O /run/download/calico.yaml'
   - 'kubeadm init --pod-network-cidr=192.168.0.0/16'
   - 'mkdir /root/.kube'
   - 'cp /etc/kubernetes/admin.conf /root/.kube/config'
@@ -64,4 +64,3 @@ runcmd:
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
-
