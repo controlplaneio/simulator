@@ -10,7 +10,7 @@ RUN apt-get update                                                              
     curl                                                                         \
  && rm -rf /var/lib/apt/lists/*
 
-RUN echo "PS1='\u@\h #'" > /root/.bashrc
+RUN echo "PS1='\u@\h # '" > /root/.bashrc
 
 ## Install Goss
 ENV GOSS_VERSION v0.3.7

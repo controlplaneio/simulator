@@ -64,7 +64,7 @@ welcome() {
   info ' '
   info "To see this message again:"
   info "  \$ welcome"
-  cat /challenge.txt
+  envsubst < /challenge.txt
 }
 readonly -f welcome
 export -f welcome
