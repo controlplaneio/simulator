@@ -25,6 +25,9 @@ scenarios:
   - name: Node Amphibious Operations
     path: ./scenario/node-amphibious-operations
     id: node-amphibious-operations
+  - name: Node raiding
+    path: ./scenario/node-raiding
+    id: node-raiding
   # - name: Network Hammer and Anvil
   #   path: ./scenario/network-hammer-and-anvil
   #   id: network-hammer-and-anvil
