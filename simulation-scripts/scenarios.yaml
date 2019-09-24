@@ -22,12 +22,9 @@ scenarios:
   - name: Network Swarming
     path: ./scenario/network-swarming
     id: network-swarming
-  - name: Node Amphibious Operations
-    path: ./scenario/node-amphibious-operations
-    id: node-amphibious-operations
-  - name: Node raiding
-    path: ./scenario/node-raiding
-    id: node-raiding
-  # - name: Network Hammer and Anvil
-  #   path: ./scenario/network-hammer-and-anvil
-  #   id: network-hammer-and-anvil
+  - name: Network Hammer and Anvil
+    path: ./scenario/network-hammer-and-anvil
+    id: network-hammer-and-anvil
+  # - name: Container Defeat in Detail
+  #   path: ./scenario/container-defeat-in-detail
+  #   id: container-defeat-in-detail

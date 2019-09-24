@@ -1,4 +1,4 @@
-Your users are reporting odd results when they query your application nodeport of 32123. They are expecting to see the nginx welcome page but 1/3 of the time they get an empty response. As a security engineer you are concerned because the application itself appears to be working normally and the only other pod in this namespace is a database with minimal security configuration due to business requirements.
+Your users are reporting odd results when they query your application nodeport of 32123. They are expecting to see the nginx welcome page, but 1/3 of the time they get an empty response. As a security engineer you are concerned because the application itself appears to be working normally and the only other pod in this namespace is a database with minimal security configuration due to business requirements.
 Can you interact with the nodeport to find a secret key, therefore proving there is an error in configuration for this namespace?
 
 Can you edit a CURRENTLY EXISTING resource to fix this error? NOTE: The deployments have already been audited and proved compliant with business requirements.

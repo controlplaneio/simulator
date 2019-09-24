@@ -23,6 +23,17 @@ spec:
       containers:
       - name: ubuntu
         image: ubuntu
+        env:
+          - name: PGUSERNAME
+            value: "postgres"
+          - name: PGHOST
+            value: "database"
+          - name: PGPASSWORD
+            value: "oopswrongpassword"
+          - name: SSHHOST
+            value: "database"
+          - name: SSHPASSWORD
+            value: "supersecretrootpassword"
         command: ["sleep"]
         args: ["infinity"]
         ports:
@@ -48,7 +59,10 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres
+        image: postgres:10.10
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "supersecretpostgrespassword"
         ports:
         - containerPort: 5432
           name: database
@@ -58,14 +72,29 @@ spec:
           readOnly: true
         - name: file
           mountPath: "/backups"
+      - name: ssh
+        image: ubuntu
+        env:
+          - name: PGUSERNAME
+            value: "postgres"
+          - name: PGHOST
+            value: "localhost"
+        command: ["bash"]
+        args: ["-c", "apt update && DEBIAN_FRONTEND=noninteractive apt install -y ssh postgresql postgresql-client && echo 'PermitEmptyPasswords yes' >> /etc/ssh/sshd_config && echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && service ssh start && echo 'root:supersecretrootpassword' | chpasswd && sleep infinity"]
+        ports:
+        - containerPort: 22
+          name: ssh
+        volumeMounts:
+        - name: file
+          mountPath: "/backups"
       initContainers:
       - name: file
         image: ubuntu
         command:
         - dd
         - "if=/dev/zero"
-        - "of=/work-dir/database.txt"
-        - "count=512"
+        - "of=/work-dir/database.dat.old"
+        - "count=1024"
         - "bs=1048576"
         volumeMounts:
         - name: file
@@ -91,6 +120,11 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: "database"
+      name: "databse"
+    - protocol: TCP
+      port: 22
+      targetPort: "ssh"
+      name: "ssh"
 ---
 apiVersion: v1
 kind: Secret
@@ -99,4 +133,4 @@ metadata:
   namespace: network-hammer-and-anvil
 type: Opaque
 data:
-  secrets.sql: Q1JFQVRFIFRBQkxFIHNlY3JldHMgKHNlY3JldCAgICAgQ0hBUig1MCkgICAgICAgTk9UIE5VTEwpOwpJTlNFUlQgSU5UTyBzZWNyZXRzIFZBTFVFUyAoJ25vdHRoZXNlY3JldHN5b3VhcmVsb29raW5nZm9yJyk7Cg==
+  secrets.sql: Q1JFQVRFIFRBQkxFIHBlcnNvbmFsZGF0YSAoCiAgaWQgU0VSSUFMIFVOSVFVRSBOT1QgTlVMTCwKICBuYW1lIFZBUkNIQVIoMTApIE5PVCBOVUxMLAogIGNyZWRpdGNhcmQgVEVYVCwKICBhZGRyZXNzIFRFWFQgTk9UIE5VTEwsCiAgcG9zdGNvZGUgVkFSQ0hBUig2KSBOT1QgTlVMTAopOwoKSU5TRVJUIElOVE8gcGVyc29uYWxkYXRhICgKICAgIG5hbWUsIGNyZWRpdGNhcmQsIGFkZHJlc3MsIHBvc3Rjb2RlCikKU0VMRUNUCiAgICBsZWZ0KG1kNShpOjp0ZXh0KSwgMTApLAogICAgbWQ1KHJhbmRvbSgpOjp0ZXh0KSwKICAgIG1kNShyYW5kb20oKTo6dGV4dCksCiAgICBsZWZ0KG1kNShyYW5kb20oKTo6dGV4dCksIDYpCkZST00gZ2VuZXJhdGVfc2VyaWVzKDEsIDEwMDAwMDApIHMoaSkK
