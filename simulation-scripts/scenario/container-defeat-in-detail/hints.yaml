@@ -1,0 +1,15 @@
+---
+-
+  general_overview:
+    objective: "Exec into a container on master with certificates mounted in to exploit etcd"
+    starting-point: "kubectl access to the cluster"
+    num-hints: "7"
+-
+  hints:
+    hint-1: "I should choose which cert-manager pod to start in carefully"
+    hint-2: "One of these seems to be running on a master, that's probably the best place to start"
+    hint-3: "Lets check the mounts in this container"
+    hint-4: "There's some etcd certs here, I think I was given the IP for the etcd cluster earlier"
+    hint-5: "The key I'm after is probably the /super/secret one"
+    hint-6: "task 2 - Lets check the node config"
+    hint-7: "task 2 - The master is missing its taint!"

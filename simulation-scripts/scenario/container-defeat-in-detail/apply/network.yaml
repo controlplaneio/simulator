@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: container-defeat-in-detail
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-cert-manager
+  namespace: container-defeat-in-detail
+spec:
+  selector:
+    matchLabels:
+      app: certs
+  template:
+    metadata:
+      labels:
+        app: certs
+    spec:
+      containers:
+      - name: cert-manager
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        volumeMounts:
+        - name: certs
+          mountPath: "/certificates"
+      volumes:
+      - name: certs
+        hostPath:
+          path: /etc/kubernetes/pki/
+          type: Directory

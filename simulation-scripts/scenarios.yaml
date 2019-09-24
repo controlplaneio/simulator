@@ -25,6 +25,6 @@ scenarios:
   - name: Network Hammer and Anvil
     path: ./scenario/network-hammer-and-anvil
     id: network-hammer-and-anvil
-  # - name: Container Defeat in Detail
-  #   path: ./scenario/container-defeat-in-detail
-  #   id: container-defeat-in-detail
+  - name: Container Defeat in Detail
+    path: ./scenario/container-defeat-in-detail
+    id: container-defeat-in-detail
