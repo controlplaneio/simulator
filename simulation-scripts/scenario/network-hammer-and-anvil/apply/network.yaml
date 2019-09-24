@@ -120,7 +120,7 @@ spec:
     - protocol: TCP
       port: 5432
       targetPort: "database"
-      name: "databse"
+      name: "database"
     - protocol: TCP
       port: 22
       targetPort: "ssh"

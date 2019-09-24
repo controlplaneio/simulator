@@ -8,9 +8,9 @@
   hints:
     hint-1: "What's returning the empty responses when the nodeport is queried?"
     hint-2: "Many databases are sql based, could it be one of the popular ones?"
-    hint-3: "I wonder what the default username for each sql databse is?"
-    hint-4: "One of the devs mentioned a postgres databse they used didn't have a password, could this be it?"
+    hint-3: "I wonder what the default username for each sql database is?"
+    hint-4: "One of the devs mentioned a postgres database they used didn't have a password, could this be it?"
     hint-5: "Hmm, how do I list tables and view the keys in tables again?"
-    hint-6: "task 2 - The databse shouldn't be talking to the outside world"
+    hint-6: "task 2 - The database shouldn't be talking to the outside world"
     hint-7: "task 2 - The labels on this service are interesting"
     hint-8: "task 3 - I wonder if a network policy would help here"
