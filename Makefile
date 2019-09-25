@@ -33,7 +33,7 @@ setup-dev: ## Initialise simulation tree with git hooks
 .PHONY: reset
 reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*
-	@rm ~/.kubesim/*
+	@rm -f -- ~/.kubesim/*
 
 .PHONY: validate-requirements
 validate-requirements: ## Verify all requirements are met
