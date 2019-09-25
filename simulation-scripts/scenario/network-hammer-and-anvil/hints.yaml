@@ -1,16 +1,16 @@
 ---
 -
   general_overview:
-    objective: "Use misconfigured svc to compromise db"
+    objective: "Use badly configured database to exfiltrate data"
     starting-point: "inside a frontend pod"
     num-hints: "8"
 -
   hints:
-    hint-1: "I wonder what the services for the 'databse' and 'api' are called? I think the names might be obvious."
-    hint-2: "I don't the api will be useful, can I look at the datbase from here?"
-    hint-3: "Many databases are sql based, could it be one of the popular ones?"
-    hint-4: "I wonder what the default username for the sql databse is?"
-    hint-5: "One of the devs mentioned a postgres databse they used didn't have a password, could this be it?"
-    hint-6: "Hmm, how do I list tables and view the keys in tables again?"
-    hint-7: "task 2 - The databse shouldn't be talking to the frontend"
+    hint-1: "Is there anything useful in the env vars"
+    hint-2: "Those look like a host and password for a root ssh user!"
+    hint-3: "I think postgres doesn't need a password if you're reaching it from localhost"
+    hint-4: "I wonder if there are any mount poinst in this container"
+    hint-5: "I have an IP and SSH key from the welcome text to this challenge, I can scp my data to there"
+    hint-6: "task-2 - The database shouldn't need to talk externally"
+    hint-7: "task 2 - Only the frontend should have access to the database"
     hint-8: "task 2 - I wonder if a network policy would help here"

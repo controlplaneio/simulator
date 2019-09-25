@@ -4,33 +4,30 @@ scenarios:
   - name: Container Ambush
     path: ./scenario/container-ambush
     id: container-ambush
+  - name: Container Defeat in Detail
+    path: ./scenario/container-defeat-in-detail
+    id: container-defeat-in-detail
+  - name: Network Feint
+    path: ./scenario/network-feint
+    id: network-feint
+  - name: Network Hedgehog Defense
+    path: ./scenario/network-hedgehog-defence
+    id: network-hedgehog-defence
+  - name: Network Siege
+    path: ./scenario/network-siege
+    id: network-siege
+  - name: Network Swarming
+    path: ./scenario/network-swarming
+    id: network-swarming
+  - name: Node Amphibious Operations
+    path: ./scenario/node-amphibious-operations
+    id: node-amphibious-operations
+  - name: Node Shock Tactics
+    path: ./scenario/node-shock-tactics
+    id: node-shock-tactics
   - name: RBAC Flanking Maneuver
     path: ./scenario/rbac-flanking-maneuver
     id: rbac-flanking-maneuver
   - name: Secret Tank Desant
     path: ./scenario/secret-tank-desant
     id: secret-tank-desant
-  - name: Network Siege
-    path: ./scenario/network-siege
-    id: network-siege
-  - name: Node Shock Tactics
-    path: ./scenario/node-shock-tactics
-    id: node-shock-tactics
-  - name: Network Feint
-    path: ./scenario/network-feint
-    id: network-feint
-  - name: Network Swarming
-    path: ./scenario/network-swarming
-    id: network-swarming
-  - name: Network Hedgehog Defense
-    path: ./scenario/network-hedgehog-defence
-    id: network-hedgehog-defence
-  - name: Node Amphibious Operations
-    path: ./scenario/node-amphibious-operations
-    id: node-amphibious-operations
-  - name: Node raiding
-    path: ./scenario/node-raiding
-    id: node-raiding
-  # - name: Network Hammer and Anvil
-  #   path: ./scenario/network-hammer-and-anvil
-  #   id: network-hammer-and-anvil

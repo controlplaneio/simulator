@@ -6,11 +6,11 @@
     num-hints: "8"
 -
   hints:
-    hint-1: "I wonder what the services for the 'databse' and 'api' are called? I think the names might be obvious."
+    hint-1: "I wonder what the services for the 'database' and 'api' are called? I think the names might be obvious."
     hint-2: "I don't the api will be useful, can I look at the datbase from here?"
     hint-3: "Many databases are sql based, could it be one of the popular ones?"
-    hint-4: "I wonder what the default username for the sql databse is?"
-    hint-5: "One of the devs mentioned a postgres databse they used didn't have a password, could this be it?"
+    hint-4: "I wonder what the default username for the sql database is?"
+    hint-5: "One of the devs mentioned a postgres database they used didn't have a password, could this be it?"
     hint-6: "Hmm, how do I list tables and view the keys in tables again?"
-    hint-7: "task 2 - The databse shouldn't be talking to the frontend"
+    hint-7: "task 2 - The database shouldn't be talking to the frontend"
     hint-8: "task 2 - I wonder if a network policy would help here"
