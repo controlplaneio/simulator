@@ -1,3 +1,3 @@
-Your audit logs indicate that an anonymous user has been starting malicious workloads on your nodes.
-The kubernetes API server is set up to authenticate and authorize every request. Can you investigate how this
-could happen and set up sufficient security parameters to prevent it in the future.
+A secret has been leaked from your application. Your audit logs indicate that it hasn't been requested through
+the Kubernetes API. You have recently read a blog post about how to exfiltrate secrets with just network access.
+Can you investigate how this could happen and set up sufficient security parameters to prevent it in the future.

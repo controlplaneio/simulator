@@ -1,0 +1,7 @@
+You are performing a postmortem on an attack against your database in the network-hedgehog-defence namespace.
+The database service is only supposed to be reachable from within its namespace, but your audit logs have revealed
+unusual requests from an unrelated setup pod in the default namespace. Figure out how the setup pod has managed to send
+postgres requests from a different namespace.
+
+Having succeeded, which Kubernetes resource can you add to the namespace to prevent this communication,
+but still allow the frontend to communicate with the database? Please implement your solution.

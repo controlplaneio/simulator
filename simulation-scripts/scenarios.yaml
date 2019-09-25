@@ -22,6 +22,9 @@ scenarios:
   - name: Network Swarming
     path: ./scenario/network-swarming
     id: network-swarming
+  - name: Network Hedgehog Defense
+    path: ./scenario/network-hedgehog-defence
+    id: network-hedgehog-defence
   - name: Node Amphibious Operations
     path: ./scenario/node-amphibious-operations
     id: node-amphibious-operations
