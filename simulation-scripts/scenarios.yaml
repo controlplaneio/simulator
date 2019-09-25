@@ -28,3 +28,9 @@ scenarios:
   - name: Container Defeat in Detail
     path: ./scenario/container-defeat-in-detail
     id: container-defeat-in-detail
+  - name: Node Raiding
+    path: ./scenario/node-raiding
+    id: node-raiding
+  - name: Node Amphibious Operations
+    path: ./scenario/node-amphibious-operations
+    id: node-amphibious-operations
