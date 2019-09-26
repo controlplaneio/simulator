@@ -10,6 +10,9 @@ scenarios:
   - name: Network Feint
     path: ./scenario/network-feint
     id: network-feint
+  - name: Network Hammer and Anvil
+    path: ./scenario/network-hammer-and-anvil
+    id: network-hammer-and-anvil
   - name: Network Hedgehog Defense
     path: ./scenario/network-hedgehog-defence
     id: network-hedgehog-defence
@@ -22,6 +25,9 @@ scenarios:
   - name: Node Amphibious Operations
     path: ./scenario/node-amphibious-operations
     id: node-amphibious-operations
+  - name: Node Raiding
+    path: ./scenario/node-raiding
+    id: node-raiding
   - name: Node Shock Tactics
     path: ./scenario/node-shock-tactics
     id: node-shock-tactics
