@@ -189,7 +189,7 @@ get_pods() {
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" > "${TMP_FILE}"slave-2
 
-  #BUG(rem): dont hardcode indexes of slaves - this ties us to the exact number
+  #BUG(rem): perturb current hardcoded throughout to 1 master, 2 slaves; may need revisting
   MASTER_1="$(get_master)"
   SLAVE_1="$(get_slave 1)"
   SLAVE_2="$(get_slave 2)"
