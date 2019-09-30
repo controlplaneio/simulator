@@ -67,17 +67,6 @@ main() {
   parse_arguments "$@"
   validate_arguments "$@"
 
-  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
-    if ! command doctl >/dev/null; then
-      error "Please install doctl from https://github.com/digitalocean/doctl"
-    fi
-
-#    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
-#      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
-#      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
-#    fi
-  fi
-
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
   if [[ "${IS_TEST_ONLY:-}" == 1 ]]; then
