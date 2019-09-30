@@ -1,0 +1,3 @@
+During a routine audit of your logs, it was noticed that the jenkins user in the 'policy-fire-support' namespace jenkins container (exec in to start this scenario), was accessing files it should not have permissions to read. These files are host mounted SSH keys for use managing other infrastructure. Can you replay this by getting the SSH Keys from the container?
+
+What small configuration change can you make to prevent the Jenkins user from reading these files. NOTE: The Deployment and RBAC of the container have been audited already and conform to internal standards.

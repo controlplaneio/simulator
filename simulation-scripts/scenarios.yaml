@@ -37,3 +37,6 @@ scenarios:
   - name: Secret Tank Desant
     path: ./scenario/secret-tank-desant
     id: secret-tank-desant
+  - name: Policy Fire Support
+    path: ./scenario/policy-fire-support
+    id: policy-fire-support

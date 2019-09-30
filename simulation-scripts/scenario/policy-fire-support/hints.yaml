@@ -1,0 +1,14 @@
+---
+-
+  general_overview:
+    objective: "Use Sudo to get un readable ssh keys from a host mount"
+    starting-point: "Inside Jenkins container"
+    num-hints: "6"
+-
+  hints:
+    hint-1: "I should look around ans see if I can find those key"
+    hint-2: "Hmm I can't seem to open /root-ssh"
+    hint-3: "Is sudo installed in this container?"
+    hint-4: "task 2 - I wonder if there is a PodSecurityPolicy on this deployment"
+    hint-5: "task 2 - Looks like the jenkins PSP is the one I want"
+    hint-6: "task 2 - I think all I need to do is prevent privilege escalation"
