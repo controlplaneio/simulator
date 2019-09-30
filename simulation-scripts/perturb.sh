@@ -67,17 +67,6 @@ main() {
   parse_arguments "$@"
   validate_arguments "$@"
 
-  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
-    if ! command doctl >/dev/null; then
-      error "Please install doctl from https://github.com/digitalocean/doctl"
-    fi
-
-#    if [[ "${DIGITALOCEAN_ACCESS_TOKEN:-}" == "" ]]; then
-#      warning "Please export DIGITALOCEAN_ACCESS_TOKEN. For example:"
-#      error "export DIGITALOCEAN_ACCESS_TOKEN=xxx"
-#    fi
-  fi
-
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
   if [[ "${IS_TEST_ONLY:-}" == 1 ]]; then
@@ -200,7 +189,7 @@ get_pods() {
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" > "${TMP_FILE}"slave-2
 
-  #BUG(rem): dont hardcode indexes of slaves - this ties us to the exact number
+  #BUG(rem): perturb current hardcoded throughout to 1 master, 2 slaves; may need revisting
   MASTER_1="$(get_master)"
   SLAVE_1="$(get_slave 1)"
   SLAVE_2="$(get_slave 2)"
@@ -209,14 +198,13 @@ get_pods() {
   sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
   sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
 
-  #tail +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
+  tail +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
 
 is_master_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
-  #bug(rem): dont disable strict host checking - `simulator` performs a keyscan
   ssh \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
