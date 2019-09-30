@@ -205,7 +205,6 @@ is_master_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
-  #bug(rem): dont disable strict host checking - `simulator` performs a keyscan
   ssh \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
