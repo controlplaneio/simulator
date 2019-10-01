@@ -198,7 +198,7 @@ get_pods() {
   sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
   sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
 
-  tail +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
+   tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
 
 is_master_accessible() {

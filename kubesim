@@ -11,7 +11,7 @@ SSH_CONFIG_PATH=${HOME}/.ssh/
 KUBE_SIM_TMP=${HOME}/.kubesim/
 SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
 
-[[ ! -d ${KUBE_SIM_TMP} ]] && mkdir ${KUBE_SIM_TMP}
+[[ ! -d ${KUBE_SIM_TMP} ]] && mkdir "${KUBE_SIM_TMP}"
 
 touch "${SIMULATOR_CONFIG_FILE}"
 
