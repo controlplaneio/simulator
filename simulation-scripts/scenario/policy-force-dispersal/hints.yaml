@@ -1,0 +1,11 @@
+---
+-
+  general_overview:
+    objective: "Enable PodSecurityPolicy in the Api server"
+    starting-point: "On the master node"
+    num-hints: "3"
+-
+  hints:
+    hint-1: "Hmm, the RBAC look good"
+    hint-2: "Where does kubeadm keep the master config?"
+    hint-3: "Looks like the PodSecurityPolicy is missing from the admission controllers"

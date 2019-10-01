@@ -40,3 +40,6 @@ scenarios:
   - name: Policy Fire Support
     path: ./scenario/policy-fire-support
     id: policy-fire-support
+  - name: Policy Force Dispersal
+    path: ./scenario/policy-force-dispersal
+    id: policy-force-dispersal
