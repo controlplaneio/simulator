@@ -13,8 +13,8 @@ set -euo pipefail
 
 scenarioName=${1:-1}
 
-if [ "${scenarioName}" == 1 ]; then
-	echo "Missing scenario name, e.g."
+if [[ "${scenarioName}" == 1 ]] || [[ "${scenarioName}" =~ -*h[a-z]* ]]; then
+	echo "Requires scenario name, e.g."
 	echo "${0} lazy_AWS"
 	exit 1
 fi
