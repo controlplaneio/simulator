@@ -1,5 +1,5 @@
-Scenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.  This
-could potentially lead to the expose of sensitive data in the attached databases.
+Scenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.
+This could potentially lead to the expose of sensitive data in the attached databases.
 
 Starting Point:
 

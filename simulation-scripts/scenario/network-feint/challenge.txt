@@ -1,4 +1,4 @@
-Scenario: Your users are reporting odd results when they query your application NodePort: 32123.
+Scenario: Your users are reporting odd results when they query your application NodePort: "$MASTER_IP_ADDRESS":32123.
 They are expecting to see the NGINX welcome page, but 1/3 of the time they get an empty response.
 As a security engineer you are concerned because the application itself appears to be working normally and the only other pod in this namespace is a database with minimal security configuration due to business requirements.
 
