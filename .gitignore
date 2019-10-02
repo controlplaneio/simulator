@@ -126,3 +126,4 @@ test.debug
 tfplan
 simulator-automated-test.yaml
 /test-ssh/
+.DS_Store

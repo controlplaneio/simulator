@@ -1,3 +1,7 @@
-A secret has been leaked from your application. Your audit logs indicate that it hasn't been requested through
-the Kubernetes API. You have recently read a blog post about how to exfiltrate secrets with just network access.
-Can you investigate how this could happen and set up sufficient security parameters to prevent it in the future.
+Scenario: A secret has been leaked from your application.
+Your audit logs indicate that it hasn't been requested through the Kubernetes API.
+You have recently read a blog post about how to exfiltrate secrets with just network access.
+
+Starting Point:
+
+Task 1: Can you investigate how this could happen and set up sufficient security parameters to prevent it in the future.?

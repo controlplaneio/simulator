@@ -1,6 +1,7 @@
-Task 1: You have been asked to perform a security test on an application hosted in Kubernetes. To make the test as close
-to reality as possible you have only been told that the application is exposed as a NodePort service on IPaddress
-x.x.x.x
+Scenario: You have been asked to perform a security test on an application hosted in Kubernetes.
+To make the test as close to reality as possible you have only been told that the application is exposed as a NodePort service on IP address x.x.x.x.
+The application is the only app deployed to this cluster and does not need to access the Kubernetes control plane at run time.
 
-Task 2: The application is the only app deployed to this cluster and does not need to access the Kubernetes control
-plane at run time. How can you update the cluster configuration to mitigate this finding?
+Starting Point:
+
+Task 1: How can you update the cluster configuration to mitigate this finding?

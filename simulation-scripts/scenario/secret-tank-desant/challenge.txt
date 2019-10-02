@@ -1,2 +1,5 @@
-During your basic app sec testing you have been able to break out of your test application and into the container. Is
-there a secret way an attacker could progress the attack?
+Scenario: During your basic app sec testing you have been able to break out of your test application and into the container.
+
+Starting Point:
+
+Task 1: Is there a secret way an attacker could progress the attack?

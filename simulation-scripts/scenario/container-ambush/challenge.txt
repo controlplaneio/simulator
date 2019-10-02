@@ -1,5 +1,8 @@
-Task1: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.  This
-could potentially lead to the expose of sensitive data in the attached databases.  Demonstrate whether this is possible
-by retrieving x data from the database.
+Scenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.  This
+could potentially lead to the expose of sensitive data in the attached databases.
 
-Task 2: Update the deployment to prevent this issue from occuring.
+Starting Point:
+
+Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the databases.
+
+Task 2: Update the deployment to prevent this issue from occurring.
