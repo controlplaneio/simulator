@@ -6,7 +6,7 @@
     num-hints: "6"
 -
   hints:
-    hint-1: "Task 1: What mounts do we have?
+    hint-1: "Task 1: What mounts do we have?"
     hint-2: "Task 1: Workload is Jenkins with mounted docker.sock."
     hint-3: "Task 1: Enumerate r/o mounted docker.sock."
     hint-4: "Task 1: Pull env vars from local Docker inspect."
