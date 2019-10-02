@@ -6,12 +6,8 @@
     num-hints: "6"
 -
   hints:
-    hint-1: |
-        Task #:
-        What mounts do we have?
-        Anything which might help expose other containers to us?
-    hint-2: "Task #: 'kubectl exec' into workload."
-    hint-3: "Task #: Workload is Jenkins with mounted docker.sock."
-    hint-4: "Task #: Enumerate r/o mounted docker.sock."
-    hint-5: "Task #: Pull env vars from local Docker inspect."
-    hint-6: "Task #: Postgres containers' password as env var."
+    hint-1: "Task 1: What mounts do we have?"
+    hint-2: "Task 1: Workload is Jenkins with mounted docker.sock."
+    hint-3: "Task 1: Enumerate r/o mounted docker.sock."
+    hint-4: "Task 1: Pull env vars from local Docker inspect."
+    hint-5: "Task 1: Postgres containers' password as env var."
