@@ -1,3 +1,5 @@
-Your audit logs have indicated that a non-root user on one of the development nodes has been able to inspect data from
-running containers including runtime secrets.  It appears that changes have been made in the etc directory.  Can you
-investigate the cause and mitigate this issue
+Scenario: Your audit logs have indicated that a non-root user on one of the development nodes has been able to inspect data from
+running containers including runtime secrets.
+It appears that changes have been made in the etc directory.
+
+Task 1: Can you investigate the cause and mitigate this issue?

@@ -1,16 +1,16 @@
 ---
 -
   general_overview:
-    objective: "Use misconfigured svc to compromise db"
-    starting-point: "inside a frontend pod"
+    objective: "Use misconfigured svc to compromise db."
+    starting-point: "Inside a frontend pod."
     num-hints: "8"
 -
   hints:
-    hint-1: "I wonder what the services for the 'database' and 'api' are called? I think the names might be obvious."
-    hint-2: "I don't the api will be useful, can I look at the datbase from here?"
-    hint-3: "Many databases are sql based, could it be one of the popular ones?"
-    hint-4: "I wonder what the default username for the sql database is?"
-    hint-5: "One of the devs mentioned a postgres database they used didn't have a password, could this be it?"
-    hint-6: "Hmm, how do I list tables and view the keys in tables again?"
-    hint-7: "task 2 - The database shouldn't be talking to the frontend"
-    hint-8: "task 2 - I wonder if a network policy would help here"
+    hint-1: "Task 1: I wonder what the services for the 'database' and 'api' are called? I think the names might be obvious."
+    hint-2: "Task 1: I don't think the API will be useful, can I look at the database from here?"
+    hint-3: "Task 1: Many databases are SQL based, could it be one of the popular ones?"
+    hint-4: "Task 1: I wonder what the default username for the database is."
+    hint-5: "Task 1: One of the devs mentioned a Postgres database they used didn't have a password, could this be it?"
+    hint-6: "Task 1: Hmm, how do I list tables and view the keys in tables again?"
+    hint-7: "Task 2: The database shouldn't be talking to the frontend."
+    hint-8: "Task 2: I wonder if a network policy would help here."

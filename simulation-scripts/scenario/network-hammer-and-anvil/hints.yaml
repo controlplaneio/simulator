@@ -1,16 +1,16 @@
 ---
 -
   general_overview:
-    objective: "Use badly configured database to exfiltrate data"
-    starting-point: "inside a frontend pod"
+    objective: "Use badly configured database to exfiltrate data."
+    starting-point: "Inside a frontend pod."
     num-hints: "8"
 -
   hints:
-    hint-1: "Is there anything useful in the env vars"
-    hint-2: "Those look like a host and password for a root ssh user!"
-    hint-3: "I think postgres doesn't need a password if you're reaching it from localhost"
-    hint-4: "I wonder if there are any mount poinst in this container"
-    hint-5: "I have an IP and SSH key from the welcome text to this challenge, I can scp my data to there"
-    hint-6: "task-2 - The database shouldn't need to talk externally"
-    hint-7: "task 2 - Only the frontend should have access to the database"
-    hint-8: "task 2 - I wonder if a network policy would help here"
+    hint-1: "Task 1: Is there anything useful in the env vars?"
+    hint-2: "Task 1: Those look like a host and password for a root SSH user!"
+    hint-3: "Task 1: I think Postgres doesn't need a password if you're reaching it from localhost."
+    hint-4: "Task 1: I wonder if there are any mount points in this container."
+    hint-5: "Task 1: I have an IP and SSH key from the welcome text to this challenge, I can 'scp' my data to there."
+    hint-6: "Task 2: The database shouldn't need to talk externally."
+    hint-7: "Task 2: Only the frontend should have access to the database."
+    hint-8: "Task 2: I wonder if a network policy would help here."

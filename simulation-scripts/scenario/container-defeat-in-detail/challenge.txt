@@ -1,3 +1,10 @@
-One of your engineers has noticed that there are more pods of your node-cert-manager DaemonSet running than they would expect. There is a known vulnerability in the node-cert-manager pod (so start this task by exec'ing into one of them in the container-defeat-in-detail namespace), can you demonstrate the extra pods are a significant concern by retrieving a flag from etcd (etcd is running at $MASTER_IP_ADDRESSES )?
+Scenario: One of your engineers has noticed that there are more pods of your node-cert-manager DaemonSet running than they would expect.
+There is a known vulnerability in the node-cert-manager pod.
 
-The node-cert-manager should only be running on the workers, what can you do to fix its scheduling. Note: The DaemonSet itself should not be edited for this task.
+Starting Point: Exec'ing into one of the pods in the 'container-defeat-in-detail' namespace.
+
+Task 1: Can you demonstrate that the extra pods are a significant concern by retrieving a flag from etcd?
+Details: etcd is running at $MASTER_IP_ADDRESSES.
+
+Task 2: The node-cert-manager should only be running on the workers, what can you do to fix its scheduling?
+Details: The DaemonSet itself should not be edited for this task.

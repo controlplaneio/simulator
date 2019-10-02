@@ -1,3 +1,6 @@
-Your audit logs indicate that an anonymous user has been starting malicious workloads on your nodes.
-You have confirmed that the kubernetes API server is set up to authenticate and authorize every request. Can you investigate how this
-could happen and set up sufficient security parameters to prevent it in the future.
+Scenario: Your audit logs indicate that an anonymous user has been starting malicious workloads on your nodes.
+You have confirmed that the Kubernetes API server is set up to authenticate and authorise every request.
+
+Starting Point:
+
+Task 1: Can you investigate how this could happen and set up sufficient security parameters to prevent it in the future?
