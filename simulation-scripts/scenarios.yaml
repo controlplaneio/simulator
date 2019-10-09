@@ -7,6 +7,9 @@ scenarios:
   - name: Container Defeat in Detail
     path: ./scenario/container-defeat-in-detail
     id: container-defeat-in-detail
+  - name: etcd inverted wedge
+    path: ./scenario/etcd-inverted-wedge
+    id: etcd-inverted-wedge
   - name: Network Feint
     path: ./scenario/network-feint
     id: network-feint

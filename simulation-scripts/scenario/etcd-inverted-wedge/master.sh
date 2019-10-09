@@ -5,7 +5,5 @@ apt update
 apt install yq -y
 apt-get install -y jq
 
-#this doesn't work
-yq r -j /etc/kubernetes/manifests/etcd.yaml | jq -r '.spec.containers[].command[]|select(. == "--client-cert-auth=true")'|="--client-cert-auth=false"
-
-#write to replace "--client-cert-auth=true" with "--client-cert-auth=false"
+yq r -j /etc/kubernetes/manifests/etcd.yaml | jq --arg auth "--client-cert-auth=true" '(.spec.containers[].command[] | select(. == $auth)) = "--client-cert-auth=false"' | yq r - > etcd.yaml
+mv etcd.yaml /etc/kubernetes/manifests/etcd.yaml
