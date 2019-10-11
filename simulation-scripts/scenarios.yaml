@@ -7,7 +7,7 @@ scenarios:
   - name: Container Defeat in Detail
     path: ./scenario/container-defeat-in-detail
     id: container-defeat-in-detail
-  - name: etcd inverted wedge
+  - name: ETCD Inverted Wedge
     path: ./scenario/etcd-inverted-wedge
     id: etcd-inverted-wedge
   - name: Network Feint
@@ -19,9 +19,6 @@ scenarios:
   - name: Network Hedgehog Defense
     path: ./scenario/network-hedgehog-defence
     id: network-hedgehog-defence
-  - name: Network Siege
-    path: ./scenario/network-siege
-    id: network-siege
   - name: Network Swarming
     path: ./scenario/network-swarming
     id: network-swarming
