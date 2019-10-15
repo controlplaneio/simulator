@@ -183,13 +183,10 @@ get_pods() {
   local SLAVE_2
   local MASTER_1
 
-  rm -rf "${TMP_FILE}*"
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >| "${TMP_FILE}"master
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" >| "${TMP_FILE}"slave-1
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" >| "${TMP_FILE}"slave-2
 
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" > "${TMP_FILE}"master
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" > "${TMP_FILE}"slave-1
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" > "${TMP_FILE}"slave-2
-
-  #BUG(rem): perturb current hardcoded throughout to 1 master, 2 slaves; may need revisting
   MASTER_1="$(get_master)"
   SLAVE_1="$(get_slave 1)"
   SLAVE_2="$(get_slave 2)"
@@ -198,7 +195,7 @@ get_pods() {
   sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
   sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
 
-#   tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
+#  tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
 
 is_master_accessible() {
