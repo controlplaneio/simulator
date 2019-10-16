@@ -103,7 +103,9 @@ write_files:
       X11DisplayOffset 10
       PrintMotd no
       PrintLastLog yes
-      TCPKeepAlive no
+      TCPKeepAlive no 
+      ClientAliveInterval 30
+      ClientAliveCountMax 240
       # Allow SendEnv of BASE64_SSH_KEY to enable SSHing to the instances in the
       # private subnet (the kubernetes master and nodes)
       AcceptEnv BASE64_SSH_KEY LANG LC_*
