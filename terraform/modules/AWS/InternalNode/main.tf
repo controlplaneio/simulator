@@ -6,7 +6,7 @@ resource "aws_instance" "simulator_internal_node" {
   vpc_security_group_ids      = ["${var.control_plane_sg_id}"]
   associate_public_ip_address = false
   subnet_id                   = "${var.private_subnet_id}"
-#  user_data                   = "${data.template_file.cloud_config.rendered}"
+  user_data                   = "${data.template_file.internal_config.rendered}"
   tags                        = "${merge(var.default_tags, map("Name", "Simulator Interal Node"))}"
 }
 
