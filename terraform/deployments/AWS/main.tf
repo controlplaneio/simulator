@@ -56,8 +56,8 @@ module "InternalNode" {
   ami_id              = "${module.Ami.AmiId}"
   instance_type       = "${var.instance_type}"
   access_key_name     = "${module.SshKey.KeyPairName}"
-  security_group      = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
-  subnet_id           = "${module.Networking.PrivateSubnetId}"
+  control_plane_sg_id = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
+  private_subnet_id   = "${module.Networking.PrivateSubnetId}"
   default_tags        = "${var.default_tags}"
 }
 
