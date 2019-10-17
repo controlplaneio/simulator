@@ -1,0 +1,56 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+disable_root: false
+
+packages: ['figlet']
+hostname: "internal"
+
+write_files:
+  - path: /etc/bash.bashrc
+    permissions: '0755'
+    content: |
+      [ -z "$PS1" ] && return
+      PS1='\u@\h $'
+      echo "$(tput setaf 3)
+       db   dD db    db d8888b. d88888b .d8888. d888888b .88b  d88. 
+       88 ,8P' 88    88 88  `8D 88'     88'  YP   `88'   88'YbdP`88 
+       88,8P   88    88 88oooY' 88ooooo `8bo.      88    88  88  88 
+       88`8b   88    88 88~~~b. 88~~~~~   `Y8b.    88    88  88  88 
+       88 `88. 88b  d88 88   8D 88.     db   8D   .88.   88  88  88 
+       YP   YD ~Y8888P' Y8888P' Y88888P `8888Y' Y888888P YP  YP  YP
+      $(tput setaf 3)$(figlet $(hostname))
+      $(tput sgr0)"
+  - path: /etc/default/motd-news
+    owner: root:root
+    permissions: '0644'
+    content: |
+      ENABLED=0
+  - path: /etc/pam.d/sshd
+    owner: root:root
+    permissions: '0644'
+    content: |
+      # Defaults with comments removed and motd disabled
+      @include common-auth
+      account    required     pam_nologin.so
+      @include common-account
+      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so close
+      session    required     pam_loginuid.so
+      session    optional     pam_keyinit.so force revoke
+      @include common-session
+      session    optional     pam_mail.so standard noenv # [1]
+      session    required     pam_limits.so
+      session    required     pam_env.so # [1]
+      session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
+      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
+      @include common-password
+
+runcmd:
+  - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
+  - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
+  - 'apt update'
+
+output:
+  all: '| tee -a /var/log/cloud-init-output.log'
+
