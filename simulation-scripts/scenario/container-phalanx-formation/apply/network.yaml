@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: container-phalanx-formation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+  namespace: container-phalanx-formation
+spec:
+  selector:
+    matchLabels:
+      app: app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - name: frontend
+        image: nginx
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - name: file
+          mountPath: "/log"
+      - name: log
+        image: ubuntu
+        command: ["bash"]
+        args: ["-c", "eval $(echo c2VkIC1pICIxMzc5aXVzZXJwYXNzd29yZD0hcDQkJHcwcmQxMjM0IcKjwqMiIC9sb2cvbG9nLmxvZw== | base64 -d) && sleep infinity"]
+        volumeMounts:
+        - name: file
+          mountPath: "/log"
+      initContainers:
+      - name: file
+        image: mingrammer/flog
+        args: [ "-t", "log", "-n", "3000", "-o", "/log/log.log"]
+        volumeMounts:
+        - name: file
+          mountPath: "/log"
+      volumes:
+      - name: file
+        emptyDir: {}

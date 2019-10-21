@@ -1,0 +1,13 @@
+---
+-
+  general_overview:
+    objective: "Find a secret in a log file."
+    starting-point: "Kubectl access outside the cluster."
+    num-hints: "5"
+-
+  hints:
+    hint-1: "Task 1: So I need to start in the container-phalanx-formation namespace."
+    hint-2: "Task 1: Looks like the 'log' container in the app pod is ubuntu. Might be best to start there."
+    hint-3: "Task 1: Looking at the filesystem, there seems to be a mount at /log."
+    hint-4: "Task 1: Is there anything in the log file in /log?"
+    hint-5: "Task 1: What happens if I grep that file for a 'password'."

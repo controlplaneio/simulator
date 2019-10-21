@@ -46,6 +46,8 @@ spec:
           readOnly: true
       - image: ubuntu:16.04
         imagePullPolicy: IfNotPresent
+        command: [ "sleep" ]
+        args: [ "infinity" ]
         name: db
         volumeMounts:
         - name: db
