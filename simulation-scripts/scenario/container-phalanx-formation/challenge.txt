@@ -1,0 +1,5 @@
+Scenario: During a routine audit of an application, it was noticed that there is a bug in its logging mechanism. Some old passwords that are used with this application were also recently rotated due to concerns that they may be compromised.
+
+Staring Point: Kubectl access
+
+Task 1: Assuming you are an internal actor (i.e. you have full kubectl access) can you figure out how these secrets were compromised?

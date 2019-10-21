@@ -7,6 +7,9 @@ scenarios:
   - name: Container Defeat in Detail
     path: ./scenario/container-defeat-in-detail
     id: container-defeat-in-detail
+  - name: Container Phalanx Formation
+    path: ./scenario/container-phalanx-formation
+    id: container-phalanx-formation
   - name: ETCD Inverted Wedge
     path: ./scenario/etcd-inverted-wedge
     id: etcd-inverted-wedge
