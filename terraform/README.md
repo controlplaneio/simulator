@@ -93,7 +93,7 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 
 Refer to [settings documentation](./modules/AWS/InternalNode/README-auto.md)
 
-* A single host on the private subnet which is not in the cluster
+* A single host on the private subnet which is external to the cluster
 
 ### Networking
 
