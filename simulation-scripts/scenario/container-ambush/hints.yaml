@@ -3,7 +3,7 @@
   general_overview:
     objective: "Get postgres password."
     starting-point: "kubectl pod exec."
-    num-hints: "6"
+    num-hints: "5"
 -
   hints:
     hint-1: "Task 1: What mounts do we have?"

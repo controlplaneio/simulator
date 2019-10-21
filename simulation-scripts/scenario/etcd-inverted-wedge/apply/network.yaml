@@ -5,3 +5,23 @@ metadata:
 type: Opaque
 data:
   credentials: b2hub2NyZWRlbnRpYWxzYXJlaGVyZQo=
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu:18.04
+        args: [bash, -c, 'sleep infinity']
