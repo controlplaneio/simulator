@@ -25,3 +25,7 @@ variable "default_tags" {
   type        = "map"
 }
 
+variable "bastion_public_ip" {
+  description = "IP address of the bastion for connecting to run tests"
+}
+

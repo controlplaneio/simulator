@@ -59,6 +59,7 @@ module "InternalNode" {
   control_plane_sg_id = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
   private_subnet_id   = "${module.Networking.PrivateSubnetId}"
   default_tags        = "${var.default_tags}"
+  bastion_public_ip   = "${module.Bastion.BastionPublicIp}"
 }
 
 // Create S3 bucket to share Kubernetes join details between

@@ -1,0 +1,16 @@
+port:
+  tcp:22:
+    listening: true
+    ip:
+      - 0.0.0.0
+
+# Check sshd is running
+service:
+  sshd:
+    enabled: true
+    running: true
+
+packages:
+  kubectl:
+    installed: true
+
