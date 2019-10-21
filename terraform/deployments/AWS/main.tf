@@ -50,6 +50,17 @@ module "Kubernetes" {
   default_tags                = "${var.default_tags}"
 }
 
+// Setup host within Kubernetes subnet
+module "InternalNode" {
+  source              = "../../modules/AWS/InternalNode"
+  ami_id              = "${module.Ami.AmiId}"
+  instance_type       = "${var.instance_type}"
+  access_key_name     = "${module.SshKey.KeyPairName}"
+  control_plane_sg_id = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
+  private_subnet_id   = "${module.Networking.PrivateSubnetId}"
+  default_tags        = "${var.default_tags}"
+}
+
 // Create S3 bucket to share Kubernetes join details between
 // master and nodes
 module "S3Storage" {

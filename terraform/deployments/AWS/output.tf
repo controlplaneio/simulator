@@ -10,6 +10,10 @@ output "cluster_nodes_private_ip" {
   value       = "${module.Kubernetes.K8sNodesPrivateIp}"
   description = "Cluster node private IPs"
 }
+output "internal_node_private_ip" {
+  value       = "${module.InternalNode.InternalNodePrivateIp}"
+  description = "Private Subnet node IP"
+}
 output "access_cidr" {
   value       = "${var.access_cidr}"
   description = "Remote access IP"

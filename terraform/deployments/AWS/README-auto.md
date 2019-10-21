@@ -24,5 +24,6 @@
 | ami\_id | AMI used for all instances |
 | bastion\_public\_ip | Bastion public IP |
 | cluster\_nodes\_private\_ip | Cluster node private IPs |
+| internal\_node\_private\_ip | Private Subnet node IP |
 | master\_nodes\_private\_ip | Master node private IP |
 
