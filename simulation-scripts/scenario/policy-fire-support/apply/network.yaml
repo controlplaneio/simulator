@@ -9,34 +9,6 @@ metadata:
   name: jenkins
   namespace: policy-fire-support
 ---
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: jenkins
-  namespace: policy-fire-support
-spec:
-  selector:
-    matchLabels:
-      app: jenkins
-  template:
-    metadata:
-      labels:
-        app: jenkins
-    spec:
-      serviceAccountName: jenkins
-      containers:
-      - name: jenkins
-        image: jenkins:policy-fire-support
-        imagePullPolicy: Never
-        volumeMounts:
-        - name: root-ssh
-          mountPath: "/root-ssh"
-      volumes:
-      - name: root-ssh
-        hostPath:
-          path: /root/.ssh/
-          type: Directory
----
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
@@ -99,3 +71,33 @@ subjects:
   - kind: ServiceAccount
     name: jenkins
     namespace: policy-fire-support
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: policy-fire-support
+spec:
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      serviceAccountName: jenkins
+      containers:
+      - name: jenkins
+        image: jenkins:policy-fire-support
+        imagePullPolicy: Never
+        securityContext:
+          runAsUser: 1000
+        volumeMounts:
+        - name: root-ssh
+          mountPath: "/root-ssh"
+      volumes:
+      - name: root-ssh
+        hostPath:
+          path: /root/.ssh/
+          type: Directory
