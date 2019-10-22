@@ -7,7 +7,7 @@
 | bastion\_public\_ip | IP address of the bastion for connecting to run tests | string | n/a | yes |
 | control\_plane\_sg\_id | configure security group | string | n/a | yes |
 | default\_tags | Default tags for all resources | map | n/a | yes |
-| instance\_type | instance type for Baston host | string | `"t2.micro"` | no |
+| instance\_type | instance type to use | string | `"t2.micro"` | no |
 | private\_subnet\_id | private subnet id | string | n/a | yes |
 
 ## Outputs
