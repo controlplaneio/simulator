@@ -2,9 +2,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: node-shock-tactics
-
 ---
-
 apiVersion: v1
 kind: Secret
 metadata:
@@ -13,31 +11,28 @@ metadata:
 type: Opaque
 data:
    password: RGFyaXVzaXNiYWQ=
-
 ---
-
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   labels:
-    name: nginx
-  name: nginx
+    name: shock-target
+  name: shock-target
   namespace: node-shock-tactics
 spec:
-  replicas: 3
   selector:
     matchLabels:
-      name: nginx
+      name: shock-target
   template:
     metadata:
       labels:
-        name: nginx
+        name: shock-target
     spec:
       containers:
       - image: nginx
         # image: vulnerables/cve-2014-6271
         imagePullPolicy: IfNotPresent
-        name: nginx
+        name: shock-target
         ports:
         - containerPort: 80
         volumeMounts:

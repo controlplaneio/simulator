@@ -13,5 +13,5 @@
     hint-5: "Task 1: /etc/shadow manipulation."
     hint-6: "Task 1: Set root password for host."
     hint-7: "Task 1: Login as root."
-    hint-8: "Task 1: 'df -h' as host root to see tmpfs mounts."
-    hint-9: "Task 1: Read creds from tmpfs volume."
+    hint-8: "Task 2: 'df -h' as host root to see tmpfs mounts."
+    hint-9: "Task 2: Read creds from tmpfs volume."

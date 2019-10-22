@@ -4,4 +4,6 @@ It appears that changes have been made in the etc directory.
 
 NOTE: DO NOT USE 'attack_node' AS THIS WILL BYPASS THE SCENARIO AND GIVE YOU ROOT ACCESS TO THE NODE.
 
-Task 1: Can you investigate the cause and mitigate this issue?
+Task 1: Can you investigate the changes and escalate your permissions?
+
+Task 2: With escalated permissions can you find the secret in the 'shock-target' pods?
