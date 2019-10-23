@@ -1,0 +1,5 @@
+Scenario: A developer has informed you, they are able to make Kubernetes API calls from an Ubuntu pod although it only belongs to the default service account.
+
+Task 1: Can you replicate this issue.
+
+Task 2: Figure out the reason behind this and reset the cluster to benchmark recommendations.

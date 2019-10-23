@@ -1,0 +1,12 @@
+---
+-
+  general_overview:
+    objective: "Figure out additional permissions given to system:anonymous role and remove them."
+    starting-point: "pod"
+    num-hints: "4"
+-
+  hints:
+    hint-1: "Task 1: Can you hit the API from inside the pod? What is the DNS resolvable name?"
+    hint-2: "Task 2: What user is assigned when hitting the API with no identity?"
+    hint-3: "Task 2: Have a look at the rolebindings and clusterrolebindings"
+    hint-4: "Task 2: system:anonymous has a clusterrolebinding to admin. Remove this binding."
