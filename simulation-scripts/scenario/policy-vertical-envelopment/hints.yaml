@@ -14,6 +14,6 @@
     hint-6: "Task 1: The secret I need is in the node-secret directory."
     hint-7: "Task 2: Looks like I need to set privileged to false."
     hint-8: "Task 3: I think a PodSecurityPolicy might be useful here."
-    hint-9: "Task 3: Remember to set a default policy before enabling the PSP"
+    hint-9: "Task 3: Remember to set a default policy before enabling the PSP in both the kube-system and policy-vertical-envelopment namespaces"
     hint-10: "Task 3: I'll need to enable the PSP controller in the api-server."
     hint-11: "Task 3: My PSP for Jenkins should prevent 'privileged= true'."
