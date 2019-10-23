@@ -1,0 +1,10 @@
+Scenario: A team has been running their own Jenkins container by baking secrets into the image. As this is a contravention of both best practice and internal processes they have been instructed to change their image to use the official Jenkins image. They claim to have done this bu the file '/secrets/aws-creds' still exists and has the contents:
+
+    AWS_ACCESS_KEY_ID=EXAMPLEKEY12345
+    AWS_SECRET_ACCESS_KEY=SECRETACCESSKEY9876!*
+
+Starting Point: Cluster access.
+
+Task 1: Can you fix the configuration error that allowed these secrets to persist?
+
+Task 2: The team has now realised that they still need the 'secrets/aws-creds' file. Can you provision this file securely into the container?

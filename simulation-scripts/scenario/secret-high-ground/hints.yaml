@@ -1,0 +1,13 @@
+---
+-
+  general_overview:
+    objective: "Fix a pull policy and then add a secret to the pod."
+    starting-point: "Cluster Access"
+    num-hints: "5"
+-
+  hints:
+    hint-1: "Task 1: I should probably check the deployment."
+    hint-2: "Task 1: Is the a flag I can update that will force the container to pull from the offical repository?"
+    hint-3: "Task 1: I should set the PodSecurityPolicy flag to Always."
+    hint-4: "Task 2: A kubernetes secret is the best choice here."
+    hint-5: "Task 2: I can mount the secret data as a file into the pod."

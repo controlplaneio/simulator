@@ -46,6 +46,9 @@ scenarios:
   - name: RBAC Flanking Maneuver
     path: ./scenario/rbac-flanking-maneuver
     id: rbac-flanking-maneuver
+  - name: Secret High Ground
+    path: ./scenario/secret-high-ground
+    id: secret-high-ground
   - name: Secret Tank Desant
     path: ./scenario/secret-tank-desant
     id: secret-tank-desant
