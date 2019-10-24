@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rbac-contact-drill
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: credentials
+  namespace: rbac-contact-drill
+type: Opaque
+data:
+  credentials: aUFtQ3JlZGVudGlhbHMK
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: rbac-contact-drill
+  name: secret-reader
+rules:
+- apiGroups: [""] # "" indicates the core API group
+  resources: ["secrets"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rbac-contact-drill
+  namespace: rbac-contact-drill
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: rbac-contact-drill
+roleRef:
+  apiGroup: ""
+  kind: Role
+  name: secret-reader
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu
+  namespace: rbac-contact-drill
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu:18.04
+        args: [bash, -c, 'sleep infinity']
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secrets-caller
+  namespace: rbac-contact-drill
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu:18.04
+        args: [bash, -c, 'sleep infinity']

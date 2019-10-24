@@ -43,6 +43,9 @@ scenarios:
   - name: Policy Vertical Envelopment
     path: ./scenario/policy-vertical-envelopment
     id: policy-vertical-envelopment
+  - name: RBAC Contact Drill
+    path: ./scenario/rbac-contact-drill
+    id: rbac-contact-drill
   - name: RBAC Flanking Maneuver
     path: ./scenario/rbac-flanking-maneuver
     id: rbac-flanking-maneuver
