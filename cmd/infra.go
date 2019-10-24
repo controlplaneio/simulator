@@ -15,6 +15,12 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
+			if bucket == "" {
+				logger.Warnf("Simulator has not been initialised with an S3 bucket")
+				logger.Warn("Please run simulator init")
+				return nil
+			}
+
 			scenariosDir := viper.GetString("scenarios-dir")
 			tfDir := viper.GetString("tf-dir")
 			err := simulator.Create(logger, tfDir, bucket)
@@ -45,6 +51,11 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
+			if bucket == "" {
+				logger.Warnf("Simulator has not been initialised with an S3 bucket")
+				logger.Warn("Please run simulator init")
+				return nil
+			}
 			tfDir := viper.GetString("tf-dir")
 			tfo, err := simulator.Status(logger, tfDir, bucket)
 			if err != nil {
@@ -73,6 +84,11 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
+			if bucket == "" {
+				logger.Warnf("Simulator has not been initialised with an S3 bucket")
+				logger.Warn("Please run simulator init")
+				return nil
+			}
 			tfDir := viper.GetString("tf-dir")
 
 			err := simulator.Destroy(logger, tfDir, bucket)
