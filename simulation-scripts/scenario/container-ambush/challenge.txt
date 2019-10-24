@@ -4,5 +4,4 @@ This could potentially lead to the expose of sensitive data in the attached data
 Starting Point:
 
 Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the databases.
-
-Task 2: Update the deployment to prevent this issue from occurring.
+What changes could you make to prevent this from happening?
