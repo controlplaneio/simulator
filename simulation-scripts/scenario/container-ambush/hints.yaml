@@ -3,7 +3,7 @@
   general_overview:
     objective: "Get postgres password."
     starting-point: "kubectl pod exec."
-    num-hints: "5"
+    num-hints: "6"
 -
   hints:
     hint-1: "Task 1: What mounts do we have?"
@@ -11,3 +11,4 @@
     hint-3: "Task 1: Enumerate r/o mounted docker.sock."
     hint-4: "Task 1: Pull env vars from local Docker inspect."
     hint-5: "Task 1: Postgres containers' password as env var."
+    hint-6: "Task 2: How did you access password, can you remove this access?"
