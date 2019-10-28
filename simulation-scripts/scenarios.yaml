@@ -34,6 +34,9 @@ scenarios:
   - name: Node Shock Tactics
     path: ./scenario/node-shock-tactics
     id: node-shock-tactics
+  - name: Policy Echelon Formation
+    path: ./scenario/policy-echelon-formation
+    id: policy-echelon-formation
   - name: Policy Fire Support
     path: ./scenario/policy-fire-support
     id: policy-fire-support

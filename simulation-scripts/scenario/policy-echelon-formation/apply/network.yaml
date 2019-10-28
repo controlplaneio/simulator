@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: policy-echelon-formation
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: process-monitor
+  namespace: policy-echelon-formation
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-pass
+  namespace: policy-echelon-formation
+type: Opaque
+data:
+  password: cXdlcnR5dWlvcDEyMzQ1ISIk
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keys
+  namespace: policy-echelon-formation
+type: Opaque
+data:
+  keys.txt: QVdTX0FDQ0VTU19LRVlfSUQ9S0VZMTIzNDU2Nzg5CkFXU19TRUNSRVRfQUNDRVNTX0tFWT1TRUNSRVRLRVkxMjM0NTY3ODkhCg==
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: process-monitor
+  namespace: policy-echelon-formation
+spec:
+  selector:
+    matchLabels:
+      app: process-monitor
+  template:
+    metadata:
+      labels:
+        app: process-monitor
+    spec:
+      serviceAccountName: process-monitor
+      hostPID: true
+      containers:
+      - name: monitor
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        securityContext:
+          capabilities:
+            add: ["ALL"]
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: db
+  namespace: policy-echelon-formation
+spec:
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        ports:
+        - containerPort: 5432
+          name: database
+        volumeMounts:
+        - name: keys
+          mountPath: "/secrets"
+          readOnly: true
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-pass
+              key: password
+      volumes:
+      - name: keys
+        secret:
+          secretName: keys

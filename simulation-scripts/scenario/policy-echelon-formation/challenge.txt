@@ -1,0 +1,9 @@
+Scenario: A new process monitoring tool has been deployed to your cluster. A fellow security engineer has audited the deployment and believes that the current configuration can allow a compromised pod this deployment to further compromise any other container on the same host.
+
+Starting Point: Inside the process-monitoring pod in the policy-echelon-formation namespace.
+
+Task 1: Can you verify this suspicion by retrieving the DB_PASSWORD, AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID from the postgres DaemonSet?
+
+Task 2: What small change can be made to the Deployment to prevent this compromise from happening again? NOTE: The deployment does require access to the host PID namespace.
+
+Task 3: What Kubernetes resource can you add to this cluster to guarantee this vulnerability cannot be re-introduced to the cluster.
