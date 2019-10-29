@@ -30,7 +30,6 @@ spec:
     spec:
       containers:
       - image: nginx
-        
         imagePullPolicy: IfNotPresent
         name: shock-target
         ports:

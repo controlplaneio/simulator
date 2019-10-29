@@ -16,6 +16,5 @@ spec:
     spec:
       containers:
       - image: alpine:3.7
-        
         imagePullPolicy: IfNotPresent
         name: malicious-pod

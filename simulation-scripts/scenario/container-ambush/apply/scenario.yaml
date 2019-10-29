@@ -40,7 +40,6 @@ spec:
     spec:
       containers:
       - image: nginx
-
         imagePullPolicy: IfNotPresent
         name: jenkins
         ports:
