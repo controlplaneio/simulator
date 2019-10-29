@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: master-bait-and-bleed
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: master-bait-and-bleed
+  name: credentials
+type: Opaque
+data:
+  credentials: YVNlY3JldElzSGVyZQo=
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: master-bait-and-bleed
+  name: ubuntu
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu:18.04
+        env:
+        - name: KUBERNETES_INSECURE_PORT
+          value: 8080
+        args: [bash, -c, 'sleep infinity']

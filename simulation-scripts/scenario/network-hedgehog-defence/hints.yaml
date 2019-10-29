@@ -6,10 +6,10 @@
     num-hints: "8"
 -
   hints:
-    hint-1: "Task #: Is it possible to hit the database service from the setup pod?"
-    hint-2: "Task #: The DNS resolution across namespaces is <service>.<namespace>."
-    hint-3: "Task #: Many databases are SQL based, could it be one of the popular ones? You may need to install a query tool on the setup pod."
-    hint-4: "Task #: Do Postgres databases have passwords by default? I wonder what the default username for the SQL database is."
-    hint-5: "Task #: Hmm, how do I list tables and view the keys in tables again?"
-    hint-6: "Task #: To query db from setupd pod: `psql -h database.network-hedgehog-defence -U postgres`. To get table `SELECT * FROM secrets;``"
-    hint-7: "Task #: Put a network policy in place such that only namespace internal resources can talk to the database."
+    hint-1: "Task 1: Is it possible to hit the database service from the setup pod?"
+    hint-2: "Task 1: The DNS resolution across namespaces is <service>.<namespace>."
+    hint-3: "Task 1: Many databases are SQL based, could it be one of the popular ones? You may need to install a query tool on the setup pod."
+    hint-4: "Task 1: Do Postgres databases have passwords by default? I wonder what the default username for the SQL database is."
+    hint-5: "Task 1: Hmm, how do I list tables and view the keys in tables again?"
+    hint-6: "Task 1: To query db from setupd pod: `psql -h database.network-hedgehog-defence -U postgres`. To get table `SELECT * FROM secrets;``"
+    hint-7: "Task 2: Put a network policy in place such that only namespace internal resources can talk to the database."

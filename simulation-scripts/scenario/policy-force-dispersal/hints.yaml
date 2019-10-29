@@ -6,6 +6,6 @@
     num-hints: "3"
 -
   hints:
-    hint-1: "Task 1: Hmm, the RBAC looks good."
+    hint-1: "Task 1: Hmm, the RBAC looks good. What other factors could influence the permissions?"
     hint-2: "Task 1: Where does kubeadm keep the master config?"
     hint-3: "Task 1: Looks like the PodSecurityPolicy is missing from the admission controllers."

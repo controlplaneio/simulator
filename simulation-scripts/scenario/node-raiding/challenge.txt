@@ -4,4 +4,5 @@ You have recently read a blog post about how to exfiltrate secrets with just net
 
 Starting Point:
 
-Task 1: Can you investigate how this could happen and set up sufficient security parameters to prevent it in the future.?
+Task 1: Can you investigate how this could happen?
+Task 2: Set up sufficient security parameters to prevent it in the future.
