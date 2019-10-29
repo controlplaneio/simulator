@@ -1,0 +1,16 @@
+---
+-
+  general_overview:
+    objective: "Figure out additional permissions given to system:authenticated group and remove them."
+    starting-point: "frontend pod in the rac-sangar namespace"
+    num-hints: "4"
+-
+  hints:
+    hint-1: "Task 1: Can I run or install kubectl in here?"
+    hint-2: "Task 1: Hmm, I can't see secrets directly. I wonder what the deployment of the application pods looks like?"
+    hint-3: "Task 2: Is there a rolebinding or clusterrolebinding bound to the default service account in this namespace?"
+    hint-4: "Task 2: Looks like there is not a direct binding to the serviceice account. Using the pods token we are in the system:authenticated group. Is something bound to that?"
+    hint-5: "Task 2: Looks like the authenticated-view ClusterRoleBinding is giving the group more permissions! It should probably be deleted for now."
+    hint-6: "Task 3: The pod should not mount the default service token."
+    hint-7: "Task 3: The application pods already do this maybe I could look there for inspiration."
+    hint-8: "Task 4: I need to replace the environment variable with a secret."

@@ -49,6 +49,9 @@ scenarios:
   - name: RBAC Contact Drill
     path: ./scenario/rbac-contact-drill
     id: rbac-contact-drill
+  - name: RBAC Sangar
+    path: ./scenario/rbac-sangar
+    id: rbac-sangar
   - name: RBAC Flanking Maneuver
     path: ./scenario/rbac-flanking-maneuver
     id: rbac-flanking-maneuver

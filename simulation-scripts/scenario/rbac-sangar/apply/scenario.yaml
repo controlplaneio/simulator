@@ -1,0 +1,64 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rbac-sangar
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: authenticated-view
+subjects:
+- kind: Group
+  name: system:authenticated
+  apiGroup: rbac.authorization.k8s.io
+roleRef:
+  apiGroup: ""
+  kind: ClusterRole
+  name: view
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rbac-sangar
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: rbac-sangar
+  name: application
+spec:
+  selector:
+    matchLabels:
+      app: application
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: application
+    spec:
+      automountServiceAccountToken: false
+      containers:
+      - name: application
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        env:
+        - name: secret-value
+          value: asdfghjklzxcvbnmqwertyuiop
