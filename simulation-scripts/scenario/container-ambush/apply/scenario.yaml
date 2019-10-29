@@ -40,7 +40,7 @@ spec:
     spec:
       containers:
       - image: nginx
-        # image: vulnerables/cve-2014-6271
+
         imagePullPolicy: IfNotPresent
         name: jenkins
         ports:

@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - image: alpine:3.7
-        # image: vulnerables/cve-2014-6271
+        
         imagePullPolicy: IfNotPresent
         name: malicious-pod
