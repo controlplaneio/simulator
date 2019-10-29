@@ -13,6 +13,9 @@ scenarios:
   - name: ETCD Inverted Wedge
     path: ./scenario/etcd-inverted-wedge
     id: etcd-inverted-wedge
+  - name: Master bait and bleed
+    path: ./scenario/master-bait-and-bleed
+    id: master-bait-and-bleed
   - name: Network Feint
     path: ./scenario/network-feint
     id: network-feint

@@ -33,5 +33,5 @@ spec:
         image: ubuntu:18.04
         env:
         - name: KUBERNETES_INSECURE_PORT
-          value: 8080
+          value: "8080"
         args: [bash, -c, 'sleep infinity']

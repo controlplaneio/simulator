@@ -1,6 +1,5 @@
-A developer has reported secrets leaking from your cluster, but no record of requests has been found in your API audit logs or through the kubelet.
-
-Task 1: How can you access secrets from inside a pod in the cluster.
-Task 2: How can you resolve this access issue.
-
+An ubuntu pod in your cluster can reportedly make API calls beyond what the default service account should be able to do.
 Your cluster is running with master IP: $MASTER_IP_ADDRESSES
+
+Task 1: Figure out how this is possible by making an API call from the cluster.
+Task 2: Amend the configuration so nothing can access the API beyond their intended RBAC capabilities.
