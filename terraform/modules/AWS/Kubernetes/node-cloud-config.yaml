@@ -14,6 +14,7 @@ write_files:
       [ -z "$PS1" ] && return
       PS1='\u@\h $'
       echo "$(tput setaf 2)$(figlet $(hostname))$(tput sgr0)"
+      source <(kubectl completion bash)
   - path: /etc/default/motd-news
     owner: root:root
     permissions: '0644'
@@ -56,4 +57,3 @@ runcmd:
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
-
