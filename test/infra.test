@@ -7,6 +7,7 @@ namespace eval ::simulator::test {
   variable BEFORE {
     catch { unset result }
     set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
+    set env(SIMULATOR_STATE_BUCKET) "dummy-test-bucket"
     set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
   }
 
@@ -19,7 +20,13 @@ namespace eval ::simulator::test {
     Test: simulator infra create
   } -body {
     spawn "simulator" "infra" "create"
-    expect "testing = testing" { set result 1 } default { set result 0 }
+    expect eof
+    catch wait result
+    if {[lindex $result 3] != 0} {
+      set result 0
+    } else {
+      set result 1
+    }
   } -setup $BEFORE -cleanup $AFTER -result 1
 
   # test infra_status_prints_ok {
