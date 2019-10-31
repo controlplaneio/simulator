@@ -14,7 +14,6 @@ const {transformV0ToV1} = require('../lib/transforms')
 function loadHintsFile(p) {
   console.log(`Loading ${p}`)
   const doc = yaml.safeLoad(readFileSync(p, 'utf8'));
-  console.log(doc)
   return doc
 }
 
@@ -37,6 +36,6 @@ hintsFiles = findScenarioHintsFiles('./simulation-scripts/scenario')
 hintsFiles.forEach(hintsFile => {
   const original = loadHintsFile(hintsFile)
   const transformed = transformV0ToV1(original)
-  writeHintsFile(transformed, hintFile)
+  writeHintsFile(transformed, hintsFile)
 })
 
