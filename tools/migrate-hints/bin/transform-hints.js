@@ -13,7 +13,9 @@ const {transformV0ToV1} = require('../lib/transforms')
 // Mixing sync and async but it doesnt matter as this is a quick n dirty script
 function loadHintsFile(p) {
   console.log(`Loading ${p}`)
-  return yaml.safeLoad(fs.readFileSync(p, 'utf8'));
+  const doc = yaml.safeLoad(readFileSync(p, 'utf8'));
+  console.log(doc)
+  return doc
 }
 
 function writeHintsFile(hints, p) {
@@ -28,13 +30,13 @@ function findScenarioHintsFiles(scenariosDir) {
 
   return readdirSync(absPath, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
-    .map(dirent => join(asbPath, dirent.name, 'hints.yaml')
+    .map(dirent => join(absPath, dirent.name, 'hints.yaml'))
 }
 
-hintsFiles = findScenarioHintsFiles('./simulation-scripts/scenarios')
-hintsFiles.forEach(hintFile => {
-  const original = loadHintsFile(hintFile)
+hintsFiles = findScenarioHintsFiles('./simulation-scripts/scenario')
+hintsFiles.forEach(hintsFile => {
+  const original = loadHintsFile(hintsFile)
   const transformed = transformV0ToV1(original)
-  writeHints(transformed, hintFile)
+  writeHintsFile(transformed, hintFile)
 })
 
