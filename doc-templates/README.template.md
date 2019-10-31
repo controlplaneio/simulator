@@ -163,6 +163,12 @@ cluster in the given cloud provider
 
 * [Hints.yaml format](./docs/hints-yaml-format.md)
 
+* If you need to make changes to the format you should update this documentation.
+* Any changes should be accompanied by a bump of the version in the `kind`
+property
+* Use the `migrate-hints` devtool to update the existing scenarios en-masse.
+You can make this tool available on your PATH by running `make devtools`
+
 ### Simulator API Documentation
 
 * [Scenario](./docs/api/scenario.md)

@@ -30,6 +30,10 @@ all: test
 setup-dev: ## Initialise simulation tree with git hooks
 	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
 
+.PHONY: dep
+devtools: ## Install devtools
+	cd tools/migrate-hints && npm install && npm link
+
 .PHONY: reset
 reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*

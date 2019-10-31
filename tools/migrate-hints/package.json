@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "migrate-hints": "transform-hints.js"
+    "migrate-hints": "bin/transform-hints.js"
   },
   "scripts": {
     "test": "ava"
