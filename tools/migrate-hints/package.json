@@ -1,0 +1,21 @@
+{
+  "name": "migrate-hints",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "migrate-hints": "transform-hints.js"
+  },
+  "scripts": {
+    "test": "ava"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "^2.4.0"
+  },
+  "dependencies": {
+    "js-yaml": "^3.13.1"
+  }
+}
