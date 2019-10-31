@@ -159,6 +159,10 @@ that does.
 * [Attack container](./attack) - Runs on the bastion providing all the tools needed to attack a
 cluster in the given cloud provider
 
+### Specifications
+
+* [Hints.yaml format](./docs/hints-yaml-format.md)
+
 ### Simulator API Documentation
 
 * [Scenario](./docs/api/scenario.md)
