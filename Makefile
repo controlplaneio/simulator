@@ -64,6 +64,12 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 		--env-file launch-environment                       \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
 
+.PHONY: docker-build-no-cache
+docker-build-no-cache: ## Builds the launch container
+	@mkdir -p ~/.kubesim
+	@touch ~/.kubesim/simulator.yaml
+	@docker build -t --no-cache $(CONTAINER_NAME_LATEST) .
+
 .PHONY: docker-build
 docker-build: ## Builds the launch container
 	@mkdir -p ~/.kubesim
