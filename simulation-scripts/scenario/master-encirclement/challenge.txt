@@ -1,0 +1,30 @@
+Scenario: An Ubuntu deployment in the 'master-encirclement' namespace is running despite violating the custom MutatingAdmissionWebhook configuration on this cluster. The Deployment is as follows:
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu
+  namespace: master-encirclement
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_ADMIN"]
+```
+Starting Point: On the Master Node
+
+Task 1: Can you find out why the pod was allowed to schedule and fix the problem?
+  NOTE: You may need to delete and reapply the deployment to ensure your fix is valid.
