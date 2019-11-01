@@ -1,11 +1,15 @@
----
--
-  general_overview:
-    objective: "Enable PodSecurityPolicy in the API server."
-    starting-point: "On the master node."
-    num-hints: "3"
--
-  hints:
-    hint-1: "Task 1: Hmm, the RBAC looks good. What other factors could influence the permissions?"
-    hint-2: "Task 1: Where does kubeadm keep the master config?"
-    hint-3: "Task 1: Looks like the PodSecurityPolicy is missing from the admission controllers."
+objective: Enable PodSecurityPolicy in the API server.
+starting-point: On the master node.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          Hmm, the RBAC looks good. What other factors could influence the
+          permissions?
+      - text: Where does kubeadm keep the master config?
+      - text: >-
+          Looks like the PodSecurityPolicy is missing from the admission
+          controllers.
+    starting-point: ''
