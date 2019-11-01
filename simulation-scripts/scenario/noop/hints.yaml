@@ -2,6 +2,7 @@
 -
   general_overview:
     objective: "Do nothing"
+    starting-point: ""
     num-hints: "0"
 -
   hints: {}
