@@ -1,4 +1,5 @@
 ----
+-
   general_overview:
     objective: "Node compromise to get readonly kubelet API access."
     starting-point: "SSH node - any worker."
