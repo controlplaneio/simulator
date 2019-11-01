@@ -74,13 +74,29 @@ simulator infra destroy
 Current list of scenarios:
 
 <pre>
-1.5682037678385196e+09	INFO	cmd/scenario.go:25	Available scenarios:
-1.568203767838556e+09	INFO	cmd/scenario.go:27	ID: container-ambush, Name: Container Ambush
-1.5682037678385653e+09	INFO	cmd/scenario.go:27	ID: rbac-flanking-maneuver, Name: RBAC Flanking Maneuver
-1.568203767838575e+09	INFO	cmd/scenario.go:27	ID: secret-tank-desant, Name: Secret Tank Desant
-1.5682037678385787e+09	INFO	cmd/scenario.go:27	ID: network-siege, Name: Network Siege
-1.5682037678385825e+09	INFO	cmd/scenario.go:27	ID: node-shock-tactics, Name: Node Shock Tactics
-1.5682037678385894e+09	INFO	cmd/scenario.go:27	ID: network-feint, Name: Network Feint
+1.572469545615786e+09	INFO	cmd/scenario.go:25	Available scenarios:
+1.5724695456168785e+09	INFO	cmd/scenario.go:27	ID: container-ambush, Name: Container Ambush
+1.572469545616901e+09	INFO	cmd/scenario.go:27	ID: container-defeat-in-detail, Name: Container Defeat in Detail
+1.5724695456169195e+09	INFO	cmd/scenario.go:27	ID: container-phalanx-formation, Name: Container Phalanx Formation
+1.572469545616936e+09	INFO	cmd/scenario.go:27	ID: etcd-inverted-wedge, Name: ETCD Inverted Wedge
+1.5724695456169481e+09	INFO	cmd/scenario.go:27	ID: master-bait-and-bleed, Name: Master bait and bleed
+1.572469545616964e+09	INFO	cmd/scenario.go:27	ID: network-feint, Name: Network Feint
+1.5724695456169722e+09	INFO	cmd/scenario.go:27	ID: network-hammer-and-anvil, Name: Network Hammer and Anvil
+1.572469545616987e+09	INFO	cmd/scenario.go:27	ID: network-hedgehog-defence, Name: Network Hedgehog Defense
+1.5724695456169953e+09	INFO	cmd/scenario.go:27	ID: network-swarming, Name: Network Swarming
+1.5724695456170094e+09	INFO	cmd/scenario.go:27	ID: node-amphibious-operations, Name: Node Amphibious Operations
+1.5724695456170223e+09	INFO	cmd/scenario.go:27	ID: node-raiding, Name: Node Raiding
+1.5724695456170347e+09	INFO	cmd/scenario.go:27	ID: node-shock-tactics, Name: Node Shock Tactics
+1.572469545617047e+09	INFO	cmd/scenario.go:27	ID: policy-echelon-formation, Name: Policy Echelon Formation
+1.5724695456170552e+09	INFO	cmd/scenario.go:27	ID: policy-fire-support, Name: Policy Fire Support
+1.5724695456170707e+09	INFO	cmd/scenario.go:27	ID: policy-force-dispersal, Name: Policy Force Dispersal
+1.5724695456170788e+09	INFO	cmd/scenario.go:27	ID: policy-vertical-envelopment, Name: Policy Vertical Envelopment
+1.5724695456170928e+09	INFO	cmd/scenario.go:27	ID: rbac-contact-drill, Name: RBAC Contact Drill
+1.5724695456171014e+09	INFO	cmd/scenario.go:27	ID: rbac-sangar, Name: RBAC Sangar
+1.572469545617111e+09	INFO	cmd/scenario.go:27	ID: rbac-flanking-maneuver, Name: RBAC Flanking Maneuver
+1.5724695456171298e+09	INFO	cmd/scenario.go:27	ID: rbac-shoot-and-scoot, Name: RBAC Shoot and Scoot
+1.5724695456171381e+09	INFO	cmd/scenario.go:27	ID: secret-high-ground, Name: Secret High Ground
+1.572469545617146e+09	INFO	cmd/scenario.go:27	ID: secret-tank-desant, Name: Secret Tank Desant
 </pre>
 
 ## How It All Works

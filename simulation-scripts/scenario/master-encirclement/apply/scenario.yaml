@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: master-encirclement
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu
+  namespace: master-encirclement
+spec:
+  selector:
+    matchLabels:
+      app: ubuntu
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        securityContext:
+          privileged: true
+          capabilities:
+            add: ["SYS_ADMIN"]

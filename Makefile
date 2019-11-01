@@ -30,6 +30,10 @@ all: test
 setup-dev: ## Initialise simulation tree with git hooks
 	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
 
+.PHONY: devtools
+devtools: ## Install devtools
+	cd tools/migrate-hints && npm install && npm link
+
 .PHONY: reset
 reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*
@@ -63,6 +67,18 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim            \
 		--env-file launch-environment                       \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
+
+.PHONY: docker-build-no-cache
+docker-build-no-cache: ## Builds the launch container
+	@mkdir -p ~/.kubesim
+	@touch ~/.kubesim/simulator.yaml
+	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
+
+.PHONY: docker-build
+docker-build: ## Builds the launch container
+	@mkdir -p ~/.kubesim
+	@touch ~/.kubesim/simulator.yaml
+	@docker build -t --no-cache $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
@@ -139,6 +155,7 @@ release: gpg-preflight previous-tag release-tag docker-test docker-build build
 	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
+	cd attack && make docker-push
 
 
 # --- MAKEFILE HELP
