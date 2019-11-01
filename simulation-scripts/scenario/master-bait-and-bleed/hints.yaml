@@ -1,12 +1,25 @@
----
--
-  general_overview:
-    objective: "API is enabled on --insecure-bind-address and --insecure-port"
-    starting-point: "pod in cluster"
-    num-hints: "4"
--
-  hints:
-    hint-1: "Task 1: Have a look at your environment variables with ```printenv```. Does anything look suspicious?"
-    hint-2: "Task 1: Looks like you may be able to access the Kubernetes API on port 8080. Try curling some of the end-points. You may need to download curl."
-    hint-3: "Task 2: The API appears to be open on the Master node without certification. Have a look at the API configuration and see why that is."
-    hint-4: "Task 2: --insecure-bind-address and --insecure-port is enabled on the API in the manifest at /etc/kubernetes/manifests/kube-apiserver.yaml. Set the insecure port to 0 and delete the binding."
+objective: API is enabled on --insecure-bind-address and --insecure-port
+starting-point: pod in cluster
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          Have a look at your environment variables with ```printenv```. Does
+          anything look suspicious?
+      - text: >-
+          Looks like you may be able to access the Kubernetes API on port 8080.
+          Try curling some of the end-points. You may need to download curl.
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: >-
+          The API appears to be open on the Master node without certification.
+          Have a look at the API configuration and see why that is.
+      - text: >-
+          --insecure-bind-address and --insecure-port is enabled on the API in
+          the manifest at /etc/kubernetes/manifests/kube-apiserver.yaml. Set the
+          insecure port to 0 and delete the binding.
+    starting-point: ''
