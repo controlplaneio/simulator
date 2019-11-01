@@ -1,14 +1,30 @@
----
--
-  general_overview:
-    objective: "Discover uncertified etcd, reach it with only network access and master node IP. Fix the leakage."
-    starting-point: "pod in cluster"
-    num-hints: "6"
--
-  hints:
-    hint-1: "Task 1: As there are no records through the API or kubelet, could the secrets be leaking directly from etcd?"
-    hint-2: "Task 1: Try to install etcdctl and explore."
-    hint-3: "Task 1: List etcd endpoints with ```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379 --insecure-transport=false --insecure-skip-tls-verify get / --prefix --keys-only```"
-    hint-4: "Task 1: ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379 --insecure-transport=false --insecure-skip-tls-verify get /registry/secrets/default/credentials"
-    hint-5: "Task 2: How could we reach the etcd backend with no certificates?"
-    hint-6: "Task 2: On the master node in /etc/kubernetes/manifests/etcd.yaml change - --client-cert-auth=false to --client-cert-auth=true"
+objective: >-
+  Discover uncertified etcd, reach it with only network access and master node
+  IP. Fix the leakage.
+starting-point: pod in cluster
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          As there are no records through the API or kubelet, could the secrets
+          be leaking directly from etcd?
+      - text: Try to install etcdctl and explore.
+      - text: >-
+          List etcd endpoints with ```ETCDCTL_API=3 etcdctl
+          --endpoints=https://<K8s master IP>:2379 --insecure-transport=false
+          --insecure-skip-tls-verify get / --prefix --keys-only```
+      - text: >-
+          ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379
+          --insecure-transport=false --insecure-skip-tls-verify get
+          /registry/secrets/default/credentials
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: How could we reach the etcd backend with no certificates?
+      - text: >-
+          On the master node in /etc/kubernetes/manifests/etcd.yaml change -
+          --client-cert-auth=false to --client-cert-auth=true
+    starting-point: ''
