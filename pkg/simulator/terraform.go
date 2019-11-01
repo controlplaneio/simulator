@@ -47,24 +47,8 @@ func Terraform(wd, cmd, bucket string) (*string, error) {
 func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket string) error {
 	logger.Debug("Terraform.InitIfNeeded() start")
 
-	logger.Info("Running terraform init")
-	_, err := Terraform(tfDir, "init", bucket)
-	if err != nil {
-		return errors.Wrap(err, "Error initialising terraform")
-	}
-
-	return nil
-}
-
-// -#-
-
-// Create runs terraform init, plan, apply to create the necessary
-// infrastructure to run scenarios
-func Create(logger *zap.SugaredLogger, tfDir, bucket string) error {
-	err := InitIfNeeded(logger, tfDir, bucket)
-
 	logger.Info("Ensuring there is a simulator keypair")
-	_, err = ssh.EnsureKey()
+	_, err := ssh.EnsureKey()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
@@ -91,6 +75,22 @@ func Create(logger *zap.SugaredLogger, tfDir, bucket string) error {
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}
+
+	logger.Info("Running terraform init")
+	_, err = Terraform(tfDir, "init", bucket)
+	if err != nil {
+		return errors.Wrap(err, "Error initialising terraform")
+	}
+
+	return nil
+}
+
+// -#-
+
+// Create runs terraform init, plan, apply to create the necessary
+// infrastructure to run scenarios
+func Create(logger *zap.SugaredLogger, tfDir, bucket string) error {
+	err := InitIfNeeded(logger, tfDir, bucket)
 
 	if err != nil {
 		return err
