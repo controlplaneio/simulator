@@ -14,22 +14,28 @@ tags:
  - Debug
 ```
 
-### Hints
+### Tasks and Hints
 
-* Let's not put challenge text in yaml because pertub will have to parse it with yq/jq
-
-https://gist.github.com/jondkent/2412170f5feba8a3cfc977fea10e1c26
-
-I think we need the hints to be a "sequence of mappings" (YAML terminology) rather than a "sequence of strings"
 e.g.
 ```
-hints:
-  - text: "blah blah blah"
-    penalty: -5
-  - text: |
-          compromise the frobnicator
-    available-after: 10m
+tasks:
+  "Task 1":
+    sort-order: 1
+    hints:
+      - text: "blah blah blah"
+        penalty: -5
+      - text: |
+              compromise the frobnicator
+        available-after: 10m
+  "Task 2":
+    sort-order: 2
+    hints:
+      - text: "hint 1"
+      - text: "hint 2"
 ```
+
+* Should we merge CHALLENGE.txt into the scenario yaml?
+* We could split the challenge text so the tasks each have their own descriptions
 
 ### Starting point
 
