@@ -1,7 +1,9 @@
-Scenario: You have been asked to perform a security test on an application hosted in Kubernetes.
-To make the test as close to reality as possible you have only been told that the application is exposed as a NodePort service on IP address "$MASTER_IP_ADDRESS".
+Scenario: A pod in your cluster running a NodePort service on IP "$MASTER_IP_ADDRESS" has been making some suspicious calls to your API server.
+You suspect someone has breached the perimeters of your pod and gained access to your API.
 The application is the only app deployed to this cluster and does not need to access the Kubernetes control plane at run time.
 
 Starting Point:
 
-Task 1: How can you update the cluster configuration to mitigate this finding?
+Task 1: Can you breach the pod running on the node and gain access to it?
+Task 2: How can you update the cluster configuration to prevent escallation once the pod has been compromised?
+Tasl 3: Think about how you breached the pod. How should this be set up in the future to prevent easy breaches?
