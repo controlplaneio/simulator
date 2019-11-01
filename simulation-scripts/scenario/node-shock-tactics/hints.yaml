@@ -1,17 +1,21 @@
----
--
-  general_overview:
-    objective: "Node escalation to workload compromise."
-    starting-point: "SSH node-any non-root."
-    num-hints: "9"
--
-  hints:
-    hint-1: "Task 1: How would you escalate yourself on this node?"
-    hint-2: "Task 1: Is there a file in /etc/ you can manipulate?"
-    hint-3: "Task 1: Where do pods store their secrets?"
-    hint-4: "Task 1: Incorrect permissions on /etc/shadow."
-    hint-5: "Task 1: /etc/shadow manipulation."
-    hint-6: "Task 1: Set root password for host."
-    hint-7: "Task 1: Login as root."
-    hint-8: "Task 2: 'df -h' as host root to see tmpfs mounts."
-    hint-9: "Task 2: Read creds from tmpfs volume."
+objective: Node escalation to workload compromise.
+starting-point: SSH node-any non-root.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: How would you escalate yourself on this node?
+      - text: Is there a file in /etc/ you can manipulate?
+      - text: Where do pods store their secrets?
+      - text: Incorrect permissions on /etc/shadow.
+      - text: /etc/shadow manipulation.
+      - text: Set root password for host.
+      - text: Login as root.
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: '''df -h'' as host root to see tmpfs mounts.'
+      - text: Read creds from tmpfs volume.
+    starting-point: ''
