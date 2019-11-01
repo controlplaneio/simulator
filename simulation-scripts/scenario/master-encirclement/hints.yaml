@@ -1,12 +1,16 @@
----
--
-  general_overview:
-    objective: "Enable MutatingAdmissionWebhook admission controller in the API server."
-    starting-point: "On the master node."
-    num-hints: "4"
--
-  hints:
-    hint-1: "Task 1: Hmm, the webhook configuration looks good. What other factors could influence the permissions?"
-    hint-2: "Task 1: The webhook deployment also looks like it's working"
-    hint-3: "Task 1: Where does kubeadm keep the master config?"
-    hint-4: "Task 1: Looks like the MutatingAdmissionWebhook admission controller has been disabled. I probably need to enable it"
+objective: Enable MutatingAdmissionWebhook admission controller in the API server.
+starting-point: On the master node.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          Hmm, the webhook configuration looks good. What other factors could
+          influence the permissions?
+      - text: The webhook deployment also looks like it's working
+      - text: Where does kubeadm keep the master config?
+      - text: >-
+          Looks like the MutatingAdmissionWebhook admission controller has been
+          disabled. I probably need to enable it
+    starting-point: ''
