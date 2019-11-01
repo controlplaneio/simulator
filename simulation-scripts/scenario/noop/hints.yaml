@@ -1,8 +1,4 @@
----
--
-  general_overview:
-    objective: "Do nothing"
-    starting-point: ""
-    num-hints: "0"
--
-  hints: {}
+objective: Do nothing
+starting-point: ''
+kind: 'cp.simulator/scenario:1.0.0'
+tasks: {}
