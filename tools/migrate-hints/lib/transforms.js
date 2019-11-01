@@ -1,4 +1,4 @@
-module.exports.groupHintsByTask = (hints) => {
+module.exports.groupHintsByTask = groupHintsByTask = (hints) => {
   return hints.reduce((acc, hint) => {
     // Pull apart the hint text on the first colon
     const [task, hintText] = hint.text.split(': ', 2)
@@ -31,9 +31,7 @@ module.exports.transformV0ToV1 = hints => {
       return acc
     }, [])
 
-  // TODO: split string on prefix and nest task hints under hints?
-
-  transformed.hints = hintsList
+  transformed.hints = groupHintsByTask(hintsList)
 
   return transformed
 }

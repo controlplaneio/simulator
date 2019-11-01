@@ -25,8 +25,8 @@ test('transforms v0 to v1 schema', t => {
       }
     }, {
       hints: {
-        "hint-1": "test hint 1",
-        "hint-2": "test hint 2"
+        "hint-1": "Task 1: test hint 1",
+        "hint-2": "Task 1: test hint 2"
       }
     }
   ]
@@ -37,7 +37,9 @@ test('transforms v0 to v1 schema', t => {
       objective: "test objective",
       "starting-point": "kubectl pod exec."
     },
-    hints: [ { "text": "test hint 1" }, { "text": "test hint 2" } ]
+    hints: {
+      "Task 1": [ { "text": "test hint 1" }, { "text": "test hint 2" } ]
+    }
   }
 
   t.deepEqual(transformV0ToV1(original), expected)
