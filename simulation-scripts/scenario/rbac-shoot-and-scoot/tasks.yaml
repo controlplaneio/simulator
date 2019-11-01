@@ -1,0 +1,22 @@
+objective: >-
+  Figure out additional permissions given to system:anonymous role and remove
+  them.
+starting-point: pod
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          Can you hit the API from inside the pod? What is the DNS resolvable
+          name?
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: What user is assigned when hitting the API with no identity?
+      - text: Have a look at the rolebindings and clusterrolebindings
+      - text: >-
+          system:anonymous has a clusterrolebinding to admin. Remove this
+          binding.
+    starting-point: ''

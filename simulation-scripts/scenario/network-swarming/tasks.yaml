@@ -1,0 +1,26 @@
+objective: Use misconfigured svc to compromise db.
+starting-point: Inside a frontend pod.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          I wonder what the services for the 'database' and 'api' are called? I
+          think the names might be obvious.
+      - text: >-
+          I don't think the API will be useful, can I look at the database from
+          here?
+      - text: 'Many databases are SQL based, could it be one of the popular ones?'
+      - text: I wonder what the default username for the database is.
+      - text: >-
+          One of the devs mentioned a Postgres database they used didn't have a
+          password, could this be it?
+      - text: 'Hmm, how do I list tables and view the keys in tables again?'
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: The database shouldn't be talking to the frontend.
+      - text: I wonder if a network policy would help here.
+    starting-point: ''

@@ -1,0 +1,25 @@
+objective: >-
+  Figure out additional permissions given to the default service account and
+  reassign to designated role.
+starting-point: ubuntu pod
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          Can you hit the API from inside the pod? You may need to install curl
+          and kubectl.
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: >-
+          What identity is assigned the pod? Check out the service account
+          directory.
+      - text: Have a look at the roles and rolebindings.
+      - text: >-
+          The default service account has permissions to view secrets. Make a
+          new role with these permissions and assign it to the secrets-caller
+          deployment
+    starting-point: ''

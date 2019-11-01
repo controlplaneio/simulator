@@ -161,7 +161,7 @@ cluster in the given cloud provider
 
 ### Specifications
 
-* [Hints.yaml format](./docs/hints-yaml-format.md)
+* [tasks.yaml format](./docs/tasks-yaml-format.md)
 
 * If you need to make changes to the format you should update this documentation.
 * Any changes should be accompanied by a bump of the version in the `kind`

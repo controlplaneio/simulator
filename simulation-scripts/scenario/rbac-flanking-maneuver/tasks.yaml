@@ -1,0 +1,12 @@
+objective: Get flag from ETCD - subpath exploitation and etcd v2.
+starting-point: none
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: Find open SSH port in workload.
+      - text: Brute force host SSH default password.
+      - text: Look around for credentials. Can you hit the API?
+      - text: The token looks like it can schedule workloads.
+    starting-point: ''

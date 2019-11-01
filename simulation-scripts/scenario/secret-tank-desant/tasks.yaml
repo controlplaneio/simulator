@@ -1,0 +1,11 @@
+objective: Compromise secret from running workload.
+starting-point: kubectl pod exec.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: kubectl exec into workload.
+      - text: Workload - enumerate container filesystem.
+      - text: Read AWS creds from file.
+    starting-point: ''

@@ -1,0 +1,33 @@
+objective: Use privileged container to get host secrets.
+starting-point: Inside Jenkins container.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: >-
+          I wonder if I can see thehost processes in this container since it is
+          a process monitor?
+      - text: 'Hmm, if I can see the proccesses I wonder what /proc looks like?'
+      - text: >-
+          I'm looking for a postgres process so I should find its pid and check
+          /proc for that pid.
+      - text: Let's see if /proc/<pid>/environ has one of the values we need.
+      - text: What's in /proc/<pid>/root?
+      - text: The final secrets I need are in /proc/<pid>/root/secrets.
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: Looks like I need to  stop adding ALL capabilities to the pod.
+    starting-point: ''
+  Task 3:
+    sort-order: 3
+    hints:
+      - text: I think a PodSecurityPolicy might be useful here.
+      - text: >-
+          Remember to set a default policy before enabling the PSP in both the
+          kube-system and policy-vertical-envelopment namespaces
+      - text: I'll need to enable the PSP controller in the api-server.
+      - text: My PSP for Jenkins should prevent adding ALL capabilities to pods.
+    starting-point: ''
