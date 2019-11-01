@@ -4,4 +4,4 @@ This could potentially lead to the expose of sensitive data in the attached data
 Starting Point:
 
 Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the databases.
-What changes could you make to prevent this from happening?
+Task 2: Change the postgres deployment so the secret password isn't so easily accessible and is consumed in the secure way.
