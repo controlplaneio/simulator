@@ -1,16 +1,26 @@
----
--
-  general_overview:
-    objective: "Use misconfigured svc to compromise db."
-    starting-point: "Outside the cluster."
-    num-hints: "8"
--
-  hints:
-    hint-1: "Task 1: What's returning the empty responses when the NodePort is queried?"
-    hint-2: "Task 1: Many databases are SQL based, could it be one of the popular ones?"
-    hint-3: "Task 1: I wonder what the default username for each SQL database is?"
-    hint-4: "Task 1: One of the devs mentioned a Postgres database they used didn't have a password, could this be it?"
-    hint-5: "Task 1: Hmm, how do I list tables and view the keys in tables again?"
-    hint-6: "Task 2: The database shouldn't be talking to the outside world."
-    hint-7: "Task 2: The labels on this service are interesting."
-    hint-8: "Task 3: I wonder if a network policy would help here."
+objective: Use misconfigured svc to compromise db.
+starting-point: Outside the cluster.
+kind: 'cp.simulator/scenario:1.0.0'
+tasks:
+  Task 1:
+    sort-order: 1
+    hints:
+      - text: What's returning the empty responses when the NodePort is queried?
+      - text: 'Many databases are SQL based, could it be one of the popular ones?'
+      - text: I wonder what the default username for each SQL database is?
+      - text: >-
+          One of the devs mentioned a Postgres database they used didn't have a
+          password, could this be it?
+      - text: 'Hmm, how do I list tables and view the keys in tables again?'
+    starting-point: ''
+  Task 2:
+    sort-order: 2
+    hints:
+      - text: The database shouldn't be talking to the outside world.
+      - text: The labels on this service are interesting.
+    starting-point: ''
+  Task 3:
+    sort-order: 3
+    hints:
+      - text: I wonder if a network policy would help here.
+    starting-point: ''
