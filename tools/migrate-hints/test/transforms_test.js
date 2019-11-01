@@ -11,10 +11,12 @@ test('groupHintsByTask', t => {
   const expected = {
     "Task 1": {
       "sort-order": 1,
+      "starting-point": "",
       hints: [ { text: "test hint" }, { text: "test hint" } ],
     },
     "Task 2": {
       "sort-order": 2,
+      "starting-point": "",
       hints: [ { text: "test hint" } ]
     }
   }
@@ -39,13 +41,12 @@ test('transforms v0 to v1 schema', t => {
 
   const expected = {
     kind: "cp.simulator/scenario:1.0.0",
-    general_overview: {
-      objective: "test objective",
-      "starting-point": "kubectl pod exec."
-    },
+    objective: "test objective",
+    "starting-point": "kubectl pod exec.",
     tasks: {
       "Task 1": {
         "sort-order": 1,
+        "starting-point": "",
         hints: [ { "text": "test hint 1" }, { "text": "test hint 2" } ]
       }
     }

@@ -6,7 +6,11 @@ module.exports.groupHintsByTask = groupHintsByTask = (hints) => {
     const sortOrder = Number(task[task.length - 1])
 
     // Create a new group for the task if it doesn't exist
-    if (!acc[task]) acc[task] = { "sort-order": sortOrder, hints: []}
+    if (!acc[task]) acc[task] = { 
+      "sort-order": sortOrder, 
+      hints: [],
+      "starting-point": ""
+    }
 
     // Reconstruct a hint without the task prefix and add it to the group
     acc[task].hints.push({ text: hintText })
@@ -22,7 +26,9 @@ module.exports.transformV0ToV1 = hints => {
   // remove hint count
   delete hints[0]['general_overview']["num-hints"]
 
-  transformed['general_overview'] = hints[0]['general_overview']
+  transformed.objective = hints[0]['general_overview'].objective
+  transformed['starting-point'] = hints[0]['general_overview']['starting-point']
+  
   // add version
   transformed.kind = 'cp.simulator/scenario:1.0.0'
 
