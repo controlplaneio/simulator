@@ -1,5 +1,20 @@
 const test = require('ava')
-const {transformV0ToV1} = require('../lib/transforms')
+const {transformV0ToV1, groupHintsByTask} = require('../lib/transforms')
+
+test('groupHintsByTask', t => {
+  const original = [ 
+    { text: 'Task 1: test hint' }, 
+    { text: 'Task 1: test hint' },
+    { text: 'Task 2: test hint' }
+  ]
+
+  const expected = {
+    "Task 1": [ { text: "test hint" }, { text: "test hint" } ],
+    "Task 2": [ { text: "test hint" } ]
+  }
+
+  t.deepEqual(groupHintsByTask(original), expected)
+})
 
 test('transforms v0 to v1 schema', t => {
   const original = [{
