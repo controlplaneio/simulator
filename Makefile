@@ -30,6 +30,10 @@ all: test
 setup-dev: ## Initialise simulation tree with git hooks
 	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
 
+.PHONY: devtools
+devtools: ## Install devtools
+	cd tools/migrate-hints && npm install && npm link
+
 .PHONY: reset
 reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*
@@ -69,6 +73,12 @@ docker-build-no-cache: ## Builds the launch container
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
 	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
+
+.PHONY: docker-build
+docker-build: ## Builds the launch container
+	@mkdir -p ~/.kubesim
+	@touch ~/.kubesim/simulator.yaml
+	@docker build -t --no-cache $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
