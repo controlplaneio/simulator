@@ -2,15 +2,21 @@ const test = require('ava')
 const {transformV0ToV1, groupHintsByTask} = require('../lib/transforms')
 
 test('groupHintsByTask', t => {
-  const original = [ 
-    { text: 'Task 1: test hint' }, 
+  const original = [
+    { text: 'Task 1: test hint' },
     { text: 'Task 1: test hint' },
     { text: 'Task 2: test hint' }
   ]
 
   const expected = {
-    "Task 1": [ { text: "test hint" }, { text: "test hint" } ],
-    "Task 2": [ { text: "test hint" } ]
+    "Task 1": {
+      "sort-order": 1,
+      hints: [ { text: "test hint" }, { text: "test hint" } ],
+    },
+    "Task 2": {
+      "sort-order": 2,
+      hints: [ { text: "test hint" } ]
+    }
   }
 
   t.deepEqual(groupHintsByTask(original), expected)
@@ -37,8 +43,11 @@ test('transforms v0 to v1 schema', t => {
       objective: "test objective",
       "starting-point": "kubectl pod exec."
     },
-    hints: {
-      "Task 1": [ { "text": "test hint 1" }, { "text": "test hint 2" } ]
+    tasks: {
+      "Task 1": {
+        "sort-order": 1,
+        hints: [ { "text": "test hint 1" }, { "text": "test hint 2" } ]
+      }
     }
   }
 
