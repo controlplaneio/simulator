@@ -10,6 +10,8 @@ If you need to include bsah code snippets you will need to change how the templa
 
 -->
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/LICENSE)
+
 # Simulator
 
 A distributed systems and infrastructure simulator for attacking and debugging
@@ -219,10 +221,10 @@ Use "kind [command] --help" for more information about a command.
 property
 * Use the Loading /Users/jonathankent/Documents/GitHub/simulator/simulation-scripts/scenario/container-ambush/hints.yaml devtool to update the existing scenarios en-masse.
 You can make this tool available on your PATH by running cd tools/migrate-hints && npm install && npm link
-audited 1081 packages in 3.345s
+audited 1081 packages in 3.619s
 found 0 vulnerabilities
 
-audited 1081 packages in 3.254s
+audited 1081 packages in 3.719s
 found 0 vulnerabilities
 
 /usr/local/bin/migrate-hints -> /usr/local/lib/node_modules/migrate-hints/bin/transform-hints.js
@@ -237,3 +239,25 @@ found 0 vulnerabilities
 ## Project Roadmap
 
 There is a [roadmap](./docs/roadmap.md) outlining current and planned work.
+
+## Contributing
+
+### Bugs
+
+If you think you have found a bug please follow the instructions below.
+
+- Please spend a small amount of time giving due diligence to the issue tracker. Your issue might be a duplicate.
+- Open a [new issue](https://github.com/kubernetes-simulator/simulator/issues/new) if a duplicate doesn't already exist.
+- Note the version of simulator you are running and the command line options you are using.
+- Note the version of Kubernetes you are running.
+- Remember users might be searching for your issue in the future, so please give it a meaningful title to help others.
+
+### Pull Requests 
+
+We welcome pull requests! 
+
+- Your PR is more likely to be accepted if it focuses on just one change.
+- Please include a comment with the results before and after your change. 
+- Your PR is more likely to be accepted if it includes tests.
+- You're welcome to submit a draft PR if you would like early feedback on an idea or an approach. 
+- Happy coding!

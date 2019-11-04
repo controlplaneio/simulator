@@ -197,8 +197,8 @@ If you think you have found a bug please follow the instructions below.
 
 - Please spend a small amount of time giving due diligence to the issue tracker. Your issue might be a duplicate.
 - Open a [new issue](https://github.com/kubernetes-simulator/simulator/issues/new) if a duplicate doesn't already exist.
-- Note the version of simulator you are running (from `simulator version`) and the command line options you are using.
-- Note the version of Kubernetes you are running (from `kubectl version`)
+- Note the version of simulator you are running and the command line options you are using.
+- Note the version of Kubernetes you are running.
 - Remember users might be searching for your issue in the future, so please give it a meaningful title to help others.
 
 ### Pull Requests 
