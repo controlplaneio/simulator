@@ -1,11 +1,10 @@
 const test = require('ava')
-const {parse} = require('../lib/args')
+const {parse, showUsage} = require('../lib/args')
 
 test('parse migrate options', t => {
   const args = [ 'migrate' ]
   const parsed = parse(args)
 
-  console.dir(parsed)
   t.deepEqual({ command: 'migrate', options: {} }, parsed)
 })
 
@@ -21,4 +20,18 @@ test('parse next-hint', t => {
   const parsed = parse(args)
 
   t.deepEqual({ command: 'next-hint', options: { task: 'task-1' } }, parsed)
+})
+
+test('showUsage', t => {
+  showUsage()
+  showUsage(true)
+  // just print so we can eyeball the output and make sure it doesnt error
+  t.pass()
+})
+
+test('parse help options', t => {
+  const args = [ 'help' ]
+  const parsed = parse(args)
+
+  t.deepEqual({ command: 'help', options: {} }, parsed)
 })
