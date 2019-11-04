@@ -6,7 +6,7 @@ tasks:
     sort-order: 1
     hints:
       - text: >-
-          I wonder if I can see thehost processes in this container since it is
+          I wonder if I can see the host processes in this container since it is
           a process monitor?
       - text: 'Hmm, if I can see the proccesses I wonder what /proc looks like?'
       - text: >-
