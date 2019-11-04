@@ -101,10 +101,6 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 **All the <code>AWS_*</code> configuration environment variables you have set will be propagated into the container**
 
-### Terraform
-
-Refer to the [kubesim terraform documentation](https://github.com/kubernetes-simulator/simulator/blob/master/terraform/README.md) 
-
 #### Troubleshooting AWS
 
 - If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
@@ -114,6 +110,10 @@ create</code>
 [some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
 [Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
 - [Multi-account](https://www.terraform.io/docs/backends/types/s3.html#multi-account-aws-architecture)
+
+### Terraform
+
+Refer to the [kubesim terraform documentation](https://github.com/kubernetes-simulator/simulator/blob/master/terraform/README.md) 
 
 ### SSH
 
