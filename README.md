@@ -81,7 +81,7 @@ Current list of scenarios:
 
 ### Infrastructure Design
 
-![Terraform AWS infrastructure](./docs/aws-bastion-host-1.png)
+![Terraform AWS infrastructure](./terraform/docs/aws-bastion-host-1.png)
 
 ### AWS Configuration
 
@@ -113,7 +113,7 @@ create</code>
 
 ### Terraform
 
-Refer to the [kubesim terraform documentation](https://github.com/kubernetes-simulator/simulator/blob/master/terraform/README.md) 
+Refer to the [kubesim terraform documentation](./terraform/README.md) 
 
 ### SSH
 
@@ -219,10 +219,10 @@ Use "kind [command] --help" for more information about a command.
 property
 * Use the Loading /Users/jonathankent/Documents/GitHub/simulator/simulation-scripts/scenario/container-ambush/hints.yaml devtool to update the existing scenarios en-masse.
 You can make this tool available on your PATH by running cd tools/migrate-hints && npm install && npm link
-audited 1081 packages in 3.536s
+audited 1081 packages in 3.345s
 found 0 vulnerabilities
 
-audited 1081 packages in 4.013s
+audited 1081 packages in 3.254s
 found 0 vulnerabilities
 
 /usr/local/bin/migrate-hints -> /usr/local/lib/node_modules/migrate-hints/bin/transform-hints.js

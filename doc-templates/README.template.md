@@ -81,7 +81,7 @@ ${scenarios}
 
 ### Infrastructure Design
 
-![Terraform AWS infrastructure](./docs/aws-bastion-host-1.png)
+![Terraform AWS infrastructure](./terraform/docs/aws-bastion-host-1.png)
 
 ### AWS Configuration
 
@@ -113,7 +113,7 @@ create</code>
 
 ### Terraform
 
-Refer to the [kubesim terraform documentation](https://github.com/kubernetes-simulator/simulator/blob/master/terraform/README.md) 
+Refer to the [kubesim terraform documentation](./terraform/README.md) 
 
 ### SSH
 
