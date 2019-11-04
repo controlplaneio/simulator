@@ -32,7 +32,7 @@ setup-dev: ## Initialise simulation tree with git hooks
 
 .PHONY: devtools
 devtools: ## Install devtools
-	cd tools/migrate-hints && npm install && npm link
+	cd tools/scenario-tools && npm install && npm link
 
 .PHONY: reset
 reset: ## Clean up files left over by simulator
