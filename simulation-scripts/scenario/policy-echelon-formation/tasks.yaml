@@ -1,12 +1,12 @@
 objective: Use privileged container to get host secrets.
-starting-point: Inside Jenkins container.
+starting-point: Inside the Process Monitor container.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   Task 1:
     sort-order: 1
     hints:
       - text: >-
-          I wonder if I can see thehost processes in this container since it is
+          I wonder if I can see the host processes in this container since it is
           a process monitor?
       - text: 'Hmm, if I can see the proccesses I wonder what /proc looks like?'
       - text: >-
