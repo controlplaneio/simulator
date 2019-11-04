@@ -174,7 +174,7 @@ cluster in the given cloud provider
 * [tasks.yaml format](./docs/tasks-yaml-format.md)
 
 * If you need to make changes to the format you should update this documentation.
-* Any changes should be accompanied by a bump of the version in the `kind`
+* Any changes should be accompanied by a bump of the version in the <code>kind</code>
 property
 * Use the <code>migrate-hints</code> devtool to update the existing scenarios en-masse.
 You can make this tool available on your PATH by running <code>make devtools</code>
