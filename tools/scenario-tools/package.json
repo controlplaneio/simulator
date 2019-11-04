@@ -1,10 +1,10 @@
 {
-  "name": "migrate-hints",
+  "name": "scenario-tools",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "bin": {
-    "migrate-hints": "bin/transform-hints.js"
+    "scenario": "bin/scenario.js"
   },
   "scripts": {
     "test": "ava"
@@ -16,6 +16,7 @@
     "ava": "^2.4.0"
   },
   "dependencies": {
+    "command-line-args": "^5.1.1",
     "js-yaml": "^3.13.1"
   }
 }
