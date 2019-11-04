@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
 const {createLogger} = require('../lib/logger')
-const {loadHintsFile, writeHintsFile, findScenarioHintsFiles} = require('../lib/io')
-const {transformV0ToV1} = require('../lib/transforms')
-
 
 const args = process.argv.slice(2);
 const logger = createLogger({})
@@ -29,11 +26,3 @@ process.on('unhandledRejection', (err) => {
 
     process.exit(1)
 })
-
-hintsFiles = findScenarioHintsFiles('./simulation-scripts/scenario')
-hintsFiles.forEach(hintsFile => {
-  const original = loadHintsFile(hintsFile)
-  const transformed = transformV0ToV1(original)
-  writeHintsFile(transformed, hintsFile)
-})
-

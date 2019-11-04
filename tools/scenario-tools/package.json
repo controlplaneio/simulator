@@ -13,10 +13,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "ava": "^2.4.0"
+    "ava": "^2.4.0",
+    "esm": "^3.2.25"
   },
   "dependencies": {
-    "command-line-args": "^5.1.1",
+    "command-line-args": "^5.0.2",
+    "command-line-arguments": "^1.1.1",
+    "command-line-commands": "^3.0.1",
     "command-line-usage": "^6.1.0",
     "js-yaml": "^3.13.1",
     "logform": "^2.1.2",
