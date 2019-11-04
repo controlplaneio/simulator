@@ -11,6 +11,9 @@ If you need to include bsah code snippets you will need to change how the templa
 -->
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/LICENSE)
+[![Platforms](https://img.shields.io/badge/Platform-Linux|MacOS-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/README.md)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/kubernetes-simulator/simulator/graphs/commit-activity)
+
 
 # Simulator
 
@@ -76,7 +79,29 @@ simulator infra destroy
 Current list of scenarios:
 
 <pre>
-./scripts/generate-docs-from-templates.sh: line 27: ./dist/simulator: No such file or directory
+     container-ambush
+     container-defeat-in-detail
+     container-phalanx-formation
+     etcd-inverted-wedge
+     master-bait-and-bleed
+     master-encirclement
+     network-feint
+     network-hammer-and-anvil
+     network-hedgehog-defence
+     network-swarming
+     node-amphibious-operations
+     node-raiding
+     node-shock-tactics
+     policy-echelon-formation
+     policy-fire-support
+     policy-force-dispersal
+     policy-vertical-envelopment
+     rbac-contact-drill
+     rbac-sangar
+     rbac-flanking-maneuver
+     rbac-shoot-and-scoot
+     secret-high-ground
+     secret-tank-desant
 </pre>
 
 ## How It All Works
