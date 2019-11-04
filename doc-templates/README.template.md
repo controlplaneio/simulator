@@ -186,3 +186,26 @@ You can make this tool available on your PATH by running `make devtools`
 ## Project Roadmap
 
 There is a [roadmap](./docs/roadmap.md) outlining current and planned work.
+
+## Contributing
+
+### Bugs
+
+If you think you have found a bug please follow the instructions below.
+
+- Please spend a small amount of time giving due diligence to the issue tracker. Your issue might be a duplicate.
+- Open a [new issue](https://github.com/kubernetes-simulator/simulator/issues/new) if a duplicate doesn't already exist.
+- Note the version of simulator you are running (from `simulator version`) and the command line options you are using.
+- Note the version of Kubernetes you are running (from `kubectl version`)
+- Remember users might be searching for your issue in the future, so please give it a meaningful title to help others.
+
+### Pull Requests 
+
+We welcome pull requests! 
+
+- Your PR is more likely to be accepted if it focuses on just one change.
+- Please include a comment with the results before and after your change. 
+- Your PR is more likely to be accepted if it includes tests.
+- You're welcome to submit a draft PR if you would like early feedback on an idea or an approach. 
+- Happy coding!
+
