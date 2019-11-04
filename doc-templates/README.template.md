@@ -10,6 +10,8 @@ If you need to include bsah code snippets you will need to change how the templa
 
 -->
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/LICENSE)
+
 # Simulator
 
 A distributed systems and infrastructure simulator for attacking and debugging
