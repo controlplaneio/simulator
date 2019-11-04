@@ -21,7 +21,7 @@ test('groupHintsByTask', t => {
     }
   }
 
-  t.deepEqual(groupHintsByTask(original), expected)
+  t.deepEqual(expected, groupHintsByTask(original))
 })
 
 test('transforms v0 to v1 schema', t => {
@@ -52,5 +52,5 @@ test('transforms v0 to v1 schema', t => {
     }
   }
 
-  t.deepEqual(transformV0ToV1(original), expected)
+  t.deepEqual(expected, transformV0ToV1(original))
 })

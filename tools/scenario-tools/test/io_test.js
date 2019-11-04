@@ -14,7 +14,7 @@ function testoutput(name) {
 
 test('loadHintsFile parses a yaml file', t => {
   const actual = loadHintsFile(fixture('test.yaml'))
-  t.deepEqual(actual, {test: 'test'})
+  t.deepEqual({test: 'test'}, actual)
 })
 
 test('writeHintsFile serializes a js object to yaml', t => {
@@ -25,5 +25,5 @@ test('writeHintsFile serializes a js object to yaml', t => {
   openSync(outputFile, 'w');
 
   writeHintsFile(input, outputFile)
-  t.deepEqual(readFileSync(outputFile, 'utf-8'), 'test: test\n')
+  t.deepEqual('test: test\n', readFileSync(outputFile, 'utf-8'))
 })
