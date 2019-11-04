@@ -1,8 +1,7 @@
-const {inspect} = require('util')
-const {MESSAGE, SPLAT} = require('triple-beam')
+const { inspect } = require('util')
+const { MESSAGE, SPLAT } = require('triple-beam')
 const winston = require('winston')
-const {format, TransformableInfo} = require('logform')
-const {Transport} = require('winston-transport')
+const { format } = require('logform')
 
 const formatLogMessage = format((info, opts) => {
   const depth = opts.depth || null
@@ -22,25 +21,25 @@ const formatLogMessage = format((info, opts) => {
 // - colorize - whethers to colourise the output
 // - level - the logging level
 // - depth - how deep to inspect js objects
-function createLogger(options) {
+function createLogger (options) {
   const formats = []
 
   // default to coloured output
-  options = Object.assign({colorize: true}, options)
+  options = Object.assign({ colorize: true }, options)
 
   if (options.colorize) {
     formats.push(winston.format.colorize())
   }
 
   formats.push(winston.format.align())
-  formats.push(formatLogMessage({colorize: options.colorize}))
+  formats.push(formatLogMessage({ colorize: options.colorize }))
 
   const transport = new winston.transports.Console({
     level: options.level || 'info',
-    format: winston.format.combine(...formats),
+    format: winston.format.combine(...formats)
   })
 
-  return winston.createLogger({transports: [transport]})
+  return winston.createLogger({ transports: [transport] })
 }
 
 module.exports.createLogger = createLogger
