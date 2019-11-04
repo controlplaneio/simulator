@@ -101,10 +101,6 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 **All the <code>AWS_*</code> configuration environment variables you have set will be propagated into the container**
 
-### Terraform
-
-Refer to the [kubesim terraform documentation](https://github.com/kubernetes-simulator/simulator/blob/master/terraform/README.md) 
-
 #### Troubleshooting AWS
 
 - If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
@@ -114,6 +110,10 @@ create</code>
 [some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
 [Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
 - [Multi-account](https://www.terraform.io/docs/backends/types/s3.html#multi-account-aws-architecture)
+
+### Terraform
+
+Refer to the [kubesim terraform documentation](https://github.com/kubernetes-simulator/simulator/blob/master/terraform/README.md) 
 
 ### SSH
 
@@ -217,24 +217,12 @@ Flags:
 
 Use "kind [command] --help" for more information about a command.
 property
-* Use the  devtool to update the existing scenarios en-masse.
+* Use the Loading /Users/jonathankent/Documents/GitHub/simulator/simulation-scripts/scenario/container-ambush/hints.yaml devtool to update the existing scenarios en-masse.
 You can make this tool available on your PATH by running cd tools/migrate-hints && npm install && npm link
-
-> core-js@2.6.10 postinstall /Users/jonathankent/Documents/GitHub/simulator/tools/migrate-hints/node_modules/core-js
-> node postinstall || echo "ignore"
-
-[96mThank you for using core-js ([94m https://github.com/zloirock/core-js [96m) for polyfilling JavaScript standard library![0m
-
-[96mThe project needs your help! Please consider supporting of core-js on Open Collective or Patreon: [0m
-[96m>[94m https://opencollective.com/core-js [0m
-[96m>[94m https://www.patreon.com/zloirock [0m
-
-[96mAlso, the author of core-js ([94m https://github.com/zloirock [96m) is looking for a good job -)[0m
-
-added 411 packages from 246 contributors and audited 1081 packages in 17.121s
+audited 1081 packages in 3.536s
 found 0 vulnerabilities
 
-audited 1081 packages in 4.751s
+audited 1081 packages in 4.013s
 found 0 vulnerabilities
 
 /usr/local/bin/migrate-hints -> /usr/local/lib/node_modules/migrate-hints/bin/transform-hints.js
