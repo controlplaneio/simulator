@@ -9,7 +9,7 @@ tasks:
       - text: >-
           Is the a flag I can update that will force the container to pull from
           the offical repository?
-      - text: I should set the PodSecurityPolicy flag to Always.
+      - text: I should set the PullPolicy flag to Always.
     starting-point: ''
   Task 2:
     sort-order: 2
