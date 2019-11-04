@@ -196,28 +196,7 @@ cluster in the given cloud provider
 * [tasks.yaml format](./docs/tasks-yaml-format.md)
 
 * If you need to make changes to the format you should update this documentation.
-* Any changes should be accompanied by a bump of the version in the kind creates and manages local Kubernetes clusters using Docker container 'nodes'
-
-Usage:
-  kind [command]
-
-Available Commands:
-  build       Build one of [base-image, node-image]
-  completion  Output shell completion code for the specified shell (bash or zsh)
-  create      Creates one of [cluster]
-  delete      Deletes one of [cluster]
-  export      exports one of [logs]
-  get         Gets one of [clusters, nodes, kubeconfig-path]
-  help        Help about any command
-  load        Loads images into nodes
-  version     prints the kind CLI version
-
-Flags:
-  -h, --help              help for kind
-      --loglevel string   logrus log level [panic, fatal, error, warning, info, debug, trace] (default "warning")
-      --version           version for kind
-
-Use "kind [command] --help" for more information about a command.
+* Any changes should be accompanied by a bump of the version in the <code>kind</code>
 property
 * Use the <code>migrate-hints</code> devtool to update the existing scenarios en-masse.
 You can make this tool available on your PATH by running <code>make devtools</code>
