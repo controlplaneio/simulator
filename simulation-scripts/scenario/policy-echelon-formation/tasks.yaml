@@ -1,5 +1,5 @@
 objective: Use privileged container to get host secrets.
-starting-point: Inside Jenkins container.
+starting-point: Inside the Process Monitor container.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   Task 1:
