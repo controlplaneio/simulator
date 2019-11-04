@@ -219,26 +219,14 @@ Flags:
 
 Use "kind [command] --help" for more information about a command.
 property
-* Use the Loading /Users/jonathankent/Documents/GitHub/simulator/simulation-scripts/scenario/container-ambush/hints.yaml devtool to update the existing scenarios en-masse.
-You can make this tool available on your PATH by running cd tools/migrate-hints && npm install && npm link
-audited 1081 packages in 3.619s
-found 0 vulnerabilities
-
-audited 1081 packages in 3.719s
-found 0 vulnerabilities
-
-/usr/local/bin/migrate-hints -> /usr/local/lib/node_modules/migrate-hints/bin/transform-hints.js
-/usr/local/lib/node_modules/migrate-hints -> /Users/jonathankent/Documents/GitHub/simulator/tools/migrate-hints
+* Use the <code>migrate-hints</code> devtool to update the existing scenarios en-masse.
+You can make this tool available on your PATH by running <code>make devtools</code>
 
 ### Simulator API Documentation
 
 * [Scenario](./docs/api/scenario.md)
 * [Simulator](./docs/api/simulator.md)
 * [Util](./docs/api/util.md)
-
-## Project Roadmap
-
-There is a [roadmap](./docs/roadmap.md) outlining current and planned work.
 
 ## Contributing
 
