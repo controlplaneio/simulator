@@ -1,5 +1,5 @@
 const test = require('ava')
-const {transformV0ToV1, groupHintsByTask} = require('../lib/transforms')
+const {transformV0ToV1, groupHintsByTask} = require('../lib/migrate')
 
 test('groupHintsByTask', t => {
   const original = [
