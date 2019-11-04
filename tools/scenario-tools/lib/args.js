@@ -9,13 +9,25 @@ function parse(argv) {
 
   let options = {}
 
-  if (command.name === 'migrate') {
-    const migrateArguments = [ { name: 'all', alias: 'a', type: Boolean } ]
+  if (command === 'migrate') {
+    const migrateArguments = [ { 
+        name: 'name', 
+        alias: 'n', 
+        type: String
+      }, { 
+        name: 'all', 
+        alias: 'a', 
+        type: Boolean,
+        defaultValue: false
+      } 
+    ]
 
     options = commandLineArgs(migrateArguments, {
       stopAtFirstUnknown: true,
       argv: remaining
     })
+
+    // TODO(rem): Make name and all required and mutually exclusive
   }
 
   if (command === 'show-hints' || command === 'next-hint') {
@@ -25,6 +37,8 @@ function parse(argv) {
       stopAtFirstUnknown: true,
       argv: remaining
     })
+
+    // TODO(rem): Make task required
   }
 
   return { command, options }
@@ -61,6 +75,7 @@ function showUsage(dev) {
     }
   ]
 
+// hide the devtools if we are in the attack container
   if (dev) {
     sections.push({
       header: 'migrate',

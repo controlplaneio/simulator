@@ -1,11 +1,22 @@
 const test = require('ava')
 const {parse, showUsage} = require('../lib/args')
 
-test('parse migrate options', t => {
-  const args = [ 'migrate' ]
+test('parse migrate with name option', t => {
+  const args = [ 'migrate', '--name', 'container-ambush' ]
   const parsed = parse(args)
 
-  t.deepEqual({ command: 'migrate', options: {} }, parsed)
+  t.deepEqual({ command: 'migrate', options: { 
+      name: 'container-ambush', 
+      all: false 
+    } 
+  }, parsed)
+})
+
+test('parse migrate with all option', t => {
+  const args = [ 'migrate', '--all' ]
+  const parsed = parse(args)
+
+  t.deepEqual({ command: 'migrate', options: { all: true } }, parsed)
 })
 
 test('parse show-hints', t => {
