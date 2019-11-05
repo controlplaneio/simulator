@@ -30,9 +30,10 @@ The quickest way to get up and running is to simply:
 
 <pre>
 source <(curl https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim)
+sh -x ./kubesim
 </pre>
 
-or (inside your local version of this repository)
+or clone this repository and run:
 
 <pre>
 make run
@@ -41,7 +42,9 @@ make run
 This will drop you into a bash shell in a launch container.  You will have a
 program on the <code>PATH</code> named <code>simulator</code> to interact with.
 
-### The <code>kubesim</code> script
+Refer to [Simulator CLI Usage](#simulator-cli-usage)
+
+### The kubesim script
 
 <code>kubesim</code> is a small script written in BASH for getting users up and running with simulator as fast as possible. It pulls the latest version of the simulator container and sets up some options for running the image. It can be installed with the following steps:
 
