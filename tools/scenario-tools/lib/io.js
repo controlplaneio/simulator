@@ -1,7 +1,6 @@
 const yaml = require('js-yaml')
 const { truncateSync, writeFileSync, readFileSync, readdirSync, existsSync } = require('fs')
 const { resolve, join } = require('path')
-const { createLogger } = require('../lib/logger')
 
 const PROGRESS_FILE_PATH = '/progress.json'
 

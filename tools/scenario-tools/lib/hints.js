@@ -20,7 +20,7 @@ function showHint (task, index, taskspath = TASKS_FILE_PATH, log = logger) {
 
   const hint = tasks[task].hints[index]
 
-  log.info(hint)
+  log.info(hint.text)
   log.info('Use `scenario show-hints --task <task>` to reshow all the hints you have seen so far')
 }
 
@@ -40,7 +40,7 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
   const lastSeenHintIndex = progress[task]
 
   for (let i = 0; i <= lastSeenHintIndex; i++) {
-    logger.info(tasks[task].hints[i])
+    logger.info(tasks[task].hints[i].text)
   }
 }
 
