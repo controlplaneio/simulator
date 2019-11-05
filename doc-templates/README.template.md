@@ -60,21 +60,33 @@ Feel free to modify and/or extend the script if you wish.
 
 ### End-to-end usage
 
-# Create a remote state bucket for terraform
+_Create a remote state bucket for terraform_
 <pre>
-__simulator init__
+simulator init
 </pre>
-# Create the infra if it isn't there
-__simulator infra create__
-# List available scenarios
-__simulator scenario list__
-# Launch a scenario (sets up your cluster)
-__simulator scenario launch node-shock-tactics__
-# Attack the cluster
-__simulator ssh attack__
-# ... Complete the scenario :)
-# Destroy your cluster when you are done
-__simulator infra destroy__
+Create the infra if it isn't there
+<pre>
+simulator infra create
+</pre>
+List available scenarios
+<pre>
+simulator scenario list
+</pre>
+Launch a scenario (sets up your cluster)
+<pre>
+simulator scenario launch node-shock-tactics
+</pre>
+Attack the cluster
+<pre>
+simulator ssh attack
+</pre>
+
+Complete the scenario
+
+Destroy your cluster when you are done
+<pre>
+simulator infra destroy
+</pre>
 
 
 Current list of scenarios:
