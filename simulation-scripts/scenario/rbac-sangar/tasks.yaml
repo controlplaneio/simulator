@@ -1,7 +1,7 @@
 objective: >-
   Figure out additional permissions given to system:authenticated group and
   remove them.
-starting-point: frontend pod in the rac-sangar namespace
+starting-point: frontend pod in the rbac-sangar namespace
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   Task 1:
@@ -18,8 +18,8 @@ tasks:
       - text: >-
           Is there a rolebinding or clusterrolebinding bound to the default
           service account in this namespace?
+      - text: Looks like there is not a direct binding to the serviceice account.
       - text: >-
-          Looks like there is not a direct binding to the serviceice account.
           Using the pods token we are in the system:authenticated group. Is
           something bound to that?
       - text: >-
@@ -33,6 +33,7 @@ tasks:
       - text: >-
           The application pods already do this maybe I could look there for
           inspiration.
+      - text: I need to set automountServiceAccountToken to be false
     starting-point: ''
   Task 4:
     sort-order: 4
