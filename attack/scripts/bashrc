@@ -65,6 +65,8 @@ welcome() {
   info "To see this message again:"
   info "  \$ welcome"
   envsubst < /challenge.txt
+  info ' '
+  info "Getting stuck?  Run scenario --help to find out how to get some hints"
 }
 readonly -f welcome
 export -f welcome
