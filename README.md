@@ -64,26 +64,26 @@ _Create a remote state bucket for terraform_
 <pre>
 simulator init
 </pre>
-Create the infra if it isn't there
+_Create the infra if it isn't there_
 <pre>
 simulator infra create
 </pre>
-List available scenarios
+_List available scenarios_
 <pre>
 simulator scenario list
 </pre>
-Launch a scenario (sets up your cluster)
+_Launch a scenario (sets up your cluster)_
 <pre>
 simulator scenario launch node-shock-tactics
 </pre>
-Attack the cluster
+_Attack the cluster_
 <pre>
 simulator ssh attack
 </pre>
 
 Complete the scenario
 
-Destroy your cluster when you are done
+_Destroy your cluster when you are done_
 <pre>
 simulator infra destroy
 </pre>
