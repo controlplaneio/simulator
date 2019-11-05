@@ -142,7 +142,7 @@ create</code>
 
 ### Terraform
 
-Refer to the [kubesim terraform documentation](./terraform/README.md) 
+Refer to the [simulator terraform documentation](./terraform/README.md) 
 
 ### SSH
 
