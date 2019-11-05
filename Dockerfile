@@ -1,16 +1,23 @@
-#--------------------------#
-# Dependencies and Linting #
-#--------------------------#
+#---------------------------------------#
+# Dependencies, Linting & JS unit tests #
+#---------------------------------------#
 FROM debian:buster-slim AS dependencies
 
-RUN apt-get update                                                               \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    build-essential                                                              \
-    ca-certificates                                                              \
-    curl                                                                         \
-    golang                                                                       \
-    git                                                                          \
-    shellcheck                                                                   \
+# We're using sh not bash at this point
+# hadolint ignore=DL4006
+RUN apt-get update                                                                    \
+    && DEBIAN_FRONTEND=noninteractive apt-get install  -y --no-install-recommends     \
+    curl                                                                              \
+    software-properties-common                                                        \
+    && curl -sL https://deb.nodesource.com/setup_13.x | bash -                        \
+    && apt-get update                                                                 \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends      \
+    build-essential                                                                   \
+    ca-certificates                                                                   \
+    golang                                                                            \
+    git                                                                               \
+    nodejs                                                                            \
+    shellcheck                                                                        \
     unzip
 
 # Install terraform
@@ -61,6 +68,7 @@ COPY --chown=1000 Dockerfile .hadolint.yaml ./
 COPY --chown=1000 scripts/ ./scripts/
 COPY --chown=1000 attack/ ./attack/
 COPY --chown=1000 kubesim ./kubesim
+COPY --chown=1000 ./tools/scenario-tools/ ./scenario-tools/
 
 USER ${lint_user}
 
@@ -71,6 +79,12 @@ RUN hadolint Dockerfile            \
     && shellcheck scripts/*        \
     && shellcheck attack/scripts/* \
     && shellcheck kubesim
+
+WORKDIR /app/scenario-tools
+
+# Run javascript linting and unit tests
+RUN npm install   \
+    && npm test
 
 #-----------------------#
 # Golang Build and Test #

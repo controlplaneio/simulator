@@ -43,7 +43,10 @@ write_files:
     content: |
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
-      sudo -E docker run -h attack -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
+      sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:latest
+  - path: /home/ubuntu/progress.json
+    permissions: '0666'
+    content: "{}"
   - path: /home/ubuntu/challenge.txt
     permissions: '0666'
     content: |
