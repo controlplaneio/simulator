@@ -50,7 +50,7 @@ const args = cloneArray(process.argv)
 
 args.shift() // remove `node` from argv
 args.shift() // remove `scenario.js` from argv
-console.log(args)
+
 try {
   const { command, options } = parse(args)
 
@@ -68,7 +68,8 @@ try {
   } else {
     showHelp()
   }
-} catch {
+} catch (e) {
   logger.error('Unrecognised cli arguments - try running the \'help\' command')
+  logger.error(e.message)
   showHelp()
 }

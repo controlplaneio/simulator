@@ -27,7 +27,7 @@ function showHint (task, index, taskspath = TASKS_FILE_PATH, log = logger) {
 function showHints (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const progress = getProgress(progresspath)
-  const tasks = loadYamlFile(taskspath)
+  const { tasks } = loadYamlFile(taskspath)
 
   if (!tasks[task]) {
     return logger.warn('Cannot find task')
