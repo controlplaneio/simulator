@@ -32,7 +32,6 @@ The quickest way to get up and running is to simply:
 
 <pre>
 source <(curl https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim)
-sh -x ./kubesim
 </pre>
 
 or clone this repository and run:
