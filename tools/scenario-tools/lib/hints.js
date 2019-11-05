@@ -38,9 +38,14 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
   }
 
   const lastSeenHintIndex = progress[task]
+  const hintcount = tasks[task].hints.length
 
-  for (let i = 0; i <= lastSeenHintIndex; i++) {
+  for (let i = 0; i <= lastSeenHintIndex && i < hintcount; i++) {
     logger.info(tasks[task].hints[i].text)
+  }
+
+  if (lastSeenHintIndex >= hintcount - 1) {
+    return logger.info('You have seen all the hints for this task')
   }
 }
 
@@ -60,7 +65,7 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
 
     hintIndex = progress[task] = ++progress[task]
     if (hintIndex >= tasks[task].hints.length) {
-      return logger.info('You have not seen all the hints for this task')
+      return logger.info('You have seen all the hints for this task')
     }
   }
   saveProgress(progress, progresspath)
