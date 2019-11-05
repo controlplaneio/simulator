@@ -76,7 +76,9 @@ _Login the environment_
 simulator ssh attack
 </pre>
 
-Once you run <code>simulator ssh attack</code> you will be logged into the Bastion host and an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  _Note_ that some starting points will require you are on the cluster first to access to starting point.
+Once you run <code>simulator ssh attack</code> you will be logged into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  __Note__ that some starting points will require you are on the cluster first to access to starting point.
+
+![Bastion container initial login](./docs/bastion.png)
 
 
 _Destroy your cluster when you are done_
