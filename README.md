@@ -62,18 +62,18 @@ Feel free to modify and/or extend the script if you wish.
 
 <pre>
 # Create a remote state bucket for terraform
-simulator init
+__simulator init__
 # Create the infra if it isn't there
-simulator infra create
+__simulator infra create__
 # List available scenarios
-simulator scenario list
+__simulator scenario list__
 # Launch a scenario (sets up your cluster)
-simulator scenario launch node-shock-tactics
+__simulator scenario launch node-shock-tactics__
 # Attack the cluster
-simulator ssh attack
+__simulator ssh attack__
 # ... Complete the scenario :)
 # Destroy your cluster when you are done
-simulator infra destroy
+__simulator infra destroy__
 </pre>
 
 Current list of scenarios:
