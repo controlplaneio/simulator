@@ -54,13 +54,13 @@ Refer to [Simulator CLI Usage](#simulator-cli-usage)
 _Create a remote state bucket for terraform_
 <pre>
 simulator init
-You will be asked for a name of a S3 bucket to use, if exists, or to create, to store Terraform state to.
 </pre>
+You will be asked for a name of a S3 bucket to use, if exists, or to create, to store Terraform state to.
 _Create the infra if it isn't there_
 <pre>
 simulator infra create
-This will standup the infrastructure, including an initial Kubernetes Cluster
 </pre>
+This will standup the infrastructure, including an initial Kubernetes Cluster
 _List available scenarios_
 <pre>
 simulator scenario list
