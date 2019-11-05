@@ -5,7 +5,7 @@ const os = require('os')
 const { createLogger } = require('../lib/logger')
 const { parse, showUsage } = require('../lib/args')
 const { migrate } = require('../lib/migrate')
-const { showHints, nextHint } = require('./lib/hints')
+const { showHints, nextHint } = require('../lib/hints')
 
 // const args = process.argv.slice(2)
 const logger = createLogger({})
