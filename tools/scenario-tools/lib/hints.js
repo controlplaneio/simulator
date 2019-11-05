@@ -33,7 +33,7 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
     return logger.warn('Cannot find task')
   }
 
-  if (!progress[task]) {
+  if (progress[task] === undefined) {
     return logger.info('You have not seen any hints for this task')
   }
 
