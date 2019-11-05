@@ -41,6 +41,8 @@ or clone this repository and run:
 make run
 </pre>
 
+![Simulator startup](./docs/simulator.png)
+
 This will drop you into a bash shell in a launch container.  You will have a
 program on the <code>PATH</code> named <code>simulator</code> to interact with.
 
@@ -52,10 +54,12 @@ Refer to [Simulator CLI Usage](#simulator-cli-usage)
 _Create a remote state bucket for terraform_
 <pre>
 simulator init
+You will be asked for a name of a S3 bucket to use, if exists, or to create, to store Terraform state to.
 </pre>
 _Create the infra if it isn't there_
 <pre>
 simulator infra create
+This will standup the infrastructure, including an initial Kubernetes Cluster
 </pre>
 _List available scenarios_
 <pre>
@@ -65,12 +69,13 @@ _Launch a scenario (sets up your cluster)_
 <pre>
 simulator scenario launch node-shock-tactics
 </pre>
-_Attack the cluster_
+_Login the environment_
 <pre>
 simulator ssh attack
 </pre>
 
-Complete the scenario
+Once you run <code>simulator ssh attack</code> you will be logged into the Bastion host and an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  _Note_ that some starting points will require you are on the cluster first to access to starting point.
+
 
 _Destroy your cluster when you are done_
 <pre>
