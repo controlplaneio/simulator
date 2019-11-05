@@ -1,6 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: node-amphibious-operations
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: node-amphibious-operations
   labels:
     name: malicious-pod
   name: malicious-pod
@@ -15,6 +21,36 @@ spec:
         name: malicious-pod
     spec:
       containers:
-      - image: alpine:3.7
-        imagePullPolicy: IfNotPresent
-        name: malicious-pod
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        ports:
+        - containerPort: 80
+          name: external
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: node-amphibious-operations
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+      project: webapidb
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: frontend
+        project: webapidb
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        ports:
+        - containerPort: 80
+          name: external

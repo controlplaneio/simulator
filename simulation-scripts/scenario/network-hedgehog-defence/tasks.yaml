@@ -14,7 +14,7 @@ tasks:
           Do Postgres databases have passwords by default? I wonder what the
           default username for the SQL database is.
       - text: 'Hmm, how do I list tables and view the keys in tables again?'
-      - text: To query db from setupd pod
+      - text: To query db from setupd pod ```psql -h database.network-hedgehog-defence -U postgres```
     starting-point: ''
   Task 2:
     sort-order: 2
