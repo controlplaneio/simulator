@@ -1,7 +1,7 @@
 const { resolve, join } = require('path')
 const { openSync, readFileSync } = require('fs')
 const test = require('ava')
-const { loadHintsFile, writeHintsFile } = require('../lib/io')
+const { loadYamlFile, writeYamlFile } = require('../lib/io')
 
 function fixture (name) {
   return resolve(join(__dirname, 'fixtures', name))
@@ -11,18 +11,18 @@ function testoutput (name) {
   return resolve(join(__dirname, 'output', name))
 }
 
-test('loadHintsFile parses a yaml file', t => {
-  const actual = loadHintsFile(fixture('test.yaml'))
+test('loadYamlFile parses a yaml file', t => {
+  const actual = loadYamlFile(fixture('test.yaml'))
   t.deepEqual({ test: 'test' }, actual)
 })
 
-test('writeHintsFile serializes a js object to yaml', t => {
+test('writeYamlFile serializes a js object to yaml', t => {
   const input = { test: 'test' }
-  const outputFile = testoutput('writeHintsTest.yaml')
+  const outputFile = testoutput('writeYamlTest.yaml')
 
   // create an empty test output file to overwrite
   openSync(outputFile, 'w')
 
-  writeHintsFile(input, outputFile)
+  writeYamlFile(input, outputFile)
   t.deepEqual('test: test\n', readFileSync(outputFile, 'utf-8'))
 })

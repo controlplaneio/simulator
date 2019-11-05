@@ -7,7 +7,7 @@ const logger = createLogger({})
 
 // Loads and parses a `hints.yaml` from the supplied absolute path.
 // Returns an object representing the yaml file
-function loadHintsFile (p) {
+function loadYamlFile (p) {
   logger.info(`Loading ${p}`)
   const doc = yaml.safeLoad(readFileSync(p, 'utf8'))
   return doc
@@ -15,7 +15,7 @@ function loadHintsFile (p) {
 
 // Serializes the supplied `hints` to YAML and overwrites an existing
 // `hints.yaml` file to the supplied path `p` with the YAMl
-function writeHintsFile (hints, p) {
+function writeYamlFile (hints, p) {
   logger.info(`Writing transformed file ${p}`)
   const contents = yaml.safeDump(hints)
   truncateSync(p)
@@ -33,7 +33,7 @@ function findScenarioHintsFiles (scenariosDir) {
 }
 
 module.exports = {
-  loadHintsFile,
-  writeHintsFile,
+  loadYamlFile,
+  writeYamlFile,
   findScenarioHintsFiles
 }

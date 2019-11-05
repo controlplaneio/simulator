@@ -1,4 +1,4 @@
-const { loadHintsFile, writeHintsFile, findScenarioHintsFiles } = require('./io')
+const { loadYamlFile, writeYamlFile, findScenarioHintsFiles } = require('./io')
 
 function groupHintsByTask (hints) {
   return hints.reduce((acc, hint) => {
@@ -51,9 +51,9 @@ function transformV0ToV1 (hints) {
 function migrate () {
   const hintsFiles = findScenarioHintsFiles('./simulation-scripts/scenario')
   hintsFiles.forEach(hintsFile => {
-    const original = loadHintsFile(hintsFile)
+    const original = loadYamlFile(hintsFile)
     const transformed = transformV0ToV1(original)
-    writeHintsFile(transformed, hintsFile)
+    writeYamlFile(transformed, hintsFile)
   })
 }
 
