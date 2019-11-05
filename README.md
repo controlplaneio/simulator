@@ -46,20 +46,6 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 
 Refer to [Simulator CLI Usage](#simulator-cli-usage)
 
-### The kubesim script
-
-<code>kubesim</code> is a small script written in BASH for getting users up and running with simulator as fast as possible. It pulls the latest version of the simulator container and sets up some options for running the image. It can be installed with the following steps:
-
-<pre>
-# cURL the script from GitHub
-curl -o kubesim https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim
-# Make it executeable
-chmod a+x kubesim
-# Place the script on your path
-cp kubesim /usr/local/bin
-</pre>
-
-Feel free to modify and/or extend the script if you wish.
 
 ### Simulator CLI Usage
 
@@ -168,6 +154,21 @@ are files starting <code>cp_simulator_</code>
 
 **If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
 next run**
+
+### The kubesim script
+
+<code>kubesim</code> is a small script written in BASH for getting users up and running with simulator as fast as possible. It pulls the latest version of the simulator container and sets up some options for running the image. It can be installed with the following steps:
+
+<pre>
+# cURL the script from GitHub
+curl -o kubesim https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim
+# Make it executeable
+chmod a+x kubesim
+# Place the script on your path
+cp kubesim /usr/local/bin
+</pre>
+
+Feel free to modify and/or extend the script if you wish.
 
 ## Development Workflow
 
