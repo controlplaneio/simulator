@@ -57,17 +57,17 @@ function showUsage (dev) {
       content: 'Helper to interact with the current scenario'
     }, {
       header: 'show-hints',
-      content: 'Shows any and all hints already seen for the given task',
+      content: 'Shows any and all hints already seen for the supplied task',
       optionList: [
         {
           name: 'task',
           typeLabel: '{underline file}',
-          description: 'The task to show the hints for'
+          description: 'The task to show the hints you have already seen'
         }
       ]
     }, {
-      header: 'show-hints',
-      content: 'Shows any and all hints already seen for the given task',
+      header: 'next-hint',
+      content: 'Shows the next hint for the supplied task',
       optionList: [
         {
           name: 'task',
