@@ -26,7 +26,7 @@ compromise and trains you in mitigating against these vulnerabilities.
 
 ## Usage
 
-Ensure the [AWS requirements](aws-configuration) are met and configured.
+Ensure the [AWS requirements](#aws-configuration) are met and configured.
 
 The quickest way to get up and running is to simply:
 
