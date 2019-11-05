@@ -53,10 +53,10 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
   const progress = getProgress(progresspath)
   let hintIndex
 
-  if (!progress[task]) {
+  if (progress[task] === undefined) {
     hintIndex = progress[task] = 0
   } else {
-    hintIndex = progress[task] = progress[task]++
+    hintIndex = progress[task] = ++progress[task]
   }
   saveProgress(progress, progresspath)
 
