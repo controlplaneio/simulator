@@ -56,7 +56,12 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
   if (progress[task] === undefined) {
     hintIndex = progress[task] = 0
   } else {
+    const { tasks } = loadYamlFile(taskspath)
+
     hintIndex = progress[task] = ++progress[task]
+    if (hintIndex >= tasks[task].hints.length) {
+      return logger.info('You have not seen all the hints for this task')
+    }
   }
   saveProgress(progress, progresspath)
 

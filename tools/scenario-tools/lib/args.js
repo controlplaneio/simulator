@@ -2,6 +2,12 @@ const commandLineArgs = require('command-line-args')
 const commandLineCommands = require('command-line-commands')
 const commandLineUsage = require('command-line-usage')
 
+function createArgumentError (msg) {
+  const err = new Error(msg)
+  err.type = 'IncorrectArguments'
+  return err
+}
+
 function parse (argv) {
   const commands = ['migrate', 'show-hints', 'next-hint', 'help']
 
@@ -28,9 +34,9 @@ function parse (argv) {
     })
 
     if (!options.all && !options.name) {
-      throw new Error('You must supply one of --all or --name arguments')
+      throw createArgumentError('You must supply one of --all or --name arguments')
     } else if (options.all && options.name) {
-      throw new Error('You cannot supply both --all or --name arguments')
+      throw createArgumentError('You cannot supply both --all or --name arguments')
     }
   }
 
@@ -43,7 +49,7 @@ function parse (argv) {
     })
 
     if (!options.task) {
-      throw new Error('Task is a required argument')
+      throw createArgumentError('Task is a required argument')
     }
   }
 
