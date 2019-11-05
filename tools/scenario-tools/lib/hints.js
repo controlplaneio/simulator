@@ -56,7 +56,7 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
   if (!progress[task]) {
     hintIndex = progress[task] = 0
   } else {
-    hintIndex = progress[task]++
+    hintIndex = progressTask[task] = progress[task]++
   }
   saveProgress(progress, progresspath)
 
