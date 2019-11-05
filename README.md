@@ -26,6 +26,8 @@ compromise and trains you in mitigating against these vulnerabilities.
 
 ## Usage
 
+Ensure the [AWS requirements](aws-configuration) are met and configured.
+
 The quickest way to get up and running is to simply:
 
 <pre>
@@ -59,9 +61,7 @@ cp kubesim /usr/local/bin
 
 Feel free to modify and/or extend the script if you wish.
 
-### [Simulator CLI Usage](./docs/cli.md)
-
-### End-to-end usage
+### Simulator CLI Usage
 
 _Create a remote state bucket for terraform_
 <pre>
