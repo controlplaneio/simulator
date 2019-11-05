@@ -17,6 +17,7 @@
   "devDependencies": {
     "ava": "^2.4.0",
     "esm": "^3.2.25",
+    "sinon": "^7.5.0",
     "standard": "^14.3.1"
   },
   "dependencies": {

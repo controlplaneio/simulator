@@ -1,7 +1,7 @@
 const { resolve, join } = require('path')
 const { openSync, readFileSync } = require('fs')
 const test = require('ava')
-const { loadYamlFile, writeYamlFile } = require('../lib/io')
+const { loadYamlFile, writeYamlFile, getProgress, saveProgress } = require('../lib/io')
 
 function fixture (name) {
   return resolve(join(__dirname, 'fixtures', name))
@@ -25,4 +25,17 @@ test('writeYamlFile serializes a js object to yaml', t => {
 
   writeYamlFile(input, outputFile)
   t.deepEqual('test: test\n', readFileSync(outputFile, 'utf-8'))
+})
+
+test('getProgress parses a JSON file', t => {
+  const actual = getProgress(fixture('test-progress.json'))
+  t.deepEqual({ 'Task 1': 1 }, actual)
+})
+
+test('saveProgress writes a JSON file', t => {
+  const input = { test: 'test' }
+  const outputFile = testoutput('saveProgres.json')
+
+  saveProgress(input, outputFile)
+  t.deepEqual('{"test":"test"}', readFileSync(outputFile, 'utf-8'))
 })

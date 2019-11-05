@@ -1,9 +1,33 @@
 const yaml = require('js-yaml')
-const { truncateSync, writeFileSync, readFileSync, readdirSync } = require('fs')
+const { truncateSync, writeFileSync, readFileSync, readdirSync, existsSync } = require('fs')
 const { resolve, join } = require('path')
 const { createLogger } = require('../lib/logger')
 
 const logger = createLogger({})
+
+const PROGRESS_FILE_PATH = '/progress.json'
+
+// TODO(rem): retrieve from S3 Bucket
+function getProgress (p = PROGRESS_FILE_PATH) {
+  const absPath = resolve(p)
+  if (!existsSync(absPath)) {
+    writeFileSync(absPath, '{}')
+  }
+
+  const contents = readFileSync(absPath, 'utf-8')
+  return JSON.parse(contents)
+}
+
+// TODO(rem): write to S3 Bucket
+function saveProgress (progress, p = PROGRESS_FILE_PATH) {
+  const absPath = resolve(p)
+  const contents = JSON.stringify(progress)
+  if (existsSync(absPath)) {
+    truncateSync(absPath)
+  }
+
+  writeFileSync(absPath, contents)
+}
 
 // Loads and parses a `hints.yaml` from the supplied absolute path.
 // Returns an object representing the yaml file
@@ -33,6 +57,8 @@ function findScenarioHintsFiles (scenariosDir) {
 }
 
 module.exports = {
+  getProgress,
+  saveProgress,
   loadYamlFile,
   writeYamlFile,
   findScenarioHintsFiles

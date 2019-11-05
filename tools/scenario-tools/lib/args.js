@@ -27,7 +27,11 @@ function parse (argv) {
       argv: remaining
     })
 
-    // TODO(rem): Make name and all required and mutually exclusive
+    if (!options.all && !options.name) {
+      throw new Error('You must supply one of --all or --name arguments')
+    } else if (options.all && options.name) {
+      throw new Error('You cannot supply both --all or --name arguments')
+    }
   }
 
   if (command === 'show-hints' || command === 'next-hint') {
@@ -38,7 +42,9 @@ function parse (argv) {
       argv: remaining
     })
 
-    // TODO(rem): Make task required
+    if (!options.task) {
+      throw new Error('Task is a required argument')
+    }
   }
 
   return { command, options }
