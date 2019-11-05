@@ -3,8 +3,6 @@ const { truncateSync, writeFileSync, readFileSync, readdirSync, existsSync } = r
 const { resolve, join } = require('path')
 const { createLogger } = require('../lib/logger')
 
-const logger = createLogger({})
-
 const PROGRESS_FILE_PATH = '/progress.json'
 
 // TODO(rem): retrieve from S3 Bucket
@@ -32,7 +30,6 @@ function saveProgress (progress, p = PROGRESS_FILE_PATH) {
 // Loads and parses a `hints.yaml` from the supplied absolute path.
 // Returns an object representing the yaml file
 function loadYamlFile (p) {
-  logger.info(`Loading ${p}`)
   const doc = yaml.safeLoad(readFileSync(p, 'utf8'))
   return doc
 }
@@ -40,7 +37,6 @@ function loadYamlFile (p) {
 // Serializes the supplied `hints` to YAML and overwrites an existing
 // `hints.yaml` file to the supplied path `p` with the YAMl
 function writeYamlFile (hints, p) {
-  logger.info(`Writing transformed file ${p}`)
   const contents = yaml.safeDump(hints)
   truncateSync(p)
   writeFileSync(p, contents)
