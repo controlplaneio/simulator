@@ -60,9 +60,10 @@ Feel free to modify and/or extend the script if you wish.
 
 ### End-to-end usage
 
-<pre>
 # Create a remote state bucket for terraform
+<pre>
 __simulator init__
+</pre>
 # Create the infra if it isn't there
 __simulator infra create__
 # List available scenarios
@@ -74,7 +75,7 @@ __simulator ssh attack__
 # ... Complete the scenario :)
 # Destroy your cluster when you are done
 __simulator infra destroy__
-</pre>
+
 
 Current list of scenarios:
 
