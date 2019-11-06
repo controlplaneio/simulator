@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "start_task": "bin/start_task",
+    "start_task": "bin/start_task.js",
+    "next_hint": "bin/next_hint.js",
     "scenario": "bin/scenario.js"
   },
   "scripts": {

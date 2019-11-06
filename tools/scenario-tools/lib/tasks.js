@@ -22,6 +22,12 @@ function startTask (task, taskspath = TASKS_FILE_PATH,
   return true
 }
 
+function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
+  const progress = getProgress(progresspath)
+  return progress.current_task
+}
+
 module.exports = {
-  startTask
+  startTask,
+  getCurrentTask
 }
