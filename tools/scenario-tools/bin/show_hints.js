@@ -2,7 +2,7 @@
 
 const { createLogger } = require('../lib/logger')
 const { getCurrentTask } = require('../lib/tasks.js')
-const { nextHint } = require('../lib/hints.js')
+const { showHints } = require('../lib/hints.js')
 
 const logger = createLogger({})
 require('../lib/error-handler')
@@ -13,5 +13,5 @@ if (task === undefined) {
   process.exit(1)
 }
 
-nextHint(task)
+showHints(task)
 process.exit(0)

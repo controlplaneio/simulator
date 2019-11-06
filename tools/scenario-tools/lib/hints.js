@@ -15,7 +15,7 @@ function showHint (task, index, taskspath = TASKS_FILE_PATH, log = logger) {
   }
 
   if (index >= tasks[task].hints.length) {
-    return log.warn('There are no more hints for this task')
+    return log.warn(`There are no more hints for ${task}`)
   }
 
   const hint = tasks[task].hints[index]
@@ -33,7 +33,7 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
   }
 
   if (progress[task] === undefined) {
-    return logger.info('You have not seen any hints for this task')
+    return logger.info(`You have not seen any hints for ${task}`)
   }
 
   const lastSeenHintIndex = progress[task]

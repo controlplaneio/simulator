@@ -2,7 +2,7 @@
 
 const { createLogger } = require('../lib/logger')
 const { cloneArray } = require('../lib/helpers')
-const { startTask } = require('../.lib/tasks.js')
+const { startTask } = require('../lib/tasks.js')
 
 const logger = createLogger({})
 
