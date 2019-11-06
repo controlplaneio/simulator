@@ -8,17 +8,17 @@ kind: Deployment
 metadata:
   namespace: node-amphibious-operations
   labels:
-    name: malicious-pod
-  name: malicious-pod
+    name: super-secret-pod
+  name: super-secret-pod
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: malicious-pod
+      name: super-secret-pod
   template:
     metadata:
       labels:
-        name: malicious-pod
+        name: super-secret-pod
     spec:
       containers:
       - name: ubuntu
@@ -28,6 +28,17 @@ spec:
         ports:
         - containerPort: 80
           name: external
+        env:
+        - name: SECRET_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: username
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: password
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,3 +63,13 @@ spec:
         ports:
         - containerPort: 80
           name: external
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: secret
+  namespace: node-amphibious-operations
+type: Opaque
+data:
+  username: dXNlcmlzdXNlcgo=
+  password: cGFzc3dvcmRpc3Bhc3N3b3JkCg==
