@@ -43,12 +43,12 @@ function writeYamlFile (hints, p) {
 
 // Given a relative path to a scenario directory, scans for scenarios
 // Returns a list of absolute paths to all `hints.yaml` files
-function findScenarioHintsFiles (scenariosDir) {
+function findScenarioFiles (scenariosDir, filename) {
   const absPath = resolve(scenariosDir)
 
   return readdirSync(absPath, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
-    .map(dirent => join(absPath, dirent.name, 'hints.yaml'))
+    .map(dirent => join(absPath, dirent.name, filename))
 }
 
 module.exports = {
@@ -56,5 +56,5 @@ module.exports = {
   saveProgress,
   loadYamlFile,
   writeYamlFile,
-  findScenarioHintsFiles
+  findScenarioFiles
 }

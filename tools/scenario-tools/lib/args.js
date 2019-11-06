@@ -17,6 +17,10 @@ function parse (argv) {
 
   if (command === 'migrate') {
     const migrateArguments = [{
+      name: 'type',
+      alias: 't',
+      type: String
+    }, {
       name: 'name',
       alias: 'n',
       type: String
@@ -32,6 +36,10 @@ function parse (argv) {
       stopAtFirstUnknown: true,
       argv: remaining
     })
+
+    if (!options.type) {
+      throw createArgumentError('You must supply the type of migration to perform')
+    }
 
     if (!options.all && !options.name) {
       throw createArgumentError('You must supply one of --all or --name arguments')
