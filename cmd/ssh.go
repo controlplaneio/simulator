@@ -17,7 +17,8 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
-			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket)
+			attackTag := viper.GetString("attack-container-tag")
+			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket, attackTag)
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
@@ -51,8 +52,9 @@ func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
+			attackTag := viper.GetString("attack-container-tag")
 
-			return simulator.Attack(logger, tfDir, bucket)
+			return simulator.Attack(logger, tfDir, bucket, attackTag)
 		},
 	}
 

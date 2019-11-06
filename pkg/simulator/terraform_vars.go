@@ -15,14 +15,16 @@ type TfVars struct {
 	PublicKey  string
 	AccessCIDR string
 	BucketName string
+	AttackTag  string
 }
 
 // NewTfVars creates a TfVars struct with all the defaults
-func NewTfVars(publicKey, accessCIDR, bucketName string) TfVars {
+func NewTfVars(publicKey, accessCIDR, bucketName, attackTag string) TfVars {
 	return TfVars{
 		PublicKey:  publicKey,
 		AccessCIDR: accessCIDR,
 		BucketName: bucketName,
+		AttackTag:  attackTag,
 	}
 }
 
@@ -50,13 +52,14 @@ func writeProvidersFile(tfDir, bucket string) error {
 }
 
 func (tfv *TfVars) String() string {
-	return "access_key = \"" + tfv.PublicKey + "\"\n" + "access_cidr = \"" + tfv.AccessCIDR + "\"\n"
+	return "access_key = \"" + tfv.PublicKey + "\"\n" + "access_cidr = \"" + tfv.AccessCIDR + "\"\n" + "attack_container_tag = \"" + tfv.AttackTag + "\"\n"
+
 }
 
 // EnsureLatestTfVarsFile writes an tfvars file if one hasnt already been made
-func EnsureLatestTfVarsFile(tfDir, publicKey, accessCIDR, bucket string) error {
+func EnsureLatestTfVarsFile(tfDir, publicKey, accessCIDR, bucket, attackTag string) error {
 	filename := tfDir + "/settings/bastion.tfvars"
-	tfv := NewTfVars(publicKey, accessCIDR, bucket)
+	tfv := NewTfVars(publicKey, accessCIDR, bucket, attackTag)
 
 	err := writeProvidersFile(tfDir, bucket)
 	if err != nil {

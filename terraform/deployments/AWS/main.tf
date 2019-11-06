@@ -22,15 +22,16 @@ module "SshKey" {
 
 // Setup Bastion host
 module "Bastion" {
-  source              = "../../modules/AWS/Bastion"
-  ami_id              = "${module.Ami.AmiId}"
-  instance_type       = "${var.instance_type}"
-  access_key_name     = "${module.SshKey.KeyPairName}"
-  security_group      = "${module.SecurityGroups.BastionSecurityGroupID}"
-  subnet_id           = "${module.Networking.PublicSubnetId}"
-  master_ip_addresses = "${join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"
-  node_ip_addresses   = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
-  default_tags        = "${var.default_tags}"
+  source               = "../../modules/AWS/Bastion"
+  ami_id               = "${module.Ami.AmiId}"
+  instance_type        = "${var.instance_type}"
+  access_key_name      = "${module.SshKey.KeyPairName}"
+  security_group       = "${module.SecurityGroups.BastionSecurityGroupID}"
+  subnet_id            = "${module.Networking.PublicSubnetId}"
+  master_ip_addresses  = "${join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"
+  node_ip_addresses    = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
+  attack_container_tag = "${var.attack_container_tag}"
+  default_tags         = "${var.default_tags}"
 }
 
 // Setup Kubernetes master and nodes

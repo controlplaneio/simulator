@@ -61,6 +61,11 @@ variable "number_of_cluster_instances" {
   default     = "2"
 }
 
+variable "attack_container_tag" {
+  description = "the docker tag of the attack container to use"
+  default     = "latest"
+}
+
 variable "default_tags" {
   description = "Default tags for all resources"
   type        = "map"

@@ -1,3 +1,4 @@
 loglevel: debug
 scenarios-dir: /app/simulation-scripts/
 tf-dir: /app/terraform/deployments/AWS
+attack-container-tag: latest

@@ -33,3 +33,7 @@ variable "default_tags" {
   type        = "map"
 }
 
+variable "attack_container_tag" {
+  description = "the docker tag of the attack container to use"
+}
+

@@ -30,20 +30,20 @@ func Test_PrepareTfArgs(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
-	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test")
+	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test", "latest")
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfo, "Got no terraform output")
 }
 
 func Test_Create(t *testing.T) {
-	err := simulator.Create(noopLogger, fixture("noop-tf-dir"), "test")
+	err := simulator.Create(noopLogger, fixture("noop-tf-dir"), "test", "latest")
 
 	assert.Nil(t, err)
 }
 
 func Test_Destroy(t *testing.T) {
-	err := simulator.Destroy(noopLogger, fixture("noop-tf-dir"), "test")
+	err := simulator.Destroy(noopLogger, fixture("noop-tf-dir"), "test", "test")
 
 	assert.Nil(t, err)
 }
