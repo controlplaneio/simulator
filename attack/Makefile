@@ -22,7 +22,7 @@ docker-run: docker-test ## Runs the attack container
 
 .PHONY: docker-build
 docker-build: ## Builds the attack container
-	@docker build -t $(CONTAINER_NAME_LATEST) .
+	@docker build -f Dockerfile -t $(CONTAINER_NAME_LATEST) ..
 
 .PHONY: docker-test
 docker-test: docker-build ## Run the attack container tests

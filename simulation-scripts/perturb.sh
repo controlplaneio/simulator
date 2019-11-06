@@ -162,7 +162,7 @@ run_scenario() {
 
   validate_instructions "${SCENARIO_DIR}"
 
-  copy_challenge_text "${SCENARIO_DIR}"
+  copy_challenge_and_tasks "${SCENARIO_DIR}"
 
   run_kubectl_yaml "${SCENARIO_DIR}"
 
@@ -211,16 +211,22 @@ is_master_accessible() {
     true
 }
 
-copy_challenge_text() {
+copy_challenge_and_tasks() {
   local SCENARIO_DIR="${1}"
 
-  info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
   pushd "${SCENARIO_DIR}"
+  info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     challenge.txt root@${BASTION_HOST}:/home/ubuntu/challenge.txt
+  info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  scp \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    tasks.yaml root@${BASTION_HOST}:/home/ubuntu/tasks.yaml
   popd
 }
 

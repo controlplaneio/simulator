@@ -18,6 +18,7 @@ SSH_CONFIG_PATH := $(HOME)/.ssh/
 KUBE_SIM_TMP := $(HOME)/.kubesim/
 SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
+TOOLS_DIR := tools/scenario-tools
 
 # --- Make
 .DEFAULT_GOAL := help
@@ -30,9 +31,18 @@ all: test
 setup-dev: ## Initialise simulation tree with git hooks
 	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
 
+.PHONY: devtools-deps
+devtools-deps: # Install devtools dependencies
+	cd $(TOOLS_DIR) && npm install
+
 .PHONY: devtools
-devtools: ## Install devtools
-	cd tools/migrate-hints && npm install && npm link
+devtools: devtools-deps ## Install devtools
+	cd $(TOOLS_DIR) && npm install && npm link
+	@echo "`scenario` should now be on your PATH"
+
+.PHONY: test-devtools
+test-devtools: # Run all the unit tests for the devtools
+	cd $(TOOLS_DIR) && npm test
 
 .PHONY: reset
 reset: ## Clean up files left over by simulator
@@ -73,12 +83,6 @@ docker-build-no-cache: ## Builds the launch container
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
 	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
-
-.PHONY: docker-build
-docker-build: ## Builds the launch container
-	@mkdir -p ~/.kubesim
-	@touch ~/.kubesim/simulator.yaml
-	@docker build -t --no-cache $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
