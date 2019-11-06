@@ -5,7 +5,6 @@ const os = require('os')
 const { createLogger } = require('../lib/logger')
 const { parse, showUsage } = require('../lib/args')
 const { migrate } = require('../lib/migrate')
-const { showHints, nextHint } = require('../lib/hints')
 const { cloneArray } = require('../lib/helpers')
 
 // const args = process.argv.slice(2)
@@ -64,12 +63,6 @@ const { command, options } = parsed
 // let's check we are happy with the UX first
 if (command === 'migrate') {
   migrate(options)
-  process.exit(0)
-} else if (command === 'show-hints') {
-  showHints(options.task)
-  process.exit(0)
-} else if (command === 'next-hint') {
-  nextHint(options.task)
   process.exit(0)
 } else {
   showHelp()
