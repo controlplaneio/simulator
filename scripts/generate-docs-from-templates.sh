@@ -16,7 +16,7 @@ unset CDPATH
 #
 main() {
   generate_readme
-  generate_cli_usage
+#  generate_cli_usage
 }
 readonly -f main
 
@@ -32,17 +32,17 @@ generate_readme() {
 readonly -f generate_readme
 
 # shellcheck disable=SC2034
-generate_cli_usage() {
-  local -r template="$(cat ./doc-templates/cli.template.md)"
-  local -r config_help="$(./dist/simulator config help)"
-  local -r help="$(./dist/simulator help)"
-  local -r infra_help="$(./dist/simulator infra help)"
-  local -r scenario_help="$(./dist/simulator scenario help)"
-  local -r ssh_help="$(./dist/simulator ssh help)"
-
-  eval "echo \"${template}\"" > ./docs/cli.md
-  return 0
-}
-readonly -f generate_cli_usage
+#generate_cli_usage() {
+#  local -r template="$(cat ./doc-templates/cli.template.md)"
+#  local -r config_help="$(./dist/simulator config help)"
+#  local -r help="$(./dist/simulator help)"
+#  local -r infra_help="$(./dist/simulator infra help)"
+#  local -r scenario_help="$(./dist/simulator scenario help)"
+#  local -r ssh_help="$(./dist/simulator ssh help)"
+#
+#  eval "echo \"${template}\"" > ./docs/cli.md
+#  return 0
+#}
+#readonly -f generate_cli_usage
 
 main
