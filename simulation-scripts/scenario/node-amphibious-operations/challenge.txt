@@ -1,7 +1,7 @@
-Scenario: Your audit logs indicate that an anonymous user has been starting malicious workloads on your nodes.
+Scenario: Your audit logs indicate that an anonymous user has been starting malicious workloads on your nodes, $NODE_IP_ADDRESSES.
 You have confirmed that the Kubernetes API server is set up to authenticate and authorise every request.
 
 Starting Point:
 
-Task 1: Can you investigate how this could happen?
-Task 2: Set up sufficient security parameters to prevent it in the future.
+Task 1: Replicate the attack from a pod in the cluster that should not be able to post.
+Task 2: Set up correct security parameters to prevent this type of attack in the future.

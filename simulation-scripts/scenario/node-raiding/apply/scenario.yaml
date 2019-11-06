@@ -24,3 +24,27 @@ spec:
         env:
         - name: SECRET_PASSWORD
           value: aW5jcmVkaWJseVNlY3JldEluZm9ybWF0aW9uCg==
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: start-pod
+  namespace: node-raiding
+spec:
+  selector:
+    matchLabels:
+      name: start-pod
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        name: start-pod
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        ports:
+        - containerPort: 80
+          name: external

@@ -1,5 +1,5 @@
 objective: Node compromise to get unauth kubelet API access.
-starting-point: SSH node - any worker
+starting-point: Pod 'start-pod' in cluster
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   Task 1:
@@ -8,8 +8,8 @@ tasks:
       - text: Have you looked into the the kubelet?
       - text: The kubelet read-write API sits on port 10250.
       - text: >-
-          Post anything directly to the kubelet API, circumventing the
-          Kubernetes server API.
+          Post or get anything directly to the kubelet API, circumventing the
+          Kubernetes server API, e.g. curl -k https://<node-IP>:10250/pods
     starting-point: ''
   Task 2:
     sort-order: 2

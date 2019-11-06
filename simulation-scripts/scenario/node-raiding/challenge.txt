@@ -1,8 +1,8 @@
-Scenario: A secret has been leaked from your application.
+Scenario: A secret has been leaked from your application through the pod configuration.
 Your audit logs indicate that it hasn't been requested through the Kubernetes API.
-You have recently read a blog post about how to exfiltrate secrets with just network access.
+You have recently read a blog post about how to exfiltrate secrets with just network access to your nodes, $NODE_IP_ADDRESSES
 
 Starting Point:
 
-Task 1: Can you investigate how this could happen?
-Task 2: Set up sufficient security parameters to prevent it in the future.
+Task 1: From a pod in the cluster, replicate the attack.
+Task 2: Set up correct security parameters to prevent this type of attack in the future. 

@@ -32,19 +32,17 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: start-pod
   namespace: node-amphibious-operations
 spec:
   selector:
     matchLabels:
-      app: frontend
-      project: webapidb
+      name: start-pod
   replicas: 2
   template:
     metadata:
       labels:
-        app: frontend
-        project: webapidb
+        name: start-pod
     spec:
       containers:
       - name: ubuntu
