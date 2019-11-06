@@ -66,7 +66,7 @@ Refer to [settings documentation](./modules/AWS/SshKey/README-auto.md)
 
 ### Ami
 
-This modules requires no settings to be provided at this moment
+This module does not require any settings to be provided at this moment
 
 * Identifies current Ubuntu 18.04 LTS AMI Id for region in use
 
@@ -144,6 +144,7 @@ This following outlines coding conventions for Terraform's HashiCorp Configurati
 Directories are split into __deployments__ and __modules__
 
 __deployments__ contains subdirectories for each terraform deployment
+
 __modules__ contains subdirectories for each cloud vendor as appropriate (i.e AWS, Azure, GCP)
 
 Taking __AWS__ as an example __modules__ subdirectory, the __AWS__ directory will then contains modules logically segregated into their core function (Networking, SecurityGroups etc).

@@ -141,6 +141,18 @@ Simulator whether run in the launch container or on the host machine will genera
 **If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
 next run**
 
+### Scenario Launching (perturb)
+
+Refer to the [scenario launch documentation](./docs/scenario.md)
+
+### Launch Flow Sequence
+
+Refer to the [Launch scenario flow documentation](./docs/launch.md)
+
+### Scenario Task Definition
+
+Refer to the [Tasks YAML file Format documentation](./docs/tasks-yaml-format.md)
+
 ### The kubesim script
 
 <code>kubesim</code> is a small script written in BASH for getting users up and running with simulator as fast as possible. It pulls the latest version of the simulator container and sets up some options for running the image. It can be installed with the following steps:
@@ -153,8 +165,6 @@ chmod a+x kubesim
 # Place the script on your path
 cp kubesim /usr/local/bin
 </pre>
-
-Feel free to modify and/or extend the script if you wish.
 
 ## Development Workflow
 
