@@ -6,6 +6,7 @@ const { createLogger } = require('../lib/logger')
 const { parse, showUsage } = require('../lib/args')
 const { migrate } = require('../lib/migrate')
 const { showHints, nextHint } = require('../lib/hints')
+const { cloneArray } = require('../lib/helpers')
 
 // const args = process.argv.slice(2)
 const logger = createLogger({})
@@ -40,10 +41,6 @@ function showHelp () {
   }
 
   showUsage(dev)
-}
-
-function cloneArray (arr) {
-  return arr.slice(0)
 }
 
 const args = cloneArray(process.argv)
