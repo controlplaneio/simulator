@@ -4,12 +4,19 @@
   "description": "",
   "main": "index.js",
   "bin": {
+    "start_task": "bin/start_task",
     "scenario": "bin/scenario.js"
   },
   "scripts": {
     "lint": "standard",
     "pretest": "npm run lint",
     "test": "ava"
+  },
+  "ava": {
+    "files": [
+      "test/**/*",
+      "!test/helpers.js"
+    ]
   },
   "keywords": [],
   "author": "",
