@@ -12,5 +12,5 @@ tasks:
       - text: Where does kubeadm keep the master config?
       - text: >-
           Looks like the MutatingAdmissionWebhook admission controller has been
-          disabled. I probably need to enable it
+          disabled. I probably need to enable it.
     starting-point: ''
