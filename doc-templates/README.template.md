@@ -54,7 +54,7 @@ _Create a remote state bucket for terraform_
 <pre>
 simulator init
 </pre>
-You will be asked for a name of a S3 bucket to use, if exists, or to create, to store Terraform state to.
+You will be asked for a name of a S3 bucket, which must be globally unique as pre AWS standards.  If this does not exist it will be created, else the existing bucket will be used.  This is used to store Terraform state to.
 
 _Create the infra if it isn't there_
 <pre>
@@ -66,16 +66,20 @@ _List available scenarios_
 <pre>
 simulator scenario list
 </pre>
+This will list all currently available scenrios
+
 _Launch a scenario (sets up your cluster)_
 <pre>
 simulator scenario launch node-shock-tactics
 </pre>
+This will launch your selected scenario.
+
 _Login the environment_
 <pre>
 simulator ssh attack
 </pre>
 
-Once you run <code>simulator ssh attack</code> you will be logged into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  __Note__ that some starting points will require you are on the cluster first to access to starting point.
+Once you run <code>simulator ssh attack</code> you will be logged into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  **Note** that some starting points will require you are on the cluster first to access to starting point.
 
 ![Bastion container initial login](./docs/bastion.png)
 
@@ -84,9 +88,9 @@ _Destroy your cluster when you are done_
 <pre>
 simulator infra destroy
 </pre>
+Once you have finished you **must** destroy the environment to ensure that no additional costs are incurred.
 
-
-Current list of scenarios:
+The following scenarios are available:
 
 <pre>
 ${scenarios}
@@ -132,11 +136,7 @@ Refer to the [simulator terraform documentation](./terraform/README.md)
 
 ### SSH
 
-Simulator whether run in the launch container or on the host machine will generate its own SSH RSA key pair.  It will
-configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the
-bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config
-separate from any other configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and
-are files starting <code>cp_simulator_</code>
+Simulator whether run in the launch container or on the host machine will generate its own SSH RSA key pair.  It will configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config separate from any other configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and are files starting <code>cp_simulator_</code>
 
 **If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
 next run**
