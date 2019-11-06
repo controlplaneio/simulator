@@ -188,8 +188,6 @@ chmod a+x kubesim
 cp kubesim /usr/local/bin
 </pre>
 
-Feel free to modify and/or extend the script if you wish.
-
 ## Development Workflow
 
 ### Git hooks
