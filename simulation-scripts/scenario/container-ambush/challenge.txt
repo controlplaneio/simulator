@@ -1,7 +1,7 @@
 Scenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.
-This could potentially lead to the expose of sensitive data in the attached databases.
+There are concerns that a compromised build agent could lead to the disclosure of sensitive information from other pods.
 
-Starting Point:
+Starting Point: in the Jenkins container in the container-ambush namespace.
 
-Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the databases.
+Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the 'db' pods in this namespace.
 Task 2: Change the postgres deployment so the secret password isn't so easily accessible and is consumed in the secure way.
