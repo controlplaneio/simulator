@@ -1,6 +1,8 @@
 A developer has reported secrets leaking from your cluster, but no record of requests has been found in your API audit logs or through the kubelet.
 
-Task 1: How can you access secrets from inside a pod in the cluster.
+Starting Point: Inside the Ubuntu container in the etcd-inverted-wedge namespace.
+
+Task 1: How can you access secrets from inside the ubuntu pod in the cluster.
 Task 2: How can you resolve this access issue.
 
-Your cluster is running with master IP: $MASTER_IP_ADDRESSES
+Your cluster is running with a master IP of: $MASTER_IP_ADDRESSES

@@ -1,7 +1,13 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: etcd-inverted-wedge
+---
+apiVersion: v1
 kind: Secret
 metadata:
   name: credentials
+  namespace: etcd-inverted-wedge
 type: Opaque
 data:
   credentials: b2hub2NyZWRlbnRpYWxzYXJlaGVyZQo=
@@ -11,6 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ubuntu
+  namespace: etcd-inverted-wedge
 spec:
   selector:
     matchLabels:

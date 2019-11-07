@@ -8,22 +8,25 @@ tasks:
     sort-order: 1
     hints:
       - text: >-
-          As there are no records through the API or kubelet, could the secrets
-          be leaking directly from etcd?
+          Since we know the leak is not from the API Server or Kubelet,
+          could the secrets be leaking directly from etcd?
       - text: Try to install etcdctl and explore.
       - text: >-
           List etcd endpoints with ```ETCDCTL_API=3 etcdctl
           --endpoints=https://<K8s master IP>:2379 --insecure-transport=false
           --insecure-skip-tls-verify get / --prefix --keys-only```
+      - text: Let's see if there's any 'secrets' here.
       - text: >-
-          ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379
+          ```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379
           --insecure-transport=false --insecure-skip-tls-verify get
-          /registry/secrets/default/credentials
+          /registry/secrets/etcd-inverted-wedge/credentials```
     starting-point: ''
   '2':
     sort-order: 2
     hints:
       - text: How could we reach the etcd backend with no certificates?
+      - text: Where does kubeadm keep it's etcd config?
+      - text: One of the configuration options here looks wrong.
       - text: >-
           On the master node in /etc/kubernetes/manifests/etcd.yaml change -
           --client-cert-auth=false to --client-cert-auth=true
