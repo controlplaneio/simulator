@@ -50,6 +50,8 @@ Refer to [Simulator CLI Usage](#simulator-cli-usage)
 
 ## Simulator CLI Usage
 
+### Creating Environment And Lauching Scenario
+
 _Create a remote state bucket for terraform_
 <pre>
 simulator init
@@ -81,6 +83,8 @@ simulator ssh attack
 
 Once you run <code>simulator ssh attack</code> you will be logged into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  **Note** that some starting points will require you are on the cluster first to access to starting point.
 
+From within this container you have access to helper command <code>start_task</code>, <code>next_hint</code> and <code>show_hints</code>.
+
 ![Bastion container initial login](./docs/bastion.png)
 
 _Start task_
@@ -103,6 +107,8 @@ show_hints
 </pre>
 
 The <code>show_hints</code> command will display all the hints you have requested to that point in the task you have started.
+
+### Cleaning Up Environment
 
 _Destroy your cluster when you are done_
 <pre>
