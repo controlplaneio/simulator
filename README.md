@@ -13,6 +13,7 @@ If you need to include bsah code snippets you will need to change how the templa
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/LICENSE)
 [![Platforms](https://img.shields.io/badge/Platform-Linux|MacOS-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/README.md)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/kubernetes-simulator/simulator/graphs/commit-activity)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 
 # Simulator
@@ -48,7 +49,9 @@ program on the <code>PATH</code> named <code>simulator</code> to interact with.
 Refer to [Simulator CLI Usage](#simulator-cli-usage)
 
 
-### Simulator CLI Usage
+## Simulator CLI Usage
+
+### Creating Environment And Lauching Scenario
 
 _Create a remote state bucket for terraform_
 <pre>
@@ -81,14 +84,40 @@ simulator ssh attack
 
 Once you run <code>simulator ssh attack</code> you will be logged into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  **Note** that some starting points will require you are on the cluster first to access to starting point.
 
+From within this container you have access to helper command <code>start_task</code>, <code>next_hint</code> and <code>show_hints</code>.
+
 ![Bastion container initial login](./docs/bastion.png)
 
+_Start task_
+<pre>
+start_task 1
+</pre>
+
+The <code>start_task</code> command is used to inform the simulator which task you are undertaking, and therefore what hints are available to aid you with that task.
+
+_Accessing hints_
+<pre>
+next_kind
+</pre>
+
+The <code>next_hint</code> command will provide a hint to help you complete the task you have started with the <code>start_task</code> command.
+
+_Viewing all hints that have been requested_
+<pre>
+show_hints
+</pre>
+
+The <code>show_hints</code> command will display all the hints you have requested to that point, in the task you have started.
+
+### Cleaning Up Environment
 
 _Destroy your cluster when you are done_
 <pre>
 simulator infra destroy
 </pre>
-Once you have finished you **must** destroy the environment to ensure that no additional costs are incurred.
+Once you have finished you **must** destroy the environment to ensure that no additional costs are incurred.  This command is actioned from within the launch container.
+
+### Scenarios
 
 The following scenarios are available:
 
@@ -142,7 +171,7 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 **All the <code>AWS_*</code> configuration environment variables you have set will be propagated into the container**
 
-#### Troubleshooting AWS
+### Troubleshooting AWS
 
 - If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
 is probably running slowly.  You must run <code>simulator infra destroy</code> and then retry <code>simulator infra
