@@ -95,7 +95,7 @@ _Accessing hints_
 next_kind
 </pre>
 
-The <code>next_hint</pre> command is to used if you need a pointer to help you complete the task you have started which the <code>start_task</code> command.
+The <code>next_hint</code> command is to used if you need a pointer to help you complete the task you have started which the <code>start_task</code> command.
 
 _Viewing all hints that have been requested_
 <pre>
