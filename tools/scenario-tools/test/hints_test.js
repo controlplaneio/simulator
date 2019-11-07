@@ -1,19 +1,10 @@
-const { resolve, join } = require('path')
 const { unlinkSync, readFileSync } = require('fs')
 const test = require('ava')
-const { spy } = require('sinon')
 const { showHint, nextHint } = require('../lib/hints')
-
-function fixture (name) {
-  return resolve(join(__dirname, 'fixtures', name))
-}
-
-function testoutput (name) {
-  return resolve(join(__dirname, 'output', name))
-}
+const { fixture, testoutput, createSpyingLogger } = require('./helpers')
 
 test('showHint shows a valid hint for a valid task', t => {
-  const spyinglogger = { warn: spy(), info: spy() }
+  const spyinglogger = createSpyingLogger()
 
   showHint('Task 1', 0, fixture('tasks.yaml'), spyinglogger)
   t.false(spyinglogger.warn.called, 'should not have displayed a warning')
@@ -21,7 +12,7 @@ test('showHint shows a valid hint for a valid task', t => {
 })
 
 test('showHint warns for an invalid task', t => {
-  const spyinglogger = { warn: spy(), info: spy() }
+  const spyinglogger = createSpyingLogger()
 
   showHint('Task 2', 0, fixture('tasks.yaml'), spyinglogger)
   t.true(spyinglogger.warn.called, 'should have displayed a warning')
@@ -29,7 +20,7 @@ test('showHint warns for an invalid task', t => {
 })
 
 test('showHint warns for a hint out of range for an valid task', t => {
-  const spyinglogger = { warn: spy(), info: spy() }
+  const spyinglogger = createSpyingLogger()
 
   showHint('Task 1', 5, fixture('tasks.yaml'), spyinglogger)
   t.true(spyinglogger.warn.called, 'should have displayed a warning')
@@ -37,7 +28,7 @@ test('showHint warns for a hint out of range for an valid task', t => {
 })
 
 test('nextHint progresses hints for the task', t => {
-  const spyinglogger = { warn: spy(), info: spy(), error: spy() }
+  const spyinglogger = createSpyingLogger()
   const progresspath = testoutput('nexthinttest.json')
   const taskspath = fixture('tasks.yaml')
 

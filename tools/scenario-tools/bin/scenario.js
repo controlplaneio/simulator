@@ -5,32 +5,12 @@ const os = require('os')
 const { createLogger } = require('../lib/logger')
 const { parse, showUsage } = require('../lib/args')
 const { migrate } = require('../lib/migrate')
-const { showHints, nextHint } = require('../lib/hints')
+const { cloneArray } = require('../lib/helpers')
 
 // const args = process.argv.slice(2)
 const logger = createLogger({})
 
-// Global fallback to handle and pretty print unhandled errors
-process.on('uncaughtException', (err) => {
-  logger.error(`Uncaught exception: ${err}`)
-
-  if (err && err.stack) {
-    logger.error(err.stack)
-  }
-
-  process.exit(1)
-})
-
-// Global fallback to handle and pretty print unhandled promise rejection errors
-process.on('unhandledRejection', (err) => {
-  logger.error(`Promise rejection: ${err}`)
-
-  if (err && err.stack) {
-    logger.error(err.stack)
-  }
-
-  process.exit(1)
-})
+require('../lib/error-handler')
 
 // Only show dev options when not in the attack container
 function showHelp () {
@@ -40,10 +20,6 @@ function showHelp () {
   }
 
   showUsage(dev)
-}
-
-function cloneArray (arr) {
-  return arr.slice(0)
 }
 
 const args = cloneArray(process.argv)
@@ -67,12 +43,6 @@ const { command, options } = parsed
 // let's check we are happy with the UX first
 if (command === 'migrate') {
   migrate(options)
-  process.exit(0)
-} else if (command === 'show-hints') {
-  showHints(options.task)
-  process.exit(0)
-} else if (command === 'next-hint') {
-  nextHint(options.task)
   process.exit(0)
 } else {
   showHelp()

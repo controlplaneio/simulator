@@ -66,7 +66,9 @@ welcome() {
   info "  \$ welcome"
   envsubst < /challenge.txt
   info ' '
-  info "Getting stuck?  Run scenario help to find out how to get some hints"
+  info "Run start_task with the name of the task to get going"
+  info "Getting stuck?  Run next_hint to see the next_hint.  You can run "
+  info "show_hints at any time to see all the hints you've already revealed again"
 }
 readonly -f welcome
 export -f welcome

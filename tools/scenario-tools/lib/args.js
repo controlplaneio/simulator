@@ -9,7 +9,7 @@ function createArgumentError (msg) {
 }
 
 function parse (argv) {
-  const commands = ['migrate', 'show-hints', 'next-hint', 'help']
+  const commands = ['migrate', 'help']
 
   const { command, argv: remaining } = commandLineCommands(commands, argv)
 
@@ -40,56 +40,18 @@ function parse (argv) {
     }
   }
 
-  if (command === 'show-hints' || command === 'next-hint') {
-    const hintArguments = [{ name: 'task', alias: 't', type: String }]
-
-    options = commandLineArgs(hintArguments, {
-      stopAtFirstUnknown: true,
-      argv: remaining
-    })
-
-    if (!options.task) {
-      throw createArgumentError('Task is a required argument')
-    }
-  }
-
   return { command, options }
 }
 
-function showUsage (dev) {
+function showUsage () {
   const sections = [
     {
       header: 'Scenario Tool',
       content: 'Helper to interact with the current scenario'
     }, {
-      header: 'show-hints',
-      content: 'Shows any and all hints already seen for the supplied task',
-      optionList: [
-        {
-          name: 'task',
-          typeLabel: '{underline file}',
-          description: 'The task to show the hints you have already seen'
-        }
-      ]
-    }, {
-      header: 'next-hint',
-      content: 'Shows the next hint for the supplied task',
-      optionList: [
-        {
-          name: 'task',
-          typeLabel: '{underline file}',
-          description: 'The task to show the hints for'
-        }
-      ]
-    }, {
       header: 'help',
       content: 'Print this usage guide.'
-    }
-  ]
-
-  // hide the devtools if we are in the attack container
-  if (dev) {
-    sections.push({
+    }, {
       header: 'migrate',
       content: 'Helper for (mass) migration of scenario tasks.yaml files',
       optionList: [{
@@ -101,10 +63,10 @@ function showUsage (dev) {
         typeLabel: '{underline file}',
         description: 'The name of the scenario to migrate'
       }
-
       ]
-    })
-  }
+    }
+  ]
+
   const usage = commandLineUsage(sections)
   console.log(usage)
 }
