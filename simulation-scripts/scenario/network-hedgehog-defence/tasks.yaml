@@ -2,7 +2,7 @@ objective: Compromised database from outside namespace.
 starting-point: Inside setup pod.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: Is it possible to hit the database service from the setup pod?
@@ -14,9 +14,10 @@ tasks:
           Do Postgres databases have passwords by default? I wonder what the
           default username for the SQL database is.
       - text: 'Hmm, how do I list tables and view the keys in tables again?'
-      - text: To query db from setupd pod ```psql -h database.network-hedgehog-defence -U postgres```
+      - text: >-
+          To query db from setupd pod ```psql -h database.network-hedgehog-defence -U postgres```
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: >-

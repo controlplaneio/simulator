@@ -2,7 +2,7 @@ objective: Get postgres password.
 starting-point: kubectl pod exec.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: What mounts do we have?
@@ -11,8 +11,8 @@ tasks:
       - text: Pull env vars from local Docker inspect.
       - text: Postgres containers' password as env var.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
-      - text: 'How did you access the password? Can you inject a secret another way?'
+      - text: How did you access the password? Can you inject a secret another way?
     starting-point: ''

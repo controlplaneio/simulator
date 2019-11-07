@@ -2,7 +2,7 @@ objective: API is enabled on --insecure-bind-address and --insecure-port
 starting-point: pod in cluster
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: >-
@@ -12,7 +12,7 @@ tasks:
           Looks like you may be able to access the Kubernetes API on port 8080.
           Try curling some of the end-points. You may need to download curl.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: >-

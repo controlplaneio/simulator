@@ -2,7 +2,7 @@ objective: Use privileged container to get host secrets.
 starting-point: Inside the Process Monitor container.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: >-
@@ -16,12 +16,12 @@ tasks:
       - text: What's in /proc/<pid>/root?
       - text: The final secrets I need are in /proc/<pid>/root/secrets.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: Looks like I need to  stop adding ALL capabilities to the pod.
     starting-point: ''
-  Task 3:
+  '3':
     sort-order: 3
     hints:
       - text: I think a PodSecurityPolicy might be useful here.

@@ -2,7 +2,7 @@ objective: Exec into a container on master with certificates mounted in to explo
 starting-point: kubectl access to the cluster.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: I should choose which cert-manager pod to start in carefully.
@@ -15,7 +15,7 @@ tasks:
           etcd cluster earlier.
       - text: The key I'm after is probably the '/super/secret one'.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: Let's check the node config.
