@@ -114,7 +114,7 @@ _Destroy your cluster when you are done_
 <pre>
 simulator infra destroy
 </pre>
-Once you have finished you **must** destroy the environment to ensure that no additional costs are incurred.
+Once you have finished you **must** destroy the environment to ensure that no additional costs are incurred.  This command is actioned from within the launch container.
 
 ### Scenarios
 
