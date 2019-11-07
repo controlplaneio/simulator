@@ -13,6 +13,7 @@ If you need to include bsah code snippets you will need to change how the templa
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/LICENSE)
 [![Platforms](https://img.shields.io/badge/Platform-Linux|MacOS-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/README.md)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/kubernetes-simulator/simulator/graphs/commit-activity)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 
 # Simulator
