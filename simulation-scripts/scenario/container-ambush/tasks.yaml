@@ -5,14 +5,15 @@ tasks:
   '1':
     sort-order: 1
     hints:
-      - text: What mounts do we have?
-      - text: Workload is Jenkins with mounted docker.sock.
-      - text: Enumerate r/o mounted docker.sock.
-      - text: Pull env vars from local Docker inspect.
-      - text: Postgres containers' password as env var.
+      - text: What mounts do we have in this container?
+      - text: Looks like the docker socket is mounted at /var/run/docker.sock
+      - text: I wonder if i can install Docker in here to use that socket?
+      - text: Let's inspect the other containers running on this host.
+      - text: The .
     starting-point: ''
   '2':
     sort-order: 2
     hints:
       - text: How did you access the password? Can you inject a secret another way?
+      - text: We should use a secret here and then consume it as an environment variable.
     starting-point: ''
