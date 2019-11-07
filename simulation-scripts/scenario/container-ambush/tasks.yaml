@@ -6,10 +6,11 @@ tasks:
     sort-order: 1
     hints:
       - text: What mounts do we have in this container?
-      - text: Looks like the docker socket is mounted at /var/run/docker.sock
+      - text: Looks like the docker socket is mounted at /var/run/docker.sock.
       - text: I wonder if i can install Docker in here to use that socket?
       - text: Let's inspect the other containers running on this host.
-      - text: The .
+      - text: The postgres-db container seems to be the one we're looking for.
+      - text: That environment variable looks like a secret!
     starting-point: ''
   '2':
     sort-order: 2
