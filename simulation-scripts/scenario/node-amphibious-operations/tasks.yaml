@@ -2,21 +2,27 @@ objective: Node compromise to get unauth kubelet API access.
 starting-point: Pod 'start-pod' in cluster
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: Have you looked into the the kubelet?
-      - text: The kubelet read-write API sits on port 10250. You may need to install some tools to get the information you need.
       - text: >-
-          Get the pod information from one of the nodes until you hit a good pod; curl -k https://<node-IP>:10250/pods
-          What can you do with this information?
+          The kubelet read-write API sits on port 10250. You may need to install
+          some tools to get the information you need.
       - text: >-
-          From the pod information you saw that there are some secrets mounted in the secret-pod. Can you run any commands in the pod?
+          Get the pod information from one of the nodes until you hit a good
+          pod; curl -k https://<node-IP>:10250/pods What can you do with this
+          information?
       - text: >-
-          Run the printenv command in the container you found; curl -k -XPOST "https://<node-ip>:10250/run/node-amphibious-operations/<pod name>/<container name>" -d "cmd=printenv"
-          You will be able to find the pod and container name from the previous pods endpoint.
+          From the pod information you saw that there are some secrets mounted
+          in the secret-pod. Can you run any commands in the pod?
+      - text: >-
+          Run the printenv command in the container you found; curl -k -XPOST
+          "https://<node-ip>:10250/run/node-amphibious-operations/<pod
+          name>/<container name>" -d "cmd=printenv" You will be able to find the
+          pod and container name from the previous pods endpoint.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: You need to fix /var/lib/kubelet/config.yaml.

@@ -2,7 +2,7 @@ objective: Use privileged container to get host secrets.
 starting-point: Inside Jenkins container.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: What mounts do I have in this container.
@@ -12,12 +12,12 @@ tasks:
       - text: Looks like the xvda1 is the host disk.
       - text: The secret I need is in the node-secret directory.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: Looks like I need to set privileged to false.
     starting-point: ''
-  Task 3:
+  '3':
     sort-order: 3
     hints:
       - text: I think a PodSecurityPolicy might be useful here.

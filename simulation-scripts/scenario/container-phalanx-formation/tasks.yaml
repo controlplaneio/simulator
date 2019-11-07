@@ -2,7 +2,7 @@ objective: Find a secret in a log file.
 starting-point: Kubectl access outside the cluster.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: So I need to start in the container-phalanx-formation namespace.

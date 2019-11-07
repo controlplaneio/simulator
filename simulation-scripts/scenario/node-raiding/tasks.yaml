@@ -2,7 +2,7 @@ objective: Node compromise to get readonly kubelet API access.
 starting-point: SSH node - any worker.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: Have you looked into the the kubelet?
@@ -11,12 +11,11 @@ tasks:
           Get anything directly from the kubelet API, circumventing the
           Kubernetes server API, e.g. curl http://<node-IP>:10255/pods
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: You need to fix /var/lib/kubelet/config.yaml.
-      - text: >-
-          readOnly port should be 0.
+      - text: readOnly port should be 0.
       - text: >-
           'systemctl daemon-reload; systemctl restart kubelet.service' applies
           the config changes.

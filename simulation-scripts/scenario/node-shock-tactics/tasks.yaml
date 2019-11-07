@@ -2,7 +2,7 @@ objective: Node escalation to workload compromise.
 starting-point: SSH node-any non-root.
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: How would you escalate yourself on this node?
@@ -13,7 +13,7 @@ tasks:
       - text: Set root password for host.
       - text: Login as root.
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: '''df -h'' as host root to see tmpfs mounts.'

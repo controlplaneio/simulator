@@ -4,7 +4,7 @@ objective: >-
 starting-point: frontend pod in the rbac-sangar namespace
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  '1':
     sort-order: 1
     hints:
       - text: Can I run or install kubectl in here?
@@ -12,7 +12,7 @@ tasks:
           Hmm, I can't see secrets directly. I wonder what the deployment of the
           application pods looks like?
     starting-point: ''
-  Task 2:
+  '2':
     sort-order: 2
     hints:
       - text: >-
@@ -26,7 +26,7 @@ tasks:
           Looks like the authenticated-view ClusterRoleBinding is giving the
           group more permissions! It should probably be deleted for now.
     starting-point: ''
-  Task 3:
+  '3':
     sort-order: 3
     hints:
       - text: The pod should not mount the default service token.
@@ -35,7 +35,7 @@ tasks:
           inspiration.
       - text: I need to set automountServiceAccountToken to be false
     starting-point: ''
-  Task 4:
+  '4':
     sort-order: 4
     hints:
       - text: I need to replace the environment variable with a secret.
