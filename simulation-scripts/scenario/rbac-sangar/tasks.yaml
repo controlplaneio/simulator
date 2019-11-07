@@ -16,11 +16,11 @@ tasks:
     sort-order: 2
     hints:
       - text: >-
-          Is there a rolebinding or clusterrolebinding bound to the default
-          service account in this namespace?
-      - text: Looks like there is not a direct binding to the serviceice account.
+          Is there a RoleBinding or ClusterRoleBinding bound to the default
+          ServiceAccount in this namespace?
+      - text: Looks like there is not a direct binding to the ServiceAccount.
       - text: >-
-          Using the pods token we are in the system:authenticated group. Is
+          Using the pod's token we are in the system:authenticated group. Is
           something bound to that?
       - text: >-
           Looks like the authenticated-view ClusterRoleBinding is giving the
@@ -31,7 +31,7 @@ tasks:
     hints:
       - text: The pod should not mount the default service token.
       - text: >-
-          The application pods already do this maybe I could look there for
+          The application pods already do this. Maybe I could look there for
           inspiration.
       - text: I need to set automountServiceAccountToken to be false
     starting-point: ''
