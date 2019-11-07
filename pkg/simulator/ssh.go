@@ -9,8 +9,8 @@ import (
 // Config returns a pointer to string containing the stanzas to add to an ssh
 // config file so that the kubernetes nodes are connectable directly via the
 // bastion or an error if the infrastructure has not been created
-func Config(logger *zap.SugaredLogger, tfDir, scenarioPath, bucketName string) (*string, error) {
-	tfo, err := Status(logger, tfDir, bucketName)
+func Config(logger *zap.SugaredLogger, tfDir, scenarioPath, bucketName, attackTag string) (*string, error) {
+	tfo, err := Status(logger, tfDir, bucketName, attackTag)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting infrastructure status")
 	}
@@ -24,9 +24,9 @@ func Config(logger *zap.SugaredLogger, tfDir, scenarioPath, bucketName string) (
 
 // Attack establishes an SSH connection to the attack container running on the
 // bastion host ready for the user to attempt to complete a scenario
-func Attack(logger *zap.SugaredLogger, tfDir, bucketName string) error {
+func Attack(logger *zap.SugaredLogger, tfDir, bucketName, attackTag string) error {
 	logger.Debugf("Checking status of infrastructure")
-	tfo, err := Status(logger, tfDir, bucketName)
+	tfo, err := Status(logger, tfDir, bucketName, attackTag)
 	if err != nil {
 		return errors.Wrap(err, "Error getting infrastrucutre status")
 	}

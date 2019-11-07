@@ -46,6 +46,10 @@ func newCmdRoot() *cobra.Command {
 		"Path to a directory containing the infrastructure scripts")
 	viper.BindPFlag("tf-dir", rootCmd.PersistentFlags().Lookup("tf-dir"))
 
+	rootCmd.PersistentFlags().StringP("attack-container-tag", "a", "latest",
+		"The attack container tag to pull on the bastion")
+	viper.BindPFlag("attack-container-tag", rootCmd.PersistentFlags().Lookup("attack-container-tag"))
+
 	// TODO: (rem) this is also used to locate the perturb.sh script which may be
 	// subsumed by this app
 	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",

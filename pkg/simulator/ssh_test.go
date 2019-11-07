@@ -9,7 +9,7 @@ import (
 func Test_Config(t *testing.T) {
 	t.Skip("Need to mock out terraform output")
 	t.Parallel()
-	cfg, err := simulator.Config(noopLogger, fixture("noop-tf-dir"), fixture("valid"), "test")
+	cfg, err := simulator.Config(noopLogger, fixture("noop-tf-dir"), fixture("valid"), "test", "latest")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, cfg)

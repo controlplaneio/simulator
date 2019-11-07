@@ -10,7 +10,7 @@ import (
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
 // the infrastructure has been created.  Returns an error if the infrastructure
 // is not ready or something goes wrong
-func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id string) error {
+func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, attackTag string) error {
 	logger.Debugf("Loading scenario manifest from %s", scenariosDir)
 	manifest, err := scenario.LoadManifest(scenariosDir)
 	if err != nil {
@@ -23,7 +23,7 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id strin
 	}
 
 	logger.Debugf("Checking status of infrastructure")
-	tfo, err := Status(logger, tfDir, bucketName)
+	tfo, err := Status(logger, tfDir, bucketName, attackTag)
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}
