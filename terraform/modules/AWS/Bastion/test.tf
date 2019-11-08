@@ -16,7 +16,7 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/../../scripts/run-goss.sh"
+    content      = "${data.template_file.goss_template.rendered}"
     destination = "/root/run-goss.sh"
   }
 
