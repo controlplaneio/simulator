@@ -1,10 +1,46 @@
 #!/usr/bin/env bash
 
-box()
-{
+set -euxo pipefail
+
+main() {
+
+  trap show_exit_warning EXIT
+  trap show_exit_warning SIGTERM
+
+  fix_aws_environment_variables
+  write_bash_aliases
+  write_inputrc
+
+  exec bash
+}
+
+fix_aws_environment_variables() {
+  export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+}
+
+write_bash_aliases() {
+  cat >>/home/launch/.bash_aliases <<EOF
+alias ll='ls -lasp'
+EOF
+}
+
+write_inputrc() {
+  cat >>/home/launch/.inputrc <<EOF
+# Make Tab autocomplete regardless of filename case
+set completion-ignore-case on
+
+# List all matches in case multiple possible completions are possible
+set show-all-if-ambiguous on
+EOF
+}
+
+box() {
   local s=("$@") b w
   for l in "${s[@]}"; do
-    ((w<${#l})) && { b="$l"; w="${#l}"; }
+    ((w < ${#l})) && {
+      b="$l"
+      w="${#l}"
+    }
   done
   tput bold
   tput setaf 3
@@ -19,7 +55,7 @@ box()
 }
 
 show_exit_warning() {
-echo "$(tput setaf 2)
+  echo "$(tput setaf 2)
 ||====================================================================||
 ||//$\\\\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//$\\\\||
 ||(100)==================| FEDERAL RESERVE NOTE |================(100)||
@@ -37,13 +73,8 @@ echo "$(tput setaf 2)
 ||====================================================================||
 $(tput sgr0)"
 
-box "   If you created any infrastructure and did not destroy it " \
+  box "   If you created any infrastructure and did not destroy it " \
     "   you will be accruing charges in your AWS account"
 }
 
-
-trap show_exit_warning EXIT
-trap show_exit_warning SIGTERM
-
-bash
-
+main
