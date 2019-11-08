@@ -42,9 +42,8 @@ endif
 CONTAINER_NAME_LATEST := $(DOCKER_REGISTRY_FQDN)/$(DOCKER_HUB_ORG)/$(CONTAINER_BASE_NAME):$(CONTAINER_TAG_LATEST)
 
 PKG := github.com/$(GITHUB_ORG)/$(GO_MODULE_NAME)
-DATE := $(shell date -I)
 
-GO_LDFLAGS=-ldflags "-w -X $(PKG)/cmd.commit=$(GIT_SHA) -X $(PKG)/cmd.version=$(MOST_RECENT_TAG) -X $(PKG)/cmd.date=$(DATE)"
+GO_LDFLAGS=-ldflags "-w -X $(PKG)/cmd.commit=$(GIT_SHA) -X $(PKG)/cmd.version=$(MOST_RECENT_TAG) -X $(PKG)/cmd.date=$(BUILD_DATE)"
 
 GO := go
 
