@@ -1,8 +1,10 @@
 # --- Project configuration
 NAME := simulator
+# Note thesee are used for the golang module name which was created before the 
+# migration from controlplane's github to the kubernetes-simulator org
 GITHUB_ORG := controlplaneio
 DOCKER_HUB_ORG := controlplane
-VERSION := 0.7-pre
+GO_MODULE_NAME := simulator-standalone
 
 # --- Boilerplate
 include prelude.mk
@@ -107,7 +109,7 @@ dep: ## Install dependencies for other targets
 .PHONY: build
 build: dep ## Run golang build for the CLI program
 	@echo "+ $@"
-	$(GO) build -a -o ./dist/simulator
+	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 
 .PHONY: is-in-launch-container
 is-in-launch-container: ## checks you are running in the launch container

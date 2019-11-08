@@ -13,12 +13,13 @@ BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
 GIT_MESSAGE := $(shell git -c log.showSignature=false \
 	log --max-count=1 --pretty=format:"%H")
-GIT_SHA := $(shell git -c log.showSignature=false rev-parse HEAD)
+GIT_SHA := $(shell git rev-parse HEAD)
 # GIT_TAG is the tag corresponsing to the curent SHA for HEAD or "dev"
 GIT_TAG := $(shell bash -c 'TAG=$$(git -c log.showSignature=false \
 	describe --tags --exact-match --abbrev=0 $(GIT_SHA) 2>/dev/null); echo "$${TAG:-dev}"')
 GIT_UNTRACKED_CHANGES := $(shell git -c log.showSignature=false \
 	status --porcelain)
+MOST_RECENT_TAG := $(shell git describe --tags --abbrev=0)
 
 ifneq ($(GIT_UNTRACKED_CHANGES),)
   ifneq ($(GIT_TAG),dev)
@@ -40,13 +41,10 @@ endif
 
 CONTAINER_NAME_LATEST := $(DOCKER_REGISTRY_FQDN)/$(DOCKER_HUB_ORG)/$(CONTAINER_BASE_NAME):$(CONTAINER_TAG_LATEST)
 
-PKG := github.com/$(GITHUB_ORG)/$(PACKAGE_NAME)
+PKG := github.com/$(GITHUB_ORG)/$(GO_MODULE_NAME)
+DATE := $(shell date -I)
 
-# golang buildtime, more at https://github.com/jessfraz/pepper/blob/master/Makefile
-# BUG: (rem) this is broken because the
-CTIMEVAR=-X $(PKG)/cmd/version.GITCOMMIT=$(GITCOMMIT) -X $(PKG)/cmd/version.VERSION=$(VERSION)
-GO_LDFLAGS=-ldflags "-w $(CTIMEVAR)"
-GO_LDFLAGS_STATIC=-ldflags "-w $(CTIMEVAR) -extldflags -static"
+GO_LDFLAGS=-ldflags "-w -X $(PKG)/cmd.commit=$(GIT_SHA) -X $(PKG)/cmd.version=$(MOST_RECENT_TAG) -X $(PKG)/cmd.date=$(DATE)"
 
 GO := go
 
