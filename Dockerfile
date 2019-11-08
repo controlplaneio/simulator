@@ -61,14 +61,21 @@ ARG lint_user=lint
 RUN useradd -ms /bin/bash ${lint_user} \
     && mkdir /app
 
+WORKDIR /app/scenario-tools
+
+COPY --chown=1000 ./tools/scenario-tools/ /app/scenario-tools/
+
+# Run javascript linting and unit tests
+RUN npm install   \
+    && npm test
+
 WORKDIR /app
 
 # Copy Dockerfiles, hadolint config and scripts
-COPY --chown=1000 Dockerfile .hadolint.yaml ./
-COPY --chown=1000 scripts/ ./scripts/
-COPY --chown=1000 attack/ ./attack/
-COPY --chown=1000 kubesim ./kubesim
-COPY --chown=1000 ./tools/scenario-tools/ ./scenario-tools/
+COPY --chown=1000 scripts/ /app/scripts/
+COPY --chown=1000 attack/ /app/attack/
+COPY --chown=1000 kubesim /app/kubesim
+COPY --chown=1000 Dockerfile .hadolint.yaml /app/
 
 USER ${lint_user}
 
@@ -81,10 +88,6 @@ RUN hadolint Dockerfile            \
     && shellcheck kubesim
 
 WORKDIR /app/scenario-tools
-
-# Run javascript linting and unit tests
-RUN npm install   \
-    && npm test
 
 #-----------------------#
 # Golang Build and Test #
@@ -194,10 +197,18 @@ COPY --chown=1000 --from=build-and-test /go/src/github.com/controlplaneio/simula
 WORKDIR /app
 
 # Add terraform and perturb/scenario scripts to the image and goss.yaml to verify the container
-ARG config_file=./simulator.yaml
+ARG config_file="./launch-files/simulator.yaml"
 COPY --chown=1000 ./terraform/ ./terraform/
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
-COPY --chown=1000 ./goss.yaml ./launch-entrypoint.sh ./acceptance.sh ./
+COPY --chown=1000                     \
+  ./launch-files/goss.yaml            \
+  ./launch-files/launch-entrypoint.sh \
+  ./launch-files/test-acceptance.sh   \
+  ./
+COPY --chown=1000              \
+  ./launch-files/.bash_aliases \
+  ./launch-files/.inputrc      \
+  /home/launch/
 COPY --chown=1000 ${config_file} /home/launch/.kubesim/
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \

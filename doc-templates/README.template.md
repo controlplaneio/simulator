@@ -151,12 +151,10 @@ https://www.terraform.io/docs/backends/types/s3.html
 
 ### Troubleshooting AWS
 
+- <code>AWS_REGION</code> is prioritised over <code>AWS_DEFAULT_REGION</code>, but if the former is empty it will be set to the same value as <code>AWS_DEFAULT_REGION</code>
 - If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
 is probably running slowly.  You must run <code>simulator infra destroy</code> and then retry <code>simulator infra
 create</code>
-- <code>AWS_REGION</code> vs <code>AWS_DEFAULT_REGION</code> - There have been
-[some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
-[Go AWS client region configuration](https://github.com/aws/aws-sdk-go#configuring-aws-region)
 - [Multi-account](https://www.terraform.io/docs/backends/types/s3.html#multi-account-aws-architecture)
 
 ### Terraform

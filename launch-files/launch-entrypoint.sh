@@ -8,34 +8,16 @@ main() {
   trap show_exit_warning SIGTERM
 
   fix_aws_environment_variables
-  write_bash_aliases
-  write_inputrc
 
-  exec bash
+  exec "${@:-/bin/bash}"
 }
 
 fix_aws_environment_variables() {
   export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
 }
 
-write_bash_aliases() {
-  cat >>/home/launch/.bash_aliases <<EOF
-alias ll='ls -lasp'
-EOF
-}
-
-write_inputrc() {
-  cat >>/home/launch/.inputrc <<EOF
-# Make Tab autocomplete regardless of filename case
-set completion-ignore-case on
-
-# List all matches in case multiple possible completions are possible
-set show-all-if-ambiguous on
-EOF
-}
-
 draw_box() {
-  local ARGUMENTS=("${@}") LINE MAX_WIDTH
+  local ARGUMENTS=("${@}") LINE="" MAX_WIDTH=0
   for THIS_ARGUMENT in "${ARGUMENTS[@]}"; do
     ((MAX_WIDTH < ${#THIS_ARGUMENT})) && {
       LINE="${THIS_ARGUMENT}"
@@ -77,4 +59,4 @@ $(tput sgr0)"
     "   you will be accruing charges in your AWS account"
 }
 
-main
+main "${@}"
