@@ -34,23 +34,23 @@ set show-all-if-ambiguous on
 EOF
 }
 
-box() {
-  local s=("$@") b w
-  for l in "${s[@]}"; do
-    ((w < ${#l})) && {
-      b="$l"
-      w="${#l}"
+draw_box() {
+  local ARGUMENTS=("${@}") LINE MAX_WIDTH
+  for THIS_ARGUMENT in "${ARGUMENTS[@]}"; do
+    ((MAX_WIDTH < ${#THIS_ARGUMENT})) && {
+      LINE="${THIS_ARGUMENT}"
+      MAX_WIDTH="${#THIS_ARGUMENT}"
     }
   done
   tput bold
   tput setaf 3
-  echo "    -${b//?/-}-
-   | ${b//?/ } |"
-  for l in "${s[@]}"; do
-    printf '   | %s%*s%s |\n' "$(tput setaf 1)" "-$w" "$l" "$(tput setaf 3)"
+  echo "    -${LINE//?/-}-
+   | ${LINE//?/ } |"
+  for THIS_ARGUMENT in "${ARGUMENTS[@]}"; do
+    printf '   | %s%*s%s |\n' "$(tput setaf 1)" "-${MAX_WIDTH}" "${THIS_ARGUMENT}" "$(tput setaf 3)"
   done
-  echo "   | ${b//?/ } |
-    -${b//?/-}-"
+  echo "   | ${LINE//?/ } |
+    -${LINE//?/-}-"
   tput sgr 0
 }
 
@@ -73,7 +73,7 @@ show_exit_warning() {
 ||====================================================================||
 $(tput sgr0)"
 
-  box "   If you created any infrastructure and did not destroy it " \
+  draw_box "   If you created any infrastructure and did not destroy it " \
     "   you will be accruing charges in your AWS account"
 }
 
