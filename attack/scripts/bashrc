@@ -54,6 +54,7 @@ welcome() {
   info "You have made it inside the perimiter of a private kubernetes cluster."
   info "There are ${BOLD}${#master[@]}${NORMAL} master "      \
        "and ${BOLD}${#node[@]}${NORMAL} nodes in the cluster"
+  info ' '
   info "We have setup helpers to attack the master(s) and node(s)."
   info ' '
   info "To attack a master:"
@@ -64,6 +65,7 @@ welcome() {
   info ' '
   info "To see this message again:"
   info "  \$ welcome"
+  info ' '
   envsubst < /challenge.txt
   info ' '
   info "Run start_task with the name of the task to get going"
