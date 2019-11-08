@@ -16,12 +16,12 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    content      = "${data.template_file.goss_template.rendered}"
+    source      = "${path.module}/../../scripts/run-goss.sh"
     destination = "/root/run-goss.sh"
   }
 
   provisioner "file" {
-    source      = "${path.module}/goss.yaml"
+    content      = "${data.template_file.goss_template.rendered}"
     destination = "/root/goss.yaml"
   }
 
