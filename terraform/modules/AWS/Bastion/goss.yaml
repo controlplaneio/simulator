@@ -29,7 +29,7 @@ service:
 # Check whether we have the latest simulator-attack pulled locally
 command:
   docker:
-    exec: "docker image inspect controlplane/simulator-attack:latest"
+    exec: 'docker image inspect controlplane/simulator-attack:${attack_container_tag}'
     exit-status: 0
   hostname:
     exec: "hostname | grep bastion"
