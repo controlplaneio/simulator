@@ -1,4 +1,8 @@
 resource "null_resource" "bastion_test" {
+  triggers = {
+    attack_container_tag = "${var.attack_container_tag}"
+  }
+
   // Ensure we can SSH as root for the goss tests and also for preturb.sh
   connection {
     host = "${aws_instance.simulator_bastion.public_ip}"
