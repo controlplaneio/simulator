@@ -5,7 +5,14 @@ package:
     installed: true
 {{end}}
 
+file:
+  # Has an ssh keypair and simulator config file
+  {{- range mkSlice ".bash_aliases" ".inputrc"}}
+/root/{{.}}:
+  exists: true
+  {{end}}
+
 command:
 # Has the necessary 3rd party packages for attacking a cluster
-  attack-motd:
+  motd:
     exit-status: 0

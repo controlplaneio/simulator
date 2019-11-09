@@ -20,17 +20,11 @@ RUN apt-get update                                                              
     openssh-client                                                                \
  && rm -rf /var/lib/apt/lists/*
 
-RUN echo "PS1='\u@\h # '" > /root/.bashrc
-
 ## Install Goss
 ENV GOSS_VERSION v0.3.7
 RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
          -o /usr/local/bin/goss                                                                    \
     && chmod +rx /usr/local/bin/goss
-
-# Add login message
-COPY ./attack/scripts/attack-motd /usr/local/bin/attack-motd
-COPY ./attack/scripts/bashrc /etc/bash.bashrc
 
 ENV NODE_ENV production
 RUN mkdir /scenario-tools
@@ -40,11 +34,24 @@ RUN npm install --production \
     && npm prune             \
     && npm link
 
-
-
 RUN mkdir /attack
 WORKDIR /attack
 COPY ./attack/ .
+
+# Add login message
+COPY ./attack/scripts/motd /usr/local/bin/motd
+COPY ./attack/scripts/bashrc /etc/bash.bashrc
+
+COPY --chown=1000              \
+  ./launch-files/.bash_aliases \
+  ./launch-files/.inputrc      \
+  /root/
+
+RUN printf "                    \n\
+if [ -f ~/.bash_aliases ]; then \n\
+    . ~/.bash_aliases           \n\
+fi                              \n\
+" >> /root/.bashrc
 
 # This container is root intentionally
 

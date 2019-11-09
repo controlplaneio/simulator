@@ -6,6 +6,46 @@ COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 BOLD=$(tput bold)
 NORMAL=$(tput sgr0)
 
+main() {
+  enable_programmable_completion
+  set_prompt_command
+
+  motd
+  welcome
+
+  unset -f main enable_programmable_completion set_prompt_command
+}
+
+enable_programmable_completion() {
+  # enable programmable completion features
+  if ! shopt -oq posix; then
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+      # shellcheck disable=SC1091
+      . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+      # shellcheck disable=SC1091
+      . /etc/bash_completion
+    fi
+  fi
+}
+
+set_prompt_command() {
+  PROMPT_COMMAND=__prompt_command
+}
+
+__prompt_command() {
+  local PREVIOUS_COMMAND_STATUS_CODE="$?"
+  local STATUS_CODE_COLOR="${COLOUR_RESET}"
+
+  PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'
+
+  if [[ "${PREVIOUS_COMMAND_STATUS_CODE}" != 0 ]]; then
+    STATUS_CODE_COLOR=${COLOUR_RED}
+  fi
+
+  PS1="${PS1}[${STATUS_CODE_COLOR}${PREVIOUS_COMMAND_STATUS_CODE}${COLOUR_RESET}]\$ "
+}
+
 #
 # Logging
 #
@@ -26,9 +66,17 @@ readonly -f info
 #
 attack_master() {
   # shellcheck disable=SC2086
-  IFS=', ' read -r -a master  <<< "${MASTER_IP_ADDRESSES}"
-  [[ $# = 0 ]] && warning "need a number"
-  [[ "$1" -gt "${#master[@]}" ]] && "master does not exist"
+  IFS=', ' read -r -a master <<<"${MASTER_IP_ADDRESSES}"
+  export master
+
+  if [[ $# == 0 ]]; then
+    warning "Please supply a number"
+    return 1
+  fi
+  if [[ "$1" -gt "${#master[@]}" ]]; then
+    warning "master '${1}' does not exist"
+    return 1
+  fi
 
   ssh root@"${master[$1]}"
 }
@@ -36,26 +84,32 @@ readonly -f attack_master
 export -f attack_master
 
 attack_node() {
-  IFS=', ' read -r -a node  <<< "${NODE_IP_ADDRESSES}"
+  IFS=', ' read -r -a node <<<"${NODE_IP_ADDRESSES}"
   export node
-  [[ $# = 0 ]] && warning "need a number"
-  [[ "$1" -gt "${#node[@]}" ]] && "node does not exist"
+
+  if [[ $# == 0 ]]; then
+    warning "Please supply a number"
+    return 1
+  fi
+  if [[ "$1" -gt "${#master[@]}" ]]; then
+    warning "node '${1}' does not exist"
+    return 1
+  fi
 
   ssh root@"${node[$1]}"
 }
 readonly -f attack_node
 export -f attack_node
 
-
 #
 # Display info message
 #
 welcome() {
-  IFS=', ' read -r -a master  <<< "${MASTER_IP_ADDRESSES}"
-  IFS=', ' read -r -a node  <<< "${NODE_IP_ADDRESSES}"
+  IFS=', ' read -r -a master <<<"${MASTER_IP_ADDRESSES}"
+  IFS=', ' read -r -a node <<<"${NODE_IP_ADDRESSES}"
   info "You have made it inside the perimiter of a private kubernetes cluster."
-  info "There are ${BOLD}${#master[@]}${NORMAL} master "      \
-       "and ${BOLD}${#node[@]}${NORMAL} nodes in the cluster"
+  info "There are ${BOLD}${#master[@]}${NORMAL} master " \
+    "and ${BOLD}${#node[@]}${NORMAL} nodes in the cluster"
   info ' '
   info "We have setup helpers to attack the master(s) and node(s)."
   info ' '
@@ -68,14 +122,21 @@ welcome() {
   info "To see this message again:"
   info "  \$ welcome"
   info ' '
-  envsubst < /challenge.txt
+  if [[ -f /challenge.txt ]]; then
+    envsubst </challenge.txt
+  fi
   info ' '
-  info "Run start_task with the name of the task to get going"
-  info "Getting stuck?  Run next_hint to see the next_hint.  You can run "
-  info "show_hints at any time to see all the hints you've already revealed again"
+  # shellcheck disable=SC2016
+  info 'Run `start_task` with the name of the task to get going'
+  # shellcheck disable=SC2016
+  info 'Getting stuck?  Run `next_hint` to see the next hint.  You can run '
+  # shellcheck disable=SC2016
+  info '`show_hints` at any time to see all revealed hints again'
+  info ' '
+  # shellcheck disable=SC2016
+  info 'See this message again with `welcome`'
 }
 readonly -f welcome
 export -f welcome
 
-attack-motd
-welcome
+main
