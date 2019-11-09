@@ -6,8 +6,8 @@ file:
     exists: true
 {{end}}
 # Has an ssh keypair and simulator config file
-{{- range mkSlice "/home/launch/.kubesim/simulator.yaml"}}
-  {{.}}:
+{{- range mkSlice ".kubesim/simulator.yaml" ".bash_aliases" ".inputrc"}}
+  /home/launch/{{.}}:
     exists: true
 {{end}}
 
@@ -26,6 +26,9 @@ command:
     exec: "which {{.}}"
     exit-status: 0
 {{end}}
+  "AWS_REGION environment variable is not empty":
+    exec: "[ '{{ getEnv "AWS_REGION" "" }}' != '' ]"
+    exit-status: 0
 
 # Runs as a non-root user
 user:
