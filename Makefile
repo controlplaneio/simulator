@@ -103,7 +103,6 @@ docker-test: docker-build ## Run the tests
 # -- SIMULATOR CLI
 .PHONY: dep
 dep: ## Install dependencies for other targets
-	$(GO) get github.com/robertkrimen/godocdown/godocdown 2>&1
 	$(GO) mod download 2>&1
 
 .PHONY: build
@@ -146,11 +145,8 @@ test-coverage:  ## Run golang unit tests with coverage and opens a browser with 
 	$(GO) tool cover -html=count.out
 
 .PHONY: docs
-docs: dep ## Generate documentation
+docs: ## Generate documentation
 	@echo "+ $@"
-	godocdown pkg/scenario > docs/api/scenario.md
-	godocdown pkg/simulator > docs/api/simulator.md
-	godocdown pkg/util > docs/api/util.md
 	./scripts/generate-docs-from-templates.sh
 	./scripts/tf-auto-doc ./terraform
 

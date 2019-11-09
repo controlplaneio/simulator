@@ -5,6 +5,7 @@
 | access\_cidr | cidr range of client connection | string | n/a | yes |
 | access\_key | ssh public key | string | n/a | yes |
 | access\_key\_name | ssh key name | string | `"simulator_bastion_access_key"` | no |
+| attack\_container\_tag | the docker tag of the attack container to use | string | `"latest"` | no |
 | cluster\_nodes\_instance\_type | instance type for k8s nodes | string | `"t2.medium"` | no |
 | default\_tags | Default tags for all resources | map | `<map>` | no |
 | instance\_type | instance type for Baston host | string | `"t2.micro"` | no |
