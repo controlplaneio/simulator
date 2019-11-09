@@ -248,9 +248,12 @@ You can make this tool available on your PATH by running <code>make devtools</co
 
 ### Simulator API Documentation
 
-* [Scenario](./docs/api/scenario.md)
-* [Simulator](./docs/api/simulator.md)
-* [Util](./docs/api/util.md)
+The simulator API docs are available on godoc.org:
+
+* [Scenario](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/scenario)
+* [Simulator](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/simulator)
+* [SSH](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/ssh)
+* [Util](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/util)
 
 ## Contributing
 
