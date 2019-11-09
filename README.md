@@ -14,6 +14,7 @@ If you need to include bsah code snippets you will need to change how the templa
 [![Platforms](https://img.shields.io/badge/Platform-Linux|MacOS-blue.svg)](https://github.com/kubernetes-simulator/simulator/blob/master/README.md)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/kubernetes-simulator/simulator/graphs/commit-activity)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+[![GoDoc](https://godoc.org/github.com/controlplaneio/simulator-standalone?status.svg)](https://godoc.org/github.com/controlplaneio/simulator-standalone)
 
 
 # Simulator
@@ -293,9 +294,12 @@ You can make this tool available on your PATH by running <code>make devtools</co
 
 ### Simulator API Documentation
 
-* [Scenario](./docs/api/scenario.md)
-* [Simulator](./docs/api/simulator.md)
-* [Util](./docs/api/util.md)
+The simulator API docs are available on godoc.org:
+
+* [Scenario](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/scenario)
+* [Simulator](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/simulator)
+* [SSH](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/ssh)
+* [Util](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/util)
 
 ## Contributing
 
