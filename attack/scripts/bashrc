@@ -65,38 +65,52 @@ readonly -f info
 # SSH helpers
 #
 attack_master() {
+  local INDEX="${1:-}"
+
   # shellcheck disable=SC2086
-  IFS=', ' read -r -a master <<<"${MASTER_IP_ADDRESSES}"
-  export master
+  IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
+  export MASTER_NODES
 
-  if [[ $# == 0 ]]; then
-    warning "Please supply a number"
+  if [[ "${INDEX}" == "" ]]; then
+    if [[ "${#MASTER_NODES[@]}" == 1 ]]; then
+      INDEX=0
+    else
+      warning "Please supply a number"
+      return 1
+    fi
+  fi
+
+  if [[ "${INDEX}" -gt "${#MASTER_NODES[@]}" ]]; then
+    warning "Master node '${INDEX}' does not exist"
     return 1
   fi
-  if [[ "$1" -gt "${#master[@]}" ]]; then
-    warning "master '${1}' does not exist"
-    return 1
-  fi
 
-  ssh root@"${master[$1]}"
+  ssh root@"${MASTER_NODES[${INDEX}]}"
 }
 readonly -f attack_master
 export -f attack_master
 
 attack_node() {
-  IFS=', ' read -r -a node <<<"${NODE_IP_ADDRESSES}"
-  export node
+  local INDEX="${1:-}"
 
-  if [[ $# == 0 ]]; then
-    warning "Please supply a number"
+  IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
+  export WORKER_NODES
+
+  if [[ "${INDEX}" == "" ]]; then
+    if [[ "${#WORKER_NODES[@]}" == 1 ]]; then
+      INDEX=0
+    else
+      warning "Please supply a number"
+      return 1
+    fi
+  fi
+
+  if [[ "${INDEX}" -gt "${#WORKER_NODES[@]}" ]]; then
+    warning "Worker node '${INDEX}' does not exist"
     return 1
   fi
-  if [[ "$1" -gt "${#master[@]}" ]]; then
-    warning "node '${1}' does not exist"
-    return 1
-  fi
 
-  ssh root@"${node[$1]}"
+  ssh root@"${WORKER_NODES[${INDEX}]}"
 }
 readonly -f attack_node
 export -f attack_node
@@ -105,11 +119,11 @@ export -f attack_node
 # Display info message
 #
 welcome() {
-  IFS=', ' read -r -a master <<<"${MASTER_IP_ADDRESSES}"
-  IFS=', ' read -r -a node <<<"${NODE_IP_ADDRESSES}"
+  IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
+  IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
   info "You have made it inside the perimiter of a private kubernetes cluster."
-  info "There are ${BOLD}${#master[@]}${NORMAL} master " \
-    "and ${BOLD}${#node[@]}${NORMAL} nodes in the cluster"
+  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master " \
+    "and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster"
   info ' '
   info "We have setup helpers to attack the master(s) and node(s)."
   info ' '
