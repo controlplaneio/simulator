@@ -150,7 +150,6 @@ test-coverage:  ## Run golang unit tests with coverage and opens a browser with 
 .PHONY: docs
 docs: ## Generate documentation
 	@echo "+ $@"
-	./scripts/generate-docs-from-templates.sh
 	./scripts/tf-auto-doc ./terraform
 
 .PHONY: release
