@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 write_keys() {
   set -x

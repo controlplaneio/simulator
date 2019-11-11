@@ -8,7 +8,7 @@ endif
 
 DOCKER_REGISTRY_FQDN ?= docker.io
 
-SHELL := /usr/bin/env bash
+SHELL := /bin/bash
 BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
 GIT_MESSAGE := $(shell git -c log.showSignature=false \
