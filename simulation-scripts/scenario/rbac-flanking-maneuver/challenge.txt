@@ -2,7 +2,7 @@ Scenario: A pod in your cluster running a NodePort service on IP "$MASTER_IP_ADD
 You suspect someone has breached the perimeters of your pod and gained access to your API.
 The application is the only app deployed to this cluster and does not need to access the Kubernetes control plane at run time.
 
-Starting Point:
+Starting Point: Cluster network access
 
 Task 1: Can you breach the pod running on the node and gain access to it?
 Task 2: How can you update the cluster configuration to prevent escallation once the pod has been compromised?

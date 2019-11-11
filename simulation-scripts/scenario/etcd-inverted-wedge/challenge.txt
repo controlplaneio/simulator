@@ -1,6 +1,6 @@
 A developer has reported secrets leaking from your cluster, but no record of requests has been found in your API audit logs or through the kubelet.
 
-Starting Point: Inside the Ubuntu container in the etcd-inverted-wedge namespace.
+Starting Point: ubuntu pod in the etcd-inverted-wedge namespace.
 
 Task 1: How can you access secrets from inside the ubuntu pod in the cluster.
 Task 2: How can you resolve this access issue.

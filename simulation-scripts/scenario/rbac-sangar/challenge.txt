@@ -1,6 +1,6 @@
 Scenario: After a change to your clusters RBAC, your reviewed the audit logs and noticed the default service account in the rbac-sanger namespace making successful calls to the api server. As per your organisations policy, the default service account in every namespace should not have permissions to query the api server. The suspect calls have been traced back to the frontend container.
 
-Starting Point: Inside the frontend pod in the rbac-sangar namespace
+Starting Point: frontend pod in the rbac-sangar namespace
 
 Task 1: Can you use the rbac-sangar default service account to retrieve a secret from the application pods in the rbac-sangar namespace?
 

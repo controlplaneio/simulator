@@ -2,7 +2,7 @@ Scenario: A secret has been leaked from your application through the pod configu
 Your audit logs indicate that it hasn't been requested through the Kubernetes API.
 You have recently read a blog post about how to exfiltrate secrets with just network access to your nodes, $NODE_IP_ADDRESSES
 
-Starting Point:
+Starting Point: start-pod pod in node-raiding namespace
 
 Task 1: From a pod in the cluster, replicate the attack.
-Task 2: Set up correct security parameters to prevent this type of attack in the future. 
+Task 2: Set up correct security parameters to prevent this type of attack in the future.

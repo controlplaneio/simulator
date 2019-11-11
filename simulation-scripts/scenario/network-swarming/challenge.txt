@@ -5,7 +5,7 @@ However, it appears as though your API pods were untouched and they did not resp
 Unfortunately, the database logs reported some odd activity during the attack.
 Concerns over a potential database compromise have been dismissed as "contacting the database from the frontend would violate our request flow".
 
-Starting Point: 'kubectl exec' into any of the frontend pods.
+Starting Point: frontend pod in the network-swarming namespace
 
 Task 1: Can you replay the attack and explain the unusual database logs?
 

@@ -1,6 +1,6 @@
 Scenario: A new process monitoring tool has been deployed to your cluster. A fellow security engineer has audited the deployment and believes that the current configuration can allow a compromised pod this deployment to further compromise any other container on the same host.
 
-Starting Point: Inside the process-monitoring pod in the policy-echelon-formation namespace.
+Starting Point: process-monitoring pod in the policy-echelon-formation namespace.
 
 Task 1: Can you verify this suspicion by retrieving the DB_PASSWORD, AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID from the postgres DaemonSet?
 

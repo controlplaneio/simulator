@@ -1,7 +1,7 @@
 Scenario: During a routine audit of your logs, it was noticed that the Jenkins user in the container within the 'policy-fire-support' namespace was accessing files it should not have permissions to read.
 These files are host mounted SSH keys for managing other infrastructure.
 
-Starting Point:
+Starting Point: jenkins pod in policy-fire-support namespace
 
 Task 1: Can you replay this by getting the SSH Keys from the container?
 

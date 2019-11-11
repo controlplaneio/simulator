@@ -3,7 +3,7 @@ Scenario: A team has been running their own Jenkins container by baking secrets 
     AWS_ACCESS_KEY_ID=EXAMPLEKEY12345
     AWS_SECRET_ACCESS_KEY=SECRETACCESSKEY9876!*
 
-Starting Point: Cluster access.
+Starting Point: Cluster network access.
 
 Task 1: Can you fix the configuration error that allowed these secrets to persist?
 
