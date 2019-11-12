@@ -1,6 +1,6 @@
 Scenario: A Jenkins pod in the 'policy-force-dispersal' namespace is running despite being privileged and using a host mount.
 The PodSecurityPolicy for this pod should be preventing it from running given that both options violate the policy.
 
-Starting Point:
+Starting Point: master node
 
 Task 1: Can you find out why the pod was allowed to schedule?

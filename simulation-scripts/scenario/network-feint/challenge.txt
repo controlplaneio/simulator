@@ -2,7 +2,7 @@ Scenario: Your users are reporting odd results when they query your application 
 They are expecting to see the NGINX welcome page, but 1/3 of the time they get an empty response.
 As a security engineer you are concerned because the application itself appears to be working normally and the only other pod in this namespace is a database with minimal security configuration due to business requirements.
 
-Starting Point:
+Starting Point: cluster access
 
 Task 1: Can you interact with the NodePort to find a secret key?
 Details: This would prove that there is an error in the configuration for this namespace.

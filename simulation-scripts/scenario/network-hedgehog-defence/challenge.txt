@@ -1,7 +1,7 @@
 Scenario: You are performing a postmortem on an attack against your database in the 'network-hedgehog-defence' namespace.
 The 'database' service is only supposed to be reachable from within its namespace, but your audit logs have revealed unusual requests from an unrelated setup pod in the 'default' namespace.
 
-Starting Point:
+Starting Point: setup pod
 
 Task 1: Figure out how the setup pod has managed to send Postgres requests from a different namespace.
 
