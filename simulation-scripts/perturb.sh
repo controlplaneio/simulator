@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Perturb Kubernetes Clusters
 #
@@ -100,14 +100,6 @@ main() {
     success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
   fi
 
-  if [[ "${IS_TEST_ONLY:-}" == 1 ]]; then
-    # force use of this scenario
-    run_test_loop "${SCENARIO}"
-  else
-    # autodetect scenario
-    run_test_loop
-  fi
-
   success "End of perturb"
 }
 
@@ -116,42 +108,6 @@ is_special_scenario() {
     error "SCENARIO is empty in is_special_scenario"
   fi
   [[ "$SCENARIO" == 'cleanup' || "$SCENARIO" == 'noop' ]]
-}
-
-run_test_loop() {
-
-  local IS_SUCCESS=0
-  local TEST_RESULT=0
-  local NO_TEST=0
-  local LOCAL_SCENARIO="${1:-}"
-
-  while true; do
-
-    source test-func.sh
-
-    if test_scenario "${LOCAL_SCENARIO:-}"; then
-      IS_SUCCESS=1
-      break
-    else
-      TEST_RESULT=$?
-      if [[ "${TEST_RESULT}" -eq 99 ]]; then
-        warning "No tests found"
-        IS_SUCCESS=0
-        NO_TEST=1
-        break
-      fi
-    fi
-
-    echo "Test again? [n/q/Y]"
-    read_prompt
-
-  done
-
-  if [[ "${IS_SUCCESS:-}" == 1 ]]; then
-    success "finished"
-  elif [[ "${NO_TEST}" -eq 0 ]]; then
-    warning "tests failed"
-  fi
 }
 
 run_scenario() {

@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 echo "Running acceptance tests"
 mkdir -p ~/.ssh

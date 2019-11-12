@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
