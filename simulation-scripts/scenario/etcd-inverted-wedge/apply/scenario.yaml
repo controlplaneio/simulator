@@ -11,7 +11,6 @@ metadata:
 type: Opaque
 data:
   credentials: b2hub2NyZWRlbnRpYWxzYXJlaGVyZQo=
-
 ---
 apiVersion: apps/v1
 kind: Deployment
