@@ -4,14 +4,13 @@ metadata:
   name: node-amphibious-operations
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   namespace: node-amphibious-operations
   labels:
     name: super-secret-pod
   name: super-secret-pod
 spec:
-  replicas: 1
   selector:
     matchLabels:
       name: super-secret-pod
@@ -49,7 +48,7 @@ spec:
   selector:
     matchLabels:
       name: start-pod
-  replicas: 2
+  replicas: 1
   template:
     metadata:
       labels:

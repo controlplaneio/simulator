@@ -1,7 +1,7 @@
-Scenario: Your audit logs indicate that an anonymous user has been execing into workloads on your nodes, $NODE_IP_ADDRESSES and getting secrets out of them.
+Scenario: Your audit logs indicate that an anonymous user has been exec'ing into workloads on your nodes, $NODE_IP_ADDRESSES and getting secrets out of them.
 You have confirmed that the Kubernetes API server is set up to authenticate and authorise every request.
 
-Starting Point: start-pod pod in the node-amphibious-operations namespace 
+Starting Point: start-pod pod in the node-amphibious-operations namespace
 
 Task 1: Replicate the attack from a pod in the cluster that should not be able to post.
 Task 2: Set up correct security parameters to prevent this type of attack in the future.
