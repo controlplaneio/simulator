@@ -19,7 +19,7 @@ metadata:
   namespace: container-ambush
 type: Opaque
 data:
-  password: c3VwZXJTZWNyZXRQYXNzd29yZAo=
+  password: c3VwZXJTZWNyZXRQYXNzd29yZA==
 ---
 apiVersion: apps/v1
 kind: Deployment
