@@ -1,9 +1,9 @@
-Scenario: A pod in your cluster running a NodePort service on IP "$MASTER_IP_ADDRESS" has been making some suspicious calls to your API server.
+Scenario: A pod in your cluster running a NodePort service on IP $MASTER_IP_ADDRESSES has been making some suspicious calls to your API server.
 You suspect someone has breached the perimeters of your pod and gained access to your API.
 The application is the only app deployed to this cluster and does not need to access the Kubernetes control plane at run time.
 
 Starting Point: Cluster network access
 
 Task 1: Can you breach the pod running on the node and gain access to it?
-Task 2: How can you update the cluster configuration to prevent escallation once the pod has been compromised?
-Task 3: Think about how you breached the pod. How should this be set up in the future to prevent easy breaches? (You don't need to do anything for this task)
+Task 2: How can you update the cluster configuration to prevent escalation once the pod has been compromised?
+Task 3: Think about how you breached the pod. How should this be set up in the future to prevent easy breaches? You don't need to do anything for this task.
