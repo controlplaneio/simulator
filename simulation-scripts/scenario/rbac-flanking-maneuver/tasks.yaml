@@ -7,12 +7,12 @@ tasks:
     hints:
       - text: >-
           Find open SSH port in workload. You can use nmap. Remember it runs on
-          a nodeport.
-      - text: The open nodeport was 30022. Brute force host SSH default password.
+          a NodePort.
+      - text: The open NodePort was 30022. Brute force host SSH default password.
       - text: Username is admin and password is password.
       - text: Look around for credentials and tools. Can you hit the API?
       - text: >-
-          Use wget to hit the api at default port 6443. The service account
+          Use wget to hit the API at default port 6443. The service account
           token looks like it can schedule workloads and get secrets.
     starting-point: ''
   '2':
@@ -28,6 +28,6 @@ tasks:
     sort-order: 3
     hints:
       - text: >-
-          Don't use passwords for ssh connections, and definitely not easy
+          Don't use passwords for SSH connections, and definitely not easy
           ones. 
     starting-point: ''
