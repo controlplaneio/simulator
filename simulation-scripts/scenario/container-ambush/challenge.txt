@@ -4,4 +4,5 @@ There are concerns that a compromised build agent could lead to the disclosure o
 Starting Point: Jenkins container in the container-ambush namespace.
 
 Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the pods in this namespace.
-Task 2: Change the deployment so sensitive information isn't so easily accessible and is consumed in the secure way (volume mount).
+Task 2: Change the deployment so sensitive information isn't so easily accessible and is consumed in the secure way.
+NOTE: The proxy has been configured to consume a configuration file at '/var/proxy/config'
