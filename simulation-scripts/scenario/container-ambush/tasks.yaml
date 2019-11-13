@@ -9,12 +9,12 @@ tasks:
       - text: Looks like the docker socket is mounted at /var/run/docker.sock.
       - text: I wonder if i can install Docker in here to use that socket?
       - text: Let's inspect the other containers running on this host.
-      - text: The postgres-db container seems to be the one we're looking for.
+      - text: The nginx container seems to be the one we're looking for.
       - text: That environment variable looks like a secret!
     starting-point: 'Jenkins container'
   '2':
     sort-order: 2
     hints:
-      - text: How did you access the password? Can you inject a secret another way?
-      - text: We should use a secret here and then consume it as an environment variable.
+      - text: How did you access the keys? Can you inject a secret another way?
+      - text: The gold standard way of consuming a secret is as a volume mount.
     starting-point: ''

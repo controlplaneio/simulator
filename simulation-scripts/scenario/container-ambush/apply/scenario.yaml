@@ -6,20 +6,12 @@ metadata:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: database
+  name: aws-keys
   namespace: container-ambush
 type: Opaque
 data:
-  secrets.sql: Q1JFQVRFIFRBQkxFIHNlY3JldHMgKHNlY3JldCAgICAgQ0hBUig1MCkgICAgICAgTk9UIE5VTEwpOwpJTlNFUlQgSU5UTyBzZWNyZXRzIFZBTFVFUyAoJ292ZXI5MDAwY3JlZGl0Y2FyZG51bWJlcnMnKTsK
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: db-pass
-  namespace: container-ambush
-type: Opaque
-data:
-  password: c3VwZXJTZWNyZXRQYXNzd29yZA==
+  AWS_ACCESS_KEY_ID: QUtJQVBPV002SFNLRlBPVEM4R0g=
+  AWS_SECRET_ACCESS_KEY: WEh6K004eHhBK0FtZFBvTXFuZDhQbm5PM09EbWVNcU1ETnJRSjVwOA==
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,34 +48,28 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: db
+  name: proxy
   namespace: container-ambush
 spec:
   selector:
     matchLabels:
-      app: db
+      app: proxy
   template:
     metadata:
       labels:
-        app: db
+        app: proxy
     spec:
       containers:
-      - name: postgres
-        image: postgres
-        ports:
-        - containerPort: 5432
-          name: database
-        volumeMounts:
-        - name: db
-          mountPath: "/docker-entrypoint-initdb.d"
-          readOnly: true
+      - name: proxy
+        image: nginx
         env:
-        - name: POSTGRES_PASSWORD
+        - name: AWS_ACCESS_KEY_ID
           valueFrom:
             secretKeyRef:
-              name: db-pass
-              key: password
-      volumes:
-      - name: db
-        secret:
-          secretName: database
+              name: aws-keys
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-keys
+              key: AWS_SECRET_ACCESS_KEY
