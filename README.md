@@ -86,7 +86,7 @@ The <code>start_task</code> command is used to inform the simulator which task y
 
 _Accessing hints_
 <pre>
-next_kind
+next_hint
 </pre>
 
 The <code>next_hint</code> command will provide a hint to help you complete the task you have started with the <code>start_task</code> command.
