@@ -12,6 +12,8 @@ Kubernetes: <code>simulator</code> creates a kuberntes cluster for you in your A
 account; runs scenarios which misconfigure it and/or leave it vulnerable to
 compromise and trains you in mitigating against these vulnerabilities.
 
+For details on why we created this project and our ultimate goals take a look at the [vision statement](./docs/vision-statement.md).
+
 ## Before you start
 
 ## Usage
