@@ -40,4 +40,4 @@ This project has benefited from many lessons learned in implementing a similar p
 
 There is still much to do on the project, please get in touch if you are interested in extending it or adding new exercises.
 
-Jon Meadows (Product Owner)
+Jon Meadows (Product Lead)
