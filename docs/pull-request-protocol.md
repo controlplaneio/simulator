@@ -19,4 +19,8 @@ The name of the commit should hold the following format; <Type>(<scope>): commit
 
 ## Labels
 
-Labels are a PR feature of github and should be set to the scope to inform the pick of the reviewer. 
+Labels are a PR feature of github and should at the very minimum be set to the type and scope to inform the pick of the reviewer.
+
+## Reviewing
+
+A reviewer should do more than sanity check a PR unless it is just metadata or documentation. If there is any functional changes or fixes, the reviewer should run the code as it sits in the PR and check it passes suitably. 
