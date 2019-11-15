@@ -15,7 +15,7 @@ SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
 
 touch "${SIMULATOR_CONFIG_FILE}"
 
-#docker pull ${CONTAINER_NAME}
+docker pull ${CONTAINER_NAME}
 
 docker run                                                          \
   -h launch                                                         \
