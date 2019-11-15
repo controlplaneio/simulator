@@ -64,7 +64,7 @@ spec:
     spec:
       serviceAccountName: rbac-flanking-maneuver
       containers:
-      - image: unnerup/insecure-ssh
+      - image: controlplane/insecure-ssh
         imagePullPolicy: IfNotPresent
         name: jumpbox
         ports:
