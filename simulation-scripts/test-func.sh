@@ -1,3 +1,6 @@
+# NOTE: This is no longer used and will be retired
+# ------------------------------------------------
+
 test_scenario() {
 
   local SCENARIO="${1:-}"
