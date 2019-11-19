@@ -1,7 +1,7 @@
 objective: >-
   Figure out additional permissions given to system:authenticated group and
   remove them.
-starting-point: frontend pod in the rbac-sangar namespace
+starting-point: 'Pod: [name: "", namespace: ""]'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

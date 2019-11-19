@@ -1,5 +1,5 @@
 objective: Exec into a container on master with certificates mounted in to exploit etcd.
-starting-point: kubectl access to the cluster.
+starting-point: 'Master: [as_root: true]'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

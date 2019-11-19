@@ -1,5 +1,5 @@
 objective: Use Sudo to get un readable ssh keys from a host mount.
-starting-point: Inside Jenkins container.
+starting-point: 'Pod: [name: "", namespace: ""]'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

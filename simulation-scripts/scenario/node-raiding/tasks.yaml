@@ -1,5 +1,5 @@
 objective: Node compromise to get readonly kubelet API access.
-starting-point: SSH node - any worker.
+starting-point: 'Worker: [as_root: true]'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
