@@ -2,10 +2,9 @@ objective: >-
   Figure out additional permissions given to system:authenticated group and
   remove them.
 starting-point:
-  type: pod
-  properties:
-    name: ''
-    namespace: ''
+  mode: pod
+  pod-name: ''
+  pod-namespace: ''
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

@@ -1,9 +1,8 @@
 objective: API is enabled on --insecure-bind-address and --insecure-port
 starting-point:
-  type: pod
-  properties:
-    name: ''
-    namespace: ''
+  mode: pod
+  pod-name: ''
+  pod-namespace: ''
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

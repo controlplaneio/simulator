@@ -2,10 +2,9 @@ objective: >-
   Figure out additional permissions given to the default service account and
   reassign to designated role.
 starting-point:
-  type: pod
-  properties:
-    name: ''
-    namespace: ''
+  mode: pod
+  pod-name: ''
+  pod-namespace: ''
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

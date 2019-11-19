@@ -1,8 +1,8 @@
 objective: Enable PodSecurityPolicy in the API server.
 starting-point:
-  type: master
-  properties:
-    as_root: true
+  mode: node
+  node-id: 'master-0'
+  as-root: true
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
