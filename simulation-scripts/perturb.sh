@@ -357,25 +357,38 @@ run_ssh() {
     root@"${@}"
 }
 
-get_file_to_run() {
-  local FILE="${1}"
-  echo "set -x"
-  if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
-    cat "${FILE}" >&2
-  else
-    cat "${FILE}"
-  fi
-  echo "echo PERTURBANCE COMPLETE FOR ${FILE} ON \$(hostname) AT \$(date)"
-  echo
-}
+#get_file_to_run() {
+#  local FILE="${1}"
+#  echo "set -x"
+#  if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
+#    cat "${FILE}" >&2
+#  else
+#    cat "${FILE}"
+#  fi
+#  echo "echo PERTURBANCE COMPLETE FOR ${FILE} ON \$(hostname) AT \$(date)"
+#  echo
+#}
 
 run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
-  (
-    set -x
-    get_file_to_run "${FILE}"
-  ) | run_ssh "${HOST}"
+
+  scp \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    /app/simulation-scripts/${FILE} root@${HOST}:/root/setup.sh
+
+  ssh -q -t \
+    -F "${SSH_CONFIG_FILE}" \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    root@${HOST} "chmod +x /root/setup.sh && /root/setup.sh"
+  echo "PERTURBANCE COMPLETE FOR /simulation-scripts/${FILE} ON ${HOST} - new approach"
+#  (
+#    set -x
+#    get_file_to_run "${FILE}"
+#  ) | run_ssh "${HOST}"
 }
 
 get_master() {
