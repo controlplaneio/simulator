@@ -1,0 +1,28 @@
+# These owners will be the default owners for everything in
+# the repo, unless a later match takes precedence.
+
+* @kubernetes-simulator/simulator
+
+# Scenarios
+/simulation-scripts/scenario @s-irvine @pi-unnerup
+
+# Terraform
+/terraform @s-irvine @raoulmillas @jondkent
+
+# Tools
+/tools @raoulmillas
+
+# Attack Container
+/attack @raoulmillas @jondkent
+
+# Simulator Binaries
+/cmd @raoulmillas @jondkent
+/pkg @raoulmillas @jondkent
+
+# kubesim
+/kubesim @s-irvine @raoulmillas
+
+# Build Files
+/Dockerfile @s-irvine @raoulmillas @pi-unnerup @jondkent
+/Jenkinsfile @raoulmillas @jondkent
+/Makefile @s-irvine @raoulmillas @pi-unnerup @jondkent
