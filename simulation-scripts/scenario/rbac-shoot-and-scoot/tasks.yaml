@@ -1,7 +1,11 @@
 objective: >-
   Figure out additional permissions given to system:anonymous role and remove
   them.
-starting-point: '{"pod":[{"name": "", "namespace": ""}]}'
+starting-point:
+  type: pod
+  properties:
+    name: ''
+    namespace: ''
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

@@ -1,5 +1,9 @@
 objective: Compromise secret from running workload.
-starting-point: '{"pod":[{"name": "", "namespace": ""}]}'
+starting-point:
+  type: pod
+  properties:
+    name: ''
+    namespace: ''
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
