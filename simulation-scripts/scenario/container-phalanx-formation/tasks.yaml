@@ -1,5 +1,7 @@
 objective: Find a secret in a log file.
-starting-point: '{"master":[{"as_root": true}]}'
+starting-point:
+  mode: internal-instance
+  kubectl-access: true
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

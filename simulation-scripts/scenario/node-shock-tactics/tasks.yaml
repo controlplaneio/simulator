@@ -1,5 +1,8 @@
 objective: Node escalation to workload compromise.
-starting-point: '{"worker":[{"as_root": false}]}'
+starting-point:
+  mode: node
+  node-id: 'node-0'
+  as-root: false
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
