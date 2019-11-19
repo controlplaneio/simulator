@@ -7,7 +7,7 @@ else
 fi
 
 CONTAINER_NAME=controlplane/simulator:latest
-SSH_CONFIG_PATH=${HOME}/.ssh/
+SSH_CONFIG_PATH=${HOME}/.kubesim/
 KUBE_SIM_TMP=${HOME}/.kubesim/
 SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
 
