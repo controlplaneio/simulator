@@ -1,7 +1,7 @@
 objective: >-
   Discover uncertified etcd, reach it with only network access and master node
   IP. Fix the leakage.
-starting-point: '{"Pod":[{"name": "", "namespace": ""}]}'
+starting-point: '{"pod":[{"name": "", "namespace": ""}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

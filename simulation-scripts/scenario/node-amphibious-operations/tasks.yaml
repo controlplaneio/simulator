@@ -1,5 +1,5 @@
 objective: Node compromise to get unauth kubelet API access.
-starting-point: '{"Pod":[{"name": "", "namespace": ""}]}'
+starting-point: '{"pod":[{"name": "", "namespace": ""}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
