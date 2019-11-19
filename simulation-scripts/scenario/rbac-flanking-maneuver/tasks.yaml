@@ -1,5 +1,5 @@
 objective: 'SSH into vulnerable workload, wget secrets using permissive SA.'
-starting-point: 'Outside: [network_access: true, kubectl_access: false]'
+starting-point: '{"Outside": [{"network_access": true, "kubectl_access": false}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

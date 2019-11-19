@@ -1,5 +1,5 @@
 objective: API is enabled on --insecure-bind-address and --insecure-port
-starting-point: 'Pod: [name: "", namespace: ""]'
+starting-point: '{"Pod":[{"name": "", "namespace": ""}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

@@ -1,5 +1,5 @@
 objective: Find a secret in a log file.
-starting-point: 'Master: [as_root: true]'
+starting-point: '{"Master":[{"as_root": true}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
