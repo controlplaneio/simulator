@@ -1,11 +1,15 @@
 
+locals {
+  aws_tags = "${merge(var.default_tags, map("Simulator Bucket", "${data.terraform_remote_state.state.config.bucket}"))}"
+}
+
 // Setup networking
 module "Networking" {
   source              = "../../modules/AWS/Networking"
   vpc_cidr            = "${var.vpc_cidr}"
   public_subnet_cidr  = "${var.public_subnet_cidr}"
   private_subnet_cidr = "${var.private_subnet_cidr}"
-  default_tags        = "${var.default_tags}"
+  default_tags        = "${local.aws_tags}"
 }
 
 // Discovery AMI Id to use for all instances
@@ -31,7 +35,7 @@ module "Bastion" {
   master_ip_addresses  = "${join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"
   node_ip_addresses    = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
   attack_container_tag = "${var.attack_container_tag}"
-  default_tags         = "${var.default_tags}"
+  default_tags         = "${local.aws_tags}"
 }
 
 // Setup Kubernetes master and nodes
@@ -48,7 +52,7 @@ module "Kubernetes" {
   private_subnet_id           = "${module.Networking.PrivateSubnetId}"
   iam_instance_profile_id     = "${module.S3Storage.IamInstanceProfileId}"
   s3_bucket_name              = "${module.S3Storage.S3BucketName}"
-  default_tags                = "${var.default_tags}"
+  default_tags                = "${local.aws_tags}"
 }
 
 // Setup host within Kubernetes subnet
@@ -59,7 +63,7 @@ module "InternalNode" {
   access_key_name     = "${module.SshKey.KeyPairName}"
   control_plane_sg_id = "${module.SecurityGroups.ControlPlaneSecurityGroupID}"
   private_subnet_id   = "${module.Networking.PrivateSubnetId}"
-  default_tags        = "${var.default_tags}"
+  default_tags        = "${local.aws_tags}"
   bastion_public_ip   = "${module.Bastion.BastionPublicIp}"
 }
 
@@ -67,7 +71,7 @@ module "InternalNode" {
 // master and nodes
 module "S3Storage" {
   source         = "../../modules/AWS/S3Storage"
-  default_tags   = "${var.default_tags}"
+  default_tags   = "${local.aws_tags}"
 }
 
 // Define security groups
@@ -77,6 +81,5 @@ module "SecurityGroups" {
   vpc_id                    = "${module.Networking.VpcId}"
   public_subnet_cidr_block  = "${module.Networking.PublicSubnetCidrBlock}"
   private_subnet_cidr_block = "${module.Networking.PrivateSubnetCidrBlock}"
-  default_tags              = "${var.default_tags}"
+  default_tags              = "${local.aws_tags}"
 }
-
