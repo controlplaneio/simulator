@@ -1,5 +1,5 @@
 objective: Use badly configured database to exfiltrate data.
-starting-point: Inside a frontend pod.
+starting-point: '{"pod":[{"name": "", "namespace": ""}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

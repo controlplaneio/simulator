@@ -1,5 +1,5 @@
 objective: Compromised database from outside namespace.
-starting-point: Inside setup pod.
+starting-point: '{"pod":[{"name": "", "namespace": ""}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':

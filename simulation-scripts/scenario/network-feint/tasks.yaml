@@ -1,5 +1,5 @@
 objective: Use misconfigured svc to compromise db.
-starting-point: Outside the cluster.
+starting-point: '{"outside":[{"network_access": true, "kubectl_access": false}]}'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
