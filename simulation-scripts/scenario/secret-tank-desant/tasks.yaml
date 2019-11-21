@@ -2,7 +2,7 @@ objective: Compromise secret from running workload.
 starting-point:
   mode: pod
   pod-name: ''
-  pod-namespace: ''
+  pod-namespace: 'secret-tank-desant'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
@@ -11,4 +11,7 @@ tasks:
       - text: kubectl exec into workload.
       - text: Workload - enumerate container filesystem.
       - text: Read AWS creds from file.
-    starting-point: ''
+    starting-point:
+      mode: pod
+      pod-name: ''
+      pod-namespace: 'secret-tank-desant'

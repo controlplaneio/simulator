@@ -16,4 +16,7 @@ tasks:
       - text: >-
           Looks like the MutatingAdmissionWebhook admission controller has been
           disabled. I probably need to enable it.
-    starting-point: ''
+    starting-point:
+      mode: node
+      node-id: 'master-0'
+      as-root: true

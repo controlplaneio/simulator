@@ -2,7 +2,7 @@ objective: Use privileged container to get host secrets.
 starting-point:
   mode: pod
   pod-name: ''
-  pod-namespace: ''
+  pod-namespace: 'policy-vertical-envelopment'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
@@ -14,12 +14,17 @@ tasks:
       - text: I think I can mount the host disk.
       - text: Looks like the xvda1 is the host disk.
       - text: The secret I need is in the node-secret directory.
-    starting-point: ''
+    starting-point:
+      mode: pod
+      pod-name: ''
+      pod-namespace: 'policy-vertical-envelopment'
   '2':
     sort-order: 2
     hints:
       - text: Looks like I need to set privileged to false.
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: true
   '3':
     sort-order: 3
     hints:
@@ -29,4 +34,6 @@ tasks:
           kube-system and policy-vertical-envelopment namespaces
       - text: I'll need to enable the PSP controller in the api-server.
       - text: My PSP for Jenkins should prevent 'privileged= true'.
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: true

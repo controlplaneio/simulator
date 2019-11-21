@@ -3,12 +3,12 @@
 ### Boilerplate
 
 * YAML version
-```
+```YAML
 kind: cp.simulator/scenario:<semver-version>
 ```
 
 * Scenario tags (categories)
-```
+```YAML
 tags:
  - AWS
  - Debug
@@ -17,7 +17,7 @@ tags:
 ### Tasks and Hints
 
 e.g.
-```
+```YAML
 tasks:
   "Task 1":
     sort-order: 1
@@ -43,7 +43,7 @@ Where we dump the user when they do `simulator ssh attack` and type `start`
 
 
 **First draft in MANIFEST.yaml**
-```
+```YAML
 attack: container
 instance: slave
 container-name: nginx
@@ -52,21 +52,21 @@ container-name: nginx
 **Proposed specification in hints.yaml**
 
 Default behaviour:
-```
-starting-point: 
+```YAML
+starting-point:
   mode: attack
 ```
 
 Land user sshed onto an internal VM instance that is not part of the kubernetes
 cluster but is in the private subnet:
-```
+```YAML
 starting-point:
   mode: internal-instance
   kubectl-access: true
 ```
 
 Land user sshed onto a node:
-```
+```YAML
 starting-point:
   mode: node
   node-id: One of <master-{0..n}|node-{0..n}>
@@ -74,17 +74,23 @@ starting-point:
 ```
 
 Land user exec'ed into a pod:
-```
+```YAML
 starting-point:
   mode: pod
   pod-name: "compromised-pod"
   pod-namespace: "default"
+```
+Do not put the user anywhere. This useful for harder scenarios where the whole
+cluster may be involved:
+```YAML
+starting-point:
+  mode: null
 ```
 
 ### Kubernetes Kind
 
 Not enough scenarios to specify platforms or versions or requiremnts etc.  Let's revisit when we design more scenarios:
 
-```
+```YAML
 local: <True|False>
 ```
