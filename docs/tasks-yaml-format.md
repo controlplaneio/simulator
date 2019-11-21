@@ -62,6 +62,7 @@ cluster but is in the private subnet:
 ```
 starting-point:
   mode: internal-instance
+  kubectl-access: true
 ```
 
 Land user sshed onto a node:
@@ -69,14 +70,15 @@ Land user sshed onto a node:
 starting-point:
   mode: node
   node-id: One of <master-{0..n}|node-{0..n}>
+  as-root: true
 ```
 
 Land user exec'ed into a pod:
 ```
 starting-point:
   mode: pod
-  node-type: One of <master|node>
   pod-name: "compromised-pod"
+  pod-namespace: "default"
 ```
 
 ### Kubernetes Kind
