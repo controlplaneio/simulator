@@ -1,6 +1,8 @@
 Scenario: A developer has informed you, they are able to make Kubernetes API calls from an Ubuntu pod although it only belongs to the default service account.
 
-Starting point: ubuntu pod in the rbac-shoot-and-scoot namespace
+Starting Point: ubuntu pod in the rbac-shoot-and-scoot namespace
+
+Difficulty: 
 
 Task 1: Can you replicate this issue.
 

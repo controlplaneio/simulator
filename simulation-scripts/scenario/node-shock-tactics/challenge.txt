@@ -2,7 +2,9 @@ Scenario: Your audit logs have indicated that a non-root user on one of the deve
 running containers including runtime secrets. The user name is 'alex' and the nodes can be found at $NODE_IP_ADDRESSES
 It appears that changes have been made in the etc directory.
 
-Starting point: worker node, Alex user
+Starting Point: worker node, Alex user
+
+Difficulty: 
 
 NOTE: DO NOT USE 'attack_node' AS THIS WILL BYPASS THE SCENARIO AND GIVE YOU ROOT ACCESS TO THE NODE.
 

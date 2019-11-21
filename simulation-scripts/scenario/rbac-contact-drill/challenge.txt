@@ -1,6 +1,8 @@
 Scenario: A developer has informed you that the ubuntu deployment is able to make secret calls to the API server. Only the secrets-caller pod should be able to do that.
 
-Starting point: ubuntu pod in the rbac-contact-drill namespace
+Starting Point: ubuntu pod in the rbac-contact-drill namespace
+
+Difficulty: 
 
 Task 1: Can you replicate this issue.
 
