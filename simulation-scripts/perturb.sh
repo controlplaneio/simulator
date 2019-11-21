@@ -17,16 +17,13 @@
 
 # exit on error or pipe failure
 set -eo pipefail
-# error on unset variable
-# shellcheck disable=SC2016
-if test "$BASH" = "" || "$BASH" -uc 'a=();true "${a[@]}"' 2>/dev/null; then
-  set -o nounset
-fi
+
 # error on clobber
 set -o noclobber
-# disable passglob
+
 if [[ "${BASH_VERSINFO:-0}" -ge 4 ]];  then
   shopt -s nullglob globstar
+  set -o nounset
 else
   shopt -s nullglob
 fi
