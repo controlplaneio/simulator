@@ -2,8 +2,9 @@
 #
 # Perturb Kubernetes Clusters
 #
-# Andrew Martin, 2018-05-10 21:52:47
-# sublimino@gmail.com
+# Created by: Andrew Martin, 2018-05-10 21:52:47 sublimino@gmail.com
+#
+# Refactored for kubesim by: Jon Kent 2019-11-21
 #
 ## Usage: perturb.sh [options] scenario
 ##
