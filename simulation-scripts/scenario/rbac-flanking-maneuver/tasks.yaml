@@ -36,4 +36,5 @@ tasks:
       - text: >-
           Don't use passwords for SSH connections, and definitely not easy
           ones.
-    starting-point: null
+    starting-point:
+      mode: null
