@@ -48,28 +48,50 @@ main() {
 
   [[ $# = 0 ]] && usage
 
-  parse_arguments "$@"
-  validate_arguments "$@"
+  while [ $# -gt 0 ]; do
+    case $1 in
+      -h | --help) usage ;;
+      -m | --master)
+        shift
+        not_empty_or_usage "${1:-}"
+        MASTER_HOST="${1}"
+        ;;
+      -s | --slaves)
+        shift
+        not_empty_or_usage "${1:-}"
+        SLAVE_HOSTS="${1}"
+        ;;
+      -b | --bastion)
+        shift
+        not_empty_or_usage "${1:-}"
+        BASTION_HOST="${1}"
+        ;;
+      --)
+        shift
+        break
+        ;;
+      -*) usage "${1}: unknown option" ;;
+      *) ARGUMENTS+=("$1") ;;
+    esac
+    shift
+  done
+
+  [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
+
+  [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
+  [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
+
+  SCENARIO="${ARGUMENTS[0]:-}" || true
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
   info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
 
-  if ! is_master_accessible; then
+  if ! $(ssh -F "${SSH_CONFIG_FILE}" -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "ConnectTimeout 3" root@"${MASTER_HOST}" true); then
     error "Cannot connect to ${MASTER_HOST}"
   elif [[ ! -d "${SCENARIO_DIR}" ]]; then
     error "Scenario directory not found at ${SCENARIO_DIR}"
   fi
-
-  run_scenario "${SCENARIO_DIR}"
-
-  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
-
-  success "End of perturb"
-}
-
-run_scenario() {
-  local SCENARIO_DIR="${1}"
 
   warning "Instructions in scenario:"
   ls -lasp "${SCENARIO_DIR}"
@@ -82,16 +104,9 @@ run_scenario() {
 
   run_scripts "${SCENARIO_DIR}"
 
-}
+  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
 
-is_master_accessible() {
-  ssh \
-    -F "${SSH_CONFIG_FILE}"  \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "ConnectTimeout 3" \
-    root@"${MASTER_HOST}" \
-    true
+  success "End of perturb"
 }
 
 copy_challenge_and_tasks() {
@@ -263,45 +278,6 @@ get_slave() {
     | tr ',' '\n' \
     | ${CAT_SORT} \
     | sed -n "${INDEX}p"
-}
-
-parse_arguments() {
-  while [ $# -gt 0 ]; do
-    case $1 in
-      -h | --help) usage ;;
-      -m | --master)
-        shift
-        not_empty_or_usage "${1:-}"
-        MASTER_HOST="${1}"
-        ;;
-      -s | --slaves)
-        shift
-        not_empty_or_usage "${1:-}"
-        SLAVE_HOSTS="${1}"
-        ;;
-      -b | --bastion)
-        shift
-        not_empty_or_usage "${1:-}"
-        BASTION_HOST="${1}"
-        ;;
-      --)
-        shift
-        break
-        ;;
-      -*) usage "${1}: unknown option" ;;
-      *) ARGUMENTS+=("$1") ;;
-    esac
-    shift
-  done
-}
-
-validate_arguments() {
-  [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
-
-  [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
-  [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
-
-  SCENARIO="${ARGUMENTS[0]:-}" || true
 }
 
 # helper functions
