@@ -12,13 +12,8 @@
 ##   -m, --master [string]      A Kubernetes API master host or IP (multi-master not supported)
 ##   -s, --slaves [string]      Kubernetes slave hosts or IPs, comma-separated
 ##   -b, --bastion [string]     Publicly accessible bastion server
-##   --test                     Only run tests, do not deploy
 ##
-##   --force                    Ignore consistency and overwrite checks
 ##   --skip-check               Skips remote host connectivity check
-##
-##   --dry-run                  Dry run
-##   --debug                    More debug
 ##
 ##   -h --help                  Display this message
 ##
@@ -40,9 +35,7 @@ else
 fi
 
 # user defaults
-IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
-IS_SKIP_CHECK=0
 SSH_CONFIG_FILE="$HOME/.ssh/cp_simulator_config"
 
 # resolved directory and self
@@ -51,18 +44,15 @@ THIS_SCRIPT="${DIR}/$(basename "$0")"
 
 # required defaults
 declare -a ARGUMENTS
-EXPECTED_NUM_ARGUMENTS=1
 ARGUMENTS=()
 SCENARIO=''
 MASTER_HOST=""
 SLAVE_HOSTS=""
 BASTION_HOST=""
-IS_TEST_ONLY=0
-IS_FORCE=0
 
 main() {
 
-  [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
+  [[ $# = 0 ]] && usage
 
   parse_arguments "$@"
   validate_arguments "$@"
@@ -77,11 +67,9 @@ main() {
     error "Scenario directory not found at ${SCENARIO_DIR}"
   fi
 
-  if [[ "${IS_TEST_ONLY:-}" != 1 ]]; then
-    run_scenario "${SCENARIO_DIR}"
+  run_scenario "${SCENARIO_DIR}"
 
-    success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
-  fi
+  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
 
   success "End of perturb"
 }
@@ -103,9 +91,6 @@ run_scenario() {
 }
 
 is_master_accessible() {
-  if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
-    return 0
-  fi
   ssh \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
@@ -207,25 +192,25 @@ run_scripts() {
     case "${TYPE}" in
 
       *worker-any.sh)
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 0)"
+        run_file_on_host "${FILE}" "$(get_slave 0)"
         ;;
       *worker-1.sh)
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "$(get_slave 1)"
         ;;
       *worker-2.sh)
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "$(get_slave 2)"
         ;;
       *workers-every.sh)
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 1)"
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "$(get_slave 2)"
         ;;
       *nodes-every.sh)
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_master)"
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 1)"
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "$(get_master)"
+        run_file_on_host "${FILE}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "$(get_slave 2)"
         ;;
       *master.sh)
-        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_master)"
+        run_file_on_host "${FILE}" "$(get_master)"
         ;;
 
        test.sh)
@@ -252,23 +237,21 @@ run_ssh() {
 
 run_file_on_host() {
   local FILE="${1}"
-  local SCENARIO_DIR="${2}"
-  local HOST="${3}"
+  local HOST="${2}"
 
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    /app/simulation-scripts/${FILE} root@${HOST}:/root/setup.sh
-#    ${SCENARIO_DIR}/${FILE} root@${HOST}:/root/setup.sh
+    /app/simulation-scripts/"${FILE}" root@"${HOST}":/root/setup.sh
 
   ssh -q -t \
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    root@${HOST} "chmod +x /root/setup.sh && /root/setup.sh"
+    root@"${HOST}" "chmod +x /root/setup.sh && /root/setup.sh"
 
-  echo "PERTURBANCE COMPLETE FOR /simulation-scripts/${FILE} ON ${HOST} - new approach"
+  echo "PERTURBANCE COMPLETE FOR /simulation-scripts/${FILE} ON ${HOST}"
 }
 
 get_master() {
@@ -296,23 +279,11 @@ parse_arguments() {
   while [ $# -gt 0 ]; do
     case $1 in
       -h | --help) usage ;;
-      --dry-run)
-        IS_DRY_RUN=1
-        ;;
       --auto-populate)
         shift
         not_empty_or_usage "${1:-}"
         IS_AUTOPOPULATE=1
         AUTOPOPULATE_REGEX="${1}"
-        ;;
-      --test)
-        IS_TEST_ONLY=1
-        ;;
-      --force)
-        IS_FORCE=1
-        ;;
-      --skip-check)
-        IS_SKIP_CHECK=1
         ;;
       -m | --master)
         shift
@@ -364,7 +335,6 @@ get_cluster_slaves() {
 
 validate_arguments() {
   [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
-  [[ "${#ARGUMENTS[@]}" -lt 1 && "${IS_TEST_ONLY}" != 1 ]] && error "Scenario required"
 
   if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
     MASTER_HOST=$(
