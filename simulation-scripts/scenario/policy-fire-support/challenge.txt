@@ -3,6 +3,8 @@ These files are host mounted SSH keys for managing other infrastructure.
 
 Starting Point: jenkins pod in policy-fire-support namespace
 
+Difficulty: 
+
 Task 1: Can you replay this by getting the SSH Keys from the container?
 
 Task 2: What small configuration change can you make to prevent the Jenkins user from reading these files?

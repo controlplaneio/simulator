@@ -2,6 +2,8 @@ Scenario: A new process monitoring tool has been deployed to your cluster. A fel
 
 Starting Point: process-monitoring pod in the policy-echelon-formation namespace.
 
+Difficulty: 
+
 Task 1: Can you verify this suspicion by retrieving the DB_PASSWORD, AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID from the postgres DaemonSet?
 
 Task 2: What small change can be made to the Deployment to prevent this compromise from happening again? NOTE: The deployment does require access to the host PID namespace.

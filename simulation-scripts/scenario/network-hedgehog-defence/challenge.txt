@@ -3,6 +3,8 @@ The 'database' service is only supposed to be reachable from within its namespac
 
 Starting Point: setup pod
 
+Difficulty: 
+
 Task 1: Figure out how the setup pod has managed to send Postgres requests from a different namespace.
 
 Task 2: Which Kubernetes resource can you add to the namespace to prevent this communication, but still allow namespace internal communication?

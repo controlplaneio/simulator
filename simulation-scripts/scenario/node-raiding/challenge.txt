@@ -4,5 +4,7 @@ You have recently read a blog post about how to exfiltrate secrets with just net
 
 Starting Point: start-pod pod in node-raiding namespace
 
+Difficulty: 
+
 Task 1: From a pod in the cluster, replicate the attack.
 Task 2: Set up correct security parameters to prevent this type of attack in the future.

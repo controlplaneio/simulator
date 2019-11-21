@@ -4,6 +4,8 @@ The application is the only app deployed to this cluster and does not need to ac
 
 Starting Point: Cluster network access
 
+Difficulty: 
+
 Task 1: Can you breach the pod running on the node and gain access to it?
 Task 2: How can you update the cluster configuration to prevent escalation once the pod has been compromised?
 Task 3: Think about how you breached the pod. How should this be set up in the future to prevent easy breaches? You don't need to do anything for this task.

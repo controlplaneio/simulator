@@ -2,4 +2,6 @@ Scenario: During your basic app sec testing you have been able to break out of y
 
 Starting Point: nginx pod in secret-tank-desant namespace
 
+Difficulty: 
+
 Task 1: Is there a secret way an attacker could progress the attack?
