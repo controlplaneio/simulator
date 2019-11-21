@@ -4,20 +4,20 @@
 * @kubernetes-simulator/simulator
 
 # Scenarios
-/simulation-scripts/scenario @s-irvine @pi-unnerup
+/simulation-scripts/scenario @s-irvine @pi-unnerup @abdullahgarcia
 
 # Terraform
 /terraform @s-irvine @raoulmillas @jondkent
 
 # Tools
-/tools @raoulmillas
+/tools @raoulmillas @abdullahgarcia
 
 # Attack Container
 /attack @raoulmillas @jondkent
 
 # Simulator Binaries
-/cmd @raoulmillas @jondkent
-/pkg @raoulmillas @jondkent
+/cmd @raoulmillas @jondkent @abdullahgarcia
+/pkg @raoulmillas @jondkent @abdullahgarcia
 
 # kubesim
 /kubesim @s-irvine @raoulmillas
