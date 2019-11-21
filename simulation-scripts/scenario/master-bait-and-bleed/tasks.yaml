@@ -2,7 +2,7 @@ objective: API is enabled on --insecure-bind-address and --insecure-port
 starting-point:
   mode: pod
   pod-name: ''
-  pod-namespace: ''
+  pod-namespace: 'master-bait-and-bleed'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
@@ -14,7 +14,10 @@ tasks:
       - text: >-
           Looks like you may be able to access the Kubernetes API on port 8080.
           Try curling some of the end-points. You may need to download curl.
-    starting-point: ''
+    starting-point:
+      mode: pod
+      pod-name: ''
+      pod-namespace: 'master-bait-and-bleed'
   '2':
     sort-order: 2
     hints:
@@ -25,4 +28,7 @@ tasks:
           --insecure-bind-address and --insecure-port is enabled on the API in
           the manifest at /etc/kubernetes/manifests/kube-apiserver.yaml. Set the
           insecure port to 0 and delete the binding.
-    starting-point: ''
+    starting-point:
+      mode: node
+      node-id: 'master-0'
+      as-root: true

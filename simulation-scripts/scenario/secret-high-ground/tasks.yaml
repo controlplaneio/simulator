@@ -12,10 +12,14 @@ tasks:
           Is the a flag I can update that will force the container to pull from
           the offical repository?
       - text: I should set the PullPolicy flag to Always.
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: true
   '2':
     sort-order: 2
     hints:
       - text: A kubernetes secret is the best choice here.
       - text: I can mount the secret data as a file into the pod.
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: true

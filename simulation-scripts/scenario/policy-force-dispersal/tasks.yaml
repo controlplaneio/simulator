@@ -15,4 +15,7 @@ tasks:
       - text: >-
           Looks like the PodSecurityPolicy is missing from the admission
           controllers.
-    starting-point: ''
+    starting-point:
+      mode: node
+      node-id: 'master-0'
+      as-root: true
