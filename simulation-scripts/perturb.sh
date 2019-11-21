@@ -13,8 +13,6 @@
 ##   -s, --slaves [string]      Kubernetes slave hosts or IPs, comma-separated
 ##   -b, --bastion [string]     Publicly accessible bastion server
 ##
-##   --skip-check               Skips remote host connectivity check
-##
 ##   -h --help                  Display this message
 ##
 
