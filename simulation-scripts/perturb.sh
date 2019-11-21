@@ -8,7 +8,6 @@
 ## Usage: perturb.sh [options] scenario
 ##
 ## Options:
-##   --auto-populate [regex]    Pull master and slaves from doctl
 ##   -m, --master [string]      A Kubernetes API master host or IP (multi-master not supported)
 ##   -s, --slaves [string]      Kubernetes slave hosts or IPs, comma-separated
 ##   -b, --bastion [string]     Publicly accessible bastion server
@@ -33,7 +32,6 @@ else
 fi
 
 # user defaults
-IS_AUTOPOPULATE=0
 SSH_CONFIG_FILE="$HOME/.ssh/cp_simulator_config"
 
 # resolved directory and self
@@ -273,12 +271,6 @@ parse_arguments() {
   while [ $# -gt 0 ]; do
     case $1 in
       -h | --help) usage ;;
-      --auto-populate)
-        shift
-        not_empty_or_usage "${1:-}"
-        IS_AUTOPOPULATE=1
-        AUTOPOPULATE_REGEX="${1}"
-        ;;
       -m | --master)
         shift
         not_empty_or_usage "${1:-}"
