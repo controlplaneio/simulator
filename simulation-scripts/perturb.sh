@@ -69,24 +69,7 @@ main() {
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
-#  if [[ "${IS_TEST_ONLY:-}" == 1 ]]; then
-#    success "In test mode, skipping deployment of ${SCENARIO}"
-#  else
-#
-#    source test-func.sh
-#
-#    local FOUND_SCENARIO
-#    if FOUND_SCENARIO=$(find_scenario); then
-#      if [[ "${IS_FORCE}" != 1 && "${FOUND_SCENARIO}" == "${SCENARIO}" ]]; then
-#        if ! is_special_scenario; then
-#          error "Scenario ${SCENARIO} already deployed, reset deployment with 'cleanup' first"
-#        fi
-#      fi
-#      info "Found scenario ${FOUND_SCENARIO}"
-#    fi
-#
-    info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
-#  fi
+  info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
 
   if ! is_master_accessible; then
     error "Cannot connect to ${MASTER_HOST}"
@@ -103,13 +86,6 @@ main() {
   success "End of perturb"
 }
 
-#is_special_scenario() {
-#  if [[ "${SCENARIO:-}" == "" ]]; then
-#    error "SCENARIO is empty in is_special_scenario"
-#  fi
-#  [[ "$SCENARIO" == 'cleanup' || "$SCENARIO" == 'noop' ]]
-#}
-
 run_scenario() {
   local SCENARIO_DIR="${1}"
 
@@ -124,36 +100,7 @@ run_scenario() {
 
   run_scripts "${SCENARIO_DIR}"
 
-#  run_cleanup "${SCENARIO_DIR}"
-
-#  get_pods
-
 }
-
-#get_pods() {
-#  # sleep to ensure all pods are initialised
-#  sleep 30
-#  local QUERY_DOCKER="docker ps"
-#  local TMP_DIR="/home/launch/.kubesim"
-#  local TMP_FILE="${TMP_DIR}/docker-"
-#  local SLAVE_1
-#  local SLAVE_2
-#  local MASTER_1
-#
-#  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >| "${TMP_FILE}"master
-#  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" >| "${TMP_FILE}"slave-1
-#  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" >| "${TMP_FILE}"slave-2
-#
-#  MASTER_1="$(get_master)"
-#  SLAVE_1="$(get_slave 1)"
-#  SLAVE_2="$(get_slave 2)"
-#
-#  sed -i 's/^/'${MASTER_1}' /' "${TMP_FILE}"master
-#  sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
-#  sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
-#
-#  tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
-#}
 
 is_master_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
@@ -260,25 +207,25 @@ run_scripts() {
     case "${TYPE}" in
 
       *worker-any.sh)
-        run_file_on_host "${FILE}" "$(get_slave 0)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 0)"
         ;;
       *worker-1.sh)
-        run_file_on_host "${FILE}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 1)"
         ;;
       *worker-2.sh)
-        run_file_on_host "${FILE}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 2)"
         ;;
       *workers-every.sh)
-        run_file_on_host "${FILE}" "$(get_slave 1)"
-        run_file_on_host "${FILE}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 2)"
         ;;
       *nodes-every.sh)
-        run_file_on_host "${FILE}" "$(get_master)"
-        run_file_on_host "${FILE}" "$(get_slave 1)"
-        run_file_on_host "${FILE}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_master)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_slave 2)"
         ;;
       *master.sh)
-        run_file_on_host "${FILE}" "$(get_master)"
+        run_file_on_host "${FILE}" "${SCENARIO_DIR}" "$(get_master)"
         ;;
 
        test.sh)
@@ -293,60 +240,6 @@ run_scripts() {
 
 }
 
-#run_cleanup() {
-#  warning 'Cleanup started'
-#
-#  local SCENARIO_DIR="${1}"
-#
-#  local COVER_TRACKS_SCRIPT="scenario/cover-tracks.sh"
-#  local REBOOT_SCRIPT="scenario/reboot.sh"
-#
-#  local SCRIPTS_TO_RUN=""
-#  local TEMP_FILE
-#
-#  # cover tracks on all nodes, reboot all nodes if required
-#
-#  if [[ ! -f "${SCENARIO_DIR}/no-cleanup.do" ]]; then
-#    info "Covering tracks..."
-#    SCRIPTS_TO_RUN+=" ${COVER_TRACKS_SCRIPT}"
-#  fi
-#
-#  if [[ -f "${SCENARIO_DIR}/reboot-all.do" ]]; then
-#    SCRIPTS_TO_RUN+=" ${REBOOT_SCRIPT}"
-#  fi
-#
-#  if ! is_special_scenario; then
-#    if [[ ! -f "${SCENARIO_DIR}/challenge.txt" ]]; then
-#      error "Scenario requires 'challenge.txt' to identify itself on the remote server"
-#    elif [[ $(stat "${SCENARIO_DIR}/challenge.txt" | awk '/^  Size: /{print $2}') -lt 20 ]]; then
-#      error "Filesize of ${SCENARIO_DIR}/challenge.txt is too small, and it must be unique"
-#    fi
-#
-#    TEMP_FILE=$(mktemp)
-#    # shellcheck disable=SC2140
-#    echo "echo 'cat ""${SCENARIO_DIR}"/challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
-#    SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
-#  fi
-##
-#  warning "Running script '${SCRIPTS_TO_RUN}'"
-#
-#  for FILE_TO_RUN in ${SCRIPTS_TO_RUN}; do
-#    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_master)" || true
-#    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_slave 1)" || true
-#    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_slave 2)" || true
-#  done
-#
-#  # reboot master or workers if required
-#
-#  if [[ -f "${SCENARIO_DIR}/reboot-master.do" ]]; then
-#    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_master)" || true
-#  fi
-#
-#  if [[ -f "${SCENARIO_DIR}/reboot-workers.do" ]]; then
-#    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_slave 1)" || true
-#    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_slave 2)" || true
-#  fi
-#}
 
 run_ssh() {
   # shellcheck disable=SC2145
@@ -357,38 +250,25 @@ run_ssh() {
     root@"${@}"
 }
 
-#get_file_to_run() {
-#  local FILE="${1}"
-#  echo "set -x"
-#  if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
-#    cat "${FILE}" >&2
-#  else
-#    cat "${FILE}"
-#  fi
-#  echo "echo PERTURBANCE COMPLETE FOR ${FILE} ON \$(hostname) AT \$(date)"
-#  echo
-#}
-
 run_file_on_host() {
   local FILE="${1}"
-  local HOST="${2}"
+  local SCENARIO_DIR="${2}"
+  local HOST="${3}"
 
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     /app/simulation-scripts/${FILE} root@${HOST}:/root/setup.sh
+#    ${SCENARIO_DIR}/${FILE} root@${HOST}:/root/setup.sh
 
   ssh -q -t \
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     root@${HOST} "chmod +x /root/setup.sh && /root/setup.sh"
+
   echo "PERTURBANCE COMPLETE FOR /simulation-scripts/${FILE} ON ${HOST} - new approach"
-#  (
-#    set -x
-#    get_file_to_run "${FILE}"
-#  ) | run_ssh "${HOST}"
 }
 
 get_master() {
