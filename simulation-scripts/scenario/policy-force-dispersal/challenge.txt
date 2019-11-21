@@ -3,4 +3,6 @@ The PodSecurityPolicy for this pod should be preventing it from running given th
 
 Starting Point: master node
 
+Difficulty: 
+
 Task 1: Can you find out why the pod was allowed to schedule?

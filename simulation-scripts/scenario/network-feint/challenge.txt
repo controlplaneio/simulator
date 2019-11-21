@@ -4,6 +4,8 @@ As a security engineer you are concerned because the application itself appears 
 
 Starting Point: cluster access
 
+Difficulty: 
+
 Task 1: Can you interact with the NodePort to find a secret key?
 Details: This would prove that there is an error in the configuration for this namespace.
 

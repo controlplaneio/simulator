@@ -2,6 +2,8 @@ Scenario: You have a Jenkins container provisioned by another team running in th
 
 Starting Point: Jenkins pod in the policy-vertical-envelopment namespace.
 
+Difficulty: 
+
 Task 1: Can you figure out how the node was compromised?
 
 Task 2: What small change can be made to the Deployment to prevent this compromise from happening again?

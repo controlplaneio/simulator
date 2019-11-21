@@ -2,6 +2,8 @@ Scenario: After a change to your clusters RBAC, your reviewed the audit logs and
 
 Starting Point: frontend pod in the rbac-sangar namespace
 
+Difficulty: 
+
 Task 1: Can you use the rbac-sangar default service account to retrieve a secret from the application pods in the rbac-sangar namespace?
 
 Task 2: Find out how the default service account gained these elevated permissions and fix the issue.

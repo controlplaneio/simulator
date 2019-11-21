@@ -5,6 +5,8 @@ Scenario: A team has been running their own Jenkins container by baking secrets 
 
 Starting Point: Cluster network access.
 
+Difficulty: 
+
 Task 1: Can you fix the configuration error that allowed these secrets to persist?
 
 Task 2: The team has now realised that they still need the 'secrets/aws-creds' file. Can you provision this file securely into the container?
