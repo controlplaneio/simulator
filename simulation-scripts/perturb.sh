@@ -94,7 +94,7 @@ is_master_accessible() {
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "ConnectTimeout 3" \
-    "$(get_connection_string)" \
+    root@"${MASTER_HOST}" \
     true
 }
 
@@ -267,10 +267,6 @@ get_slave() {
     | tr ',' '\n' \
     | ${CAT_SORT} \
     | sed -n "${INDEX}p"
-}
-
-get_connection_string() {
-  echo "root@${MASTER_HOST}"
 }
 
 parse_arguments() {
