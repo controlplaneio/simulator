@@ -305,44 +305,11 @@ parse_arguments() {
   done
 }
 
-get_node_ips() {
-  if [[ -z "${NODE_IPS:-}" ]]; then
-    NODE_IPS=$(doctl compute droplet list | grep -- "${AUTOPOPULATE_REGEX}" | awk '{print $2" "$3}' | sort | awk '{print $2}')
-  fi
-  if [[ "$(echo "${NODE_IPS}" | wc -l)" != 3 ]]; then
-    error "Exactly 3 node ips required from search regex ${AUTOPOPULATE_REGEX}. Found: ${NODE_IPS}"
-  fi
-  echo "${NODE_IPS}"
-}
-
-get_cluster_master() {
-  local IPS
-  IPS=$(get_node_ips)
-  echo "${IPS}" | head -n1
-}
-
-get_cluster_slaves() {
-  local IPS
-  IPS=$(get_node_ips)
-  echo "${IPS}" | tail -n +2 | tr '\n' ','
-}
-
 validate_arguments() {
   [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
 
-  if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
-    MASTER_HOST=$(
-      set -e
-      get_cluster_master
-    )
-    SLAVE_HOSTS=$(
-      set -e
-      get_cluster_slaves
-    )
-  else
-    [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
-    [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
-  fi
+  [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
+  [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
 
   SCENARIO="${ARGUMENTS[0]:-}" || true
 }
@@ -351,7 +318,6 @@ validate_arguments() {
 
 usage() {
   [ "$*" ] && echo "${THIS_SCRIPT}: ${COLOUR_RED}$*${COLOUR_RESET}" && echo
-  #sed -n '/^##/,/^$/s/^## \{0,1\}//p' "${THIS_SCRIPT}" | sed "s/%SCRIPT_NAME%/$(basename "${THIS_SCRIPT}")/g"
   sed -n '/^##/p' "${THIS_SCRIPT}"
   exit 2
 } 2>/dev/null
