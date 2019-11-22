@@ -2,7 +2,7 @@ Scenario: You have a Jenkins container provisioned by another team running in th
 
 Starting Point: Jenkins pod in the policy-vertical-envelopment namespace.
 
-Difficulty: 
+Difficulty: Medium
 
 Task 1: Can you figure out how the node was compromised?
 

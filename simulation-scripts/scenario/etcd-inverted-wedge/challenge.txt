@@ -2,7 +2,7 @@ A developer has reported secrets leaking from your cluster, but no record of req
 
 Starting Point: ubuntu pod in the etcd-inverted-wedge namespace.
 
-Difficulty: 
+Difficulty: Hard
 
 Task 1: How can you access secrets from inside the ubuntu pod in the cluster.
 Task 2: How can you resolve this access issue.

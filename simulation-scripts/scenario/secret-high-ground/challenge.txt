@@ -5,7 +5,7 @@ Scenario: A team has been running their own Jenkins container by baking secrets 
 
 Starting Point: Cluster network access.
 
-Difficulty: 
+Difficulty: Easy
 
 Task 1: Can you fix the configuration error that allowed these secrets to persist?
 

@@ -2,7 +2,7 @@ Scenario: A developer has informed you, they are able to make Kubernetes API cal
 
 Starting Point: ubuntu pod in the rbac-shoot-and-scoot namespace
 
-Difficulty: 
+Difficulty: Easy
 
 Task 1: Can you replicate this issue.
 

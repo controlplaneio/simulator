@@ -2,7 +2,7 @@ Scenario: A new process monitoring tool has been deployed to your cluster. A fel
 
 Starting Point: process-monitoring pod in the policy-echelon-formation namespace.
 
-Difficulty: 
+Difficulty: Medium
 
 Task 1: Can you verify this suspicion by retrieving the DB_PASSWORD, AWS_SECRET_ACCESS_KEY and AWS_ACCESS_KEY_ID from the postgres DaemonSet?
 

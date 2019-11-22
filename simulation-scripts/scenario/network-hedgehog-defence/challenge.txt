@@ -3,7 +3,7 @@ The 'database' service is only supposed to be reachable from within its namespac
 
 Starting Point: setup pod
 
-Difficulty: 
+Difficulty: Medium
 
 Task 1: Figure out how the setup pod has managed to send Postgres requests from a different namespace.
 
