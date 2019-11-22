@@ -6,6 +6,8 @@ The following is a guide on contributing scenarios in terms of what they should 
 
 Ensure that your scenario does not already exist in [the list of scenarios](../simulation-scripts/scenario/). You can read all the challenge texts and hints in each scenario's directory. Familiarise yourself with the structure.
 
+Think about how difficult your scenario will be. Guidelines can be found [here.](./difficulty.md)
+
 ## Creating scenarios
 
 ### How to add a scenario
