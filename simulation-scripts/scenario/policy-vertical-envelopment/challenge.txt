@@ -1,4 +1,4 @@
-Scenario: You have a Jenkins container provisioned by another team running in the "policy-vertical-envelopment" namespace. This container has a known vulnerability and is the suspected vector for a previous node compromise. You have been assured that this container does not do any Docker builds so does not have the Docker socket mounted.
+Scenario: You have a Jenkins container provisioned by another team running in the "policy-vertical-envelopment" namespace. This container has a suspected vulnerability and is the suspected vector for a previous node compromise. You have been assured that this container does not do any Docker builds so does not have the Docker socket mounted.
 
 Starting Point: Jenkins pod in the policy-vertical-envelopment namespace.
 

@@ -3,7 +3,7 @@ Your application in the 'network-swarming' namespace follows a standard frontend
 During the attack it was obvious that your frontend pods were compromised.
 However, it appears as though your API pods were untouched and they did not respond to any unusual requests.
 Unfortunately, the database logs reported some odd activity during the attack.
-Concerns over a potential database compromise have been dismissed as "contacting the database from the frontend would violate our request flow".
+Concerns over a potential database compromise have been flagged as contacting the database from the frontend would violate the request flow.
 
 Starting Point: frontend pod in the network-swarming namespace
 
