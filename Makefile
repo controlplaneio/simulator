@@ -53,7 +53,7 @@ reset: ## Clean up files left over by simulator
 
 .PHONY: validate-reqs
 validate-reqs: ## Verify all requirements are met
-	@./scripts/validate-reqs
+	@./scripts/validate-requirements
 
 .PHONY: previous-tag
 previous-tag:
@@ -95,7 +95,7 @@ docker-build: ## Builds the launch container
 	@docker build -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-test
-docker-test: docker-build ## Run the tests
+docker-test: validate-reqs docker-build ## Run the tests
 	@export AWS_DEFAULT_REGION="testing propagation to AWS_REGION var"; \
 	docker run                                                			\
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws  			\
@@ -155,7 +155,7 @@ docs: ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 .PHONY: release
-release: gpg-preflight previous-tag release-tag docker-test docker-build build ## Docker container and binary release automation for simulator
+release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker-build build ## Docker container and binary release automation for simulator
 	git tag --sign -m $(RELEASE_TAG) $(RELEASE_TAG)
 	git push origin $(RELEASE_TAG)
 	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
