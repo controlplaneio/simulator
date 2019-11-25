@@ -7,7 +7,7 @@ Concerns over a potential database compromise have been dismissed as "contacting
 
 Starting Point: frontend pod in the network-swarming namespace
 
-Difficulty: 
+Difficulty: Easy
 
 Task 1: Can you replay the attack and explain the unusual database logs?
 

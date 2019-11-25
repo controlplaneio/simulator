@@ -3,7 +3,7 @@ These files are host mounted SSH keys for managing other infrastructure.
 
 Starting Point: jenkins pod in policy-fire-support namespace
 
-Difficulty: 
+Difficulty: Easy
 
 Task 1: Can you replay this by getting the SSH Keys from the container?
 

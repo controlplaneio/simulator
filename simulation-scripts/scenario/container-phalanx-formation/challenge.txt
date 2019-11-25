@@ -2,6 +2,6 @@ Scenario: During a routine audit of an application, it was noticed that there is
 
 Starting Point: Kubectl access
 
-Difficulty:
+Difficulty: Easy
 
 Task 1: Assuming you are an internal actor (i.e. you have full kubectl access) can you figure out how these secrets were compromised?

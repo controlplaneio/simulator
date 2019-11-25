@@ -4,7 +4,7 @@ It appears that changes have been made in the etc directory.
 
 Starting Point: worker node, Alex user
 
-Difficulty: 
+Difficulty: Medium
 
 NOTE: DO NOT USE 'attack_node' AS THIS WILL BYPASS THE SCENARIO AND GIVE YOU ROOT ACCESS TO THE NODE.
 

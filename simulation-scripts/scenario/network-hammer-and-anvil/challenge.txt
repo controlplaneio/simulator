@@ -5,7 +5,7 @@ You are concerned that this is potentially insecure especially since you suspect
 
 Starting Point: frontend pods in the network-hammer-and-anvil namespace.
 
-Difficulty: 
+Difficulty: Medium
 
 Task 1: Can you exfiltrate an old database backup as well as the current database state?
 Details: Place the files in '/exfiltrated' on $MASTER_IP_ADDRESSES using the root account with this base64'd SSH key: $BASE64_SSH_KEY

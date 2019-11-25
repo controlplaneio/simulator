@@ -2,7 +2,7 @@ Scenario: A developer has informed you that the ubuntu deployment is able to mak
 
 Starting Point: ubuntu pod in the rbac-contact-drill namespace
 
-Difficulty: 
+Difficulty: Easy
 
 Task 1: Can you replicate this issue.
 

@@ -3,7 +3,7 @@ There is a known vulnerability in the node-cert-manager pod.
 
 Starting Point: cert-manager pod in the container-defeat-in-detail namespace.
 
-Difficulty: 
+Difficulty: Meduim
 
 Task 1: Can you demonstrate that the extra pods are a significant concern by retrieving a flag from etcd?
 Details: etcd is running at $MASTER_IP_ADDRESSES.

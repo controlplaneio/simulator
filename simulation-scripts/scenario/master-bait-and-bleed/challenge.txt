@@ -3,7 +3,7 @@ Your cluster is running with master IP: $MASTER_IP_ADDRESSES
 
 Starting Point: ubuntu pod in the master-bait-and-bleed namespace.
 
-Difficulty :
+Difficulty : Medium
 
 Task 1: Figure out how this is possible by making an API call from the cluster.
 Task 2: Amend the configuration so nothing can access the API beyond their intended RBAC capabilities.

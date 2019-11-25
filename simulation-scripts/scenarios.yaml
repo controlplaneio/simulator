@@ -4,92 +4,92 @@ scenarios:
   - name: Container Ambush
     path: ./scenario/container-ambush
     id: container-ambush
-    difficulty:
+    difficulty: Easy
   - name: Container Defeat in Detail
     path: ./scenario/container-defeat-in-detail
     id: container-defeat-in-detail
-    difficulty:
+    difficulty: Medium
   - name: Container Phalanx Formation
     path: ./scenario/container-phalanx-formation
     id: container-phalanx-formation
-    difficulty:
+    difficulty: Easy
   - name: ETCD Inverted Wedge
     path: ./scenario/etcd-inverted-wedge
     id: etcd-inverted-wedge
-    difficulty:
+    difficulty: Hard
   - name: Master bait and bleed
     path: ./scenario/master-bait-and-bleed
     id: master-bait-and-bleed
-    difficulty:
+    difficulty: Medium
   - name: Master Encirclement
     path: ./scenario/master-encirclement
     id: master-encirclement
-    difficulty:
+    difficulty: Medium
   - name: Network Feint
     path: ./scenario/network-feint
     id: network-feint
-    difficulty:
+    difficulty: Medium
   - name: Network Hammer and Anvil
     path: ./scenario/network-hammer-and-anvil
     id: network-hammer-and-anvil
-    difficulty:
+    difficulty: Medium
   - name: Network Hedgehog Defense
     path: ./scenario/network-hedgehog-defence
     id: network-hedgehog-defence
-    difficulty:
+    difficulty: Medium
   - name: Network Swarming
     path: ./scenario/network-swarming
     id: network-swarming
-    difficulty:
+    difficulty: Easy
   - name: Node Amphibious Operations
     path: ./scenario/node-amphibious-operations
     id: node-amphibious-operations
-    difficulty:
+    difficulty: Hard
   - name: Node Raiding
     path: ./scenario/node-raiding
     id: node-raiding
-    difficulty:
+    difficulty: Medium
   - name: Node Shock Tactics
     path: ./scenario/node-shock-tactics
     id: node-shock-tactics
-    difficulty:
+    difficulty: Medium
   - name: Policy Echelon Formation
     path: ./scenario/policy-echelon-formation
     id: policy-echelon-formation
-    difficulty:
+    difficulty: Hard
   - name: Policy Fire Support
     path: ./scenario/policy-fire-support
     id: policy-fire-support
-    difficulty:
+    difficulty: Easy
   - name: Policy Force Dispersal
     path: ./scenario/policy-force-dispersal
     id: policy-force-dispersal
-    difficulty:
+    difficulty: Easy
   - name: Policy Vertical Envelopment
     path: ./scenario/policy-vertical-envelopment
     id: policy-vertical-envelopment
-    difficulty:
+    difficulty: Medium
   - name: RBAC Contact Drill
     path: ./scenario/rbac-contact-drill
     id: rbac-contact-drill
-    difficulty:
-  - name: RBAC Sangar
-    path: ./scenario/rbac-sangar
-    id: rbac-sangar
-    difficulty:
+    difficulty: Easy
   - name: RBAC Flanking Maneuver
     path: ./scenario/rbac-flanking-maneuver
     id: rbac-flanking-maneuver
-    difficulty:
+    difficulty: Hard
+  - name: RBAC Sangar
+    path: ./scenario/rbac-sangar
+    id: rbac-sangar
+    difficulty: Easy
   - name: RBAC Shoot and Scoot
     path: ./scenario/rbac-shoot-and-scoot
     id: rbac-shoot-and-scoot
-    difficulty:
+    difficulty: Easy
   - name: Secret High Ground
     path: ./scenario/secret-high-ground
     id: secret-high-ground
-    difficulty:
+    difficulty: Easy
   - name: Secret Tank Desant
     path: ./scenario/secret-tank-desant
     id: secret-tank-desant
-    difficulty: 
+    difficulty: Easy
