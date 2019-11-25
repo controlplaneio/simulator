@@ -26,7 +26,7 @@ spec:
 ```
 Starting Point: On the Master Node
 
-Difficulty: Hard
+Difficulty: Medium
 
 Task 1: Can you find out why the pod was allowed to schedule and fix the problem?
   NOTE: You may need to delete and reapply the deployment to ensure your fix is valid.
