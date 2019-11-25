@@ -1,9 +1,9 @@
 Scenario: One of your engineers has noticed that there are more pods of your node-cert-manager DaemonSet running than they would expect.
-There is a known vulnerability in the node-cert-manager pod.
+There is a suspected vulnerability in the node-cert-manager pod.
 
-Starting Point: cert-manager pod in the container-defeat-in-detail namespace.
+Starting Point: cluster internal instance with kubectl access
 
-Difficulty: Meduim
+Difficulty: Medium
 
 Task 1: Can you demonstrate that the extra pods are a significant concern by retrieving a flag from etcd?
 Details: etcd is running at $MASTER_IP_ADDRESSES.
