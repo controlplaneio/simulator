@@ -34,7 +34,7 @@ setup-dev: ## Initialise simulation tree with git hooks
 	@ln -s $(shell pwd)/setup/hooks/pre-commit $(shell pwd)/.git/hooks/pre-commit
 
 .PHONY: devtools-deps
-devtools-deps: # Install devtools dependencies
+devtools-deps: ## Install devtools dependencies
 	cd $(TOOLS_DIR) && npm install
 
 .PHONY: devtools
@@ -43,7 +43,7 @@ devtools: devtools-deps ## Install devtools
 	@echo "`scenario` should now be on your PATH"
 
 .PHONY: test-devtools
-test-devtools: # Run all the unit tests for the devtools
+test-devtools: ## Run all the unit tests for the devtools
 	cd $(TOOLS_DIR) && npm test
 
 .PHONY: reset
@@ -51,9 +51,9 @@ reset: ## Clean up files left over by simulator
 	@rm -rf ~/.ssh/cp_simulator_*
 	@rm -f -- ~/.kubesim/*
 
-.PHONY: validate-requirements
-validate-requirements: ## Verify all requirements are met
-	@./scripts/validate-requirements
+.PHONY: validate-reqs
+validate-reqs: ## Verify all requirements are met
+	@./scripts/validate-reqs
 
 .PHONY: previous-tag
 previous-tag:
@@ -71,7 +71,7 @@ gpg-preflight:
 	@echo Your gpg key for git is $$(git config user.signingkey)
 
 # --- DOCKER
-run: validate-requirements docker-build ## Run the simulator - the build stage of the container runs all the cli tests
+run: validate-reqs docker-build ## Run the simulator - the build stage of the container runs all the cli tests
 	@docker run                                                     \
 		-h launch                                                     \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws              \
@@ -82,8 +82,8 @@ run: validate-requirements docker-build ## Run the simulator - the build stage o
 		--env-file launch-environment                                 \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
 
-.PHONY: docker-build-no-cache
-docker-build-no-cache: ## Builds the launch container
+.PHONY: docker-build-nocache
+docker-build-nocache: ## Builds the launch container without the Docker cache
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
 	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
@@ -115,15 +115,15 @@ build: dep ## Run golang build for the CLI program
 	@echo "+ $@"
 	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 
-.PHONY: is-in-launch-container
-is-in-launch-container: ## checks you are running in the launch container
+.PHONY: is-in-launch
+is-in-launch: ## checks you are running in the launch container
 	[ $(HOST) == "launch" ]
 
 .PHONY: test
 test:  test-unit test-acceptance ## run all tests except goss tests
 
 .PHONY: test-acceptance
-test-acceptance: is-in-launch-container build ## Run tcl acceptance tests for the CLI program
+test-acceptance: is-in-launch build ## Run tcl acceptance tests for the CLI program
 	@echo "+ $@"
 	./test/run-tests.tcl
 
@@ -155,7 +155,7 @@ docs: ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 .PHONY: release
-release: gpg-preflight previous-tag release-tag docker-test docker-build build
+release: gpg-preflight previous-tag release-tag docker-test docker-build build ## Docker container and binary release automation for simulator
 	git tag --sign -m $(RELEASE_TAG) $(RELEASE_TAG)
 	git push origin $(RELEASE_TAG)
 	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
@@ -169,12 +169,12 @@ release: gpg-preflight previous-tag release-tag docker-test docker-build build
 help: ## parse jobs and descriptions from this Makefile
 	@set -x;
 	@grep -E '^[ a-zA-Z0-9_-]+:([^=]|$$)' Makefile \
-    | grep -Ev '^(help|all|help-no-color)\b[[:space:]]*:' \
+    | grep -Ev '^(help|all|help-no-colour|previous-tag|release-tag|gpg-preflight)\b[[:space:]]*:' \
     | awk 'BEGIN {FS = ":.*?##"}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 .PHONY: help
-help-no-color:
+help-no-colour:
 	@set -x;
 	@grep -E '^[ a-zA-Z0-9_-]+:([^=]|$$)' Makefile \
-    | grep -Ev '^(help|all|help-no-color)\b[[:space:]]*:' \
+    | grep -Ev '^(help|all|help-no-colour|previous-tag|release-tag|gpg-preflight)\b[[:space:]]*:' \
     | awk 'BEGIN {FS = ":.*?##"}; {printf "%-20s %s\n", $$1, $$2}'
