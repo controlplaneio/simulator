@@ -16,7 +16,7 @@ else
 	SIMULATOR_AWS_CREDS_PATH := $(shell dirname $(AWS_SHARED_CREDENTIALS_FILE))
 endif
 
-SSH_CONFIG_PATH := $(HOME)/.ssh/
+SSH_CONFIG_PATH := $(HOME)/.kubesim/
 KUBE_SIM_TMP := $(HOME)/.kubesim/
 SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
