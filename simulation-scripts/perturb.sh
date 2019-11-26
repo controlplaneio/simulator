@@ -46,8 +46,46 @@ BASTION_HOST=""
 
 main() {
 
-  [[ $# = 0 ]] && usage
+  parse_arguments "$@"
 
+  [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
+
+  [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
+  [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
+
+  SCENARIO="${ARGUMENTS[0]:-}" || true
+
+  local SCENARIO_DIR="scenario/${SCENARIO}/"
+
+  if [ ! -d "${SCENARIO_DIR}" ]; then
+    error "${SCENARIO_DIR} not found"
+  fi
+
+  info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
+
+  if ! is_master_accessible ;then
+    error "Cannot connect to ${MASTER_HOST}"
+  elif [[ ! -d "${SCENARIO_DIR}" ]]; then
+    error "Scenario directory not found at ${SCENARIO_DIR}"
+  fi
+
+  warning "Instructions in scenario:"
+  ls -lasp "${SCENARIO_DIR}"
+
+  validate_instructions "${SCENARIO_DIR}"
+
+  copy_challenge_and_tasks "${SCENARIO_DIR}"
+
+  run_kubectl_yaml "${SCENARIO_DIR}"
+
+  run_scripts "${SCENARIO_DIR}"
+
+  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
+
+  success "End of perturb"
+}
+
+parse_arguments() {
   while [ $# -gt 0 ]; do
     case $1 in
       -h | --help) usage ;;
@@ -75,42 +113,16 @@ main() {
     esac
     shift
   done
+}
 
-  [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
-
-  [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
-  [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
-
-  SCENARIO="${ARGUMENTS[0]:-}" || true
-
-  local SCENARIO_DIR="scenario/${SCENARIO}/"
-
-  if [ ! -d "${SCENARIO_DIR}" ]; then
-    error "${SCENARIO_DIR} not found"
-  fi
-
-  info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
-
-  if ! $(ssh -F "${SSH_CONFIG_FILE}" -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "ConnectTimeout 3" root@"${MASTER_HOST}" true); then
-    error "Cannot connect to ${MASTER_HOST}"
-  elif [[ ! -d "${SCENARIO_DIR}" ]]; then
-    error "Scenario directory not found at ${SCENARIO_DIR}"
-  fi
-
-  warning "Instructions in scenario:"
-  ls -lasp "${SCENARIO_DIR}"
-
-  validate_instructions "${SCENARIO_DIR}"
-
-  copy_challenge_and_tasks "${SCENARIO_DIR}"
-
-  run_kubectl_yaml "${SCENARIO_DIR}"
-
-  run_scripts "${SCENARIO_DIR}"
-
-  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
-
-  success "End of perturb"
+is_master_accessible() {
+  ssh \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "ConnectTimeout 3" \
+    "$(get_connection_string)" \
+    true
 }
 
 copy_challenge_and_tasks() {
@@ -252,17 +264,26 @@ run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
 
+  info "Setup scenario to be perturbed"
+
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    /app/simulation-scripts/"${FILE}" root@"${HOST}":/root/setup.sh
+    /app/simulation-scripts/"${FILE}" root@"${HOST}":/tmp/setup.sh
 
   ssh -q -t \
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    root@"${HOST}" "chmod +x /root/setup.sh && /root/setup.sh"
+    root@"${HOST}" "chmod +x /root/setup.sh && /tmp/setup.sh"
+
+  info "Cleanup setup"
+  ssh -q -t \
+    -F "${SSH_CONFIG_FILE}" \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    root@"${HOST}" "rm /tmp/setup.sh"
 
   echo "PERTURBANCE COMPLETE FOR /simulation-scripts/${FILE} ON ${HOST}"
 }
