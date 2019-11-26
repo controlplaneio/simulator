@@ -34,7 +34,7 @@ I have experimented in the past with adding mentorship capabilities into the sys
 
 ## Acknowledgements
 
-This project was conceived and implemented at JPMorgan Chase, built in collaboration with the control-plane.io team. Multiple team members have been involved in creating the project thus far, notably Raoul Millais and Jon Kent.
+Multiple team members have been involved in creating the project thus far, notably Raoul Millais and Jon Kent.
 
 This project has benefited from many lessons learned in implementing a similar platform focussing on application security - Remediate the Flag. To get a better view of the target functionality, take a look at the RemediateTheFlag project at <https://github.com/sk4ddy/remediatetheflag>
 
