@@ -1,6 +1,6 @@
 
 locals {
-  aws_tags = "${merge(var.default_tags, map("Simulator Bucket", "${data.terraform_remote_state.state.config.bucket}"))}"
+  aws_tags = "${var.default_tags}"
 }
 
 // Setup networking
