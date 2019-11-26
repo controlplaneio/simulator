@@ -15,6 +15,8 @@ type Scenario struct {
 	Path string `yaml:"path"`
 	// A human-friendly readable name for this scenario for use in user interfaces
 	DisplayName string `yaml:"name"`
+	// A Difficulty level for this scenario for use in user interfaces
+	Difficulty string `yaml:"difficulty"`
 }
 
 // Validate a scenario relative to its manifest

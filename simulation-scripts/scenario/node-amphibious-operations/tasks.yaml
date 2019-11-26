@@ -2,7 +2,7 @@ objective: Node compromise to get unauth kubelet API access.
 starting-point:
   mode: pod
   pod-name: ''
-  pod-namespace: ''
+  pod-namespace: 'node-amphibious-operations'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
@@ -24,7 +24,10 @@ tasks:
           "https://<node-ip>:10250/run/node-amphibious-operations/<pod
           name>/<container name>" -d "cmd=printenv" You will be able to find the
           pod and container name from the previous pods endpoint.
-    starting-point: ''
+    starting-point:
+      mode: pod
+      pod-name: ''
+      pod-namespace: 'node-amphibious-operations'
   '2':
     sort-order: 2
     hints:
@@ -35,4 +38,7 @@ tasks:
       - text: >-
           'systemctl daemon-reload; systemctl restart kubelet.service' applies
           the config changes.
-    starting-point: ''
+    starting-point:
+      mode: node
+      node-id: 'node-0'
+      as-root: true

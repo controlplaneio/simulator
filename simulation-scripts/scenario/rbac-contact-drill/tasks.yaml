@@ -4,7 +4,7 @@ objective: >-
 starting-point:
   mode: pod
   pod-name: ''
-  pod-namespace: ''
+  pod-namespace: 'rbac-contact-drill'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
@@ -13,7 +13,10 @@ tasks:
       - text: >-
           Can you hit the API from inside the pod? You may need to install curl
           and kubectl.
-    starting-point: ''
+    starting-point:
+      mode: pod
+      pod-name: ''
+      pod-namespace: 'rbac-contact-drill'
   '2':
     sort-order: 2
     hints:
@@ -25,4 +28,6 @@ tasks:
           The default service account has permissions to view secrets. Make a
           new role with these permissions and assign it to the secrets-caller
           deployment
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: true

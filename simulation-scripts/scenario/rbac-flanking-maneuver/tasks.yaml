@@ -16,7 +16,9 @@ tasks:
       - text: >-
           Use wget to hit the API at default port 6443. The service account
           token looks like it can schedule workloads and get secrets.
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: false
   '2':
     sort-order: 2
     hints:
@@ -25,11 +27,14 @@ tasks:
       - text: >-
           Since the pod doesn't need to talk to the API, you can just delete the
           rolebinding.
-    starting-point: ''
+    starting-point:
+      mode: internal-instance
+      kubectl-access: true
   '3':
     sort-order: 3
     hints:
       - text: >-
           Don't use passwords for SSH connections, and definitely not easy
-          ones. 
-    starting-point: ''
+          ones.
+    starting-point:
+      mode: null
