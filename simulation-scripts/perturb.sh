@@ -85,6 +85,10 @@ main() {
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
+  if [ ! -d "${SCENARIO_DIR}" ]; then
+    error "${SCENARIO_DIR} not found"
+  fi
+
   info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
 
   if ! $(ssh -F "${SSH_CONFIG_FILE}" -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" -o "ConnectTimeout 3" root@"${MASTER_HOST}" true); then
