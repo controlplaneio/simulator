@@ -276,14 +276,7 @@ run_file_on_host() {
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    root@"${HOST}" "chmod +x /root/setup.sh && /tmp/setup.sh"
-
-  info "Cleanup setup"
-  ssh -q -t \
-    -F "${SSH_CONFIG_FILE}" \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    root@"${HOST}" "rm /tmp/setup.sh"
+    root@"${HOST}" "chmod +x /root/setup.sh && /tmp/setup.sh && rm /tmp/setup.sh"
 
   echo "PERTURBANCE COMPLETE FOR /simulation-scripts/${FILE} ON ${HOST}"
 }
