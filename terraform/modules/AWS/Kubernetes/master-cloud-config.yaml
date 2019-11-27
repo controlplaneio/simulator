@@ -62,6 +62,7 @@ runcmd:
   - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /run/download/calico.yaml'
   - "egrep -A 1 'kubeadm join' /var/log/cloud-init-output.log  |tr -d '\\' | tr -d '\n' > /tmp/join.txt"
   - 'aws s3 cp /tmp/join.txt s3://${s3_bucket_name}'
+  - 'aws s3 cp /root/.kube/config s3://${s3_bucket_name}'
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'

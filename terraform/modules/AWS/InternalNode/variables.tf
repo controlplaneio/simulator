@@ -29,3 +29,9 @@ variable "bastion_public_ip" {
   description = "IP address of the bastion for connecting to run tests"
 }
 
+variable "iam_instance_profile_id" {
+  description = "IAM instance S3 access profile id"
+}
+variable "s3_bucket_name" {
+  description = "Name  of s3 bucket"
+}

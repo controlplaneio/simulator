@@ -64,7 +64,7 @@ readonly -f info
 #
 # SSH helpers
 #
-attack_master() {
+ssh_master() {
   local INDEX="${1:-}"
 
   # shellcheck disable=SC2086
@@ -87,10 +87,10 @@ attack_master() {
 
   ssh -o "StrictHostKeyChecking=no" root@"${MASTER_NODES[${INDEX}]}"
 }
-readonly -f attack_master
-export -f attack_master
+readonly -f ssh_master
+export -f ssh_master
 
-attack_node() {
+ssh_node() {
   local INDEX="${1:-}"
 
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
@@ -112,8 +112,12 @@ attack_node() {
 
   ssh -o "StrictHostKeyChecking=no" root@"${WORKER_NODES[${INDEX}]}"
 }
-readonly -f attack_node
-export -f attack_node
+readonly -f ssh_node
+export -f ssh_node
+
+ssh_internal() {
+  ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_NODE_IP}"
+}
 
 #
 # Display info message
@@ -121,17 +125,20 @@ export -f attack_node
 welcome() {
   IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
-  info "You have made it inside the perimeter of a private kubernetes cluster."
+  info "You have found a private kubernetes cluster."
   info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master " \
     "and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster"
   info ' '
-  info "We have setup helpers to attack the master(s) and node(s)."
+  info "We have setup helpers to ssh to the master(s) and node(s)."
   info ' '
-  info "To attack a master:"
-  info "  \$ attack_master 0"
+  info "To ssh to a master:"
+  info "  \$ ssh_master 0"
   info ' '
-  info "To attack a node:"
-  info "  \$ attack_node 2"
+  info "To ssh to a node:"
+  info "  \$ ssh_node 1"
+  info ' '
+  info "To ssh to an instance with network access to the cluster"
+  info " \$ ssh_internal"
   info ' '
   info "To see this message again:"
   info "  \$ welcome"

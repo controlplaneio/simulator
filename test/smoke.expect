@@ -53,7 +53,7 @@ expect {
 
 expect {
   "bash-5.0#" {
-    send "attack_master 0"
+    send "ssh_master 0"
   }
 }
 

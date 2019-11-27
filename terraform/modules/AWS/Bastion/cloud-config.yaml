@@ -43,7 +43,8 @@ write_files:
     content: |
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
-      sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -it controlplane/simulator-attack:${attack_container_tag}
+      export INTERNAL_NODE_IP=${internal_node_private_ip}
+      sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -e INTERNAL_NODE_IP -it controlplane/simulator-attack:${attack_container_tag}
   - path: /home/ubuntu/progress.json
     permissions: '0666'
     content: "{}"
@@ -106,7 +107,7 @@ write_files:
       X11DisplayOffset 10
       PrintMotd no
       PrintLastLog yes
-      TCPKeepAlive no 
+      TCPKeepAlive no
       ClientAliveInterval 30
       ClientAliveCountMax 240
       # Allow SendEnv of BASE64_SSH_KEY to enable SSHing to the instances in the

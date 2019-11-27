@@ -7,6 +7,6 @@ resource "aws_instance" "simulator_internal_node" {
   associate_public_ip_address = false
   subnet_id                   = "${var.private_subnet_id}"
   user_data                   = "${data.template_file.internal_config.rendered}"
+  iam_instance_profile        = "${var.iam_instance_profile_id}"
   tags                        = "${merge(var.default_tags, map("Name", "Simulator Internal Node"))}"
 }
-
