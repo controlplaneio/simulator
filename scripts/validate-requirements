@@ -40,3 +40,11 @@ else
 	echo "created"
 fi
 
+echo -n "Checking ./terraform/deployments/AWS/.terraform is doesn't exist.."
+
+if [[ -d ./terraform/deployments/AWS/.terraform ]]; then
+	rm -R terraform/deployments/AWS/.terraform
+	echo "directory deleted"
+else
+	echo "doesn't exist"
+fi
