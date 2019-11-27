@@ -1,4 +1,6 @@
 #!/bin/bash
+dirName="$( cd "$( dirname "${BASH_SOURCE[0]}")" && pwd )"
+simRootDir=$(echo ${dirName} | sed -e 's/scripts//g')
 
 echo -n "Checking AWS cli installed.."
 
@@ -40,10 +42,10 @@ else
 	echo "created"
 fi
 
-echo -n "Checking ./terraform/deployments/AWS/.terraform is doesn't exist.."
+echo -n "Checking "${simRootDir}"/terraform/deployments/AWS/.terraform is doesn't exist.."
 
-if [[ -d ./terraform/deployments/AWS/.terraform ]]; then
-	rm -R terraform/deployments/AWS/.terraform
+if [[ -d "${simRootDir}"/terraform/deployments/AWS/.terraform ]]; then
+	rm -R "${simRootDir}"/terraform/deployments/AWS/.terraform
 	echo "directory deleted"
 else
 	echo "doesn't exist"
