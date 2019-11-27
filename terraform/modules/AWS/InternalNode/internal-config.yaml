@@ -22,6 +22,7 @@ write_files:
       YP   YD ~Y8888P' Y8888P' Y88888P \`8888Y' Y888888P YP  YP  YP
       $(tput setaf 3)$(figlet $(hostname))
       $(tput sgr0)"
+      source <(kubectl completion bash)
   - path: /etc/default/motd-news
     owner: root:root
     permissions: '0644'
@@ -50,8 +51,9 @@ runcmd:
   - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
   - 'apt update'
-  - 'apt install -y kubectl'
+  - 'apt install -y kubectl awscli'
+  - 'mkdir -pv /root/.kube/'
+  - 'while true; do aws s3 ls s3://${s3_bucket_name}/config > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/config /root/.kube/ && aws s3 rm s3://${s3_bucket_name}/config'
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
-
