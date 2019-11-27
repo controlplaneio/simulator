@@ -13,7 +13,9 @@ tasks:
       - text: >-
           I think Postgres doesn't need a password if you're reaching it from
           localhost.
+      - text: I can use pg_dump get the data from the database.
       - text: I wonder if there are any mount points in this container.
+      - text: Is there something there in /backups?
       - text: >-
           I have an IP and SSH key from the welcome text to this challenge, I
           can 'scp' my data to there.

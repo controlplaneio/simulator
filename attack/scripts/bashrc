@@ -85,7 +85,7 @@ attack_master() {
     return 1
   fi
 
-  ssh root@"${MASTER_NODES[${INDEX}]}"
+  ssh -o "StrictHostKeyChecking=no" root@"${MASTER_NODES[${INDEX}]}"
 }
 readonly -f attack_master
 export -f attack_master
@@ -110,7 +110,7 @@ attack_node() {
     return 1
   fi
 
-  ssh root@"${WORKER_NODES[${INDEX}]}"
+  ssh -o "StrictHostKeyChecking=no" root@"${WORKER_NODES[${INDEX}]}"
 }
 readonly -f attack_node
 export -f attack_node
