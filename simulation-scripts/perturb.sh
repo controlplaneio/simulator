@@ -65,8 +65,6 @@ main() {
 
   if ! is_master_accessible ;then
     error "Cannot connect to ${MASTER_HOST}"
-  elif [[ ! -d "${SCENARIO_DIR}" ]]; then
-    error "Scenario directory not found at ${SCENARIO_DIR}"
   fi
 
   warning "Instructions in scenario:"
