@@ -118,8 +118,6 @@ run_scenario() {
 
   validate_instructions "${SCENARIO_DIR}"
 
-  copy_challenge_and_tasks "${SCENARIO_DIR}"
-
   run_kubectl_yaml "${SCENARIO_DIR}"
 
   run_scripts "${SCENARIO_DIR}"
@@ -127,12 +125,15 @@ run_scenario() {
   run_cleanup "${SCENARIO_DIR}"
 
   get_pods
+
+  copy_challenge_and_tasks "${SCENARIO_DIR}"
 }
 
 get_pods() {
   # sleep to ensure all pods are initialised
   sleep 30
-  local QUERY_DOCKER="docker ps"
+  local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
+  local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_DIR="/home/launch/.kubesim"
   local TMP_FILE="${TMP_DIR}/docker-"
   local SLAVE_1
@@ -140,16 +141,9 @@ get_pods() {
   local MASTER_1
 
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >| "${TMP_FILE}"master
+  echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >| "${TMP_FILE}"all-pods
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" >| "${TMP_FILE}"slave-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" >| "${TMP_FILE}"slave-2
-
-  MASTER_1="$(get_master)"
-  SLAVE_1="$(get_slave 1)"
-  SLAVE_2="$(get_slave 2)"
-
-  sed -i 's/^/'${MASTER_1}' /' "${TMP_FILE}"master
-  sed -i 's/^/'${SLAVE_1}' /' "${TMP_FILE}"slave-1
-  sed -i 's/^/'${SLAVE_2}' /' "${TMP_FILE}"slave-2
 
 #  tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
@@ -172,18 +166,50 @@ copy_challenge_and_tasks() {
 
   pushd "${SCENARIO_DIR}"
   info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  tmpchallenge=$(mktemp)
+  cp challenge.txt ${tmpchallenge}
+  if grep '##IP\|##NAME\|##HIP' challenge.txt > /dev/null; then
+    template_challenge
+  fi
+
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    challenge.txt root@${BASTION_HOST}:/home/ubuntu/challenge.txt
+    ${tmpchallenge} root@${BASTION_HOST}:/home/ubuntu/challenge.txt
   info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  rm ${tmpchallenge}
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     tasks.yaml root@${BASTION_HOST}:/home/ubuntu/tasks.yaml
   popd
+}
+
+template_challenge() {
+
+  if grep '##IP' challenge.txt > /dev/null; then
+    TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP'| tr '\n' ' ')
+    for tmp_name in $TEMPLATE_NAME; do
+      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' | tr '\n' ' ')
+      sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+    done
+  fi
+  if grep '##NAME' challenge.txt > /dev/null; then
+    TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
+    for tmp_name in $TEMPLATE_NAME; do
+      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' | tr '\n' ' ')
+      sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+    done
+  fi
+  if grep '##HIP' challenge.txt > /dev/null; then
+    TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
+    for tmp_name in $TEMPLATE_NAME; do
+      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' | tr '\n' ' ')
+      sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+    done
+  fi
 }
 
 validate_instructions() {
@@ -323,7 +349,7 @@ run_cleanup() {
 
     TEMP_FILE=$(mktemp)
     # shellcheck disable=SC2140
-    echo "echo 'cat ""${SCENARIO_DIR}"/challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
+    echo "echo 'cat ""${SCENARIO_DIR}"challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
 
