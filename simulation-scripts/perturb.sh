@@ -113,6 +113,10 @@ is_special_scenario() {
 run_scenario() {
   local SCENARIO_DIR="${1}"
 
+  if previously_perturbed ;then
+    error "Perturbed has been previously run on this cluster"
+  fi
+
   warning "Instructions in scenario:"
   ls -lasp "${SCENARIO_DIR}"
 
@@ -127,6 +131,8 @@ run_scenario() {
   get_pods
 
   copy_challenge_and_tasks "${SCENARIO_DIR}"
+
+  lock_perturb
 }
 
 get_pods() {
@@ -210,6 +216,24 @@ template_challenge() {
       sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
     done
   fi
+}
+
+previously_perturbed() {
+  ssh \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "ConnectTimeout 3" \
+    root@${MASTER_HOST} "[ -f /tmp/perturbed.lock ] && true || false"
+}
+
+lock_perturb() {
+  ssh \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "ConnectTimeout 3" \
+    root@${MASTER_HOST} "touch /tmp/perturbed.lock"
 }
 
 validate_instructions() {
