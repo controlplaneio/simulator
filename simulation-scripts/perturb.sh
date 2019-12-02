@@ -57,7 +57,6 @@ SCENARIO=''
 MASTER_HOST=""
 SLAVE_HOSTS=""
 BASTION_HOST=""
-IS_TEST_ONLY=0
 IS_FORCE=0
 
 main() {
@@ -69,24 +68,19 @@ main() {
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
-  if [[ "${IS_TEST_ONLY:-}" == 1 ]]; then
-    success "In test mode, skipping deployment of ${SCENARIO}"
-  else
+  source test-func.sh
 
-    source test-func.sh
-
-    local FOUND_SCENARIO
-    if FOUND_SCENARIO=$(find_scenario); then
-      if [[ "${IS_FORCE}" != 1 && "${FOUND_SCENARIO}" == "${SCENARIO}" ]]; then
-        if ! is_special_scenario; then
-          error "Scenario ${SCENARIO} already deployed, reset deployment with 'cleanup' first"
-        fi
+  local FOUND_SCENARIO
+  if FOUND_SCENARIO=$(find_scenario); then
+    if [[ "${IS_FORCE}" != 1 && "${FOUND_SCENARIO}" == "${SCENARIO}" ]]; then
+      if ! is_special_scenario; then
+        error "Scenario ${SCENARIO} already deployed, reset deployment with 'cleanup' first"
       fi
-      info "Found scenario ${FOUND_SCENARIO}"
     fi
-
-    info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
+    info "Found scenario ${FOUND_SCENARIO}"
   fi
+
+  info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
 
   if ! is_master_accessible; then
     error "Cannot connect to ${MASTER_HOST}"
@@ -94,11 +88,9 @@ main() {
     error "Scenario directory not found at ${SCENARIO_DIR}"
   fi
 
-  if [[ "${IS_TEST_ONLY:-}" != 1 ]]; then
-    run_scenario "${SCENARIO_DIR}"
+  run_scenario "${SCENARIO_DIR}"
 
-    success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
-  fi
+  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
 
   success "End of perturb"
 }
@@ -461,9 +453,6 @@ parse_arguments() {
         IS_AUTOPOPULATE=1
         AUTOPOPULATE_REGEX="${1}"
         ;;
-      --test)
-        IS_TEST_ONLY=1
-        ;;
       --force)
         IS_FORCE=1
         ;;
@@ -520,7 +509,7 @@ get_cluster_slaves() {
 
 validate_arguments() {
   [[ "${#ARGUMENTS[@]}" -gt 1 ]] && error "Only one scenario accepted"
-  [[ "${#ARGUMENTS[@]}" -lt 1 && "${IS_TEST_ONLY}" != 1 ]] && error "Scenario required"
+  [[ "${#ARGUMENTS[@]}" -lt 1 ]] && error "Scenario required"
 
   if [[ "${IS_AUTOPOPULATE:-}" == 1 ]]; then
     MASTER_HOST=$(
