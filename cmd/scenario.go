@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"strings"
+	"fmt"
 )
 
 func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
@@ -22,9 +23,9 @@ func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 				return err
 			}
 
-			logger.Info("Available scenarios:")
+			fmt.Println("Available scenarios:")
 			for _, s := range manifest.Scenarios {
-				logger.Info("ID: " + s.Id + ", Name: " + s.DisplayName)
+				fmt.Println("ID: " + s.Id + ", Name: " + s.DisplayName)
 			}
 
 			return nil
