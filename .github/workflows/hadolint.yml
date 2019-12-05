@@ -1,8 +1,8 @@
 on: pull_request
-name: hadolint
+name: Hadolint
 jobs:
   hadolint-simulator:
-    name: hadolint simulator
+    name: 'Hadolint Simulator'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -12,7 +12,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         HADOLINT_ACTION_DOCKERFILE_FOLDER: .
   hadolint-attack:
-    name: hadolint attack
+    name: 'Hadolint Attack'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
