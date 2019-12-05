@@ -13,7 +13,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/deployments/AWS'
+          tf_actions_working_dir: 'terraform/deployments/AWS'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-ami:
@@ -27,7 +27,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/Ami'
+          tf_actions_working_dir: 'terraform/modules/AWS/Ami'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-bastion:
@@ -41,7 +41,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/Bastion'
+          tf_actions_working_dir: 'terraform/modules/AWS/Bastion'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-internalnode:
@@ -55,7 +55,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/InternalNode'
+          tf_actions_working_dir: 'terraform/modules/AWS/InternalNode'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-kubernetes:
@@ -69,7 +69,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/Kubernetes'
+          tf_actions_working_dir: 'terraform/modules/AWS/Kubernetes'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-networking:
@@ -83,7 +83,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/Networking'
+          tf_actions_working_dir: 'terraform/modules/AWS/Networking'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-s3storage:
@@ -97,7 +97,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/S3Storage'
+          tf_actions_working_dir: 'terraform/modules/AWS/S3Storage'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-securitygroups:
@@ -111,7 +111,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/SecurityGroups'
+          tf_actions_working_dir: 'terraform/modules/AWS/SecurityGroups'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-sshkey:
@@ -125,6 +125,6 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-            tf_actions_working_dir: 'terraform/modules/AWS/SshKey'
+          tf_actions_working_dir: 'terraform/modules/AWS/SshKey'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
