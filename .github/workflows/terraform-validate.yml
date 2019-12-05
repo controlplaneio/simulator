@@ -15,6 +15,7 @@ jobs:
           tf_actions_subcommand: 'init'
           tf_actions_working_dir: 'terraform/deployments/AWS'
         env:
+          AWS_REGION: 'eu-west-1'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'Terraform Validate'
         uses: hashicorp/terraform-github-actions@master
@@ -23,4 +24,5 @@ jobs:
           tf_actions_subcommand: 'validate'
           tf_actions_working_dir: 'terraform/deployments/AWS'
         env:
+          AWS_REGION: 'eu-west-1'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
