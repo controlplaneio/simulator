@@ -10,6 +10,8 @@ import (
 	"go.uber.org/zap"
 	"os"
 	"strings"
+	"io/ioutil"
+  "path/filepath"
 )
 
 func saveBucketConfig(logger *zap.SugaredLogger, bucket string) {
@@ -18,12 +20,39 @@ func saveBucketConfig(logger *zap.SugaredLogger, bucket string) {
 	viper.WriteConfig()
 }
 
+func writeS3VarsFile(tfDir, bucket string) error {
+	logger.Infof("Writing bucket name %s to terraform vars\n", bucket)
+
+	bucketvarspath := filepath.Join(tfDir, "s3.tfvars")
+	input, err := ioutil.ReadFile(bucketvarspath)
+	if err != nil {
+		return errors.Wrapf(err, "Error reading bucket vars file %s", bucketvarspath)
+	}
+
+	lines := strings.Split(string(input), "\n")
+	for i, line := range lines {
+		if strings.Contains(line, "s3_bucket_name = ") {
+			lines[i] = fmt.Sprintf("s3_bucket_name = \"%s\"", bucket)
+		}
+	}
+	output := strings.Join(lines, "\n")
+
+	err = ioutil.WriteFile(bucketvarspath, []byte(output), 0644)
+	if err != nil {
+		return errors.Wrapf(err, "Error writing providers file %s", bucketvarspath)
+	}
+
+	return nil
+}
+
 func newInitCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `init`,
 		Short: "Creates and configures a bucket for remote state",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
+			tfDir := viper.GetString("tf-dir")
+
 			logger, err := newLogger(viper.GetString("loglevel"), "console")
 			if err != nil {
 				logger.Fatalf("Can't re-initialize zap logger: %v", err)
@@ -53,6 +82,12 @@ func newInitCommand() *cobra.Command {
 
 					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
 				}
+
+				logger.Infof("Creating tfDir %s for terraform remote state\n", tfDir)
+				// errr := writeS3VarsFile(tfDir, bucket)
+				// if errr != nil {
+				// 	return errors.Wrap(err, "Error saving bucket name")
+				// }
 
 				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 				saveBucketConfig(logger, bucket)
