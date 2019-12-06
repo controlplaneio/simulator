@@ -63,7 +63,7 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, atta
 	_, err = Perturb(&po)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 3") {
-			logger.Info("Scenario clash error from perturb.sh")
+			logger.Error("Scenario clash error from perturb.sh")
 		} else {
 			return errors.Wrapf(err, "Error running perturb with %#v", po)
 		}
