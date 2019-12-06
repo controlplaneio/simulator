@@ -83,11 +83,11 @@ func newInitCommand() *cobra.Command {
 					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
 				}
 
-				logger.Infof("Creating tfDir %s for terraform remote state\n", tfDir)
-				// errr := writeS3VarsFile(tfDir, bucket)
-				// if errr != nil {
-				// 	return errors.Wrap(err, "Error saving bucket name")
-				// }
+				logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
+				errr := writeS3VarsFile(tfDir, bucket)
+				if errr != nil {
+				 	return errors.Wrap(err, "Error saving bucket name")
+				}
 
 				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 				saveBucketConfig(logger, bucket)
