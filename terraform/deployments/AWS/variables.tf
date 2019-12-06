@@ -73,4 +73,3 @@ variable "default_tags" {
     Product = "simulator"
   }
 }
-

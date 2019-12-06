@@ -20,9 +20,8 @@ func saveBucketConfig(logger *zap.SugaredLogger, bucket string) {
 	viper.WriteConfig()
 }
 
-func writeS3VarsFile(tfDir, bucket string) error {
-	logger.Infof("Writing bucket name %s to terraform vars\n", bucket)
-
+func writeS3VarsFile(logger *zap.SugaredLogger, tfDir, bucket string) error {
+  logger.Infof("Writing s3 bucket %s to tfvars\n", bucket)
 	bucketvarspath := filepath.Join(tfDir, "s3.tfvars")
 	input, err := ioutil.ReadFile(bucketvarspath)
 	if err != nil {
@@ -42,6 +41,7 @@ func writeS3VarsFile(tfDir, bucket string) error {
 		return errors.Wrapf(err, "Error writing providers file %s", bucketvarspath)
 	}
 
+  logger.Infof("Wrote s3 bucket %s to tfvars\n", bucket)
 	return nil
 }
 
@@ -82,18 +82,18 @@ func newInitCommand() *cobra.Command {
 
 					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
 				}
-
-				logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
-				errr := writeS3VarsFile(tfDir, bucket)
-				if errr != nil {
-				 	return errors.Wrap(err, "Error saving bucket name")
-				}
-
-				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 				saveBucketConfig(logger, bucket)
 
 				return nil
 			}
+//bucket var
+			logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
+			errr := writeS3VarsFile(logger, tfDir, bucket)
+			if errr != nil {
+				return errors.Wrap(err, "Error saving bucket name")
+			}
+//bucket var
+			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 
 			logger.Warnf("Simulator is already configured to use an S3 bucket named %s", bucket)
 			logger.Warn("Please remove the state-bucket from simulator.yaml to create another")
