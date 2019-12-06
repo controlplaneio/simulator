@@ -106,7 +106,8 @@ run_scenario() {
   local SCENARIO_DIR="${1}"
 
   if previously_perturbed ;then
-    error "This cluster has previously been perturbed"
+    warning "This cluster has previously been perturbed"
+    exit 103
   fi
 
   warning "Instructions in scenario:"
