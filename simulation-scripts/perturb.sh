@@ -134,10 +134,38 @@ run_scenario() {
   copy_challenge_and_tasks "${SCENARIO_DIR}"
 }
 
+container_statuses() {
+  local status
+  status=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)" | jq -r '.items[].status.containerStatuses[].ready' | sort -u | tr '\n' ' ')
+  if [[ $status == "true " ]]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
 get_pods() {
-  # sleep to ensure all pods are initialised
+  local timeout
+  local count
+  local increment
+
   info "Waiting for all pods to be initalised..."
-  sleep 30
+  timeout="300"
+  increment="3"
+  count="0"
+
+  while container_statuses && [[ count -le timeout ]]; do
+    sleep $increment
+    count=$((count+increment))
+    if ! (( $count % 9 )) ; then
+      info "Still waiting for pods to be initalised"
+    fi
+  done
+
+  if [[ count -gt timeout ]]; then
+    error "Timed out waiting for pods to be ready"
+  fi
+
   local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_FILE="${TMP_DIR}/docker-"
