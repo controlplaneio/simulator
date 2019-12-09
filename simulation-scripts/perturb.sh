@@ -157,7 +157,7 @@ get_pods() {
   while container_statuses && [[ count -le timeout ]]; do
     sleep $increment
     count=$((count+increment))
-    if ! (( $count % 9 )) ; then
+    if ! (( count % 9 )) ; then
       info "Still waiting for pods to be initalised"
     fi
   done
@@ -175,7 +175,6 @@ get_pods() {
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >| "${TMP_FILE}"node-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >| "${TMP_FILE}"node-2
 
-#  tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
 
 fix_ioctl() {
@@ -202,7 +201,7 @@ fix_ioctl() {
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
       -o "LogLevel=QUIET" \
-      "root@$(get_node ${1})" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
+      "root@$(get_node "${1}")" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   fi
 }
 
@@ -236,7 +235,7 @@ is_host_accessible() {
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
       -o "LogLevel=QUIET" \
-      "root@$(get_node ${1})" \
+      "root@$(get_node "${1}")" \
       true
   fi
 }
@@ -247,8 +246,8 @@ copy_challenge_and_tasks() {
   pushd "${SCENARIO_DIR}" > /dev/null
   tmpchallenge=$(mktemp)
   tmphash=$(mktemp)
-  base64 -w0 challenge.txt >| ${tmphash}
-  cp challenge.txt ${tmpchallenge}
+  base64 -w0 challenge.txt >| "${tmphash}"
+  cp challenge.txt "${tmpchallenge}"
   if grep '##IP\|##NAME\|##HIP' challenge.txt > /dev/null; then
     template_challenge
   fi
@@ -259,8 +258,8 @@ copy_challenge_and_tasks() {
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "LogLevel=ERROR" \
-    ${tmpchallenge} root@${BASTION_HOST}:/home/ubuntu/challenge.txt
-  rm ${tmpchallenge}
+    "${tmpchallenge}" "root@${BASTION_HOST}:/home/ubuntu/challenge.txt"
+  rm "${tmpchallenge}"
 
   info "Copying scenario hash from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
@@ -268,8 +267,8 @@ copy_challenge_and_tasks() {
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "LogLevel=ERROR" \
-    ${tmphash} root@${BASTION_HOST}:/home/ubuntu/hash.txt
-  rm ${tmphash}
+    "${tmphash}" "root@${BASTION_HOST}:/home/ubuntu/hash.txt"
+  rm "${tmphash}"
 
   info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
@@ -286,22 +285,22 @@ template_challenge() {
   if grep '##IP' challenge.txt > /dev/null; then
     TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP'| tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' | tr '\n' ' ')
-      sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##NAME' challenge.txt > /dev/null; then
     TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' | tr '\n' ' ')
-      sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##HIP' challenge.txt > /dev/null; then
     TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' | tr '\n' ' ')
-      sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
 }
@@ -313,9 +312,9 @@ find_scenario() {
 
   if [[ "${CHALLENGE_HASH:-}" != "" ]]; then
     for CHALLENGE in scenario/**/challenge.txt; do
-      THIS_CHALLENGE=$(cat "${CHALLENGE}" | base64 -w0)
+      THIS_CHALLENGE=$(base64 -w0 < "${CHALLENGE}")
       if [[ "${THIS_CHALLENGE}" == "${CHALLENGE_HASH}" ]]; then
-        FOUND_SCENARIO=$(basename $(dirname "${CHALLENGE}"))
+        FOUND_SCENARIO=$(basename "$(dirname "${CHALLENGE}")")
         info "Installed scenario found: ${FOUND_SCENARIO}"
         break
       fi
@@ -510,6 +509,7 @@ get_file_to_run() {
 run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
+  #shellcheck disable=SC2094
   (
     touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
     exec 19>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
@@ -685,7 +685,6 @@ TERM="xterm-color"
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
 COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
-COLOUR_WHITE=$(tput setaf 7 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
 main "$@"
