@@ -139,9 +139,9 @@ container_statuses() {
   local status
   status=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)" | jq -r '.items[].status.containerStatuses[].ready' | sort -u | tr '\n' ' ')
   if [[ $status == "true " ]]; then
-    return 1
-  else
     return 0
+  else
+    return 1
   fi
 }
 
@@ -155,7 +155,7 @@ get_pods() {
   increment="3"
   count="0"
 
-  while container_statuses && [[ count -le timeout ]]; do
+  while ! container_statuses && [[ count -le timeout ]]; do
     sleep $increment
     count=$((count+increment))
     if ! (( count % 9 )) ; then
