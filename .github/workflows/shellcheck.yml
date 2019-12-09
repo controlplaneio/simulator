@@ -14,4 +14,3 @@ jobs:
           path: "."
           pattern: "*.sh"
           exclude: "./.git/*"
-          shellcheck_flags: "-S error"
