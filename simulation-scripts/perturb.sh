@@ -70,13 +70,16 @@ main() {
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
-  if ! is_master_accessible; then
+  if ! is_host_accessible 1000; then
     error "Cannot connect to ${MASTER_HOST}"
   fi
-  if ! is_node_accessible 1; then
+  if ! is_host_accessible 0; then
+    error "Cannot connect to ${MASTER_HOST}"
+  fi
+  if ! is_host_accessible 1; then
     error "Cannot connect to $(get_node 1)"
   fi
-  if ! is_node_accessible 2; then
+  if ! is_host_accessible 2; then
     error "Cannot connect to $(get_node 2)"
   fi
   if [[ ! -d "${SCENARIO_DIR}" ]]; then
@@ -176,33 +179,38 @@ fix_ioctl() {
 }
 
 
-is_master_accessible() {
+is_host_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
-  ssh \
-    -F "${SSH_CONFIG_FILE}"  \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "ConnectTimeout 3" \
-    -o "LogLevel=QUIET" \
-    "$(get_connection_string)" \
-    true
-}
-
-is_node_accessible() {
-  if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
-    return 0
+  if [[ ${1} -eq "1000" ]]; then
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@${BASTION_HOST}" \
+      true
+  elif [[ ${1} -eq "0" ]]; then
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "$(get_connection_string)" \
+      true
+  else
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@$(get_node ${1})" \
+      true
   fi
-
-  ssh \
-    -F "${SSH_CONFIG_FILE}"  \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "ConnectTimeout 3" \
-    -o "LogLevel=QUIET" \
-    "root@$(get_node ${1})" \
-    true
 }
 
 copy_challenge_and_tasks() {
