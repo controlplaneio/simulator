@@ -71,6 +71,14 @@ func newInitCommand() *cobra.Command {
 				}
 
 				bucket = strings.TrimSpace(bucket)
+				//bucket var
+				logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
+				errr := writeS3VarsFile(logger, tfDir, bucket)
+				if errr != nil {
+					return errors.Wrap(err, "Error saving bucket name")
+				}
+				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
+				//bucket var
 
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
 				if err = simulator.CreateRemoteStateBucket(logger, bucket); err != nil {
@@ -86,14 +94,6 @@ func newInitCommand() *cobra.Command {
 
 				return nil
 			}
-//bucket var
-			logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
-			errr := writeS3VarsFile(logger, tfDir, bucket)
-			if errr != nil {
-				return errors.Wrap(err, "Error saving bucket name")
-			}
-//bucket var
-			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 
 			logger.Warnf("Simulator is already configured to use an S3 bucket named %s", bucket)
 			logger.Warn("Please remove the state-bucket from simulator.yaml to create another")
