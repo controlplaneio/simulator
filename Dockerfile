@@ -74,17 +74,19 @@ WORKDIR /app
 # Copy Dockerfiles, hadolint config and scripts
 COPY --chown=1000 scripts/ /app/scripts/
 COPY --chown=1000 attack/ /app/attack/
+COPY --chown=1000 simulation-scripts/ /app/simulation-scripts/
 COPY --chown=1000 kubesim /app/kubesim
 COPY --chown=1000 Dockerfile .hadolint.yaml /app/
 
 USER ${lint_user}
 
 # Lint Dockerfiles
-RUN hadolint Dockerfile            \
-    &&  hadolint attack/Dockerfile \
+RUN hadolint Dockerfile                         \
+    &&  hadolint attack/Dockerfile              \
 # Lint shell scripts
-    && shellcheck scripts/*        \
-    && shellcheck attack/scripts/* \
+    && shellcheck scripts/*                     \
+    && shellcheck attack/scripts/*              \
+    && shellcheck simulation-scripts/perturb.sh \
     && shellcheck kubesim
 
 WORKDIR /app/scenario-tools

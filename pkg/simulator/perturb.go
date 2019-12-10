@@ -43,7 +43,7 @@ func (po *PerturbOptions) ToArguments() []string {
 	arguments := []string{"--master", po.Master.String()}
 	arguments = append(arguments, "--bastion")
 	arguments = append(arguments, po.Bastion.String())
-	arguments = append(arguments, "--slaves")
+	arguments = append(arguments, "--nodes")
 	slaves := ""
 	for index, slave := range po.Slaves {
 		slaves += slave.String()

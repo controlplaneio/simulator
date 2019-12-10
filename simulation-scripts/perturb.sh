@@ -1,4 +1,5 @@
 #!/bin/bash
+#shellcheck disable=SC1117
 #
 # Perturb Kubernetes Clusters
 #
@@ -10,7 +11,7 @@
 ## Options:
 ##   --auto-populate [regex]    Pull master and slaves from doctl
 ##   -m, --master [string]      A Kubernetes API master host or IP (multi-master not supported)
-##   -s, --slaves [string]      Kubernetes slave hosts or IPs, comma-separated
+##   -n, --nodes [string]       Kubernetes node hosts or IPs, comma-separated
 ##   -b, --bastion [string]     Publicly accessible bastion server
 ##   --test                     Only run tests, do not deploy
 ##
@@ -55,9 +56,11 @@ EXPECTED_NUM_ARGUMENTS=1
 ARGUMENTS=()
 SCENARIO=''
 MASTER_HOST=""
-SLAVE_HOSTS=""
+NODE_HOSTS=""
 BASTION_HOST=""
 IS_FORCE=0
+TMP_DIR="/home/launch/.kubesim"
+FOUND_SCENARIO=""
 
 main() {
 
@@ -68,29 +71,43 @@ main() {
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
-  source test-func.sh
+  if ! is_host_accessible 1000; then
+    error "Cannot connect to ${MASTER_HOST}"
+  fi
+  if ! is_host_accessible 0; then
+    error "Cannot connect to ${MASTER_HOST}"
+  fi
+  if ! is_host_accessible 1; then
+    error "Cannot connect to $(get_node 1)"
+  fi
+  if ! is_host_accessible 2; then
+    error "Cannot connect to $(get_node 2)"
+  fi
+  if [[ ! -d "${SCENARIO_DIR}" ]]; then
+    error "Scenario directory not found at ${SCENARIO_DIR}"
+  fi
 
-  local FOUND_SCENARIO
-  if FOUND_SCENARIO=$(find_scenario); then
-    if [[ "${IS_FORCE}" != 1 && "${FOUND_SCENARIO}" == "${SCENARIO}" ]]; then
+  fix_ioctl 1000
+  fix_ioctl 0
+  fix_ioctl 1
+  fix_ioctl 2
+
+  find_scenario
+
+  if [[ -n ${FOUND_SCENARIO} ]]; then
+    if [[ "${IS_FORCE}" != 1 ]]; then
       if ! is_special_scenario; then
-        error "Scenario ${SCENARIO} already deployed, reset deployment with 'cleanup' first"
+        warning "Scenario ${FOUND_SCENARIO} already deployed"
+        exit 103
       fi
     fi
-    info "Found scenario ${FOUND_SCENARIO}"
   fi
 
   info "Running ${SCENARIO_DIR} against ${MASTER_HOST}"
 
-  if ! is_master_accessible; then
-    error "Cannot connect to ${MASTER_HOST}"
-  elif [[ ! -d "${SCENARIO_DIR}" ]]; then
-    error "Scenario directory not found at ${SCENARIO_DIR}"
-  fi
-
   run_scenario "${SCENARIO_DIR}"
 
-  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${SLAVE_HOSTS} (slaves)"
+  success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${NODE_HOSTS} (nodes)"
 
   success "End of perturb"
 }
@@ -105,14 +122,6 @@ is_special_scenario() {
 run_scenario() {
   local SCENARIO_DIR="${1}"
 
-  if previously_perturbed ;then
-    warning "This cluster has previously been perturbed"
-    exit 103
-  fi
-
-  warning "Instructions in scenario:"
-  ls -lasp "${SCENARIO_DIR}"
-
   validate_instructions "${SCENARIO_DIR}"
 
   run_kubectl_yaml "${SCENARIO_DIR}"
@@ -124,66 +133,152 @@ run_scenario() {
   get_pods
 
   copy_challenge_and_tasks "${SCENARIO_DIR}"
+}
 
-  lock_perturb
+container_statuses() {
+  local status
+  status=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)" | jq -r '.items[].status.containerStatuses[].ready' | sort -u | tr '\n' ' ')
+  if [[ $status == "true " ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 get_pods() {
-  # sleep to ensure all pods are initialised
-  sleep 30
+  local timeout
+  local count
+  local increment
+
+  info "Waiting for all pods to be initalised..."
+  timeout="300"
+  increment="3"
+  count="0"
+
+  while ! container_statuses && [[ count -le timeout ]]; do
+    sleep $increment
+    count=$((count+increment))
+    if ! (( count % 9 )) ; then
+      info "Still waiting for pods to be initalised"
+    fi
+  done
+
+  if [[ count -gt timeout ]]; then
+    error "Timed out waiting for pods to be ready"
+  fi
+
   local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
-  local TMP_DIR="/home/launch/.kubesim"
   local TMP_FILE="${TMP_DIR}/docker-"
-  local SLAVE_1
-  local SLAVE_2
-  local MASTER_1
 
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >| "${TMP_FILE}"master
   echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >| "${TMP_FILE}"all-pods
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 1)" >| "${TMP_FILE}"slave-1
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_slave 2)" >| "${TMP_FILE}"slave-2
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >| "${TMP_FILE}"node-1
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >| "${TMP_FILE}"node-2
 
-#  tail -n +2 -q "${TMP_DIR}"/docker-slave-* |egrep -v pause\|kube-proxy\|calico | awk '{print$3"="$1}' |sed 's/\//\-/' > "${TMP_DIR}"/scenario-slave-pods.env
 }
 
-is_master_accessible() {
+fix_ioctl() {
+  if [[ ${1} -eq "1000" ]]; then
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@${BASTION_HOST}" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
+  elif [[ ${1} -eq "0" ]]; then
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@$(get_master)" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
+  else
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@$(get_node "${1}")" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
+  fi
+}
+
+
+is_host_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
-  ssh \
-    -F "${SSH_CONFIG_FILE}"  \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "ConnectTimeout 3" \
-    "$(get_connection_string)" \
-    true
+  if [[ ${1} -eq "1000" ]]; then
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@${BASTION_HOST}" \
+      true
+  elif [[ ${1} -eq "0" ]]; then
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "$(get_connection_string)" \
+      true
+  else
+    ssh \
+      -F "${SSH_CONFIG_FILE}"  \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 3" \
+      -o "LogLevel=QUIET" \
+      "root@$(get_node "${1}")" \
+      true
+  fi
 }
 
 copy_challenge_and_tasks() {
   local SCENARIO_DIR="${1}"
 
-  pushd "${SCENARIO_DIR}"
-  info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  pushd "${SCENARIO_DIR}" > /dev/null
   tmpchallenge=$(mktemp)
-  cp challenge.txt ${tmpchallenge}
+  tmphash=$(mktemp)
+  base64 -w0 challenge.txt >| "${tmphash}"
+  cp challenge.txt "${tmpchallenge}"
   if grep '##IP\|##NAME\|##HIP' challenge.txt > /dev/null; then
     template_challenge
   fi
 
+  info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
-    ${tmpchallenge} root@${BASTION_HOST}:/home/ubuntu/challenge.txt
+    -o "LogLevel=ERROR" \
+    "${tmpchallenge}" "root@${BASTION_HOST}:/home/ubuntu/challenge.txt"
+  rm "${tmpchallenge}"
+
+  info "Copying scenario hash from ${SCENARIO_DIR} to ${BASTION_HOST}"
+  scp \
+    -F "${SSH_CONFIG_FILE}"  \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "LogLevel=ERROR" \
+    "${tmphash}" "root@${BASTION_HOST}:/home/ubuntu/hash.txt"
+  rm "${tmphash}"
+
   info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  rm ${tmpchallenge}
   scp \
     -F "${SSH_CONFIG_FILE}"  \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
+    -o "LogLevel=ERROR" \
     tasks.yaml root@${BASTION_HOST}:/home/ubuntu/tasks.yaml
-  popd
+  popd > /dev/null
 }
 
 template_challenge() {
@@ -191,42 +286,47 @@ template_challenge() {
   if grep '##IP' challenge.txt > /dev/null; then
     TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP'| tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' | tr '\n' ' ')
-      sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##NAME' challenge.txt > /dev/null; then
     TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' | tr '\n' ' ')
-      sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##HIP' challenge.txt > /dev/null; then
     TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(cat ~/.kubesim/docker-master-kubectl | jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' | tr '\n' ' ')
-      sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" ${tmpchallenge}
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
 }
 
-previously_perturbed() {
-  ssh \
-    -F "${SSH_CONFIG_FILE}"  \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "ConnectTimeout 3" \
-    root@${MASTER_HOST} "[ -f /tmp/perturbed.lock ] && true || false"
-}
+find_scenario() {
+  local CHALLENGE_HASH
 
-lock_perturb() {
-  ssh \
-    -F "${SSH_CONFIG_FILE}"  \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "ConnectTimeout 3" \
-    root@${MASTER_HOST} "touch /tmp/perturbed.lock"
+  CHALLENGE_HASH=$(echo 'cat /home/ubuntu/hash.txt 2>/dev/null || true; echo' | run_ssh "${BASTION_HOST}" | tail -n1)
+
+  if [[ "${CHALLENGE_HASH:-}" != "" ]]; then
+    for CHALLENGE in scenario/**/challenge.txt; do
+      THIS_CHALLENGE=$(base64 -w0 < "${CHALLENGE}")
+      if [[ "${THIS_CHALLENGE}" == "${CHALLENGE_HASH}" ]]; then
+        FOUND_SCENARIO=$(basename "$(dirname "${CHALLENGE}")")
+        info "Installed scenario found: ${FOUND_SCENARIO}"
+        break
+      fi
+    done
+    if [[ -z ${FOUND_SCENARIO} ]]; then
+      info "Hash found but it does not match a known scenario"
+      FOUND_SCENARIO="Unknown Scenario"
+    fi
+  else
+    info "No scenario hash found"
+  fi
 }
 
 validate_instructions() {
@@ -234,7 +334,6 @@ validate_instructions() {
 
   shopt -s extglob
   for FILE in "${SCENARIO_DIR%/}/"*.{sh,do,txt}; do
-    echo "${FILE}"
     local TYPE; TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
       *worker-any.sh) ;;
@@ -278,15 +377,15 @@ run_kubectl_yaml() {
       # shellcheck disable=SC2185
       FILES=$(find -regex '.*.ya?ml')
 
-      info "running remotely: kubectl ${ACTION} -f ${FILES}"
-
       FILES_STRING=$(for FILE in ${FILES}; do
         cat "${FILE}"
         echo '---'
       done)
 
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f -
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f -
+      info "Testing kube yamls are valid"
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &> /dev/null
+      info "Applying kube yamls to the cluster"
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &> /dev/null
     )
   done
 }
@@ -297,27 +396,27 @@ run_scripts() {
   shopt -s extglob
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
-    echo "${FILE}"
+    info "Running script files. This may take 1-2 mins"
     local TYPE; TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
 
       *worker-any.sh)
-        run_file_on_host "${FILE}" "$(get_slave 0)"
+        run_file_on_host "${FILE}" "$(get_node 0)"
         ;;
       *worker-1.sh)
-        run_file_on_host "${FILE}" "$(get_slave 1)"
+        run_file_on_host "${FILE}" "$(get_node 1)"
         ;;
       *worker-2.sh)
-        run_file_on_host "${FILE}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "$(get_node 2)"
         ;;
       *workers-every.sh)
-        run_file_on_host "${FILE}" "$(get_slave 1)"
-        run_file_on_host "${FILE}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "$(get_node 1)"
+        run_file_on_host "${FILE}" "$(get_node 2)"
         ;;
       *nodes-every.sh)
         run_file_on_host "${FILE}" "$(get_master)"
-        run_file_on_host "${FILE}" "$(get_slave 1)"
-        run_file_on_host "${FILE}" "$(get_slave 2)"
+        run_file_on_host "${FILE}" "$(get_node 1)"
+        run_file_on_host "${FILE}" "$(get_node 2)"
         ;;
       *master.sh)
         run_file_on_host "${FILE}" "$(get_master)"
@@ -336,7 +435,7 @@ run_scripts() {
 }
 
 run_cleanup() {
-  warning 'Cleanup started'
+  info 'Cleanup started'
 
   local SCENARIO_DIR="${1}"
 
@@ -349,7 +448,7 @@ run_cleanup() {
   # cover tracks on all nodes, reboot all nodes if required
 
   if [[ ! -f "${SCENARIO_DIR}/no-cleanup.do" ]]; then
-    info "Covering tracks..."
+    info "Covering tracks"
     SCRIPTS_TO_RUN+=" ${COVER_TRACKS_SCRIPT}"
   fi
 
@@ -366,16 +465,14 @@ run_cleanup() {
 
     TEMP_FILE=$(mktemp)
     # shellcheck disable=SC2140
-    echo "echo 'cat ""${SCENARIO_DIR}"challenge.txt"' > /opt/challenge.txt" | tee "${TEMP_FILE}"
+    echo "echo 'cat ""${SCENARIO_DIR}"challenge.txt"' > /opt/challenge.txt" >| "${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
 
-  warning "Running script '${SCRIPTS_TO_RUN}'"
-
   for FILE_TO_RUN in ${SCRIPTS_TO_RUN}; do
     get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_master)" || true
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_slave 1)" || true
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_slave 2)" || true
+    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 1)" || true
+    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 2)" || true
   done
 
   # reboot master or workers if required
@@ -385,8 +482,8 @@ run_cleanup() {
   fi
 
   if [[ -f "${SCENARIO_DIR}/reboot-workers.do" ]]; then
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_slave 1)" || true
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_slave 2)" || true
+    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 1)" || true
+    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 2)" || true
   fi
 }
 
@@ -396,42 +493,47 @@ run_ssh() {
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
+    -o "LogLevel=ERROR" \
     root@"${@}"
 }
 
 get_file_to_run() {
   local FILE="${1}"
-  echo "set -x"
   if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
     cat "${FILE}" >&2
   else
     cat "${FILE}"
   fi
-  echo "echo PERTURBANCE COMPLETE FOR ${FILE} ON \$(hostname) AT \$(date)"
   echo
 }
 
 run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
+  #shellcheck disable=SC2094
   (
+    touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
+    exec 19>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
+    BASH_XTRACEFD=19
     set -x
-    get_file_to_run "${FILE}"
-  ) | run_ssh "${HOST}"
+    get_file_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1
+  ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
+  rm "${TMP_DIR}/perturb-script-file-${HOST}.log"
+  unset BASH_XTRACEFD
 }
 
 get_master() {
   echo "${MASTER_HOST}"
 }
 
-get_slave() {
+get_node() {
   local INDEX="${1:-1}"
   local CAT_SORT="cat"
   if [[ "${INDEX}" == 0 ]]; then
     CAT_SORT='sort --random-sort'
     INDEX=1
   fi
-  echo "${SLAVE_HOSTS}" \
+  echo "${NODE_HOSTS}" \
     | tr ',' '\n' \
     | ${CAT_SORT} \
     | sed -n "${INDEX}p"
@@ -465,10 +567,10 @@ parse_arguments() {
         not_empty_or_usage "${1:-}"
         MASTER_HOST="${1}"
         ;;
-      -s | --slaves)
+      -n | --nodes)
         shift
         not_empty_or_usage "${1:-}"
-        SLAVE_HOSTS="${1}"
+        NODE_HOSTS="${1}"
         ;;
       -b | --bastion)
         shift
@@ -502,7 +604,7 @@ get_cluster_master() {
   echo "${IPS}" | head -n1
 }
 
-get_cluster_slaves() {
+get_cluster_nodes() {
   local IPS
   IPS=$(get_node_ips)
   echo "${IPS}" | tail -n +2 | tr '\n' ','
@@ -517,13 +619,13 @@ validate_arguments() {
       set -e
       get_cluster_master
     )
-    SLAVE_HOSTS=$(
+    NODE_HOSTS=$(
       set -e
-      get_cluster_slaves
+      get_cluster_nodes
     )
   else
     [[ ${MASTER_HOST:-} ]] || error "--master must be an IP or hostname, or comma-delimited list"
-    [[ ${SLAVE_HOSTS:-} ]] || error "--slaves must be an IP or hostname, or comma-delimited list"
+    [[ ${NODE_HOSTS:-} ]] || error "--nodes must be an IP or hostname, or comma-delimited list"
   fi
 
   SCENARIO="${ARGUMENTS[0]:-}" || true
@@ -541,12 +643,12 @@ usage() {
 success() {
   [ "${*:-}" ] && RESPONSE="$*" || RESPONSE="Unknown Success"
   printf "%s\n" "$(log_message_prefix)${COLOUR_GREEN}${RESPONSE}${COLOUR_RESET}"
-} 1>&2
+}
 
 info() {
   [ "${*:-}" ] && INFO="$*" || INFO="Unknown Info"
-  printf "%s\n" "$(log_message_prefix)${COLOUR_WHITE}${INFO}${COLOUR_RESET}"
-} 1>&2
+  printf "%s\n" "$(log_message_prefix)${COLOUR_BLUE}${INFO}${COLOUR_RESET}"
+}
 
 warning() {
   [ "${*:-}" ] && ERROR="$*" || ERROR="Unknown Warning"
@@ -583,7 +685,7 @@ not_empty_or_usage() {
 TERM="xterm-color"
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
-COLOUR_WHITE=$(tput setaf 7 :-"" 2>/dev/null)
+COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
 main "$@"

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build -t jenkins/jenkins:lts-alpine - &> /dev/null <<EOF
+docker build -t jenkins/jenkins:lts-alpine - <<EOF
 FROM jenkins/jenkins:lts-alpine
 
 USER root

@@ -1,23 +1,23 @@
 #!/bin/bash
 
-git clone https://github.com/controlplaneio/kubesec-webhook.git webhook &> /dev/null
+git clone https://github.com/controlplaneio/kubesec-webhook.git webhook
 
 cd webhook
 
-apt update && apt install -y make &> /dev/null
+apt update && apt install -y make
 
-make certs &> /dev/null
+make certs
 
-make deploy &> /dev/null
+make deploy
 
 cd ..
 
-rm -rf webhook  &> /dev/null
+rm -rf webhook
 
-kubectl create namespace master-encirclement &> /dev/null
+kubectl create namespace master-encirclement
 
-kubectl label namespaces master-encirclement kubesec-validation=enabled &> /dev/null
+kubectl label namespaces master-encirclement kubesec-validation=enabled
 
 sed -i '18i\ \ \ \ \- --disable-admission-plugins=MutatingAdmissionWebhook' /etc/kubernetes/manifests/kube-apiserver.yaml
 
-apt remove -y make  &> /dev/null
+apt remove -y make 
