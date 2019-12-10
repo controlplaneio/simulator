@@ -1,3 +1,5 @@
+#! /bin/bash
+
 add-apt-repository ppa:rmescandon/yq
 apt update
 apt install yq -y

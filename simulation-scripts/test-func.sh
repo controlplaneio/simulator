@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # test_scenario() {
 #
 #   local SCENARIO="${1:-}"
