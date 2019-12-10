@@ -5,6 +5,7 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	"strings"
 )
 
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
@@ -61,7 +62,11 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, atta
 	logger.Infof("Setting up the \"%s\" scenario on the cluster", s.DisplayName)
 	_, err = Perturb(&po)
 	if err != nil {
-		return errors.Wrapf(err, "Error running perturb with %#v", po)
+		if strings.Contains(err.Error(), "exit status 103") {
+			logger.Error("Scenario clash error from perturb.sh")
+		} else {
+			return errors.Wrapf(err, "Error running perturb with %#v", po)
+		}
 	}
 
 	return nil

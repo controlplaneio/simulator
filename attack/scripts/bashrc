@@ -1,5 +1,5 @@
 # shellcheck disable=SC2148
-COLOUR_WHITE=$(tput setaf 7 :-"" 2>/dev/null)
+COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
@@ -57,7 +57,7 @@ readonly -f warning
 
 info() {
   [ "${*:-}" ] && INFO="$*" || INFO="Unknown Info"
-  printf "%s\\n" "${COLOUR_WHITE}${INFO}${COLOUR_RESET}"
+  printf "%s\\n" "${COLOUR_BLUE}${INFO}${COLOUR_RESET}"
 } 1>&2
 readonly -f info
 
