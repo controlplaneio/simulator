@@ -31,7 +31,7 @@ resource "aws_iam_role" "simulator_s3_access_role" {
   ]
 }
 EOF
-  tags = "${merge(var.default_tags, map("Name", "Simulator S3 Bucket Role"))}"
+  tags               = "${merge(var.default_tags, map("Name", "Simulator S3 Bucket Role"))}"
 }
 
 

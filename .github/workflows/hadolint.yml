@@ -1,0 +1,23 @@
+on: pull_request
+name: Hadolint
+jobs:
+  hadolint-simulator:
+    name: 'Hadolint Simulator'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: hadolint on pr
+      uses: burdzwastaken/hadolint-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HADOLINT_ACTION_DOCKERFILE_FOLDER: .
+  hadolint-attack:
+    name: 'Hadolint Attack'
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: hadolint on pr
+      uses: burdzwastaken/hadolint-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        HADOLINT_ACTION_DOCKERFILE_FOLDER: attack

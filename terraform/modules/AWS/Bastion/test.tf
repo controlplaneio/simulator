@@ -21,7 +21,7 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    content      = "${data.template_file.goss_template.rendered}"
+    content     = "${data.template_file.goss_template.rendered}"
     destination = "/root/goss.yaml"
   }
 
