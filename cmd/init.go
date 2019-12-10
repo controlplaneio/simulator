@@ -24,6 +24,7 @@ func newInitCommand() *cobra.Command {
 		Short: "Creates and configures a bucket for remote state",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
+
 			logger, err := newLogger(viper.GetString("loglevel"), "console")
 			if err != nil {
 				logger.Fatalf("Can't re-initialize zap logger: %v", err)
@@ -43,6 +44,7 @@ func newInitCommand() *cobra.Command {
 
 				bucket = strings.TrimSpace(bucket)
 
+
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
 				if err = simulator.CreateRemoteStateBucket(logger, bucket); err != nil {
 					if strings.HasPrefix(errors.Cause(err).Error(), "BucketAlreadyOwnedByYou") {
@@ -53,8 +55,6 @@ func newInitCommand() *cobra.Command {
 
 					return errors.Wrapf(err, "Error creating s3 bucket %s", bucket)
 				}
-
-				logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 				saveBucketConfig(logger, bucket)
 
 				return nil

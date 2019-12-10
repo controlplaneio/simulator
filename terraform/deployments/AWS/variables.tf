@@ -66,6 +66,11 @@ variable "attack_container_tag" {
   default     = "latest"
 }
 
+variable "s3_bucket_name" {
+  description = "name of the s3 state bucket"
+}
+
+
 variable "default_tags" {
   description = "Default tags for all resources"
   type        = "map"
@@ -73,4 +78,3 @@ variable "default_tags" {
     Product = "simulator"
   }
 }
-
