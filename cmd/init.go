@@ -24,7 +24,6 @@ func newInitCommand() *cobra.Command {
 		Short: "Creates and configures a bucket for remote state",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
-			tfDir := viper.GetString("tf-dir")
 
 			logger, err := newLogger(viper.GetString("loglevel"), "console")
 			if err != nil {

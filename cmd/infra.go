@@ -11,12 +11,11 @@ import (
 	"path/filepath"
 	"fmt"
 	"strings"
-
 )
 
 func writeS3VarsFile(logger *zap.SugaredLogger, tfDir, bucket string) error {
   logger.Infof("Writing s3 bucket %s to tfvars\n", bucket)
-	bucketvarspath := filepath.Join(tfDir, "s3.tfvars")
+	bucketvarspath := filepath.Join(tfDir, "terraform.tfvars")
 	input, err := ioutil.ReadFile(bucketvarspath)
 	if err != nil {
 		return errors.Wrapf(err, "Error reading bucket vars file %s", bucketvarspath)
@@ -64,7 +63,7 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 			//bucket var
 
-			err := simulator.Create(logger, tfDir, bucket, attackTag)
+			err = simulator.Create(logger, tfDir, bucket, attackTag)
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
 			}
