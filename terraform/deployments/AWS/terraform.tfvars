@@ -1,1 +1,1 @@
-s3_bucket_name = "101219-pi2"
+s3_bucket_name = "###replaced by infra.go###"
