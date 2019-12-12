@@ -15,8 +15,8 @@ tasks:
           name?
       - text: What do we get from `printenv`?
       - text: That looks like the IP and port for the API server!
-      - text: I reckon I can curl that endpoint if i use HTTPS and the -k option
-      - text: How do I navigate the HTTP api to find a secret?
+      - text: I reckon I can curl that endpoint if I use HTTPS and the -k option
+      - text: How do I navigate the HTTP API to find a secret?
       - text: >-
           I think this might work:
           'curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'

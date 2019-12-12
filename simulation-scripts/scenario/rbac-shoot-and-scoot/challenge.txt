@@ -4,6 +4,6 @@ Starting Point: ubuntu pod in the rbac-shoot-and-scoot namespace
 
 Difficulty: Easy
 
-Task 1: Can you replicate this issue by finding the secret value in the rbac-shoot-and-scoot namespace.
+Task 1: Can you replicate this issue by finding the value of the credentials secret in the rbac-shoot-and-scoot namespace.
 
 Task 2: Figure out the reason behind this and reset the cluster to benchmark recommendations.
