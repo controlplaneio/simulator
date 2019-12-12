@@ -25,7 +25,10 @@ func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 			fmt.Println("Available scenarios:")
 			for _, s := range manifest.Scenarios {
-				fmt.Println("ID: " + s.Id + ", Name: " + s.DisplayName)
+				fmt.Println("")
+				fmt.Println("Name: " + s.DisplayName)
+				fmt.Println("Description: " + s.Description)
+				fmt.Println("ID: " + s.Id)
 			}
 
 			return nil

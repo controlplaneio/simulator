@@ -24,6 +24,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: credentials
+  namespace: rbac-shoot-and-scoot
 type: Opaque
 data:
   credentials: b2hub2NyZWRlbnRpYWxzYXJlaGVyZQo=
@@ -44,6 +45,7 @@ spec:
       labels:
         app: ubuntu
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: ubuntu
         image: ubuntu:18.04
