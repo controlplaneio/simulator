@@ -5,12 +5,12 @@ scenarios:
     path: ./scenario/container-ambush
     id: container-ambush
     difficulty: Easy
-    description: "Your CI build agent is compromised, where can you get from here?"
+    description: "Your CI build agent is compromised; where can you get from here?"
   - name: Container Defeat in Detail
     path: ./scenario/container-defeat-in-detail
     id: container-defeat-in-detail
     difficulty: Medium
-    description: "A minor DaemonSet misconfiguration has led to cluster compromise, how?"
+    description: "A minor DaemonSet misconfiguration has led to cluster compromise; can you discover how?"
   - name: Container Phalanx Formation
     path: ./scenario/container-phalanx-formation
     id: container-phalanx-formation
@@ -20,87 +20,87 @@ scenarios:
     path: ./scenario/etcd-inverted-wedge
     id: etcd-inverted-wedge
     difficulty: Hard
-    description: "Secrets are leaking from your cluster, can you discover how?"
+    description: "Secrets are leaking from your cluster; can you discover how?"
   - name: Master bait and bleed
     path: ./scenario/master-bait-and-bleed
     id: master-bait-and-bleed
     difficulty: Medium
-    description: "A pod can make calls it should not have permissions for, how serious is this?"
+    description: "A pod can make calls it should not have permissions for; how serious is this?"
   - name: Master Encirclement
     path: ./scenario/master-encirclement
     id: master-encirclement
     difficulty: Medium
-    description: "A deployment should have been blocked by the cluster, how did it succeed"
+    description: "A deployment should have been blocked by the cluster; how did it succeed?"
   - name: Network Feint
     path: ./scenario/network-feint
     id: network-feint
     difficulty: Medium
-    description: "Your service looks to be on the fritz but is something more serious happening instead?"
+    description: "Your service looks to be on the fritz, but is something more serious happening instead?"
   - name: Network Hammer and Anvil
     path: ./scenario/network-hammer-and-anvil
     id: network-hammer-and-anvil
     difficulty: Medium
-    description: "A developer has set up an odd SSH route, is it safe?"
+    description: "A developer has set up an odd SSH route; is it safe?"
   - name: Network Hedgehog Defense
     path: ./scenario/network-hedgehog-defence
     id: network-hedgehog-defence
     difficulty: Medium
-    description: "You are running a postmortem on a suspected attack, could they have crossed a namespace?"
+    description: "You are running a postmortem on a suspected attack; could they have crossed a namespace?"
   - name: Network Swarming
     path: ./scenario/network-swarming
     id: network-swarming
     difficulty: Easy
-    description: "Some odd audit logs have surfaced from your database, did someone manage to bypass your api?"
+    description: "Some odd audit logs have surfaced from your database; did someone manage to bypass your api?"
   - name: Node Amphibious Operations
     path: ./scenario/node-amphibious-operations
     id: node-amphibious-operations
     difficulty: Hard
-    description: "Your RBAC is secure but somehow attackers may be exec'ing into your containers!"
+    description: "Your RBAC is secure but somehow attackers are exec'ing into your containers!"
   - name: Node Raiding
     path: ./scenario/node-raiding
     id: node-raiding
     difficulty: Medium
-    description: "Someone has managed to enumerate the pods in your cluster, how?"
+    description: "Someone has managed to enumerate the pods in your cluster; figure out how."
   - name: Node Shock Tactics
     path: ./scenario/node-shock-tactics
     id: node-shock-tactics
     difficulty: Medium
-    description: "A non-root user on one of your nodes may have escalated itself, can you replicate this?"
+    description: "A non-root user on one of your nodes may have escalated themself; can you replicate this?"
   - name: Policy Echelon Formation
     path: ./scenario/policy-echelon-formation
     id: policy-echelon-formation
     difficulty: Hard
-    description: "A new monitoring tool has been deployed, evaluate its configuration."
+    description: "A new monitoring tool has been deployed. Evaluate its configuration."
   - name: Policy Fire Support
     path: ./scenario/policy-fire-support
     id: policy-fire-support
     difficulty: Easy
-    description: "A container user has accessed files it should not have permissions for, how?"
+    description: "A container user has accessed files they should not have permissions for; figure out how."
   - name: Policy Force Dispersal
     path: ./scenario/policy-force-dispersal
     id: policy-force-dispersal
     difficulty: Easy
-    description: "A pod is running with security options that should be disabled, can you fix the problem?"
+    description: "A pod is running with security options that should be disabled; can you fix the problem?"
   - name: Policy Vertical Envelopment
     path: ./scenario/policy-vertical-envelopment
     id: policy-vertical-envelopment
     difficulty: Medium
-    description: "You are suspicious this Jenkins pod was a vector for a node compromise, can you replay the attack?"
+    description: "You are suspicious this Jenkins pod was a vector for a node compromise; can you replay the attack?"
   - name: RBAC Contact Drill
     path: ./scenario/rbac-contact-drill
     id: rbac-contact-drill
     difficulty: Easy
-    description: "A pod is reading secrets it shouldn't be able to, how?"
+    description: "A pod is reading secrets it shouldn't be able to; figure out how."
   - name: RBAC Flanking Maneuver
     path: ./scenario/rbac-flanking-maneuver
     id: rbac-flanking-maneuver
     difficulty: Hard
-    description: "A pod is making odd calls to the API server, what's going on?"
+    description: "A pod is making odd calls to the API server; what's going on?"
   - name: RBAC Sangar
     path: ./scenario/rbac-sangar
     id: rbac-sangar
     difficulty: Easy
-    description: "A pod is somehow communicating with the API when it shouldn't, how is it doing this?"
+    description: "A pod is somehow communicating with the API when it shouldn't; how is it doing this?"
   - name: RBAC Shoot and Scoot
     path: ./scenario/rbac-shoot-and-scoot
     id: rbac-shoot-and-scoot
@@ -110,9 +110,9 @@ scenarios:
     path: ./scenario/secret-high-ground
     id: secret-high-ground
     difficulty: Easy
-    description: "You have found a secret persisting in a container it shouldn't be in, how do you remove it?"
+    description: "You have found a secret persisting in a container it shouldn't be in; how do you remove it?"
   - name: Secret Tank Desant
     path: ./scenario/secret-tank-desant
     id: secret-tank-desant
     difficulty: Easy
-    description: "You have broken into a container, how do you progress your pentest?"
+    description: "You have broken into a container; how do you progress your pentest?"
