@@ -50,7 +50,7 @@ scenarios:
     path: ./scenario/network-swarming
     id: network-swarming
     difficulty: Easy
-    description: "Some odd audit logs have surfaced from your database; did someone manage to bypass your api?"
+    description: "Some odd audit logs have surfaced from your database; did someone manage to bypass your API?"
   - name: Node Amphibious Operations
     path: ./scenario/node-amphibious-operations
     id: node-amphibious-operations
