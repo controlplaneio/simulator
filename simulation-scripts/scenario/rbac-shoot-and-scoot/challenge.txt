@@ -1,9 +1,9 @@
-Scenario: A developer has informed you, they are able to make Kubernetes API calls from an Ubuntu pod although it only belongs to the default service account.
+Scenario: A developer has informed you, they are able to make Kubernetes API calls from an Ubuntu pod to get a secret although its service account token is unmounted.
 
 Starting Point: ubuntu pod in the rbac-shoot-and-scoot namespace
 
 Difficulty: Easy
 
-Task 1: Can you replicate this issue.
+Task 1: Can you replicate this issue by finding the value of the credentials secret in the rbac-shoot-and-scoot namespace?
 
 Task 2: Figure out the reason behind this and reset the cluster to benchmark recommendations.
