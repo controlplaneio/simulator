@@ -8,7 +8,7 @@ terraform {
   backend "s3" {
     key = "simulator.tfstate"
     // 'bucket='' must have this exact number of spaces for simulator to replace it properly
-    bucket = "###REPLACED-BY-SIMULATOR###"
+    //bucket = "###"
     // Optional, S3 Bucket Server Side Encryption
     encrypt = false
   }
