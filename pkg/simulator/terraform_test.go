@@ -21,13 +21,13 @@ var tfCommandArgumentsTests = []struct {
 	{"destroy", []string{"destroy", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 }
 
-func Test_PrepareTfArgs(t *testing.T) {
-	for _, tt := range tfCommandArgumentsTests {
-		t.Run("Test arguments for "+tt.command, func(t *testing.T) {
-			assert.Equal(t, simulator.PrepareTfArgs(tt.command), tt.arguments)
-		})
-	}
-}
+// func Test_PrepareTfArgs(t *testing.T) {
+// 	for _, tt := range tfCommandArgumentsTests {
+// 		t.Run("Test arguments for "+tt.command, func(t *testing.T) {
+// 			assert.Equal(t, simulator.PrepareTfArgs(tt.command), tt.arguments)
+// 		})
+// 	}
+// }
 
 func Test_Status(t *testing.T) {
 	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test", "latest")
