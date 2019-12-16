@@ -72,14 +72,14 @@ gpg-preflight:
 
 # --- DOCKER
 run: validate-reqs docker-build ## Run the simulator - the build stage of the container runs all the cli tests
-	@docker run                                                     \
-		-h launch                                                     \
-		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws              \
-		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                       \
-		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                      \
+	@docker run                                                             \
+		-h launch                                                       \
+		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
+		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                         \
+		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                        \
 		-v "$(shell pwd)/terraform":/app/terraform                      \
 		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro \
-		--env-file launch-environment                                 \
+		--env-file launch-environment                                   \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
 
 .PHONY: docker-build-nocache
@@ -97,10 +97,10 @@ docker-build: ## Builds the launch container
 .PHONY: docker-test
 docker-test: validate-reqs docker-build ## Run the tests
 	@export AWS_DEFAULT_REGION="testing propagation to AWS_REGION var"; \
-	docker run                                                			\
-		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws  			\
-		--env-file launch-environment                       			\
-		--rm -t $(CONTAINER_NAME_LATEST) \
+	docker run                                                          \
+		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
+		--env-file launch-environment                               \
+		--rm -t $(CONTAINER_NAME_LATEST)                            \
 		/app/test-acceptance.sh
 
 	cd attack && make docker-test
