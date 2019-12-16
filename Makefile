@@ -111,16 +111,16 @@ docker-test: validate-reqs docker-build ## Run the tests
 # -- SIMULATOR CLI
 .PHONY: dep
 dep: ## Install dependencies for other targets
-	$(GO) mod download 2>&1
+	$(GO) mod download
 	$(GO) get honnef.co/go/tools/cmd/staticcheck
 
 .PHONY: static-analysis
-static-analysis:
-	#$(GO) vet
+static-analysis: dep
+	$(GO) vet
 	staticcheck $(PKG)
 
 .PHONY: build
-build: dep ## Run golang build for the CLI program
+build: static-analysis ## Run golang build for the CLI program
 	@echo "+ $@"
 	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 
