@@ -66,7 +66,6 @@ require (
 	github.com/prometheus/procfs v0.0.3 // indirect
 	github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481 // indirect
 	github.com/rogpeppe/fastuuid v1.1.0 // indirect
-	github.com/rogpeppe/go-internal v1.3.0 // indirect
 	github.com/rogpeppe/godef v1.1.1 // indirect
 	github.com/russross/blackfriday v2.0.0+incompatible // indirect
 	github.com/shirou/gopsutil v2.18.12+incompatible // indirect
@@ -100,8 +99,11 @@ require (
 	google.golang.org/grpc v1.21.1 // indirect
 	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20180810215634-df19058c872c // indirect
 	gopkg.in/yaml.v2 v2.2.2
+	honnef.co/go/tools v0.0.1-2019.2.3 // indirect
 	mvdan.cc/unparam v0.0.0-20190310220240-1b9ccfa71afe // indirect
 	sourcegraph.com/sqs/pbtypes v1.0.0 // indirect
 )
+
+replace github.com/go-critic/go-critic@v0.0.0-20181204210945-1df300866540 => github.com/go-critic/go-critic v0.3.5-0.20190526074819-1df300866540
 
 go 1.13

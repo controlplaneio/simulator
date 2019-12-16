@@ -22,6 +22,9 @@ SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
 
+export GOPROXY=direct
+export GOSUMDB=off
+
 # --- Make
 .DEFAULT_GOAL := help
 
@@ -109,6 +112,12 @@ docker-test: validate-reqs docker-build ## Run the tests
 .PHONY: dep
 dep: ## Install dependencies for other targets
 	$(GO) mod download 2>&1
+	$(GO) get honnef.co/go/tools/cmd/staticcheck
+
+.PHONY: static-analysis
+static-analysis:
+	#$(GO) vet
+	staticcheck $(PKG)
 
 .PHONY: build
 build: dep ## Run golang build for the CLI program
