@@ -7,36 +7,36 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-	"io/ioutil"
-	"path/filepath"
-	"fmt"
-	"strings"
+	// "io/ioutil"
+	// "path/filepath"
+	// "fmt"
+	// "strings"
 )
 
-func writeS3VarsFile(logger *zap.SugaredLogger, tfDir, bucket string) error {
-  logger.Infof("Writing s3 bucket %s to tfvars\n", bucket)
-	bucketvarspath := filepath.Join(tfDir, "terraform.tfvars")
-	input, err := ioutil.ReadFile(bucketvarspath)
-	if err != nil {
-		return errors.Wrapf(err, "Error reading bucket vars file %s", bucketvarspath)
-	}
+// func writeS3VarsFile(logger *zap.SugaredLogger, tfDir, bucket string) error {
+//   logger.Infof("Writing s3 bucket %s to tfvars\n", bucket)
+// 	bucketvarspath := filepath.Join(tfDir, "terraform.tfvars")
+// 	input, err := ioutil.ReadFile(bucketvarspath)
+// 	if err != nil {
+// 		return errors.Wrapf(err, "Error reading bucket vars file %s", bucketvarspath)
+// 	}
 
-	lines := strings.Split(string(input), "\n")
-	for i, line := range lines {
-		if strings.Contains(line, "s3_bucket_name = ") {
-			lines[i] = fmt.Sprintf("s3_bucket_name = \"%s\"", bucket)
-		}
-	}
-	output := strings.Join(lines, "\n")
+// 	lines := strings.Split(string(input), "\n")
+// 	for i, line := range lines {
+// 		if strings.Contains(line, "s3_bucket_name = ") {
+// 			lines[i] = fmt.Sprintf("s3_bucket_name = \"%s\"", bucket)
+// 		}
+// 	}
+// 	output := strings.Join(lines, "\n")
 
-	err = ioutil.WriteFile(bucketvarspath, []byte(output), 0644)
-	if err != nil {
-		return errors.Wrapf(err, "Error writing providers file %s", bucketvarspath)
-	}
+// 	err = ioutil.WriteFile(bucketvarspath, []byte(output), 0644)
+// 	if err != nil {
+// 		return errors.Wrapf(err, "Error writing providers file %s", bucketvarspath)
+// 	}
 
-  logger.Infof("Wrote s3 bucket %s to tfvars\n", bucket)
-	return nil
-}
+//   logger.Infof("Wrote s3 bucket %s to tfvars\n", bucket)
+// 	return nil
+// }
 
 func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 	cmd := &cobra.Command{
@@ -55,15 +55,15 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 
 			//bucket var
-			logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
-			err := writeS3VarsFile(logger, tfDir, bucket)
-			if err != nil {
-				return errors.Wrap(err, "Error saving bucket name")
-			}
+			// logger.Infof("Creating variable %s for terraform s3 bucket\n", bucket)
+			// err := writeS3VarsFile(logger, tfDir, bucket)
+			// if err != nil {
+			// 	return errors.Wrap(err, "Error saving bucket name")
+			// }
 			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 			//bucket var
 
-			err = simulator.Create(logger, tfDir, bucket, attackTag)
+			err := simulator.Create(logger, tfDir, bucket, attackTag)
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
 			}
