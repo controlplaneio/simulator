@@ -26,10 +26,7 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 
 	if cmd == "init" {
 		providerBucketFlag := fmt.Sprintf("-backend-config=bucket=%s", bucket)
-		stateBucketFlag := fmt.Sprintf("-var=s3_bucket_name=%s", bucket)
-
 		arguments = append(arguments, providerBucketFlag)
-		arguments = append(arguments, stateBucketFlag)
 	}
 
 	if cmd == "apply" || cmd == "destroy" {
