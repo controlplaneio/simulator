@@ -19,13 +19,16 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 	}
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
+		stateBucketFlag := fmt.Sprintf("-var=s3_bucket_name=%s", bucket)
+
 		arguments = append(arguments, "-input=false")
 		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
+		arguments = append(arguments, stateBucketFlag)
 	}
 
 	if cmd == "init" {
-		backendBucketFlag := fmt.Sprintf("-backend-config=bucket=%s", bucket)
-		arguments = append(arguments, backendBucketFlag)
+		providerBucketFlag := fmt.Sprintf("-backend-config=bucket=%s", bucket)
+		arguments = append(arguments, providerBucketFlag)
 	}
 
 	if cmd == "apply" || cmd == "destroy" {
