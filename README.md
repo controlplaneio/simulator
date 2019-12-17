@@ -3,7 +3,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/kubernetes-simulator/simulator/graphs/commit-activity)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 [![GoDoc](https://godoc.org/github.com/controlplaneio/simulator-standalone?status.svg)](https://godoc.org/github.com/controlplaneio/simulator-standalone)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/kubernetes-simulator/simulator)](https://goreportcard.com/report/github.com/kubernetes-simulator/simulator)
 
 # Simulator
 

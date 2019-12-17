@@ -130,7 +130,6 @@ USER ${build_user}
 
 # Install golang module dependencies before copying source to cache them in their own layer
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
-RUN go mod download
 
 # Add the full source tree
 COPY --chown=1000 .  /go/src/github.com/controlplaneio/simulator-standalone/
@@ -140,11 +139,14 @@ WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
 USER root
 RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/
 
+RUN go get honnef.co/go/tools/cmd/staticcheck
 USER ${build_user}
+
+RUN mkdir /home/${build_user}/go/bin
+ENV PATH=${PATH}:/home/${build_user}/go/bin
 
 # Golang build and test
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
-ENV GO111MODULE=on
 RUN make test-unit
 
 #------------------#
