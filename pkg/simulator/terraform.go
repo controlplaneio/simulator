@@ -25,8 +25,8 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 	}
 
 	if cmd == "init" {
-		providerBucketFlag := fmt.Sprintf("-backend-config=bucket=%s", bucket)
-		arguments = append(arguments, providerBucketFlag)
+		providerBucketArg := fmt.Sprintf("-backend-config=bucket=%s", bucket)
+		arguments = append(arguments, providerBucketArg)
 	}
 
 	if cmd == "apply" || cmd == "destroy" {
