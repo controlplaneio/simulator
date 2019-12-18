@@ -68,7 +68,7 @@ variable "attack_container_tag" {
 
 variable "state_bucket_name" {
   description = "name of the s3 state bucket"
-  default      = "not-defined"
+  default     = "not-defined"
 }
 
 
