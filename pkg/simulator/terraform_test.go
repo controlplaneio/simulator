@@ -11,23 +11,23 @@ import (
 var noopLogger = zap.NewNop().Sugar()
 
 var tfCommandArgumentsTests = []struct {
-	command   string
+	prepArgs   []string
 	arguments []string
 }{
-	{"output", []string{"output", "-json"}},
-	{"init", []string{"init", "-input=false", "--var-file=settings/bastion.tfvars"}},
-	{"plan", []string{"plan", "-input=false", "--var-file=settings/bastion.tfvars"}},
-	{"apply", []string{"apply", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
-	{"destroy", []string{"destroy", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
+	{[]string{"output", "test-bucket"}, []string{"output", "-json"}},
+	{[]string{"init", "test-bucket"}, []string{"init", "-input=false", "--var-file=settings/bastion.tfvars", "-backend-config=bucket=test-bucket"}},
+	{[]string{"plan", "test-bucket"}, []string{"plan", "-input=false", "--var-file=settings/bastion.tfvars"}},
+	{[]string{"apply", "test-bucket"}, []string{"apply", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
+	{[]string{"destroy", "test-bucket"}, []string{"destroy", "-input=false", "--var-file=settings/bastion.tfvars", "-auto-approve"}},
 }
 
-// func Test_PrepareTfArgs(t *testing.T) {
-// 	for _, tt := range tfCommandArgumentsTests {
-// 		t.Run("Test arguments for "+tt.command, func(t *testing.T) {
-// 			assert.Equal(t, simulator.PrepareTfArgs(tt.command), tt.arguments)
-// 		})
-// 	}
-// }
+func Test_PrepareTfArgs(t *testing.T) {
+	for _, tt := range tfCommandArgumentsTests {
+		t.Run("Test arguments for "+tt.prepArgs[0], func(t *testing.T) {
+			assert.Equal(t, simulator.PrepareTfArgs(tt.prepArgs[0], tt.prepArgs[1]), tt.arguments)
+		})
+	}
+}
 
 func Test_Status(t *testing.T) {
 	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test", "latest")
