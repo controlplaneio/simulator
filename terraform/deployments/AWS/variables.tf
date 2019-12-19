@@ -66,8 +66,9 @@ variable "attack_container_tag" {
   default     = "latest"
 }
 
-variable "s3_bucket_name" {
+variable "state_bucket_name" {
   description = "name of the s3 state bucket"
+  default     = "not-defined"
 }
 
 

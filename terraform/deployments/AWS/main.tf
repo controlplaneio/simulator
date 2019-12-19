@@ -1,6 +1,6 @@
 
 locals {
-  aws_tags = "${merge(var.default_tags, map("Simulator Bucket", "${var.s3_bucket_name}"))}"
+  aws_tags = "${merge(var.default_tags, map("Simulator Bucket", "${var.state_bucket_name}"))}"
 }
 
 // Setup networking
