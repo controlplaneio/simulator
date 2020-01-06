@@ -126,8 +126,7 @@ welcome() {
   IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
   info "You have found a private kubernetes cluster."
-  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master " \
-    "and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster"
+  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster."
   info ' '
   info "We have setup helpers to ssh to the master(s) and node(s)."
   info ' '
