@@ -62,7 +62,7 @@ info() {
 readonly -f info
 
 #
-# SSH helpers
+# SSH helpers.
 #
 ssh_master() {
   local INDEX="${1:-}"
@@ -125,19 +125,25 @@ ssh_internal() {
 welcome() {
   IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
+  info ' '
   info "You have found a private kubernetes cluster."
+  info ' '
   info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster."
   info ' '
-  info "We have setup helpers to ssh to the master(s) and node(s)."
+  info "If you want to begin to work on the scenario from its starting point:"
   info ' '
-  info "To ssh to a master:"
+  info "  \$ starting_point"
+  info ' '
+  info "Additionally, we have setup helpers to SSH to the master(s) and node(s)."
+  info ' '
+  info "To SSH to a master:"
   info "  \$ ssh_master 0"
   info ' '
-  info "To ssh to a node:"
+  info "To SSH to a node:"
   info "  \$ ssh_node 1"
   info ' '
-  info "To ssh to an instance with network access to the cluster"
-  info " \$ ssh_internal"
+  info "To SSH to an instance with network access to the cluster:"
+  info "  \$ ssh_internal"
   info ' '
   info "To see this message again:"
   info "  \$ welcome"
@@ -154,7 +160,7 @@ welcome() {
   info '`show_hints` at any time to see all revealed hints again'
   info ' '
   # shellcheck disable=SC2016
-  info 'See this message again with `welcome`'
+  info 'See this message again with `welcome`.'
 }
 readonly -f welcome
 export -f welcome
