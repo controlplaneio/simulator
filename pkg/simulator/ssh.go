@@ -45,6 +45,5 @@ func Attack(logger *zap.SugaredLogger, tfDir, bucketName, attackTag string) erro
 	}
 
 	logger.Infof("Connecting to", bastion)
-	ssh.SSH(bastion)
-	return nil
+	return ssh.SSH(bastion)
 }

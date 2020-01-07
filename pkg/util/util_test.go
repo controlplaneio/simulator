@@ -58,6 +58,7 @@ func Test_ExpandTilde(t *testing.T) {
 
 	// Call ExpandTilde again to exercise the cache
 	p2, err := util.ExpandTilde("~/.")
+	assert.Nil(t, err, "Got an error resolving tilde")
 	assert.Equal(t, *p, *p2, "Cached version differed")
 
 	p3, err := util.ExpandTilde("fail")

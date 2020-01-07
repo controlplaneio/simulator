@@ -122,8 +122,6 @@ func MustRemove(path string) {
 	if err != nil {
 		panic(err)
 	}
-
-	return
 }
 
 // EnsureFile checks a file exists and writes the supplied contents if not.
