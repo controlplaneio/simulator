@@ -61,9 +61,12 @@ type SSHConfig struct {
 // ToSSHConfig produces the SSH config
 func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 	bastionConfigTmpl, err := template.New("bastion-ssh-config").Parse(bastionConfigTmplSrc)
-	k8sConfigTmpl, err := template.New("k8s-ssh-config").Parse(k8sConfigTmplSrc)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error parsing ssh config template")
+	}
+	k8sConfigTmpl, err := template.New("k8s-ssh-config").Parse(k8sConfigTmplSrc)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error parsing k8s config template")
 	}
 
 	var buf bytes.Buffer
@@ -107,7 +110,7 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 		}
 	}
 
-	var output = string(buf.Bytes())
+	var output = buf.String()
 	return &output, nil
 }
 

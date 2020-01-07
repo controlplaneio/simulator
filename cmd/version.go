@@ -21,7 +21,8 @@ func newVersionCommand() *cobra.Command {
 			if err != nil {
 				logger.Fatalf("Can't re-initialize zap logger: %v", err)
 			}
-			defer logger.Sync()
+
+			defer logger.Sync() //nolint:errcheck
 
 			logger.Infof("version %s\n", version)
 			logger.Infof("git commit %s\n", commit)

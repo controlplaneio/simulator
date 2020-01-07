@@ -18,7 +18,7 @@ type Scenario struct {
 	// A Difficulty level for this scenario for use in user interfaces
 	Difficulty string `yaml:"difficulty"`
 	// A short description of the scenario to be used in the user interfaces
-	Description string `yaml: "description"`
+	Description string `yaml:"description"`
 }
 
 // Validate a scenario relative to its manifest
@@ -35,7 +35,7 @@ func (s *Scenario) Validate(manifestPath string) error {
 			"Error stating %s for scenario %s in %s", s.Path, s.DisplayName, manifestPath)
 	}
 
-	if stat.IsDir() != true {
+	if !stat.IsDir() {
 		return errors.Errorf(
 			"Scenario %s is not a directory at %s read from %s",
 			s.DisplayName, s.Path, manifestPath)

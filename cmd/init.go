@@ -15,7 +15,12 @@ import (
 func saveBucketConfig(logger *zap.SugaredLogger, bucket string) {
 	logger.Info("Saving state bucket name to config")
 	viper.Set("state-bucket", bucket)
-	viper.WriteConfig()
+	if err := viper.WriteConfig(); err != nil {
+		// TODO(rem): better messaging for the user - this is a first step
+		// to fix the linting errors - the behaviour is better than before
+		// at least we print a stackdump now
+		panic(err)
+	}
 }
 
 func newInitCommand() *cobra.Command {
@@ -29,7 +34,8 @@ func newInitCommand() *cobra.Command {
 			if err != nil {
 				logger.Fatalf("Can't re-initialize zap logger: %v", err)
 			}
-			defer logger.Sync()
+
+			defer logger.Sync() //nolint:errcheck
 
 			if bucket == "" {
 				logger.Info("No state bucket name found in config or on commandline arguments")
@@ -43,7 +49,6 @@ func newInitCommand() *cobra.Command {
 				}
 
 				bucket = strings.TrimSpace(bucket)
-
 
 				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
 				if err = simulator.CreateRemoteStateBucket(logger, bucket); err != nil {
