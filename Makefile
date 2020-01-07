@@ -117,7 +117,7 @@ dep: ## Install dependencies for other targets
 
 .PHONY: static-analysis
 static-analysis: dep
-	golangci-lint run --new
+	golangci-lint run
 
 .PHONY: build
 build: static-analysis ## Run golang build for the CLI program
