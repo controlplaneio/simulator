@@ -101,6 +101,7 @@ RUN apt-get update                                                              
     awscli                                                                       \
     build-essential                                                              \
     ca-certificates                                                              \
+    curl                                                                         \
     git                                                                          \
     golang                                                                       \
     openssh-client                                                               \
@@ -139,11 +140,11 @@ WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
 USER root
 RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/
 
-RUN go get honnef.co/go/tools/cmd/staticcheck
-USER ${build_user}
+# We're using sh not bash at this point
+# hadolint ignore=DL4006
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
 
-RUN mkdir /home/${build_user}/go/bin
-ENV PATH=${PATH}:/home/${build_user}/go/bin
+USER ${build_user}
 
 # Golang build and test
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone

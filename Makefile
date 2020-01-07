@@ -111,13 +111,13 @@ docker-test: validate-reqs docker-build ## Run the tests
 # -- SIMULATOR CLI
 .PHONY: dep
 dep: ## Install dependencies for other targets
+	mkdir -p ~/go/bin
 	$(GO) mod download
-	$(GO) get honnef.co/go/tools/cmd/staticcheck
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2
 
 .PHONY: static-analysis
 static-analysis: dep
-	$(GO) vet
-	staticcheck $(PKG)
+	golangci-lint run --new
 
 .PHONY: build
 build: static-analysis ## Run golang build for the CLI program
