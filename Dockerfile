@@ -14,11 +14,20 @@ RUN apt-get update                                                              
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends      \
     build-essential                                                                   \
     ca-certificates                                                                   \
-    golang                                                                            \
     git                                                                               \
     nodejs                                                                            \
     shellcheck                                                                        \
     unzip
+
+# Download and save golang latest for use in other layers and install
+ARG GO_INSTALL_VERSION=1.13.5
+# hadolint ignore=DL3003,DL3010
+RUN mkdir /downloads                                                  \
+    && cd /downloads                                                  \
+    && curl -sLO https://dl.google.com/go/go${GO_INSTALL_VERSION}.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go${GO_INSTALL_VERSION}.linux-amd64.tar.gz
+
+ENV PATH $PATH:/usr/local/go/bin
 
 # Install terraform
 ENV GOPATH /go
@@ -101,11 +110,18 @@ RUN apt-get update                                                              
     ca-certificates                                                              \
     curl                                                                         \
     git                                                                          \
-    golang                                                                       \
     openssh-client                                                               \
     unzip
 
+# Install golang version downloaded in dependency stage
 COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
+# hadolint ignore=DL3010
+COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
+# We want to minimise layers to keep the build fast
+# hadolint ignore=DL3010
+RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
+    && rm go*.linux-amd64.tar.gz
+ENV PATH $PATH:/usr/local/go/bin
 
 # Setup non-root build user
 ARG build_user=build
@@ -163,13 +179,20 @@ RUN apt-get update                                                              
     file                                                                         \
     gettext-base                                                                 \
     gnupg                                                                        \
-    golang                                                                       \
     lsb-release                                                                  \
     make                                                                         \
     openssh-client                                                               \
     tcl                                                                          \
     tcl-expect                                                                   \
  && rm -rf /var/lib/apt/lists/*
+
+# Install golang version downloaded in dependency stage
+COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
+# hadolint ignore=DL3010
+COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
+RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
+    && rm go*.linux-amd64.tar.gz
+ENV PATH $PATH:/usr/local/go/bin
 
 # Add login message
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/scripts/launch-motd /usr/local/bin/launch-motd
