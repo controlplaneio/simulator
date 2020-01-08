@@ -133,6 +133,8 @@ run_scenario() {
   get_pods
 
   copy_challenge_and_tasks "${SCENARIO_DIR}"
+
+  rm "${TMP_DIR}"/perturb-script-file-*
 }
 
 container_statuses() {
@@ -470,20 +472,20 @@ run_cleanup() {
   fi
 
   for FILE_TO_RUN in ${SCRIPTS_TO_RUN}; do
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_master)" || true
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 1)" || true
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 2)" || true
+    cat_script_to_run "${FILE_TO_RUN}" | run_ssh "$(get_master)" || true
+    cat_script_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 1)" || true
+    cat_script_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 2)" || true
   done
 
   # reboot master or workers if required
 
   if [[ -f "${SCENARIO_DIR}/reboot-master.do" ]]; then
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_master)" || true
+    cat_script_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_master)" || true
   fi
 
   if [[ -f "${SCENARIO_DIR}/reboot-workers.do" ]]; then
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 1)" || true
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 2)" || true
+    cat_script_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 1)" || true
+    cat_script_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 2)" || true
   fi
 }
 
@@ -497,7 +499,7 @@ run_ssh() {
     root@"${@}"
 }
 
-get_file_to_run() {
+cat_script_to_run() {
   local FILE="${1}"
   if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
     cat "${FILE}" >&2
@@ -510,16 +512,16 @@ get_file_to_run() {
 run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
-  #shellcheck disable=SC2094
+  touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
+  cat_script_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
+  exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
+  BASH_XTRACEFD=$FD
   (
-    touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
-    exec 19>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
-    BASH_XTRACEFD=19
     set -x
-    get_file_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1
+    cat_script_to_run "${FILE}"
   ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
-  rm "${TMP_DIR}/perturb-script-file-${HOST}.log"
   unset BASH_XTRACEFD
+  exec {FD}>&-
 }
 
 get_master() {
