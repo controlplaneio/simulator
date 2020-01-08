@@ -133,6 +133,8 @@ run_scenario() {
   get_pods
 
   copy_challenge_and_tasks "${SCENARIO_DIR}"
+
+  rm "${TMP_DIR}"/perturb-script-file-*
 }
 
 container_statuses() {
@@ -513,12 +515,12 @@ run_file_on_host() {
   #shellcheck disable=SC2094
   (
     touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
+    get_file_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
     exec 19>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
     BASH_XTRACEFD=19
     set -x
-    get_file_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1
+    get_file_to_run "${FILE}"
   ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
-  rm "${TMP_DIR}/perturb-script-file-${HOST}.log"
   unset BASH_XTRACEFD
 }
 
