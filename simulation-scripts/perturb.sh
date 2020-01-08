@@ -512,12 +512,11 @@ cat_script_to_run() {
 run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
-  #shellcheck disable=SC2094
+  touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
+  cat_script_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
+  exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
+  BASH_XTRACEFD=$FD
   (
-    touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
-    cat_script_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
-    exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
-    BASH_XTRACEFD=$FD
     set -x
     cat_script_to_run "${FILE}"
   ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
