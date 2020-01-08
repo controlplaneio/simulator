@@ -117,7 +117,7 @@ The following scenarios are available:
      container-defeat-in-detail
      container-phalanx-formation
      etcd-inverted-wedge
-     master-bait-and-bleed
+     master-shell-scrape
      master-encirclement
      network-feint
      network-hammer-and-anvil

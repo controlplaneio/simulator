@@ -2,7 +2,7 @@ objective: API is enabled on --insecure-bind-address and --insecure-port
 starting-point:
   mode: pod
   pod-name: ''
-  pod-namespace: 'master-bait-and-bleed'
+  pod-namespace: 'master-shell-scrape'
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
   '1':
@@ -17,7 +17,7 @@ tasks:
     starting-point:
       mode: pod
       pod-name: ''
-      pod-namespace: 'master-bait-and-bleed'
+      pod-namespace: 'master-shell-scrape'
   '2':
     sort-order: 2
     hints:
