@@ -22,7 +22,6 @@ SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
 
-export GOPROXY=direct
 export GOSUMDB=off
 
 # --- Make
