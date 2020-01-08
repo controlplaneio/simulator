@@ -472,20 +472,20 @@ run_cleanup() {
   fi
 
   for FILE_TO_RUN in ${SCRIPTS_TO_RUN}; do
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_master)" || true
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 1)" || true
-    get_file_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 2)" || true
+    cat_script_to_run "${FILE_TO_RUN}" | run_ssh "$(get_master)" || true
+    cat_script_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 1)" || true
+    cat_script_to_run "${FILE_TO_RUN}" | run_ssh "$(get_node 2)" || true
   done
 
   # reboot master or workers if required
 
   if [[ -f "${SCENARIO_DIR}/reboot-master.do" ]]; then
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_master)" || true
+    cat_script_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_master)" || true
   fi
 
   if [[ -f "${SCENARIO_DIR}/reboot-workers.do" ]]; then
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 1)" || true
-    get_file_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 2)" || true
+    cat_script_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 1)" || true
+    cat_script_to_run "${REBOOT_SCRIPT}" | run_ssh "$(get_node 2)" || true
   fi
 }
 
@@ -499,7 +499,7 @@ run_ssh() {
     root@"${@}"
 }
 
-get_file_to_run() {
+cat_script_to_run() {
   local FILE="${1}"
   if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
     cat "${FILE}" >&2
@@ -515,11 +515,11 @@ run_file_on_host() {
   #shellcheck disable=SC2094
   (
     touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
-    get_file_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
+    cat_script_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
     exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
     BASH_XTRACEFD=$FD
     set -x
-    get_file_to_run "${FILE}"
+    cat_script_to_run "${FILE}"
   ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
   unset BASH_XTRACEFD
   exec {FD}>&-
