@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: master-bait-and-bleed
+  name: master-shell-scrape
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  namespace: master-bait-and-bleed
+  namespace: master-shell-scrape
   name: credentials
 type: Opaque
 data:
@@ -16,7 +16,7 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: master-bait-and-bleed
+  namespace: master-shell-scrape
   name: ubuntu
 spec:
   selector:
