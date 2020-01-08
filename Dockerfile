@@ -109,15 +109,15 @@ COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 
 # Setup non-root build user
 ARG build_user=build
-RUN useradd -ms /bin/bash ${build_user}
-
+RUN useradd -ms /bin/bash ${build_user} \
 # Create golang src directory
-RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone
-
+    &&  mkdir -p /go/src/github.com/controlplaneio/simulator-standalone \
 # Create an empty public ssh key file for the tests
-RUN mkdir -p /home/${build_user}/.ssh && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
+    && mkdir -p /home/${build_user}/.ssh                                           \
+    && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
 # Create module cache and copy manifest files
     &&  mkdir -p /home/${build_user}/go/pkg/mod
+
 COPY ./go.* /go/src/github.com/controlplaneio/simulator-standalone/
 
 # Give ownership of module cache and src tree to build user
@@ -136,11 +136,10 @@ WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
 
 # TODO: (rem) why is this owned by root after the earlier chmod?
 USER root
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/
-
 # We're using sh not bash at this point
 # hadolint ignore=DL4006
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
+RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/ \
+    && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
 
 USER ${build_user}
 
