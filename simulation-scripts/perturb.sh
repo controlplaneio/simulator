@@ -516,12 +516,13 @@ run_file_on_host() {
   (
     touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
     get_file_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
-    exec 19>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
-    BASH_XTRACEFD=19
+    exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
+    BASH_XTRACEFD=$FD
     set -x
     get_file_to_run "${FILE}"
   ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
   unset BASH_XTRACEFD
+  exec {FD}>&-
 }
 
 get_master() {
