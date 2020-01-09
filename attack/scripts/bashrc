@@ -79,13 +79,13 @@ starting_point() {
       export NODE_TYPE
 
       if [[ $NODE_TYPE =~ "master" ]]; then
-        NODE_NUMBER="$(echo $NODE_TYPE | sed "s/node-id: 'master-//" | sed "s/'//")"
+        NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
         export NODE_NUMBER
-        ssh_master $NODE_NUMBER
+        ssh_master "$NODE_NUMBER"
       else
-        NODE_NUMBER="$(echo $NODE_TYPE | sed "s/node-id: 'node-//" | sed "s/'//")"
+        NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
         export NODE_NUMBER
-        ssh_node $NODE_NUMBER
+        ssh_node "$NODE_NUMBER"
       fi
     else
       if [[ $MODE =~ "pod" ]]; then
