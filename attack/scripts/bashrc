@@ -62,6 +62,44 @@ info() {
 readonly -f info
 
 #
+# Starting point.
+#
+
+starting_point() {
+  # Identify the starting point mode.
+  MODE="$(sed '3,3!d' /tasks.yaml)"
+  export MODE
+
+  #Determine the type.
+  if [[ $MODE =~ "internal-instance" ]]; then
+    ssh_internal
+  else
+    if [[ $MODE =~ "node" ]]; then
+      NODE_TYPE="$(sed '4,4!d' /tasks.yaml)"
+      export NODE_TYPE
+
+      if [[ $NODE_TYPE =~ "master" ]]; then
+        NODE_NUMBER="$(echo $NODE_TYPE | sed "s/node-id: 'master-//" | sed "s/'//")"
+        export NODE_NUMBER
+        ssh_master $NODE_NUMBER
+      else
+        NODE_NUMBER="$(echo $NODE_TYPE | sed "s/node-id: 'node-//" | sed "s/'//")"
+        export NODE_NUMBER
+        ssh_node $NODE_NUMBER
+      fi
+    else
+      if [[ $MODE =~ "pod" ]]; then
+        echo "Starting point: POD - PENDING IMPLEMENTATION"
+      else
+        echo "There's no starting point or the scenario configuration file is not following the expected format."
+      fi
+    fi
+  fi
+}
+readonly -f starting_point
+export -f starting_point
+
+#
 # SSH helpers.
 #
 ssh_master() {
@@ -118,6 +156,8 @@ export -f ssh_node
 ssh_internal() {
   ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_NODE_IP}"
 }
+readonly -f ssh_internal
+export -f ssh_internal
 
 #
 # Display info message
