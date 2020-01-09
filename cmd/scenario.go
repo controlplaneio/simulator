@@ -1,13 +1,13 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"strings"
-	"fmt"
 )
 
 func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
@@ -77,7 +77,7 @@ func newScenarioCommand() *cobra.Command {
 	if err != nil {
 		logger.Fatalf("can't re-initialize zap logger: %v", err)
 	}
-	defer logger.Sync()
+	defer logger.Sync() //nolint:errcheck
 
 	cmd.AddCommand(newScenarioListCommand(logger))
 	cmd.AddCommand(newScenarioLaunchCommand(logger))

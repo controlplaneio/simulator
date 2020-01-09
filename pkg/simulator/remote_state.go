@@ -11,19 +11,20 @@ import (
 // CreateRemoteStateBucket initialises a remote-state bucket
 func CreateRemoteStateBucket(logger *zap.SugaredLogger, bucket string) error {
 	sess, err := session.NewSession(&aws.Config{})
+	if err != nil {
+		return err
+	}
 
 	svc := s3.New(sess)
 
-	_, err = svc.CreateBucket(&s3.CreateBucketInput{Bucket: aws.String(bucket)})
-	if err != nil {
+	if _, err := svc.CreateBucket(&s3.CreateBucketInput{Bucket: aws.String(bucket)}); err != nil {
 		return errors.Wrapf(err, "Unable to create bucket %q", bucket)
 	}
 
 	logger.Infof("Waiting for bucket %q to be created...", bucket)
-	err = svc.WaitUntilBucketExists(&s3.HeadBucketInput{
+	if err := svc.WaitUntilBucketExists(&s3.HeadBucketInput{
 		Bucket: aws.String(bucket),
-	})
-	if err != nil {
+	}); err != nil {
 		return errors.Wrapf(err, "Error occurred while waiting for bucket to be created, %v", bucket)
 	}
 

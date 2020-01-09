@@ -10,11 +10,6 @@ import (
 	"golang.org/x/crypto/ssh/terminal"
 	"net"
 	"os"
-	"time"
-)
-
-const (
-	timeout = 10 * time.Minute
 )
 
 // GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls
@@ -131,7 +126,12 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		if err != nil {
 			return errors.Wrap(err, "Error setting stdin terminal to raw mode")
 		}
-		defer terminal.Restore(fileDescriptor, originalState)
+		defer func() {
+			if err := terminal.Restore(fileDescriptor, originalState); err != nil {
+				// Something really bad happened
+				panic(err)
+			}
+		}()
 	}
 
 	if err = setupPty(fileDescriptor, session); err != nil {

@@ -39,7 +39,8 @@ func newConfigCommand() *cobra.Command {
 		logger.Fatalf("can't re-initialize zap logger: %v", err)
 	}
 
-	defer logger.Sync()
+	defer logger.Sync() //nolint:errcheck
+
 	cmd.AddCommand(newConfigGetCommand(logger))
 
 	return cmd
