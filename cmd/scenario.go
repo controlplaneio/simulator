@@ -46,11 +46,12 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
 			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
 			scenariosDir := viper.GetString("scenarios-dir")
 			attackTag := viper.GetString("attack-container-tag")
 			scenarioID := args[0]
 
-			if err := simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID, attackTag); err != nil {
+			if err := simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID, attackTag, tfVarsDir); err != nil {
 				if strings.HasPrefix(err.Error(), "Scenario not found") {
 					logger.Warn(err.Error())
 					return nil
