@@ -67,34 +67,57 @@ readonly -f info
 
 starting_point() {
   # Identify the starting point mode.
-  MODE="$(sed '3,3!d' /tasks.yaml)"
+  MODE="$(sed '3,3!d' /tasks.yaml | tr '[:upper:]' '[:lower:]')"
   export MODE
 
-  #Determine the type.
+  #Determine if mode is internal-instance.
   if [[ $MODE =~ "internal-instance" ]]; then
-    ssh_internal
-  else
-    if [[ $MODE =~ "node" ]]; then
-      NODE_TYPE="$(sed '4,4!d' /tasks.yaml)"
-      export NODE_TYPE
+    KUBECTL_ACCESS="$(sed '4,4!d' /tasks.yaml)"
+    export KUBECTL_ACCESS
 
-      if [[ $NODE_TYPE =~ "master" ]]; then
-        NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
-        export NODE_NUMBER
-        ssh_master "$NODE_NUMBER"
-      else
-        NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
-        export NODE_NUMBER
-        ssh_node "$NODE_NUMBER"
-      fi
-    else
-      if [[ $MODE =~ "pod" ]]; then
-        echo "Starting point: POD - PENDING IMPLEMENTATION"
-      else
-        echo "There's no starting point or the scenario configuration file is not following the expected format."
-      fi
+    if [[ $KUBECTL_ACCESS =~ "false" ]]; then
+      ssh "$INTERNAL_NODE_IP" rm -r ~/.kube
+    fi
+
+    ssh_internal
+    return
+  fi
+
+  #Determine if mode is node.
+  if [[ $MODE =~ "node" ]]; then
+    NODE_TYPE="$(sed '4,4!d' /tasks.yaml)"
+    export NODE_TYPE
+
+    if [[ $NODE_TYPE =~ "master" ]]; then
+      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
+      export NODE_NUMBER
+      
+      ssh_master "$NODE_NUMBER"
+      return
+    fi
+
+    if [[ $NODE_TYPE =~ "node" ]]; then
+      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
+      export NODE_NUMBER
+      
+      ssh_node "$NODE_NUMBER"
+      return
     fi
   fi
+
+  #Determine if mode is pod.
+  if [[ $MODE =~ "pod" ]]; then
+    echo "Starting point: POD - PENDING IMPLEMENTATION"
+    return
+  fi
+  
+  #Determine if mode is null.
+  if [[ $MODE =~ "null" ]]; then
+    echo "There's no starting point."
+    return
+  fi
+
+  echo "The scenario configuration file is not following the expected format."
 }
 readonly -f starting_point
 export -f starting_point
