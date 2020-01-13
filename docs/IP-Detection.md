@@ -22,3 +22,9 @@ These HTTPS sources are given three votes to the following HTTP sources single v
 * http://diagnostic.opendns.com/myip
 
 Once all sources have returned an IP or timed out, the IP with most votes wins and is returned as the IP for the user.
+
+## Reconfiguring the Whitelisted IP
+
+While limiting the IPs able to SSH to the bastion is obviously great for security it does pose a user experience issue. Users may have their IPs change due to network conditions, restarts or simply moving location. It would be wasteful to completely reprovision a cluster every time this happens and the user would lose the progress on their current scenario.
+
+If it is known that the user IP has changed or SSH is timing out, the security groups can be reconfigured by running `simulator infra create`. Simulator will notice the discrepancy between the security group and the current IP and then take action to remedy it.
