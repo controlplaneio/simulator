@@ -39,8 +39,7 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/j
     && chmod +x /usr/local/bin/jq
 
 ## Install YQ
-ARG YQ_VERSION=2.7.2
-RUN curl -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
+RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
       -o /usr/local/bin/yq                                                                  \
     && chmod +x /usr/local/bin/yq
 

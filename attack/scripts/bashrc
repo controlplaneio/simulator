@@ -67,15 +67,15 @@ readonly -f info
 
 starting_point() {
   # Identify the starting point mode.
-  MODE="$(sed '3,3!d' /tasks.yaml | tr '[:upper:]' '[:lower:]')"
+  MODE="$(yq r /tasks.yaml starting-point.mode | tr '[:upper:]' '[:lower:]')"
   export MODE
 
   #Determine if mode is internal-instance.
-  if [[ $MODE =~ "internal-instance" ]]; then
-    KUBECTL_ACCESS="$(sed '4,4!d' /tasks.yaml)"
+  if [[ "$MODE" == "internal-instance" ]]; then
+    KUBECTL_ACCESS="$(yq r /tasks.yaml starting-point.kubectl-access | tr '[:upper:]' '[:lower:]')"
     export KUBECTL_ACCESS
 
-    if [[ $KUBECTL_ACCESS =~ "false" ]]; then
+    if [[ "$KUBECTL_ACCESS" == "false" ]]; then
       ssh "$INTERNAL_NODE_IP" rm -r ~/.kube
     fi
 
@@ -84,11 +84,11 @@ starting_point() {
   fi
 
   #Determine if mode is node.
-  if [[ $MODE =~ "node" ]]; then
-    NODE_TYPE="$(sed '4,4!d' /tasks.yaml)"
+  if [[ "$MODE" == "node" ]]; then
+    NODE_TYPE="$(yq r /tasks.yaml starting-point.node-id | tr '[:upper:]' '[:lower:]')"
     export NODE_TYPE
 
-    if [[ $NODE_TYPE =~ "master" ]]; then
+    if [[ "$NODE_TYPE" =~ "master" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
       export NODE_NUMBER
       
@@ -96,7 +96,7 @@ starting_point() {
       return
     fi
 
-    if [[ $NODE_TYPE =~ "node" ]]; then
+    if [[ "$NODE_TYPE" =~ "node" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
       export NODE_NUMBER
       
@@ -106,13 +106,13 @@ starting_point() {
   fi
 
   #Determine if mode is pod.
-  if [[ $MODE =~ "pod" ]]; then
+  if [[ "$MODE" == "pod" ]]; then
     echo "Starting point: POD - PENDING IMPLEMENTATION"
     return
   fi
   
   #Determine if mode is null.
-  if [[ $MODE =~ "null" ]]; then
+  if [[ "$MODE" == "null" ]]; then
     echo "There's no starting point."
     return
   fi
