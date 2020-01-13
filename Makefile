@@ -22,7 +22,6 @@ SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
 
-export GOPROXY=direct
 export GOSUMDB=off
 
 # --- Make
@@ -111,13 +110,13 @@ docker-test: validate-reqs docker-build ## Run the tests
 # -- SIMULATOR CLI
 .PHONY: dep
 dep: ## Install dependencies for other targets
+	mkdir -p ~/go/bin
 	$(GO) mod download
-	$(GO) get honnef.co/go/tools/cmd/staticcheck
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2
 
 .PHONY: static-analysis
 static-analysis: dep
-	$(GO) vet
-	staticcheck $(PKG)
+	golangci-lint run
 
 .PHONY: build
 build: static-analysis ## Run golang build for the CLI program

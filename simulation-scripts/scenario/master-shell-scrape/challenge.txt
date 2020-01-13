@@ -1,7 +1,7 @@
 An ubuntu pod in your cluster can reportedly make API calls beyond what the default service account should be able to do.
 Your cluster is running with master IP: $MASTER_IP_ADDRESSES
 
-Starting Point: ubuntu pod in the master-bait-and-bleed namespace.
+Starting Point: ubuntu pod in the master-shell-scrape namespace.
 
 Difficulty : Medium
 

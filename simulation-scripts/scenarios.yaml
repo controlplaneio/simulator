@@ -21,9 +21,9 @@ scenarios:
     id: etcd-inverted-wedge
     difficulty: Hard
     description: "Secrets are leaking from your cluster; can you discover how?"
-  - name: Master bait and bleed
-    path: ./scenario/master-bait-and-bleed
-    id: master-bait-and-bleed
+  - name: Master shell scrape
+    path: ./scenario/master-shell-scrape
+    id: master-shell-scrape
     difficulty: Medium
     description: "A pod can make calls it should not have permissions for; how serious is this?"
   - name: Master Encirclement

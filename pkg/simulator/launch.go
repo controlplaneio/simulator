@@ -25,6 +25,9 @@ func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, atta
 
 	logger.Debugf("Checking status of infrastructure")
 	tfo, err := Status(logger, tfDir, bucketName, attackTag)
+	if err != nil {
+		return err
+	}
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}

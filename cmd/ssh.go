@@ -74,7 +74,7 @@ func newSSHCommand() *cobra.Command {
 	if err != nil {
 		logger.Fatalf("can't re-initialize zap logger: %v", err)
 	}
-	defer logger.Sync()
+	defer logger.Sync() //nolint:errcheck
 
 	cmd.AddCommand(newSSHConfigCommand(logger))
 	cmd.AddCommand(newSSHAttackCommand(logger))

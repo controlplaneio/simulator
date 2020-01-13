@@ -14,11 +14,20 @@ RUN apt-get update                                                              
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends      \
     build-essential                                                                   \
     ca-certificates                                                                   \
-    golang                                                                            \
     git                                                                               \
     nodejs                                                                            \
     shellcheck                                                                        \
     unzip
+
+# Download and save golang latest for use in other layers and install
+ARG GO_INSTALL_VERSION=1.13.5
+# hadolint ignore=DL3003,DL3010
+RUN mkdir /downloads                                                  \
+    && cd /downloads                                                  \
+    && curl -sLO https://dl.google.com/go/go${GO_INSTALL_VERSION}.linux-amd64.tar.gz \
+    && tar -C /usr/local -xzf go${GO_INSTALL_VERSION}.linux-amd64.tar.gz
+
+ENV PATH $PATH:/usr/local/go/bin
 
 # Install terraform
 ENV GOPATH /go
@@ -32,11 +41,17 @@ RUN terraform-bundle package terraform-bundle.hcl && \
     mkdir -p terraform-bundle                     && \
     unzip -d terraform-bundle terraform_*.zip
 
-# Install JQ
+# Default configuration for dep
 ARG JQ_VERSION=1.6
+ARG YQ_VERSION=2.7.2
+ARG GOSS_VERSION=v0.3.7
+ARG HADOLINT_VERSION=v1.16.3
+ARG lint_user=lint
+
+# Install JQ
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
       -o /usr/local/bin/jq                                                                \
-    && chmod +x /usr/local/bin/jq
+    && chmod +x /usr/local/bin/jq                                                         \
 
 ## Install YQ
 RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
@@ -44,20 +59,15 @@ RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_a
     && chmod +x /usr/local/bin/yq
 
 ## Install Goss
-ARG GOSS_VERSION=v0.3.7
-RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
-         -o /usr/local/bin/goss                                                                    \
-    && chmod +rx /usr/local/bin/goss
-
+    && curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
+         -o /usr/local/bin/goss                                                                       \
+    && chmod +rx /usr/local/bin/goss                                                                  \
 # Install Hadolint
-ARG HADOLINT_VERSION=v1.16.3
-RUN curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
-        -o /usr/local/bin/hadolint                                                                            \
-    && chmod +x /usr/local/bin/hadolint
-
+    && curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
+        -o /usr/local/bin/hadolint                                                                               \
+    && chmod +x /usr/local/bin/hadolint                                                                          \
 # Setup non-root lint user
-ARG lint_user=lint
-RUN useradd -ms /bin/bash ${lint_user} \
+    && useradd -ms /bin/bash ${lint_user} \
     && mkdir /app
 
 WORKDIR /app/scenario-tools
@@ -100,24 +110,32 @@ RUN apt-get update                                                              
     awscli                                                                       \
     build-essential                                                              \
     ca-certificates                                                              \
+    curl                                                                         \
     git                                                                          \
-    golang                                                                       \
     openssh-client                                                               \
     unzip
 
+# Install golang version downloaded in dependency stage
 COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
+# hadolint ignore=DL3010
+COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
+# We want to minimise layers to keep the build fast
+# hadolint ignore=DL3010
+RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
+    && rm go*.linux-amd64.tar.gz
+ENV PATH $PATH:/usr/local/go/bin
 
 # Setup non-root build user
 ARG build_user=build
-RUN useradd -ms /bin/bash ${build_user}
-
+RUN useradd -ms /bin/bash ${build_user} \
 # Create golang src directory
-RUN mkdir -p /go/src/github.com/controlplaneio/simulator-standalone
-
+    &&  mkdir -p /go/src/github.com/controlplaneio/simulator-standalone \
 # Create an empty public ssh key file for the tests
-RUN mkdir -p /home/${build_user}/.ssh && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
+    && mkdir -p /home/${build_user}/.ssh                                           \
+    && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
 # Create module cache and copy manifest files
     &&  mkdir -p /home/${build_user}/go/pkg/mod
+
 COPY ./go.* /go/src/github.com/controlplaneio/simulator-standalone/
 
 # Give ownership of module cache and src tree to build user
@@ -136,13 +154,12 @@ WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
 
 # TODO: (rem) why is this owned by root after the earlier chmod?
 USER root
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/
+# We're using sh not bash at this point
+# hadolint ignore=DL4006
+RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/ \
+    && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
 
-RUN go get honnef.co/go/tools/cmd/staticcheck
 USER ${build_user}
-
-RUN mkdir /home/${build_user}/go/bin
-ENV PATH=${PATH}:/home/${build_user}/go/bin
 
 # Golang build and test
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
@@ -164,13 +181,20 @@ RUN apt-get update                                                              
     file                                                                         \
     gettext-base                                                                 \
     gnupg                                                                        \
-    golang                                                                       \
     lsb-release                                                                  \
     make                                                                         \
     openssh-client                                                               \
     tcl                                                                          \
     tcl-expect                                                                   \
  && rm -rf /var/lib/apt/lists/*
+
+# Install golang version downloaded in dependency stage
+COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
+# hadolint ignore=DL3010
+COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
+RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
+    && rm go*.linux-amd64.tar.gz
+ENV PATH $PATH:/usr/local/go/bin
 
 # Add login message
 COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/scripts/launch-motd /usr/local/bin/launch-motd
