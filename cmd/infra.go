@@ -25,16 +25,17 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
 			
 			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
 			//bucket var
 
-			err := simulator.Create(logger, tfDir, bucket, attackTag)
+			err := simulator.Create(logger, tfDir, bucket, attackTag, tfVarsDir)
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
 			}
 
-			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket, attackTag)
+			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket, attackTag, tfVarsDir)
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
@@ -63,8 +64,9 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 				return nil
 			}
 			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
 			attackTag := viper.GetString("attack-container-tag")
-			tfo, err := simulator.Status(logger, tfDir, bucket, attackTag)
+			tfo, err := simulator.Status(logger, tfDir, bucket, attackTag, tfVarsDir)
 			if err != nil {
 				logger.Errorw("Error getting status of infrastructure", zap.Error(err))
 				return err
@@ -97,9 +99,10 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 				return nil
 			}
 			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			attackTag := viper.GetString("attack-container-tag")
-			err := simulator.Destroy(logger, tfDir, bucket, attackTag)
+			err := simulator.Destroy(logger, tfDir, bucket, attackTag, tfVarsDir)
 			if err != nil {
 				logger.Errorw("Error destroying infrastructure", zap.Error(err))
 			}

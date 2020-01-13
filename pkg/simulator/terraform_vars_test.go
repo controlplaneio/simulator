@@ -19,10 +19,10 @@ state_bucket_name = "test-bucket"
 }
 
 func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
-	tfDir := fixture("tf-dir-with-settings")
-	varsFile := tfDir + "/settings/bastion.tfVars"
+	tfVarsDir := fixture("tf-dir-with-settings")
+	varsFile := tfVarsDir + "/settings/bastion.tfVars"
 
-	err := simulator.EnsureLatestTfVarsFile(tfDir, "ssh-rsa", "10.0.0.1/16", "test-bucket", "latest")
+	err := simulator.EnsureLatestTfVarsFile(tfVarsDir, "ssh-rsa", "10.0.0.1/16", "test-bucket", "latest")
 	assert.Nil(t, err, "Got an error")
 
 	assert.Equal(t, util.MustSlurp(varsFile), "test = true\n")
