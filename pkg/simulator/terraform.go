@@ -1,11 +1,12 @@
 package simulator
 
 import (
+	"fmt"
+
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"fmt"
 )
 
 // PrepareTfArgs takes a string with the terraform command desired and returns
@@ -52,7 +53,7 @@ func Terraform(wd, cmd string, bucket string) (*string, error) {
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if
 // needed
-func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tfVarsDir) error {
+func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) error {
 	logger.Debug("Terraform.InitIfNeeded() start")
 	logger.Info("Ensuring there is a simulator keypair")
 	_, err := ssh.EnsureKey()
@@ -90,7 +91,7 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tf
 		return errors.Wrap(err, "Error initialising terraform")
 	}
 
-//tf-vars-dir: ~/.kubesim
+	//tf-vars-dir: ~/.kubesim
 
 	return nil
 }
@@ -99,7 +100,7 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tf
 
 // Create runs terraform init, plan, apply to create the necessary
 // infrastructure to run scenarios
-func Create(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tfVarsDir) error {
+func Create(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) error {
 	err := InitIfNeeded(logger, tfDir, bucket, attackTag, tfVarsDir)
 
 	if err != nil {
@@ -119,7 +120,7 @@ func Create(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tfVarsDi
 
 // Status calls terraform output to get the state of the infrastruture and
 // parses the output for programmatic use
-func Status(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tfVarsDir) (*TerraformOutput, error) {
+func Status(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) (*TerraformOutput, error) {
 	err := InitIfNeeded(logger, tfDir, bucket, attackTag, tfVarsDir)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error initialising")
@@ -143,7 +144,7 @@ func Status(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tfVarsDi
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy(logger *zap.SugaredLogger, tfDir, bucket, attackTag string, tfVarsDir) error {
+func Destroy(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) error {
 	err := InitIfNeeded(logger, tfDir, bucket, attackTag, tfVarsDir)
 	if err != nil {
 		return errors.Wrap(err, "Error initialising")

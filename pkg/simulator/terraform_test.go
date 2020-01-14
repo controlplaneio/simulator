@@ -11,7 +11,7 @@ import (
 var noopLogger = zap.NewNop().Sugar()
 
 var tfCommandArgumentsTests = []struct {
-	prepArgs   []string
+	prepArgs  []string
 	arguments []string
 }{
 	{[]string{"output", "test-bucket"}, []string{"output", "-json"}},
@@ -30,20 +30,20 @@ func Test_PrepareTfArgs(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
-	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test", "latest")
+	tfo, err := simulator.Status(noopLogger, fixture("noop-tf-dir"), "test", "latest", "test")
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfo, "Got no terraform output")
 }
 
 func Test_Create(t *testing.T) {
-	err := simulator.Create(noopLogger, fixture("noop-tf-dir"), "test", "latest")
+	err := simulator.Create(noopLogger, fixture("noop-tf-dir"), "test", "latest", "test")
 
 	assert.Nil(t, err)
 }
 
 func Test_Destroy(t *testing.T) {
-	err := simulator.Destroy(noopLogger, fixture("noop-tf-dir"), "test", "test")
+	err := simulator.Destroy(noopLogger, fixture("noop-tf-dir"), "test", "test", "test")
 
 	assert.Nil(t, err)
 }

@@ -1,17 +1,18 @@
 package simulator
 
 import (
+	"strings"
+
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
-	"strings"
 )
 
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
 // the infrastructure has been created.  Returns an error if the infrastructure
 // is not ready or something goes wrong
-func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, attackTag string, tfVarsDir) error {
+func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, attackTag, tfVarsDir string) error {
 	logger.Debugf("Loading scenario manifest from %s", scenariosDir)
 	manifest, err := scenario.LoadManifest(scenariosDir)
 	if err != nil {

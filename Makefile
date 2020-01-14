@@ -120,7 +120,7 @@ static-analysis: dep
 	staticcheck $(PKG)
 
 .PHONY: build
-build: static-analysis ## Run golang build for the CLI program
+build: ## Run golang build for the CLI program
 	@echo "+ $@"
 	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 

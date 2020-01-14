@@ -14,12 +14,15 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			scenariosDir := viper.GetString("scenarios-dir")
-			bucket := viper.GetString("state-bucket")
-			tfDir := viper.GetString("tf-dir")
-			attackTag := viper.GetString("attack-container-tag")
-			tfVarsDir := viper.GetString("tf-vars-dir")
-			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket, attackTag, tfVarsDir)
+			simulator := simulator.NewSimulator(
+				simulator.WithLogger(logger),
+				simulator.WithTfDir(viper.GetString("tf-dir")),
+				simulator.WithScenariosDir(viper.GetString("scenarios-dir")),
+				simulator.WithAttackTag(viper.GetString("attack-container-tag")),
+				simulator.WithBucketName(viper.GetString("state-bucket")),
+				simulator.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+
+			cfg, err := simulator.SSHConfig()
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
