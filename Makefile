@@ -119,7 +119,7 @@ static-analysis: dep
 	golangci-lint run
 
 .PHONY: build
-build: static-analysis ## Run golang build for the CLI program
+build: ## Run golang build for the CLI program
 	@echo "+ $@"
 	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 

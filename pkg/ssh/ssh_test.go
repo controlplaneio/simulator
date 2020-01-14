@@ -1,9 +1,10 @@
 package ssh_test
 
 import (
+	"testing"
+
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {

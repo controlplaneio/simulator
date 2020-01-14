@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
-
 )
 
 func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
@@ -15,8 +14,8 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("state-bucket")
-			if bucket == "" {
+			bucketName := viper.GetString("state-bucket")
+			if bucketName == "" {
 				logger.Warnf("Simulator has not been initialised with an S3 bucket")
 				logger.Warn("Please run simulator init")
 				return nil
@@ -26,16 +25,24 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
-			
-			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucket)
+
+			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucketName)
 			//bucket var
 
-			err := simulator.Create(logger, tfDir, bucket, attackTag, tfVarsDir)
+			err := simulator.Create(logger, tfDir, bucketName, attackTag, tfVarsDir)
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
 			}
 
-			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket, attackTag, tfVarsDir)
+			simulator := simulator.NewSimulator(
+				simulator.WithLogger(logger),
+				simulator.WithTfDir(tfDir),
+				simulator.WithScenariosDir(scenariosDir),
+				simulator.WithAttackTag(attackTag),
+				simulator.WithBucketName(bucketName),
+				simulator.WithTfVarsDir(tfVarsDir))
+
+			cfg, err := simulator.SSHConfig()
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
