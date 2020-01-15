@@ -172,7 +172,7 @@ ssh_master() {
     return 1
   fi
 
-  ssh -o "StrictHostKeyChecking=no" root@"${MASTER_NODES[${INDEX}]}"
+  ssh root@"${MASTER_NODES[${INDEX}]}"
 }
 readonly -f ssh_master
 export -f ssh_master
@@ -197,13 +197,13 @@ ssh_node() {
     return 1
   fi
 
-  ssh -o "StrictHostKeyChecking=no" root@"${WORKER_NODES[${INDEX}]}"
+  ssh root@"${WORKER_NODES[${INDEX}]}"
 }
 readonly -f ssh_node
 export -f ssh_node
 
 ssh_internal() {
-  ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_HOST_IP}"
+  ssh root@"${INTERNAL_HOST_IP}"
 }
 readonly -f ssh_internal
 export -f ssh_internal
