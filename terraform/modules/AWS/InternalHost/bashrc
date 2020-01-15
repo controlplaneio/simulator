@@ -1,0 +1,61 @@
+# shellcheck disable=SC2148
+if [[ $- == *i* ]]; then
+  COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
+  COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
+
+  main() {
+    enable_programmable_completion
+    set_prompt_command
+
+    motd
+
+    unset -f main enable_programmable_completion set_prompt_command
+    # shellcheck source=/dev/null
+    source <(kubectl completion bash)
+  }
+
+  enable_programmable_completion() {
+    # enable programmable completion features
+    if ! shopt -oq posix; then
+      if [ -f /usr/share/bash-completion/bash_completion ]; then
+        # shellcheck disable=SC1091
+        . /usr/share/bash-completion/bash_completion
+      elif [ -f /etc/bash_completion ]; then
+        # shellcheck disable=SC1091
+        . /etc/bash_completion
+      fi
+    fi
+  }
+
+  set_prompt_command() {
+    PROMPT_COMMAND=__prompt_command
+  }
+
+  __prompt_command() {
+    local PREVIOUS_COMMAND_STATUS_CODE="$?"
+    local STATUS_CODE_COLOR="${COLOUR_RESET}"
+
+    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'
+
+    if [[ "${PREVIOUS_COMMAND_STATUS_CODE}" != 0 ]]; then
+      STATUS_CODE_COLOR=${COLOUR_RED}
+    fi
+
+    PS1="${PS1}[${STATUS_CODE_COLOR}${PREVIOUS_COMMAND_STATUS_CODE}${COLOUR_RESET}]\$ "
+  }
+
+  motd() {
+    # shellcheck disable=SC2046
+    echo "$(tput setaf 3)
+    db   dD db    db d8888b. d88888b .d8888. d888888b .88b  d88.
+    88 ,8P' 88    88 88  \`8D 88'     88'  YP   \`88'   88'YbdP\`88
+    88,8P   88    88 88oooY' 88ooooo \`8bo.      88    88  88  88
+    88\`8b   88    88 88~~~b. 88~~~~~   \`Y8b.    88    88  88  88
+    88 \`88. 88b  d88 88   8D 88.     db   8D   .88.   88  88  88
+    YP   YD ~Y8888P' Y8888P' Y88888P \`8888Y' Y888888P YP  YP  YP
+    $(tput setaf 3)$(figlet $(hostname))
+    $(tput sgr0)"
+  }
+
+  main
+fi

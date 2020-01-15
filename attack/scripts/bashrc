@@ -203,7 +203,7 @@ readonly -f ssh_node
 export -f ssh_node
 
 ssh_internal() {
-  ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_NODE_IP}"
+  ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_HOST_IP}"
 }
 readonly -f ssh_internal
 export -f ssh_internal

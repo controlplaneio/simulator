@@ -15,36 +15,16 @@ runcmd:
 
 write_files:
   - path: /etc/bash.bashrc
-    permissions: "0755"
-    content: |
-      [ -z "$PS1" ] && return
-      PS1='\u@\h $'
-      echo "$(tput setaf 3)
-                                                      |>>>
-                                                      |
-                                                  _  _|_  _
-                                                 |;|_|;|_|;|
-                                                \\\\.    .  /
-                                                 \\\\:  .  /
-                                                   ||:   |
-                                                   ||:.  |
-                                                   ||:  .|
-                                                   ||:   |       \\,/
-                                                   ||: , |            /\`\\
-                                                   ||:   |
-                                                   ||: . |
-                    __                            _||_   |
-      $(tput setaf 4)     ____----    \\----__            __ ----     -----\\              ___
-      -~--~                   ----____---/                  ------_____---    -----~~
-      $(tput setaf 3)$(figlet $(hostname))
-      $(tput sgr0)"
+    permissions: '0755'
+    content: !!binary |
+      ${bastion_bashrc}
   - path: /home/ubuntu/.bash_login
     permissions: "0755"
     content: |
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
-      export INTERNAL_NODE_IP=${internal_node_private_ip}
-      sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -e INTERNAL_NODE_IP -it controlplane/simulator-attack:${attack_container_tag}
+      export INTERNAL_HOST_IP=${internal_host_private_ip}
+      sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -e INTERNAL_HOST_IP -it controlplane/simulator-attack:${attack_container_tag}
   - path: /home/ubuntu/progress.json
     permissions: "0666"
     content: "{}"

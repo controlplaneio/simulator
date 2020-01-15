@@ -34,7 +34,7 @@ module "Bastion" {
   subnet_id                = "${module.Networking.PublicSubnetId}"
   master_ip_addresses      = "${join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"
   node_ip_addresses        = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
-  internal_node_private_ip = "${module.InternalNode.InternalNodePrivateIp}"
+  internal_host_private_ip = "${module.InternalHost.InternalHostPrivateIp}"
   attack_container_tag     = "${var.attack_container_tag}"
   default_tags             = "${local.aws_tags}"
 }
@@ -57,8 +57,8 @@ module "Kubernetes" {
 }
 
 // Setup host within Kubernetes subnet
-module "InternalNode" {
-  source                  = "../../modules/AWS/InternalNode"
+module "InternalHost" {
+  source                  = "../../modules/AWS/InternalHost"
   ami_id                  = "${module.Ami.AmiId}"
   instance_type           = "${var.instance_type}"
   access_key_name         = "${module.SshKey.KeyPairName}"

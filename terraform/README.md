@@ -14,7 +14,21 @@
     - [Ami](#ami)
     - [Bastion](#bastion)
     - [Kubernetes](#kubernetes)
-    - [InternalNode](#internalnode)
+    - [InternalHost](#internalhost)
+    - [Networking](#networking)
+    - [S3Storage](#s3storage)
+    - [SecurityGroups](#securitygroups)
+  - [Settings](#settings)
+  - [Remote State](#remote-state)
+- [Terraform environment  standup](#terraform-environment-standup)
+  - [Terraform target infrastructure](#terraform-target-infrastructure)
+  - [Terraform Deployments structure](#terraform-deployments-structure)
+  - [Current Terraform Modules](#current-terraform-modules)
+    - [SshKey](#sshkey)
+    - [Ami](#ami)
+    - [Bastion](#bastion)
+    - [Kubernetes](#kubernetes)
+    - [InternalHost](#internalhost)
     - [Networking](#networking)
     - [S3Storage](#s3storage)
     - [SecurityGroups](#securitygroups)
@@ -89,9 +103,9 @@ Cloud init is used to installed k8s software and initialise the cluster.  This i
 * cloud-init-master.cfg - run on master nodes and installs kubelet, kubectl, kubeadm, docker and crictl.  Initialises the cluster
 * cloud-init.cfg - runs on nodes and installs kubelet, kubectl, kubeadm, docker and crictl.
 
-### InternalNode
+### InternalHost
 
-Refer to [settings documentation](./modules/AWS/InternalNode/README-auto.md)
+Refer to [settings documentation](./modules/AWS/InternalHost/README-auto.md)
 
 * A single host on the private subnet which is external to the cluster
 

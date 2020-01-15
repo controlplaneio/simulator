@@ -4,6 +4,7 @@ data "template_file" "node_cloud_config" {
   vars = {
     hostname       = "k8s-node-${count.index}"
     s3_bucket_name = "${var.s3_bucket_name}"
+    node_bashrc    = "${filebase64("${path.module}/bashrc")}"
   }
 }
 

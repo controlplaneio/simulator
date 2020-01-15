@@ -1,0 +1,42 @@
+# shellcheck disable=SC2148
+COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
+COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
+
+main() {
+  enable_programmable_completion
+  set_prompt_command
+
+  unset -f main enable_programmable_completion set_prompt_command
+}
+
+enable_programmable_completion() {
+  # enable programmable completion features
+  if ! shopt -oq posix; then
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+      # shellcheck disable=SC1091
+      . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+      # shellcheck disable=SC1091
+      . /etc/bash_completion
+    fi
+  fi
+}
+
+set_prompt_command() {
+  PROMPT_COMMAND=__prompt_command
+}
+
+__prompt_command() {
+  local PREVIOUS_COMMAND_STATUS_CODE="$?"
+  local STATUS_CODE_COLOR="${COLOUR_RESET}"
+
+  PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]'
+
+  if [[ "${PREVIOUS_COMMAND_STATUS_CODE}" != 0 ]]; then
+    STATUS_CODE_COLOR=${COLOUR_RED}
+  fi
+
+  PS1="${PS1}[${STATUS_CODE_COLOR}${PREVIOUS_COMMAND_STATUS_CODE}${COLOUR_RESET}]\$ "
+}
+
+main

@@ -10,11 +10,8 @@ hostname: "${hostname}"
 write_files:
   - path: /etc/bash.bashrc
     permissions: '0755'
-    content: |
-      [ -z "$PS1" ] && return
-      PS1='\u@\h $'
-      echo "$(tput setaf 2)$(figlet $(hostname))$(tput sgr0)"
-      source <(kubectl completion bash)
+    content: !!binary |
+      ${master_bashrc}
   - path: /etc/default/motd-news
     owner: root:root
     permissions: '0644'

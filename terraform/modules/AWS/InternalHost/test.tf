@@ -1,9 +1,9 @@
-resource "null_resource" "internal_node_test" {
+resource "null_resource" "internal_host_test" {
 
   connection {
     bastion_host        = "${var.bastion_public_ip}"
     bastion_private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
-    host                = "${aws_instance.simulator_internal_node.private_ip}"
+    host                = "${aws_instance.simulator_internal_host.private_ip}"
     type                = "ssh"
     user                = "root"
     // disable ssh-agent support

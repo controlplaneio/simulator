@@ -86,6 +86,10 @@ COPY --chown=1000 attack/ /app/attack/
 COPY --chown=1000 simulation-scripts/ /app/simulation-scripts/
 COPY --chown=1000 kubesim /app/kubesim
 COPY --chown=1000 Dockerfile .hadolint.yaml /app/
+COPY --chown=1000 terraform/modules/AWS/Bastion/bashrc /app/Bastion/bashrc
+COPY --chown=1000 terraform/modules/AWS/InternalHost/bashrc /app/InternalHost/bashrc
+COPY --chown=1000 terraform/modules/AWS/Kubernetes/bashrc /app/Kubernetes/bashrc
+COPY --chown=1000 launch-files/bashrc /app/launch-files/bashrc
 
 USER ${lint_user}
 
@@ -96,7 +100,11 @@ RUN hadolint Dockerfile                         \
     && shellcheck scripts/*                     \
     && shellcheck attack/scripts/*              \
     && shellcheck simulation-scripts/perturb.sh \
-    && shellcheck kubesim
+    && shellcheck kubesim                       \
+    && shellcheck Bastion/bashrc                \
+    && shellcheck InternalHost/bashrc           \
+    && shellcheck Kubernetes/bashrc             \
+    && shellcheck launch-files/bashrc
 
 WORKDIR /app/scenario-tools
 
@@ -179,6 +187,7 @@ RUN apt-get update                                                              
     ca-certificates                                                              \
     curl                                                                         \
     file                                                                         \
+    figlet                                                                       \
     gettext-base                                                                 \
     gnupg                                                                        \
     lsb-release                                                                  \
@@ -237,6 +246,8 @@ COPY --chown=1000              \
   ./launch-files/.inputrc      \
   /home/launch/
 COPY --chown=1000 ${config_file} /home/launch/.kubesim/
+
+COPY --chown=1000 launch-files/bashrc /home/launch/.bashrc
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS
