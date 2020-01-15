@@ -134,7 +134,18 @@ run_scenario() {
 
   copy_challenge_and_tasks "${SCENARIO_DIR}"
 
+  cleanup
+}
+
+cleanup() {
+  shopt -u nullglob
+  if ls "${TMP_DIR}"/perturb-script-file-* > /dev/null 2>&1; then
   rm "${TMP_DIR}"/perturb-script-file-*
+  fi
+  if ls "${TMP_DIR}"/docker-* > /dev/null 2>&1; then
+    rm "${TMP_DIR}"/docker-*
+  fi
+  shopt -s nullglob
 }
 
 container_statuses() {
