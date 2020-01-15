@@ -140,7 +140,7 @@ run_scenario() {
 cleanup() {
   shopt -u nullglob
   if ls "${TMP_DIR}"/perturb-script-file-* > /dev/null 2>&1; then
-  rm "${TMP_DIR}"/perturb-script-file-*
+    rm "${TMP_DIR}"/perturb-script-file-*
   fi
   if ls "${TMP_DIR}"/docker-* > /dev/null 2>&1; then
     rm "${TMP_DIR}"/docker-*
