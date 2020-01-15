@@ -14,5 +14,5 @@
 
 | Name | Description |
 |------|-------------|
-| InternalNodePrivateIp | Internal node private ip address |
+| InternalHostPrivateIp | Internal Host private ip address |
 
