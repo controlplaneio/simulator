@@ -187,7 +187,6 @@ RUN apt-get update                                                              
     ca-certificates                                                              \
     curl                                                                         \
     file                                                                         \
-    figlet                                                                       \
     gettext-base                                                                 \
     gnupg                                                                        \
     lsb-release                                                                  \
