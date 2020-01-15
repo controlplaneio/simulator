@@ -1,4 +1,5 @@
 # shellcheck disable=SC2148
+
 if [[ $- == *i* ]]; then
   COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
   COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)

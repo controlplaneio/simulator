@@ -1,4 +1,5 @@
 # shellcheck disable=SC2148
+
 COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
