@@ -22,7 +22,7 @@ pipeline {
     }
 
   environment {
-    ENVIRONMENT = 'simulator-dev'
+    ENVIRONMENT = 'ops'
     DOCKER_IMAGE_TAG = "${getDockerImageTag()}"
     TMP_AWS_CREDENTIALS = credentials("${ENVIRONMENT}_aws_credentials")
     AWS_ACCESS_KEY_ID = "${TMP_AWS_CREDENTIALS_USR}"
