@@ -27,6 +27,7 @@ resource "null_resource" "internal_host_test" {
     inline = [
       "chmod +x /root/run-goss.sh",
       "/root/run-goss.sh",
+      "rm /root/run-goss.sh /root/goss.yaml",
     ]
   }
 }

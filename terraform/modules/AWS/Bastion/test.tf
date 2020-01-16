@@ -29,6 +29,7 @@ resource "null_resource" "bastion_test" {
     inline = [
       "chmod +x /root/run-goss.sh",
       "/root/run-goss.sh",
+      "rm /root/run-goss.sh /root/goss.yaml",
     ]
   }
 }
