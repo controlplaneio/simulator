@@ -1,0 +1,4 @@
+alias ll='ls --color=auto -lasp'
+alias ls='ls --color=auto'
+alias k='kubectl'
+alias grep='grep --color=auto'

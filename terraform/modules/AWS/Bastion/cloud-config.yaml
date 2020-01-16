@@ -18,6 +18,14 @@ write_files:
     permissions: '0755'
     content: !!binary |
       ${bastion_bashrc}
+  - path: /home/ubuntu/.inputrc
+    permissions: '0755'
+    content: !!binary |
+      ${bastion_inputrc}
+  - path: /home/ubuntu/.bash_aliases
+    permissions: '0755'
+    content: !!binary |
+      ${bastion_aliases}
   - path: /home/ubuntu/.bash_login
     permissions: "0755"
     content: |

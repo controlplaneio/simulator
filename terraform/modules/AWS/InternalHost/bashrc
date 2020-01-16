@@ -6,12 +6,20 @@ if [[ $- == *i* ]]; then
   main() {
     enable_programmable_completion
     set_prompt_command
+    source_aliases
 
     motd
 
-    unset -f main enable_programmable_completion set_prompt_command
+    unset -f main enable_programmable_completion set_prompt_command source_aliases
     # shellcheck source=/dev/null
     source <(kubectl completion bash)
+  }
+
+  source_aliases() {
+  if [[ -f ~/.bash_aliases ]]; then
+    # shellcheck source=/dev/null
+    source ~/.bash_aliases
+  fi
   }
 
   enable_programmable_completion() {

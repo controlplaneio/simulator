@@ -240,10 +240,8 @@ COPY --chown=1000                     \
   ./launch-files/launch-entrypoint.sh \
   ./launch-files/test-acceptance.sh   \
   ./
-COPY --chown=1000              \
-  ./launch-files/.bash_aliases \
-  ./launch-files/.inputrc      \
-  /home/launch/
+COPY --chown=1000 ./launch-files/bash_aliases /home/launch/.bash_aliases
+COPY --chown=1000 ./launch-files/inputrc /home/launch/.inputrc
 COPY --chown=1000 ${config_file} /home/launch/.kubesim/
 
 COPY --chown=1000 launch-files/bashrc /home/launch/.bashrc

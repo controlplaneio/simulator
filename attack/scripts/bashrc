@@ -9,11 +9,19 @@ NORMAL=$(tput sgr0)
 main() {
   enable_programmable_completion
   set_prompt_command
+  source_aliases
 
   motd
   welcome
 
-  unset -f main enable_programmable_completion set_prompt_command
+  unset -f main enable_programmable_completion set_prompt_command source_aliases
+}
+
+source_aliases() {
+  if [[ -f ~/.bash_aliases ]]; then
+    # shellcheck source=/dev/null
+    source ~/.bash_aliases
+  fi
 }
 
 enable_programmable_completion() {
