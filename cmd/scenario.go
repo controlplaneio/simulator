@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -44,14 +44,17 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Short: "Launches a scenario",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("state-bucket")
-			tfDir := viper.GetString("tf-dir")
-			tfVarsDir := viper.GetString("tf-vars-dir")
-			scenariosDir := viper.GetString("scenarios-dir")
-			attackTag := viper.GetString("attack-container-tag")
-			scenarioID := args[0]
 
-			if err := simulator.Launch(logger, tfDir, scenariosDir, bucket, scenarioID, attackTag, tfVarsDir); err != nil {
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(viper.GetString("tf-dir")),
+				sim.WithScenariosDir(viper.GetString("scenarios-dir")),
+				sim.WithAttackTag(viper.GetString("attack-container-tag")),
+				sim.WithScenarioID(args[0]),
+				sim.WithBucketName(viper.GetString("state-bucket")),
+				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+
+			if err := simulator.Launch(); err != nil {
 				if strings.HasPrefix(err.Error(), "Scenario not found") {
 					logger.Warn(err.Error())
 					return nil

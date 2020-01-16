@@ -16,6 +16,8 @@ type Simulator struct {
 	// AttackTag is the docker tag for the attack container that terraform will use
 	// when creating the infrastructure
 	AttackTag string
+	// scenarioID is the unique identifier of the scenario used for the launch function
+	ScenarioID string
 	// TfVarsDir is the location to store the terraform variables file that are detected
 	// automatically for use when creating the infrastructure
 	TfVarsDir string
@@ -68,6 +70,14 @@ func WithTfDir(tfDir string) Option {
 func WithTfVarsDir(tfVarsDir string) Option {
 	return func(s *Simulator) {
 		s.TfVarsDir = tfVarsDir
+	}
+}
+
+// WithScenarioID returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithScenarioID(scenarioID string) Option {
+	return func(s *Simulator) {
+		s.ScenarioID = scenarioID
 	}
 }
 

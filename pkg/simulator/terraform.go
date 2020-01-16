@@ -100,41 +100,42 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir
 
 // Create runs terraform init, plan, apply to create the necessary
 // infrastructure to run scenarios
-func Create(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) error {
-	err := InitIfNeeded(logger, tfDir, bucket, attackTag, tfVarsDir)
+func (s *Simulator) Create() error {
+	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
 
 	if err != nil {
 		return err
 	}
 
-	logger.Info("Running terraform plan")
-	_, err = Terraform(tfDir, "plan", bucket)
+	s.Logger.Info("Running terraform plan")
+	_, err = Terraform(s.TfDir, "plan", s.BucketName)
 	if err != nil {
 		return err
 	}
 
-	logger.Info("Running terraform apply")
-	_, err = Terraform(tfDir, "apply", bucket)
+	s.Logger.Info("Running terraform apply")
+	_, err = Terraform(s.TfDir, "apply", s.BucketName)
 	return err
 }
 
+
 // Status calls terraform output to get the state of the infrastruture and
 // parses the output for programmatic use
-func Status(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) (*TerraformOutput, error) {
-	err := InitIfNeeded(logger, tfDir, bucket, attackTag, tfVarsDir)
+func (s *Simulator) Status() (*TerraformOutput, error) {
+	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error initialising")
 	}
 
-	logger.Info("Running terraform output")
-	out, err := Terraform(tfDir, "output", bucket)
+	s.Logger.Info("Running terraform output")
+	out, err := Terraform(s.TfDir, "output", s.BucketName)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
 
-	logger.Debug(out)
+	s.Logger.Debug(out)
 
-	logger.Debug("Parsing terraform output")
+	s.Logger.Debug("Parsing terraform output")
 	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error parsing terraform outputs")

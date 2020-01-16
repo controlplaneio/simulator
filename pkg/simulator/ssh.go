@@ -3,14 +3,22 @@ package simulator
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
 )
 
 // SSHConfig returns a pointer to string containing the stanzas to add to an ssh
 // config file so that the kubernetes nodes are connectable directly via the
 // bastion or an error if the infrastructure has not been created
 func (s *Simulator) SSHConfig() (*string, error) {
-	tfo, err := Status(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
+
+	simulator := NewSimulator(
+		WithLogger(s.Logger),
+		WithTfDir(s.TfDir),
+		WithScenariosDir(s.ScenariosDir),
+		WithAttackTag(s.AttackTag),
+		WithBucketName(s.BucketName),
+		WithTfVarsDir(s.TfVarsDir))
+
+	tfo, err := simulator.Status()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting infrastructure status")
 	}
@@ -24,27 +32,36 @@ func (s *Simulator) SSHConfig() (*string, error) {
 
 // Attack establishes an SSH connection to the attack container running on the
 // bastion host ready for the user to attempt to complete a scenario
-func Attack(logger *zap.SugaredLogger, tfDir, bucketName, attackTag, tfVarsDir string) error {
-	logger.Debugf("Checking status of infrastructure")
-	tfo, err := Status(logger, tfDir, bucketName, attackTag, tfVarsDir)
+func (s *Simulator) Attack() error {
+	s.Logger.Debugf("Checking status of infrastructure")
+
+	simulator := NewSimulator(
+		WithLogger(s.Logger),
+		WithTfDir(s.TfDir),
+		WithScenariosDir(s.ScenariosDir),
+		WithAttackTag(s.AttackTag),
+		WithBucketName(s.BucketName),
+		WithTfVarsDir(s.TfVarsDir))
+
+	tfo, err := simulator.Status()
 	if err != nil {
 		return errors.Wrap(err, "Error getting infrastrucutre status")
 	}
 
 	bastion := tfo.BastionPublicIP.Value
 
-	logger.Debugf("Checking infrastructure is usable")
+	s.Logger.Debugf("Checking infrastructure is usable")
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}
 
-	logger.Infof("Keyscanning %s and updating known hosts", bastion)
+	s.Logger.Infof("Keyscanning %s and updating known hosts", bastion)
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrap(err, "Error writing known hosts")
 	}
 
-	logger.Infof("Connecting to", bastion)
+	s.Logger.Infof("Connecting to", bastion)
 	ssh.SSH(bastion)
 	return nil
 }

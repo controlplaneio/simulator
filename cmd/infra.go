@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -27,21 +27,20 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucketName)
-			//bucket var
 
-			err := simulator.Create(logger, tfDir, bucketName, attackTag, tfVarsDir)
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(tfDir),
+				sim.WithScenariosDir(scenariosDir),
+				sim.WithAttackTag(attackTag),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(tfVarsDir))
+			
+			err := simulator.Create()
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
 			}
-
-			simulator := simulator.NewSimulator(
-				simulator.WithLogger(logger),
-				simulator.WithTfDir(tfDir),
-				simulator.WithScenariosDir(scenariosDir),
-				simulator.WithAttackTag(attackTag),
-				simulator.WithBucketName(bucketName),
-				simulator.WithTfVarsDir(tfVarsDir))
-
+			
 			cfg, err := simulator.SSHConfig()
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
@@ -64,16 +63,21 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("state-bucket")
-			if bucket == "" {
+			bucketName := viper.GetString("state-bucket")
+			if bucketName == "" {
 				logger.Warnf("Simulator has not been initialised with an S3 bucket")
 				logger.Warn("Please run simulator init")
 				return nil
 			}
-			tfDir := viper.GetString("tf-dir")
-			tfVarsDir := viper.GetString("tf-vars-dir")
-			attackTag := viper.GetString("attack-container-tag")
-			tfo, err := simulator.Status(logger, tfDir, bucket, attackTag, tfVarsDir)
+
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(viper.GetString("tf-dir")),
+				sim.WithAttackTag(viper.GetString("attack-container-tag")),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+			
+				tfo, err := simulator.Status()
 			if err != nil {
 				logger.Errorw("Error getting status of infrastructure", zap.Error(err))
 				return err
@@ -109,7 +113,7 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			attackTag := viper.GetString("attack-container-tag")
-			err := simulator.Destroy(logger, tfDir, bucket, attackTag, tfVarsDir)
+			err := sim.Destroy(logger, tfDir, bucket, attackTag, tfVarsDir)
 			if err != nil {
 				logger.Errorw("Error destroying infrastructure", zap.Error(err))
 			}

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -14,13 +14,13 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			simulator := simulator.NewSimulator(
-				simulator.WithLogger(logger),
-				simulator.WithTfDir(viper.GetString("tf-dir")),
-				simulator.WithScenariosDir(viper.GetString("scenarios-dir")),
-				simulator.WithAttackTag(viper.GetString("attack-container-tag")),
-				simulator.WithBucketName(viper.GetString("state-bucket")),
-				simulator.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(viper.GetString("tf-dir")),
+				sim.WithScenariosDir(viper.GetString("scenarios-dir")),
+				sim.WithAttackTag(viper.GetString("attack-container-tag")),
+				sim.WithBucketName(viper.GetString("state-bucket")),
+				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
 
 			cfg, err := simulator.SSHConfig()
 			if err != nil {
@@ -54,12 +54,15 @@ func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `attack`,
 		Short: "Connect to an attack container to complete the scenario",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("state-bucket")
-			tfDir := viper.GetString("tf-dir")
-			tfVarsDir := viper.GetString("tf-vars-dir")
-			attackTag := viper.GetString("attack-container-tag")
 
-			return simulator.Attack(logger, tfDir, bucket, attackTag, tfVarsDir)
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(viper.GetString("tf-dir")),
+				sim.WithAttackTag(viper.GetString("attack-container-tag")),
+				sim.WithBucketName(viper.GetString("state-bucket")),
+				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+
+			return simulator.Attack()
 		},
 	}
 
