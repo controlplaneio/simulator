@@ -6,66 +6,74 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
 )
 
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
 // the infrastructure has been created.  Returns an error if the infrastructure
 // is not ready or something goes wrong
-func Launch(logger *zap.SugaredLogger, tfDir, scenariosDir, bucketName, id, attackTag, tfVarsDir string) error {
-	logger.Debugf("Loading scenario manifest from %s", scenariosDir)
-	manifest, err := scenario.LoadManifest(scenariosDir)
+func (s *Simulator) Launch() error {
+	s.Logger.Debugf("Loading scenario manifest from %s", s.ScenariosDir)
+	manifest, err := scenario.LoadManifest(s.ScenariosDir)
 	if err != nil {
 		return errors.Wrap(err, "Error loading scenario manifest file")
 	}
 
-	logger.Debugf("Checking manifest contains %s", id)
-	if !manifest.Contains(id) {
-		return errors.Errorf("Scenario not found: %s", id)
+	s.Logger.Debugf("Checking manifest contains %s", s.ScenarioID)
+	if !manifest.Contains(s.ScenarioID) {
+		return errors.Errorf("Scenario not found: %s", s.ScenarioID)
 	}
 
-	logger.Debugf("Checking status of infrastructure")
+	s.Logger.Debugf("Checking status of infrastructure")
 
-	tfo, err := Status(logger, tfDir, bucketName, attackTag, tfVarsDir)
+	simulator := NewSimulator(
+		WithLogger(s.Logger),
+		WithTfDir(s.TfDir),
+		WithScenariosDir(s.ScenariosDir),
+		WithAttackTag(s.AttackTag),
+		WithBucketName(s.BucketName),
+		WithTfVarsDir(s.TfVarsDir))
+
+	tfo, err := simulator.Status()
+
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}
-	logger.Debug(tfo)
+	s.Logger.Debug(tfo)
 
-	logger.Infof("Finding details of scenario %s", id)
-	s := manifest.Find(id)
-	logger.Debug(s)
+	s.Logger.Infof("Finding details of scenario %s", s.ScenarioID)
+	sID := manifest.Find(s.ScenarioID)
+	s.Logger.Debug(sID)
 
-	logger.Debugf(
+	s.Logger.Debugf(
 		"Making options to pass to perturb from terraorm output and scnenario")
-	po := MakePerturbOptions(*tfo, s.Path)
-	logger.Debug(po)
+	po := MakePerturbOptions(*tfo, sID.Path)
+	s.Logger.Debug(po)
 
-	logger.Debug("Regenerating SSH config")
+	s.Logger.Debug("Regenerating SSH config")
 	cfg, err := tfo.ToSSHConfig()
 	if err != nil {
 		return errors.Wrap(err, "Error templating SSH config")
 	}
 
-	logger.Info("Updating SSH config")
+	s.Logger.Info("Updating SSH config")
 	err = ssh.EnsureSSHConfig(*cfg)
 	if err != nil {
 		return errors.Wrap(err, "Error writing SSH config")
 	}
 
 	bastion := tfo.BastionPublicIP.Value
-	logger.Infof("Keyscanning %s and updating known hosts", bastion)
+	s.Logger.Infof("Keyscanning %s and updating known hosts", bastion)
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s",
 			bastion)
 	}
 
-	logger.Infof("Setting up the \"%s\" scenario on the cluster", s.DisplayName)
+	s.Logger.Infof("Setting up the \"%s\" scenario on the cluster", sID.DisplayName)
 	_, err = Perturb(&po)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 103") {
-			logger.Error("Scenario clash error from perturb.sh")
+			s.Logger.Error("Scenario clash error from perturb.sh")
 		} else {
 			return errors.Wrapf(err, "Error running perturb with %#v", po)
 		}
