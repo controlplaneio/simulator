@@ -12,7 +12,7 @@ import (
 // PrepareTfArgs takes a string with the terraform command desired and returns
 // a slice of strings containing the complete list of arguments including the
 // command to use when exec'ing terraform
-func PrepareTfArgs(cmd string, bucket string) []string {
+func PrepareTfArgs(cmd string, bucket, tfVarsDir string) []string {
 	arguments := []string{cmd}
 
 	if cmd == "output" {
@@ -21,8 +21,7 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
-		// put in tfVarsDir variable instead here
-		arguments = append(arguments, "--var-file=~/.kubesim/settings/bastion.tfvars")
+		arguments = append(arguments, "--var-file=" + tfVarsDir + "/settings/bastion.tfvars")
 
 	}
 
@@ -39,8 +38,8 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 }
 
 // Terraform wraps running terraform as a child process
-func Terraform(wd, cmd string, bucket string) (*string, error) {
-	args := PrepareTfArgs(cmd, bucket)
+func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
+	args := PrepareTfArgs(cmd, bucket, tfVarsDir)
 	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
 	if cmd == "output" {
 		// TODO: (rem) deal with non-empty stderr?
@@ -86,12 +85,10 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir
 	}
 
 	logger.Info("Running terraform init")
-	_, err = Terraform(tfDir, "init", bucket)
+	_, err = Terraform(tfDir, "init", bucket, tfVarsDir)
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
 	}
-
-	//tf-vars-dir: ~/.kubesim
 
 	return nil
 }
@@ -108,13 +105,13 @@ func (s *Simulator) Create() error {
 	}
 
 	s.Logger.Info("Running terraform plan")
-	_, err = Terraform(s.TfDir, "plan", s.BucketName)
+	_, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
 	if err != nil {
 		return err
 	}
 
 	s.Logger.Info("Running terraform apply")
-	_, err = Terraform(s.TfDir, "apply", s.BucketName)
+	_, err = Terraform(s.TfDir, "apply", s.BucketName, s.TfVarsDir)
 	return err
 }
 
@@ -128,7 +125,7 @@ func (s *Simulator) Status() (*TerraformOutput, error) {
 	}
 
 	s.Logger.Info("Running terraform output")
-	out, err := Terraform(s.TfDir, "output", s.BucketName)
+	out, err := Terraform(s.TfDir, "output", s.BucketName, s.TfVarsDir)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
@@ -152,6 +149,6 @@ func Destroy(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir stri
 	}
 
 	logger.Info("Running terrraform destroy")
-	_, err = Terraform(tfDir, "destroy", bucket)
+	_, err = Terraform(tfDir, "destroy", bucket, tfVarsDir)
 	return err
 }

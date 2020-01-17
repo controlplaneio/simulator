@@ -24,16 +24,7 @@ func (s *Simulator) Launch() error {
 	}
 
 	s.Logger.Debugf("Checking status of infrastructure")
-
-	simulator := NewSimulator(
-		WithLogger(s.Logger),
-		WithTfDir(s.TfDir),
-		WithScenariosDir(s.ScenariosDir),
-		WithAttackTag(s.AttackTag),
-		WithBucketName(s.BucketName),
-		WithTfVarsDir(s.TfVarsDir))
-
-	tfo, err := simulator.Status()
+	tfo, err := s.Status()
 
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")

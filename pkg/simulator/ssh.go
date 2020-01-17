@@ -10,15 +10,7 @@ import (
 // bastion or an error if the infrastructure has not been created
 func (s *Simulator) SSHConfig() (*string, error) {
 
-	simulator := NewSimulator(
-		WithLogger(s.Logger),
-		WithTfDir(s.TfDir),
-		WithScenariosDir(s.ScenariosDir),
-		WithAttackTag(s.AttackTag),
-		WithBucketName(s.BucketName),
-		WithTfVarsDir(s.TfVarsDir))
-
-	tfo, err := simulator.Status()
+	tfo, err := s.Status()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting infrastructure status")
 	}
@@ -35,15 +27,7 @@ func (s *Simulator) SSHConfig() (*string, error) {
 func (s *Simulator) Attack() error {
 	s.Logger.Debugf("Checking status of infrastructure")
 
-	simulator := NewSimulator(
-		WithLogger(s.Logger),
-		WithTfDir(s.TfDir),
-		WithScenariosDir(s.ScenariosDir),
-		WithAttackTag(s.AttackTag),
-		WithBucketName(s.BucketName),
-		WithTfVarsDir(s.TfVarsDir))
-
-	tfo, err := simulator.Status()
+	tfo, err := s.Status()
 	if err != nil {
 		return errors.Wrap(err, "Error getting infrastrucutre status")
 	}
