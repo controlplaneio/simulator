@@ -86,7 +86,7 @@ starting_point() {
   local KUBECTL_ACCESS
   local NODE_TYPE
   local NODE_NUMBER
-  
+
   task_no=$(find_current_task)
   task_json=$(yq r -j /tasks.yaml)
   #test that the task number has been found correctly
@@ -103,9 +103,9 @@ starting_point() {
     KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."kubectl-access"')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
-      ssh "$INTERNAL_NODE_IP" mv -r ~/.kube /var/local/.kube
+      ssh "$INTERNAL_NODE_IP" mv ~/.kube /var/local/
     elif [[ ! -d ~/.kube ]]; then
-      ssh "$INTERNAL_NODE_IP" mv -r /var/local/.kube ~/.kube
+      ssh "$INTERNAL_NODE_IP" mv /var/local/.kube ~/
     fi
 
     ssh_internal
@@ -118,14 +118,14 @@ starting_point() {
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
-      
+
       ssh_master "$NODE_NUMBER"
       return
     fi
 
     if [[ "$NODE_TYPE" =~ "node" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
-      
+
       ssh_node "$NODE_NUMBER"
       return
     fi
@@ -136,7 +136,7 @@ starting_point() {
     echo "Starting point: POD - Not yet implemented. Please use 'ssh_internal' and then 'kubectl exec ...' to start in the relevant pod."
     return
   fi
-  
+
   #Determine if mode is null.
   if [[ "$MODE" == "null" ]]; then
     echo "No Starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
