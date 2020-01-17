@@ -89,12 +89,14 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 docker-build-nocache: ## Builds the launch container without the Docker cache
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
+	@mkdir -p ~/.kubesim/settings
 	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
+	@mkdir -p ~/.kubesim/settings
 	@docker build -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-test
