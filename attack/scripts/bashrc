@@ -65,18 +65,47 @@ readonly -f info
 # Starting point.
 #
 
+find_current_task() {
+  local current_task
+  current_task=$(jq -r '.current_task' /progress.json)
+  if [[ ${current_task} != "null" ]]; then
+    echo "${current_task}"
+    return
+  else
+    warning "No task found! Please launch a scenario with 'simulator scenario launch ...' or start a scenario task with 'start_task ...'."
+    return 1
+  fi
+}
+readonly -f find_current_task
+
 starting_point() {
-  # Identify the starting point mode.
-  MODE="$(yq r /tasks.yaml starting-point.mode | tr '[:upper:]' '[:lower:]')"
-  export MODE
+  local task_no
+  local task_json
+  local regex
+  local MODE
+  local KUBECTL_ACCESS
+  local NODE_TYPE
+  local NODE_NUMBER
+  
+  task_no=$(find_current_task)
+  task_json=$(yq r -j /tasks.yaml)
+  #test that the task number has been found correctly
+  regex='^[0-9]+$'
+  if ! [[ ${task_no} =~ ${regex} ]]; then
+    warning "Task number not found correctly"
+    return 1
+  fi
+  # Identify the starting point mode
+  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point".mode')"
 
   #Determine if mode is internal-instance.
   if [[ "$MODE" == "internal-instance" ]]; then
-    KUBECTL_ACCESS="$(yq r /tasks.yaml starting-point.kubectl-access | tr '[:upper:]' '[:lower:]')"
-    export KUBECTL_ACCESS
+    KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."kubectl-access"')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
-      ssh "$INTERNAL_NODE_IP" rm -r ~/.kube
+      ssh "$INTERNAL_NODE_IP" mv -r ~/.kube /var/local/.kube
+    elif [[ ! -d ~/.kube ]]; then
+      ssh "$INTERNAL_NODE_IP" mv -r /var/local/.kube ~/.kube
     fi
 
     ssh_internal
@@ -85,12 +114,10 @@ starting_point() {
 
   #Determine if mode is node.
   if [[ "$MODE" == "node" ]]; then
-    NODE_TYPE="$(yq r /tasks.yaml starting-point.node-id | tr '[:upper:]' '[:lower:]')"
-    export NODE_TYPE
+    NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."node-id"')"
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
-      export NODE_NUMBER
       
       ssh_master "$NODE_NUMBER"
       return
@@ -98,7 +125,6 @@ starting_point() {
 
     if [[ "$NODE_TYPE" =~ "node" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
-      export NODE_NUMBER
       
       ssh_node "$NODE_NUMBER"
       return
@@ -107,13 +133,13 @@ starting_point() {
 
   #Determine if mode is pod.
   if [[ "$MODE" == "pod" ]]; then
-    echo "Starting point: POD - PENDING IMPLEMENTATION"
+    echo "Starting point: POD - Not yet implemented. Please use 'ssh_internal' and then 'kubectl exec ...' to start in the relevant pod."
     return
   fi
   
   #Determine if mode is null.
   if [[ "$MODE" == "null" ]]; then
-    echo "There's no starting point."
+    echo "No Starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
     return
   fi
 
@@ -216,14 +242,14 @@ welcome() {
   fi
   info ' '
   # shellcheck disable=SC2016
-  info 'Run `start_task` with the name of the task to get going'
+  info 'Run start_task with the name of the task to get going'
   # shellcheck disable=SC2016
-  info 'Getting stuck?  Run `next_hint` to see the next hint.  You can run '
+  info 'Getting stuck?  Run next_hint to see the next hint.  You can run '
   # shellcheck disable=SC2016
-  info '`show_hints` at any time to see all revealed hints again'
+  info 'show_hints at any time to see all revealed hints again'
   info ' '
   # shellcheck disable=SC2016
-  info 'See this message again with `welcome`.'
+  info 'See this message again with welcome.'
 }
 readonly -f welcome
 export -f welcome

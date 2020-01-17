@@ -4,18 +4,18 @@ package_update: true
 package_upgrade: true
 disable_root: 0
 
-packages: ['docker.io', 'figlet']
+packages: ["docker.io", "figlet"]
 
 hostname: "bastion"
 
 runcmd:
-  - 'systemctl daemon-reload'
-  - 'systemctl restart docker'
-  - 'docker pull controlplane/simulator-attack:${attack_container_tag}'
+  - "systemctl daemon-reload"
+  - "systemctl restart docker"
+  - "docker pull controlplane/simulator-attack:${attack_container_tag}"
 
 write_files:
   - path: /etc/bash.bashrc
-    permissions: '0755'
+    permissions: "0755"
     content: |
       [ -z "$PS1" ] && return
       PS1='\u@\h $'
@@ -39,28 +39,32 @@ write_files:
       $(tput setaf 3)$(figlet $(hostname))
       $(tput sgr0)"
   - path: /home/ubuntu/.bash_login
-    permissions: '0755'
+    permissions: "0755"
     content: |
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
       export INTERNAL_NODE_IP=${internal_node_private_ip}
       sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -e INTERNAL_NODE_IP -it controlplane/simulator-attack:${attack_container_tag}
   - path: /home/ubuntu/progress.json
-    permissions: '0666'
+    permissions: "0666"
     content: "{}"
   - path: /home/ubuntu/challenge.txt
-    permissions: '0666'
+    permissions: "0666"
     content: |
-      No scenario instructions found
+      No scenario instructions found. Have you launched a task with `simulator scenario launch ...`?
+  - path: /home/ubuntu/tasks.yaml
+    permissions: "0666"
+    content: |
+      No scenario tasks found. Have you launched a task with `simulator scenario launch ...`?
   - path: /etc/default/motd-news
     owner: root:root
-    permissions: '0644'
+    permissions: "0644"
     content: |
       # Don't call home to canonical
       ENABLED=0
   - path: /etc/pam.d/sshd
     owner: root:root
-    permissions: '0644'
+    permissions: "0644"
     content: |
       # Defaults with comments removed and motd disabled
       @include common-auth
@@ -78,7 +82,7 @@ write_files:
       @include common-password
   - path: /etc/ssh/sshd_config
     owner: root:root
-    permissions: '0644'
+    permissions: "0644"
     content: |
       # Defaults with comments removed
       Port 22
@@ -117,4 +121,4 @@ write_files:
       UsePAM yes
 
 output:
-  all: '| tee -a /var/log/cloud-init-output.log'
+  all: "| tee -a /var/log/cloud-init-output.log"

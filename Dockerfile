@@ -63,13 +63,11 @@ RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION
          -o /usr/local/bin/goss                                                                    \
     && chmod +rx /usr/local/bin/goss
 
-# Install Hadolint
+# Install Hadolint and setup non-root lint user
 RUN curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
         -o /usr/local/bin/hadolint                                                                            \
-    && chmod +x /usr/local/bin/hadolint
-
-# Setup non-root lint user
-RUN useradd -ms /bin/bash ${lint_user} \
+    && chmod +x /usr/local/bin/hadolint \
+    && useradd -ms /bin/bash ${lint_user} \
     && mkdir /app
 
 WORKDIR /app/scenario-tools
