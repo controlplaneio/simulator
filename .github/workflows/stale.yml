@@ -18,6 +18,5 @@ jobs:
         stale-issue-label: 'dying'
         stale-pr-label: 'dying'
         days-before-stale: 35
-        days-before-close: 14
         exempt-issue-label: 'backlog'
         exempt-pr-label: 'awaiting approval'
