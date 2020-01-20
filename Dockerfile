@@ -51,20 +51,22 @@ ARG lint_user=lint
 # Install JQ
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
       -o /usr/local/bin/jq                                                                \
-    && chmod +x /usr/local/bin/jq                                                         \
+    && chmod +x /usr/local/bin/jq
+
 ## Install YQ
-    && curl -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
-      -o /usr/local/bin/yq                                                                     \
-    && chmod +x /usr/local/bin/yq                                                              \
+RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+      -o /usr/local/bin/yq                                                           \
+    && chmod +x /usr/local/bin/yq
+
 ## Install Goss
-    && curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
-         -o /usr/local/bin/goss                                                                       \
-    && chmod +rx /usr/local/bin/goss                                                                  \
-# Install Hadolint
-    && curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
-        -o /usr/local/bin/hadolint                                                                               \
-    && chmod +x /usr/local/bin/hadolint                                                                          \
-# Setup non-root lint user
+RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
+         -o /usr/local/bin/goss                                                                    \
+    && chmod +rx /usr/local/bin/goss
+
+# Install Hadolint and setup non-root lint user
+RUN curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
+        -o /usr/local/bin/hadolint                                                                            \
+    && chmod +x /usr/local/bin/hadolint \
     && useradd -ms /bin/bash ${lint_user} \
     && mkdir /app
 

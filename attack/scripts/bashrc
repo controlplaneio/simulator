@@ -62,7 +62,94 @@ info() {
 readonly -f info
 
 #
-# SSH helpers
+# Starting point.
+#
+
+find_current_task() {
+  local current_task
+  current_task=$(jq -r '.current_task' /progress.json)
+  if [[ ${current_task} != "null" ]]; then
+    echo "${current_task}"
+    return
+  else
+    warning "No task found! Please launch a scenario with 'simulator scenario launch ...' or start a scenario task with 'start_task ...'."
+    return 1
+  fi
+}
+readonly -f find_current_task
+
+starting_point() {
+  local task_no
+  local task_json
+  local regex
+  local MODE
+  local KUBECTL_ACCESS
+  local NODE_TYPE
+  local NODE_NUMBER
+
+  task_no=$(find_current_task)
+  task_json=$(yq r -j /tasks.yaml)
+  #test that the task number has been found correctly
+  regex='^[0-9]+$'
+  if ! [[ ${task_no} =~ ${regex} ]]; then
+    warning "Task number not found correctly"
+    return 1
+  fi
+  # Identify the starting point mode
+  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point".mode')"
+
+  #Determine if mode is internal-instance.
+  if [[ "$MODE" == "internal-instance" ]]; then
+    KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."kubectl-access"')"
+
+    if [[ "$KUBECTL_ACCESS" == "false" ]]; then
+      ssh "$INTERNAL_NODE_IP" mv ~/.kube /var/local/
+    elif [[ ! -d ~/.kube ]]; then
+      ssh "$INTERNAL_NODE_IP" mv /var/local/.kube ~/
+    fi
+
+    ssh_internal
+    return
+  fi
+
+  #Determine if mode is node.
+  if [[ "$MODE" == "node" ]]; then
+    NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."node-id"')"
+
+    if [[ "$NODE_TYPE" =~ "master" ]]; then
+      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
+
+      ssh_master "$NODE_NUMBER"
+      return
+    fi
+
+    if [[ "$NODE_TYPE" =~ "node" ]]; then
+      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
+
+      ssh_node "$NODE_NUMBER"
+      return
+    fi
+  fi
+
+  #Determine if mode is pod.
+  if [[ "$MODE" == "pod" ]]; then
+    echo "Starting point: POD - Not yet implemented. Please use 'ssh_internal' and then 'kubectl exec ...' to start in the relevant pod."
+    return
+  fi
+
+  #Determine if mode is null.
+  if [[ "$MODE" == "null" ]]; then
+    echo "No Starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
+    return
+  fi
+
+  echo "The scenario configuration file is not following the expected format."
+}
+readonly -f starting_point
+export -f starting_point
+
+#
+# SSH helpers.
 #
 ssh_master() {
   local INDEX="${1:-}"
@@ -118,6 +205,8 @@ export -f ssh_node
 ssh_internal() {
   ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_NODE_IP}"
 }
+readonly -f ssh_internal
+export -f ssh_internal
 
 #
 # Display info message
@@ -125,20 +214,25 @@ ssh_internal() {
 welcome() {
   IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
+  info ' '
   info "You have found a private kubernetes cluster."
-  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master " \
-    "and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster"
   info ' '
-  info "We have setup helpers to ssh to the master(s) and node(s)."
+  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster."
   info ' '
-  info "To ssh to a master:"
+  info "If you want to begin to work on the scenario from its starting point:"
+  info ' '
+  info "  \$ starting_point"
+  info ' '
+  info "Additionally, we have setup helpers to SSH to the master(s) and node(s)."
+  info ' '
+  info "To SSH to a master:"
   info "  \$ ssh_master 0"
   info ' '
-  info "To ssh to a node:"
+  info "To SSH to a node:"
   info "  \$ ssh_node 1"
   info ' '
-  info "To ssh to an instance with network access to the cluster"
-  info " \$ ssh_internal"
+  info "To SSH to an instance with network access to the cluster:"
+  info "  \$ ssh_internal"
   info ' '
   info "To see this message again:"
   info "  \$ welcome"
@@ -148,14 +242,14 @@ welcome() {
   fi
   info ' '
   # shellcheck disable=SC2016
-  info 'Run `start_task` with the name of the task to get going'
+  info 'Run start_task with the name of the task to get going'
   # shellcheck disable=SC2016
-  info 'Getting stuck?  Run `next_hint` to see the next hint.  You can run '
+  info 'Getting stuck?  Run next_hint to see the next hint.  You can run '
   # shellcheck disable=SC2016
-  info '`show_hints` at any time to see all revealed hints again'
+  info 'show_hints at any time to see all revealed hints again'
   info ' '
   # shellcheck disable=SC2016
-  info 'See this message again with `welcome`'
+  info 'See this message again with welcome.'
 }
 readonly -f welcome
 export -f welcome

@@ -14,6 +14,7 @@ RUN apt-get update                                                              
     ca-certificates                                                               \
     gettext-base                                                                  \
     hping3                                                                        \
+    jq                                                                            \
     man-db                                                                        \
     nmap                                                                          \
     nodejs                                                                        \
@@ -25,6 +26,11 @@ ENV GOSS_VERSION v0.3.7
 RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
          -o /usr/local/bin/goss                                                                    \
     && chmod +rx /usr/local/bin/goss
+
+# Install YQ
+RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+      -o /usr/local/bin/yq                                                                  \
+    && chmod +x /usr/local/bin/yq
 
 ENV NODE_ENV production
 RUN mkdir /scenario-tools

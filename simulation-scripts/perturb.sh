@@ -338,7 +338,7 @@ find_scenario() {
       FOUND_SCENARIO="Unknown Scenario"
     fi
   else
-    info "No scenario hash found"
+    info "No previous scenario hash found"
   fi
 }
 
