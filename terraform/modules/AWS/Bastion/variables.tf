@@ -37,6 +37,6 @@ variable "attack_container_tag" {
   description = "the docker tag of the attack container to use"
 }
 
-variable "internal_node_private_ip" {
-  description = "The Internal Node Private IP address"
+variable "internal_host_private_ip" {
+  description = "The Internal Host Private IP address"
 }

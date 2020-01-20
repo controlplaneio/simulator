@@ -48,10 +48,8 @@ COPY ./attack/ .
 COPY ./attack/scripts/motd /usr/local/bin/motd
 COPY ./attack/scripts/bashrc /etc/bash.bashrc
 
-COPY --chown=1000              \
-  ./launch-files/.bash_aliases \
-  ./launch-files/.inputrc      \
-  /root/
+COPY --chown=1000 ./launch-files/bash_aliases /root/.bash_aliases
+COPY --chown=1000 ./launch-files/inputrc /root/.inputrc
 
 RUN printf "                    \n\
 if [ -f ~/.bash_aliases ]; then \n\

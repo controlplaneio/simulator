@@ -44,8 +44,8 @@ jobs:
           tf_actions_working_dir: 'terraform/modules/AWS/Bastion'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  module-internalnode:
-    name: 'Module InternalNode'
+  module-internalhost:
+    name: 'Module InternalHost'
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
@@ -55,7 +55,7 @@ jobs:
         with:
           tf_actions_version: 0.12.13
           tf_actions_subcommand: 'fmt'
-          tf_actions_working_dir: 'terraform/modules/AWS/InternalNode'
+          tf_actions_working_dir: 'terraform/modules/AWS/InternalHost'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   module-kubernetes:

@@ -1,4 +1,4 @@
-# shellcheck disable=SC2148
+# shellcheck shell=bash
 COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
@@ -9,11 +9,19 @@ NORMAL=$(tput sgr0)
 main() {
   enable_programmable_completion
   set_prompt_command
+  source_aliases
 
   motd
   welcome
 
-  unset -f main enable_programmable_completion set_prompt_command
+  unset -f main enable_programmable_completion set_prompt_command source_aliases
+}
+
+source_aliases() {
+  if [[ -f ~/.bash_aliases ]]; then
+    # shellcheck source=/dev/null
+    source ~/.bash_aliases
+  fi
 }
 
 enable_programmable_completion() {
@@ -172,7 +180,7 @@ ssh_master() {
     return 1
   fi
 
-  ssh -o "StrictHostKeyChecking=no" root@"${MASTER_NODES[${INDEX}]}"
+  ssh root@"${MASTER_NODES[${INDEX}]}"
 }
 readonly -f ssh_master
 export -f ssh_master
@@ -197,13 +205,13 @@ ssh_node() {
     return 1
   fi
 
-  ssh -o "StrictHostKeyChecking=no" root@"${WORKER_NODES[${INDEX}]}"
+  ssh root@"${WORKER_NODES[${INDEX}]}"
 }
 readonly -f ssh_node
 export -f ssh_node
 
 ssh_internal() {
-  ssh -o "StrictHostKeyChecking=no" root@"${INTERNAL_NODE_IP}"
+  ssh root@"${INTERNAL_HOST_IP}"
 }
 readonly -f ssh_internal
 export -f ssh_internal

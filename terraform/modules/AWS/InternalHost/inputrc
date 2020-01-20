@@ -1,0 +1,83 @@
+# do not bell on tab-completion
+#set bell-style none
+
+# Allow UTF-8 input and output, instead of showing stuff like $'\0123\0456'
+set meta-flag on
+set input-meta on
+set output-meta on
+set convert-meta off
+
+# shift tab for ZSH-ish autocomplete
+"\e[Z": menu-complete
+
+# Immediately add a trailing slash when autocompleting symlinks to directories
+set mark-symlinked-directories on
+
+set colored-stats On
+
+$if mode=emacs
+
+# for linux console and RH/Debian xterm
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+"\e[5~": beginning-of-history
+"\e[6~": end-of-history
+"\e[3~": delete-char
+"\e[2~": quoted-insert
+"\e[5C": forward-word
+"\e[5D": backward-word
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+
+# for rxvt
+"\e[8~": end-of-line
+
+# Use Alt/Meta + Delete to delete the preceding word
+"\e[3;3~": kill-word
+
+# for non RH/Debian xterm, can't hurt for RH/DEbian xterm
+"\eOH": beginning-of-line
+"\eOF": end-of-line
+
+# for freebsd console
+"\e[H": beginning-of-line
+"\e[F": end-of-line
+
+$endif
+
+# Andy's additions
+
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\e[C": forward-char
+"\e[D": backward-char
+
+set completion-ignore-case On
+
+# http://superuser.com/questions/399348/bash-always-display-file-possibilities-on-tab-complete
+set completion-query-items 200
+
+# http://linuxart.com/log/archives/2005/10/13/super-useful-inputrc/
+
+set bell-style visible
+set expand-tilde off
+set show-all-if-ambiguous on
+
+# Show extra file information when completing, like `ls -F` does
+set visible-stats on
+
+# This turns off the use of the internal pager when returning long completion lists.
+set page-completions off
+
+
+"\C-d": kill-whole-line
+
+# Be more intelligent when autocompleting by also looking at the text after
+# the cursor. For example, when the current line is "cd ~/src/mozil", and
+# the cursor is on the "z", pressing Tab will not autocomplete it to "cd
+# ~/src/mozillail", but to "cd ~/src/mozilla". (This is supported by the
+# Readline used by Bash 4.)
+set skip-completed-text on
+
+
+

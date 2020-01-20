@@ -68,6 +68,9 @@ ssh_host_keyscan() {
     if [[ "${NODE_IP_ADDRESSES:-}" != "" ]]; then
       echo "${NODE_IP_ADDRESSES//,/ }"
     fi
+    if [[ "${INTERNAL_HOST_IP:-}" != "" ]]; then
+      echo "${INTERNAL_HOST_IP//,/ }"
+    fi
   } | xargs -I{} bash -c \
     'ssh-keygen -f "/root/.ssh/known_hosts" -R {}; ssh-keyscan -H {}' \
     >>~/.ssh/known_hosts 2>/dev/null

@@ -14,10 +14,11 @@ jobs:
           path: "."
           pattern: "*.sh"
           exclude: "./.git/*"
-      - name: Shellcheck-Attack-Bashrc
+      - name: Shellcheck-Bashrc
         uses: reviewdog/action-shellcheck@v1
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
-          path: "attack/scripts"
+          path: "."
           pattern: "bashrc"
+          exclude: "./.git/*"

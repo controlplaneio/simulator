@@ -10,7 +10,7 @@ output "cluster_nodes_private_ip" {
   value = [ "127.0.0.1", "127.0.0.2" ]
 }
 
-output "internal_node_private_ip" {
+output "internal_host_private_ip" {
   value = "127.0.0.3"
 }
 
