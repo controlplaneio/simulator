@@ -1,34 +1,33 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Compromised database from outside namespace.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'network-hedgehog-defence'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: network-hedgehog-defence
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: Is it possible to hit the database service from the setup pod?
-      - text: The DNS resolution across namespaces is <service>.<namespace>.
-      - text: >-
-          Many databases are SQL based, could it be one of the popular ones? You
-          may need to install a query tool on the setup pod.
-      - text: >-
-          Do Postgres databases have passwords by default? I wonder what the
-          default username for the SQL database is.
-      - text: 'Hmm, how do I list tables and view the keys in tables again?'
-      - text: >-
-          To query db from setupd pod ```psql -h database.network-hedgehog-defence -U postgres```
+    - text: Is it possible to hit the database service from the setup pod?
+    - text: The DNS resolution across namespaces is <service>.<namespace>.
+    - text: Many databases are SQL based, could it be one of the popular ones? You
+        may need to install a query tool on the setup pod.
+    - text: Do Postgres databases have passwords by default? I wonder what the default
+        username for the SQL database is.
+    - text: Hmm, how do I list tables and view the keys in tables again?
+    - text: To query db from setupd pod ```psql -h database.network-hedgehog-defence
+        -U postgres```
+    - summary: ""
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'network-hedgehog-defence'
-  '2':
-    sort-order: 2
+      pod-name: ""
+      pod-namespace: network-hedgehog-defence
+  "2":
     hints:
-      - text: >-
-          Put a network policy in place such that only namespace internal
-          resources can talk to the database.
+    - text: Put a network policy in place such that only namespace internal resources
+        can talk to the database.
+    - summary: ""
+    sort-order: 2
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance

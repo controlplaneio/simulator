@@ -1,40 +1,38 @@
-objective: 'SSH into vulnerable workload, wget secrets using permissive SA.'
+kind: cp.simulator/scenario:1.0.0
+objective: SSH into vulnerable workload, wget secrets using permissive SA.
 starting-point:
-  mode: internal-instance
   kubectl-access: false
-kind: 'cp.simulator/scenario:1.0.0'
+  mode: internal-instance
 tasks:
-  '1':
+  "1":
+    hints:
+    - text: Find open SSH port in workload. You can use nmap. Remember it runs on
+        a NodePort.
+    - text: The open NodePort was 30022. Brute force host SSH default password.
+    - text: Username is admin and password is password.
+    - text: Look around for credentials and tools. Can you hit the API?
+    - text: Use wget to hit the API at default port 6443. The service account token
+        looks like it can schedule workloads and get secrets.
+    - summary: ""
     sort-order: 1
-    hints:
-      - text: >-
-          Find open SSH port in workload. You can use nmap. Remember it runs on
-          a NodePort.
-      - text: The open NodePort was 30022. Brute force host SSH default password.
-      - text: Username is admin and password is password.
-      - text: Look around for credentials and tools. Can you hit the API?
-      - text: >-
-          Use wget to hit the API at default port 6443. The service account
-          token looks like it can schedule workloads and get secrets.
     starting-point:
-      mode: internal-instance
       kubectl-access: false
-  '2':
-    sort-order: 2
-    hints:
-      - text: What identity is assigned the pod?
-      - text: Have a look at the roles and rolebindings.
-      - text: >-
-          Since the pod doesn't need to talk to the API, you can just delete the
-          rolebinding.
-    starting-point:
       mode: internal-instance
-      kubectl-access: true
-  '3':
-    sort-order: 3
+  "2":
     hints:
-      - text: >-
-          Don't use passwords for SSH connections, and definitely not easy
-          ones.
+    - text: What identity is assigned the pod?
+    - text: Have a look at the roles and rolebindings.
+    - text: Since the pod doesn't need to talk to the API, you can just delete the
+        rolebinding.
+    - summary: ""
+    sort-order: 2
+    starting-point:
+      kubectl-access: true
+      mode: internal-instance
+  "3":
+    hints:
+    - text: Don't use passwords for SSH connections, and definitely not easy ones.
+    - summary: ""
+    sort-order: 3
     starting-point:
       mode: null

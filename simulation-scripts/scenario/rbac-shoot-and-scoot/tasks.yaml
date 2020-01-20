@@ -1,37 +1,32 @@
-objective: >-
-  Figure out additional permissions given to system:anonymous role and remove
+kind: cp.simulator/scenario:1.0.0
+objective: Figure out additional permissions given to system:anonymous role and remove
   them.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'rbac-shoot-and-scoot'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: rbac-shoot-and-scoot
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: >-
-          Can you hit the API from inside the pod? What is the DNS resolvable
-          name?
-      - text: What do we get from `printenv`?
-      - text: That looks like the IP and port for the API server!
-      - text: I reckon I can curl that endpoint if I use HTTPS and the -k option
-      - text: How do I navigate the HTTP API to find a secret?
-      - text: >-
-          I think this might work:
-          'curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'
+    - text: Can you hit the API from inside the pod? What is the DNS resolvable name?
+    - text: What do we get from `printenv`?
+    - text: That looks like the IP and port for the API server!
+    - text: I reckon I can curl that endpoint if I use HTTPS and the -k option
+    - text: How do I navigate the HTTP API to find a secret?
+    - text: 'I think this might work: ''curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'''
+    - summary: ""
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'rbac-shoot-and-scoot'
-  '2':
-    sort-order: 2
+      pod-name: ""
+      pod-namespace: rbac-shoot-and-scoot
+  "2":
     hints:
-      - text: What user is assigned when hitting the API with no identity?
-      - text: Have a look at the rolebindings and clusterrolebindings
-      - text: >-
-          system:anonymous has a clusterrolebinding to admin. Remove this
-          binding.
+    - text: What user is assigned when hitting the API with no identity?
+    - text: Have a look at the rolebindings and clusterrolebindings
+    - text: system:anonymous has a clusterrolebinding to admin. Remove this binding.
+    - summary: ""
+    sort-order: 2
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance

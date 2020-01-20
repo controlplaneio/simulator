@@ -1,34 +1,33 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Use badly configured database to exfiltrate data.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'network-hammer-and-anvil'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: network-hammer-and-anvil
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: Is there anything useful in the env vars?
-      - text: Those look like a host and password for a root SSH user!
-      - text: >-
-          I think Postgres doesn't need a password if you're reaching it from
-          localhost.
-      - text: I can use pg_dump get the data from the database.
-      - text: I wonder if there are any mount points in this container.
-      - text: Is there something there in /backups?
-      - text: >-
-          I have an IP and SSH key from the welcome text to this challenge, I
-          can 'scp' my data to there.
+    - text: Is there anything useful in the env vars?
+    - text: Those look like a host and password for a root SSH user!
+    - text: I think Postgres doesn't need a password if you're reaching it from localhost.
+    - text: I can use pg_dump get the data from the database.
+    - text: I wonder if there are any mount points in this container.
+    - text: Is there something there in /backups?
+    - text: I have an IP and SSH key from the welcome text to this challenge, I can
+        'scp' my data to there.
+    - summary: ""
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'network-hammer-and-anvil'
-  '2':
-    sort-order: 2
+      pod-name: ""
+      pod-namespace: network-hammer-and-anvil
+  "2":
     hints:
-      - text: The database shouldn't need to talk externally.
-      - text: Only the frontend should have access to the database.
-      - text: I wonder if a network policy would help here.
+    - text: The database shouldn't need to talk externally.
+    - text: Only the frontend should have access to the database.
+    - text: I wonder if a network policy would help here.
+    - summary: ""
+    sort-order: 2
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance

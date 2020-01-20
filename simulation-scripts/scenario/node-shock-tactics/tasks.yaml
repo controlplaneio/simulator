@@ -1,27 +1,29 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Node escalation to workload compromise.
 starting-point:
-  mode: internal-instance
   kubectl-access: false
-kind: 'cp.simulator/scenario:1.0.0'
+  mode: internal-instance
 tasks:
-  '1':
+  "1":
+    hints:
+    - text: How would you escalate yourself on this node?
+    - text: Is there a file in /etc/ you can manipulate?
+    - text: Where do pods store their secrets?
+    - text: Incorrect permissions on /etc/shadow.
+    - text: /etc/shadow manipulation.
+    - text: Set root password for host.
+    - text: Login as root.
+    - summary: ""
     sort-order: 1
-    hints:
-      - text: How would you escalate yourself on this node?
-      - text: Is there a file in /etc/ you can manipulate?
-      - text: Where do pods store their secrets?
-      - text: Incorrect permissions on /etc/shadow.
-      - text: /etc/shadow manipulation.
-      - text: Set root password for host.
-      - text: Login as root.
     starting-point:
-      mode: internal-instance
       kubectl-access: false
-  '2':
+      mode: internal-instance
+  "2":
+    hints:
+    - text: '''df -h'' as host root to see tmpfs mounts.'
+    - text: Read creds from tmpfs volume.
+    - summary: ""
     sort-order: 2
-    hints:
-      - text: '''df -h'' as host root to see tmpfs mounts.'
-      - text: Read creds from tmpfs volume.
     starting-point:
-      mode: internal-instance
       kubectl-access: false
+      mode: internal-instance

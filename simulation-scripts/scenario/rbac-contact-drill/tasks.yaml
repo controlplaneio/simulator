@@ -1,33 +1,29 @@
-objective: >-
-  Figure out additional permissions given to the default service account and
-  reassign to designated role.
+kind: cp.simulator/scenario:1.0.0
+objective: Figure out additional permissions given to the default service account
+  and reassign to designated role.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'rbac-contact-drill'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: rbac-contact-drill
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: >-
-          Can you hit the API from inside the pod? You may need to install curl
-          and kubectl.
+    - text: Can you hit the API from inside the pod? You may need to install curl
+        and kubectl.
+    - summary: ""
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'rbac-contact-drill'
-  '2':
-    sort-order: 2
+      pod-name: ""
+      pod-namespace: rbac-contact-drill
+  "2":
     hints:
-      - text: >-
-          What identity is assigned the pod? Check out the service account
-          directory.
-      - text: Have a look at the roles and rolebindings.
-      - text: >-
-          The default service account has permissions to view secrets. Make a
-          new role with these permissions and assign it to the secrets-caller
-          deployment
+    - text: What identity is assigned the pod? Check out the service account directory.
+    - text: Have a look at the roles and rolebindings.
+    - text: The default service account has permissions to view secrets. Make a new
+        role with these permissions and assign it to the secrets-caller deployment
+    - summary: ""
+    sort-order: 2
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance

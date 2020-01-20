@@ -1,42 +1,38 @@
-objective: >-
-  Discover uncertified etcd, reach it with only network access and master node
-  IP. Fix the leakage.
+kind: cp.simulator/scenario:1.0.0
+objective: Discover uncertified etcd, reach it with only network access and master
+  node IP. Fix the leakage.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'etcd-inverted-wedge'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: etcd-inverted-wedge
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: >-
-          Since we know the leak is not from the API Server or Kubelet,
-          could the secrets be leaking directly from etcd?
-      - text: Try to install etcdctl and explore.
-      - text: >-
-          List etcd endpoints with ```ETCDCTL_API=3 etcdctl
-          --endpoints=https://<K8s master IP>:2379 --insecure-transport=false
-          --insecure-skip-tls-verify get / --prefix --keys-only```
-      - text: Let's see if there's any 'secrets' here.
-      - text: >-
-          ```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379
-          --insecure-transport=false --insecure-skip-tls-verify get
-          /registry/secrets/etcd-inverted-wedge/credentials```
+    - text: Since we know the leak is not from the API Server or Kubelet, could the
+        secrets be leaking directly from etcd?
+    - text: Try to install etcdctl and explore.
+    - text: List etcd endpoints with ```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s
+        master IP>:2379 --insecure-transport=false --insecure-skip-tls-verify get
+        / --prefix --keys-only```
+    - text: Let's see if there's any 'secrets' here.
+    - text: '```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379 --insecure-transport=false
+        --insecure-skip-tls-verify get /registry/secrets/etcd-inverted-wedge/credentials```'
+    - summary: ""
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'etcd-inverted-wedge'
-  '2':
-    sort-order: 2
+      pod-name: ""
+      pod-namespace: etcd-inverted-wedge
+  "2":
     hints:
-      - text: How could we reach the etcd backend with no certificates?
-      - text: Where does kubeadm keep it's etcd config?
-      - text: One of the configuration options here looks wrong.
-      - text: >-
-          On the master node in /etc/kubernetes/manifests/etcd.yaml change -
-          --client-cert-auth=false to --client-cert-auth=true
+    - text: How could we reach the etcd backend with no certificates?
+    - text: Where does kubeadm keep it's etcd config?
+    - text: One of the configuration options here looks wrong.
+    - text: On the master node in /etc/kubernetes/manifests/etcd.yaml change - --client-cert-auth=false
+        to --client-cert-auth=true
+    - summary: ""
+    sort-order: 2
     starting-point:
-      mode: node
-      node-id: 'master-0'
       as-root: true
+      mode: node
+      node-id: master-0
