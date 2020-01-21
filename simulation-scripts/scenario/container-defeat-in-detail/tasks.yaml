@@ -14,17 +14,17 @@ tasks:
     - text: There are some etcd certs here, I think I was given the IP for the etcd
         cluster earlier.
     - text: The key I'm after is probably the '/super/secret one'.
-    - summary: ""
     sort-order: 1
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""
   "2":
     hints:
     - text: Let's check the node config.
     - text: The master is missing its taint!
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

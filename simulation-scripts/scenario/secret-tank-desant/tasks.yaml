@@ -10,9 +10,9 @@ tasks:
     - text: kubectl exec into workload.
     - text: Workload - enumerate container filesystem.
     - text: Read AWS creds from file.
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: secret-tank-desant
+    summary: ""

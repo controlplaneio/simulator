@@ -12,8 +12,8 @@ tasks:
     - text: Looking at the filesystem, there seems to be a mount at /log.
     - text: Is there anything in the log file in /log?
     - text: What happens if I grep that file for a 'password'.
-    - summary: ""
     sort-order: 1
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

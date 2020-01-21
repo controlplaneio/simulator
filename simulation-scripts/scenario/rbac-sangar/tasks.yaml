@@ -12,12 +12,12 @@ tasks:
     - text: Hmm, I can't see secrets directly. I wonder what the deployment of the
         application pods looks like?
     - text: The secret is in an environment variable in the application pods.
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: rbac-sangar
+    summary: ""
   "2":
     hints:
     - text: Is there a RoleBinding in this namespace or a ClusterRoleBinding bound
@@ -27,26 +27,26 @@ tasks:
         bound to that?
     - text: Looks like the authenticated-view ClusterRoleBinding is giving the group
         more permissions! It should probably be deleted for now.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""
   "3":
     hints:
     - text: The pod should not mount the default service token.
     - text: The application pods already do this. Maybe I could look there for inspiration.
     - text: I need to set automountServiceAccountToken to be false
-    - summary: ""
     sort-order: 3
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""
   "4":
     hints:
     - text: I need to replace the environment variable with a secret.
-    - summary: ""
     sort-order: 4
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

@@ -15,19 +15,19 @@ tasks:
     - text: Is there something there in /backups?
     - text: I have an IP and SSH key from the welcome text to this challenge, I can
         'scp' my data to there.
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: network-hammer-and-anvil
+    summary: ""
   "2":
     hints:
     - text: The database shouldn't need to talk externally.
     - text: Only the frontend should have access to the database.
     - text: I wonder if a network policy would help here.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

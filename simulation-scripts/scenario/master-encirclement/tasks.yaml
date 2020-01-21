@@ -13,9 +13,9 @@ tasks:
     - text: Where does kubeadm keep the master config?
     - text: Looks like the MutatingAdmissionWebhook admission controller has been
         disabled. I probably need to enable it.
-    - summary: ""
     sort-order: 1
     starting-point:
       as-root: true
       mode: node
       node-id: master-0
+    summary: ""

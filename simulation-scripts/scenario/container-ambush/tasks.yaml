@@ -13,18 +13,18 @@ tasks:
     - text: Let's inspect the other containers running on this host.
     - text: The nginx container seems to be the one we're looking for.
     - text: That environment variable looks like a secret!
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: container-ambush
+    summary: ""
   "2":
     hints:
     - text: How did you access the keys? Can you inject a secret another way?
     - text: The gold standard way of consuming a secret is as a volume mount.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

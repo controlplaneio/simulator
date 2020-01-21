@@ -16,18 +16,18 @@ tasks:
     - text: One of the devs mentioned a Postgres database they used didn't have a
         password, could this be it?
     - text: Hmm, how do I list tables and view the keys in tables again?
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: network-swarming
+    summary: ""
   "2":
     hints:
     - text: The database shouldn't be talking to the frontend.
     - text: I wonder if a network policy would help here.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

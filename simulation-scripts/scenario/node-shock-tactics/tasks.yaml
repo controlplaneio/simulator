@@ -13,17 +13,17 @@ tasks:
     - text: /etc/shadow manipulation.
     - text: Set root password for host.
     - text: Login as root.
-    - summary: ""
     sort-order: 1
     starting-point:
       kubectl-access: false
       mode: internal-instance
+    summary: ""
   "2":
     hints:
     - text: '''df -h'' as host root to see tmpfs mounts.'
     - text: Read creds from tmpfs volume.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: false
       mode: internal-instance
+    summary: ""

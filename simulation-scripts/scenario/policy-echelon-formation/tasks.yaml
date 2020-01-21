@@ -15,18 +15,18 @@ tasks:
     - text: Let's see if /proc/<pid>/environ has one of the values we need.
     - text: What's in /proc/<pid>/root?
     - text: The final secrets I need are in /proc/<pid>/root/secrets.
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: policy-echelon-formation
+    summary: ""
   "2":
     hints:
     - text: Looks like I need to  stop adding ALL capabilities to the pod.
-    - summary: ""
     sort-order: 2
     starting-point: ""
+    summary: ""
   "3":
     hints:
     - text: I think a PodSecurityPolicy might be useful here.
@@ -34,8 +34,8 @@ tasks:
         and policy-vertical-envelopment namespaces
     - text: I'll need to enable the PSP controller in the api-server.
     - text: My PSP for Jenkins should prevent adding ALL capabilities to pods.
-    - summary: ""
     sort-order: 3
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

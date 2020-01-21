@@ -17,12 +17,12 @@ tasks:
     - text: Let's see if there's any 'secrets' here.
     - text: '```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379 --insecure-transport=false
         --insecure-skip-tls-verify get /registry/secrets/etcd-inverted-wedge/credentials```'
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: etcd-inverted-wedge
+    summary: ""
   "2":
     hints:
     - text: How could we reach the etcd backend with no certificates?
@@ -30,9 +30,9 @@ tasks:
     - text: One of the configuration options here looks wrong.
     - text: On the master node in /etc/kubernetes/manifests/etcd.yaml change - --client-cert-auth=false
         to --client-cert-auth=true
-    - summary: ""
     sort-order: 2
     starting-point:
       as-root: true
       mode: node
       node-id: master-0
+    summary: ""

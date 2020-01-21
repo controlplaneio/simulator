@@ -10,9 +10,9 @@ tasks:
     - text: Hmm, the RBAC looks good. What other factors could influence the permissions?
     - text: Where does kubeadm keep the master config?
     - text: Looks like the PodSecurityPolicy is missing from the admission controllers.
-    - summary: ""
     sort-order: 1
     starting-point:
       as-root: true
       mode: node
       node-id: master-0
+    summary: ""

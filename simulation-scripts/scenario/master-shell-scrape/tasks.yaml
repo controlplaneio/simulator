@@ -11,12 +11,12 @@ tasks:
         look suspicious?
     - text: Looks like you may be able to access the Kubernetes API on port 8080.
         Try curling some of the end-points. You may need to download curl.
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: master-shell-scrape
+    summary: ""
   "2":
     hints:
     - text: The API appears to be open on the Master node without certification. Have
@@ -24,9 +24,9 @@ tasks:
     - text: --insecure-bind-address and --insecure-port is enabled on the API in the
         manifest at /etc/kubernetes/manifests/kube-apiserver.yaml. Set the insecure
         port to 0 and delete the binding.
-    - summary: ""
     sort-order: 2
     starting-point:
       as-root: true
       mode: node
       node-id: master-0
+    summary: ""

@@ -16,18 +16,18 @@ tasks:
     - text: Hmm, how do I list tables and view the keys in tables again?
     - text: To query db from setupd pod ```psql -h database.network-hedgehog-defence
         -U postgres```
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: network-hedgehog-defence
+    summary: ""
   "2":
     hints:
     - text: Put a network policy in place such that only namespace internal resources
         can talk to the database.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

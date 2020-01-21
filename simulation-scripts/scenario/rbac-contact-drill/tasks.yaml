@@ -10,20 +10,20 @@ tasks:
     hints:
     - text: Can you hit the API from inside the pod? You may need to install curl
         and kubectl.
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: rbac-contact-drill
+    summary: ""
   "2":
     hints:
     - text: What identity is assigned the pod? Check out the service account directory.
     - text: Have a look at the roles and rolebindings.
     - text: The default service account has permissions to view secrets. Make a new
         role with these permissions and assign it to the secrets-caller deployment
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""

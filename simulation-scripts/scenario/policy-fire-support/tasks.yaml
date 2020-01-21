@@ -10,19 +10,19 @@ tasks:
     - text: I should look around and see if I can find those key.
     - text: Hmm I can't seem to open /root-ssh.
     - text: Is sudo installed in this container?
-    - summary: ""
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: policy-fire-support
+    summary: ""
   "2":
     hints:
     - text: I wonder if there is a PodSecurityPolicy on this deployment.
     - text: Looks like the Jenkins PSP is the one I want.
     - text: I think all I need to do is prevent privilege escalation.
-    - summary: ""
     sort-order: 2
     starting-point:
       kubectl-access: true
       mode: internal-instance
+    summary: ""
