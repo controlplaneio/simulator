@@ -111,9 +111,9 @@ starting_point() {
     KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."kubectl-access"')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
-      ssh "$INTERNAL_NODE_IP" mv ~/.kube /var/local/
+      ssh "$INTERNAL_HOST_IP" mv ~/.kube /var/local/
     elif [[ ! -d ~/.kube ]]; then
-      ssh "$INTERNAL_NODE_IP" mv /var/local/.kube ~/
+      ssh "$INTERNAL_HOST_IP" mv /var/local/.kube ~/
     fi
 
     ssh_internal
