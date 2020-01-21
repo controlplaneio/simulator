@@ -57,8 +57,7 @@ func Test_Create(t *testing.T) {
 		sim.WithTfVarsDir(fixture("noop-tf-dir")))
 
 	// out := simulator.WhereAmI()
-	pathypath, pwd, err := simulator.CreateTwo()
-	erro := simulator.Create()
+	err := simulator.CreateThree()
 
 	
 
@@ -79,10 +78,7 @@ func Test_Create(t *testing.T) {
 	// str := string(file)
 
 	// assert.Nil(t, out)
-	assert.Nil(t, pwd)
 	assert.Nil(t, err)
-	assert.Nil(t, pathypath)
-	assert.Nil(t, erro)
 	// assert.Nil(t, str)
 }
 

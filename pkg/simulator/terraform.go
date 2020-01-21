@@ -55,12 +55,13 @@ func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
 
 
 // TerraformTwo wraps running terraform as a child process
-func TerraformTwo(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
+func TerraformTwo(wd, cmd string, bucket, tfVarsDir string) []string {
 	args := PrepareTfArgs(cmd, bucket, tfVarsDir)
 
-	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
+	// env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
 
-	return util.Run(wd, env, "terraform", args...)
+	// return util.Run(wd, env, "terraform", args...)
+	return args
 }
 
 
@@ -109,11 +110,13 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir
 
 // CreateThree runs terraform init, plan, apply to create the necessary
 // infrastructure to run scenarios
-func (s *Simulator) CreateThree() (*string, error) {
+func (s *Simulator) CreateThree() error {
+	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
 
-	s.Logger.Info("Running terraform plan")
-	args, err := TerraformTwo(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
-	return args, err
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 // -#-
