@@ -22,17 +22,17 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: node-amphibious-operations
-    summary: ""
+    summary: "We were able to query the kubelet api directly and get some sensitive data about the pods. We then took this further and used our access to run arbitrary commands inside the pod."
   "2":
     hints:
     - text: You need to fix /var/lib/kubelet/config.yaml.
-    - text: '''authentication.anonymous.enabled'' value should be ''false'' and ''authorization.mode''
-        should be ''Webhook''.'
-    - text: '''systemctl daemon-reload; systemctl restart kubelet.service'' applies
-        the config changes.'
+    - text: "'authentication.anonymous.enabled' value should be 'false' and 'authorization.mode'
+        should be 'Webhook'."
+    - text: "'systemctl daemon-reload; systemctl restart kubelet.service' applies
+        the config changes."
     sort-order: 2
     starting-point:
       as-root: true
       mode: node
       node-id: node-0
-    summary: ""
+    summary: "We edited the kubelet yaml to disable anonymous authentication and enforce the webhook authentication mode. We then restarted the kubelet."

@@ -17,13 +17,13 @@ tasks:
     starting-point:
       kubectl-access: false
       mode: internal-instance
-    summary: ""
+    summary: "We manipulated some malformed /etc/shadow permissions to escalate ourselves to root on the node."
   "2":
     hints:
-    - text: '''df -h'' as host root to see tmpfs mounts.'
+    - text: "'df -h' as host root to see tmpfs mounts."
     - text: Read creds from tmpfs volume.
     sort-order: 2
     starting-point:
       kubectl-access: false
       mode: internal-instance
-    summary: ""
+    summary: "We used our root privileges to read secret data from tmpfs mount inside the container."

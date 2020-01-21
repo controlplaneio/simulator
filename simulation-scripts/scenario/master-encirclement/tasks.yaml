@@ -18,4 +18,4 @@ tasks:
       as-root: true
       mode: node
       node-id: master-0
-    summary: ""
+    summary: "The Mutating Admission Webhook admission controller was disabled. We re-enabled it in the manifest for the api server."

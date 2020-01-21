@@ -16,7 +16,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: master-shell-scrape
-    summary: ""
+    summary: "We were able to make privileged api calls to the api server with authenticating."
   "2":
     hints:
     - text: The API appears to be open on the Master node without certification. Have
@@ -29,4 +29,4 @@ tasks:
       as-root: true
       mode: node
       node-id: master-0
-    summary: ""
+    summary: "We disabled the --insecure bind port and address options in the api server manifest."

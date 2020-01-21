@@ -21,7 +21,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: network-hedgehog-defence
-    summary: ""
+    summary: "Using psql we managed to get some secret data from a pod in another namespace."
   "2":
     hints:
     - text: Put a network policy in place such that only namespace internal resources
@@ -30,4 +30,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We created a network policy that only allowed the database to receive traffic from inside its namespace."

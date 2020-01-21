@@ -18,7 +18,7 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We managed to retrieve a secret value from etcd using some certificates mounted into the container accidentally."
   "2":
     hints:
     - text: Let's check the node config.
@@ -27,4 +27,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "The master node needed its master taint to be reapplied."

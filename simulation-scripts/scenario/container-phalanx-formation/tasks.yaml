@@ -16,4 +16,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "By using our kubectl access we were able to exec into a pod and read sensitive information from a malfunctioning logging mechanism."

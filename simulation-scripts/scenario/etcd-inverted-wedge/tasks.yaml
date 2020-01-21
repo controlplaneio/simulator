@@ -22,7 +22,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: etcd-inverted-wedge
-    summary: ""
+    summary: "Etcd allowed us to connect to it without using certificates."
   "2":
     hints:
     - text: How could we reach the etcd backend with no certificates?
@@ -35,4 +35,4 @@ tasks:
       as-root: true
       mode: node
       node-id: master-0
-    summary: ""
+    summary: "We re-enabled client certificate authentication in the etcd manifest on the master."

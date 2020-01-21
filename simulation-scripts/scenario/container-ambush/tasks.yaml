@@ -18,7 +18,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: container-ambush
-    summary: ""
+    summary: "There was a docker socket mounted into the container. Using it we could query Docker to find the value of an environment variable in another container."
   "2":
     hints:
     - text: How did you access the keys? Can you inject a secret another way?
@@ -27,4 +27,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We injected the secret value into the container as an environment variable backed by a kubernetes secret."

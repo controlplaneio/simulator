@@ -21,7 +21,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: network-swarming
-    summary: ""
+    summary: "We used the db service in the namespace to connect to a database psql and find some secret data. We should not have been able to do this given our starting location."
   "2":
     hints:
     - text: The database shouldn't be talking to the frontend.
@@ -30,4 +30,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "A Network Policy was implemented to prevent the frontend pods from interacting with the database."

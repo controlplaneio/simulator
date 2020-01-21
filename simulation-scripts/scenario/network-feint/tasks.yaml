@@ -16,7 +16,7 @@ tasks:
     starting-point:
       kubectl-access: false
       mode: internal-instance
-    summary: ""
+    summary: "We used psql to query the application database from outside the cluster. This should not be allowed."
   "2":
     hints:
     - text: The database shouldn't be talking to the outside world.
@@ -25,7 +25,7 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "The labels on the the frontend service select to many pods. We made the labels more selective to fix the issue."
   "3":
     hints:
     - text: I wonder if a network policy would help here.
@@ -33,4 +33,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We added a network policy to the namespace to prevent all but approved traffic between pods and the outside."

@@ -20,7 +20,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: network-hammer-and-anvil
-    summary: ""
+    summary: "We SSH'd into a sidecar container of a database pod after finding some credentials in our starting pod. From there we accessed the database directly and through a shared mount to exfiltrate some secret data."
   "2":
     hints:
     - text: The database shouldn't need to talk externally.
@@ -30,4 +30,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We used a network policy to prevent the database from exfiltrating data and preventing SSH into the sidecar container."

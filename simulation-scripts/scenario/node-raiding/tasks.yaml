@@ -16,16 +16,16 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: node-raiding
-    summary: ""
+    summary: "We queried the outdated kublet readonly port to get pod information."
   "2":
     hints:
     - text: You need to fix /var/lib/kubelet/config.yaml.
     - text: readOnly port should be 0.
-    - text: '''systemctl daemon-reload; systemctl restart kubelet.service'' applies
-        the config changes.'
+    - text: "'systemctl daemon-reload; systemctl restart kubelet.service' applies
+        the config changes."
     sort-order: 2
     starting-point:
       as-root: true
       mode: node
       node-id: node-0
-    summary: ""
+    summary: "We disabled the readonly port in the kubelet config and restarted the service."
