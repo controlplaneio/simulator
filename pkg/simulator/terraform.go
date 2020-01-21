@@ -7,6 +7,9 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"go.uber.org/zap"
+	"os"
+	"path/filepath"
+
 )
 
 // PrepareTfArgs takes a string with the terraform command desired and returns
@@ -49,6 +52,17 @@ func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
 
 	return util.Run(wd, env, "terraform", args...)
 }
+
+
+// TerraformTwo wraps running terraform as a child process
+func TerraformTwo(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
+	args := PrepareTfArgs(cmd, bucket, tfVarsDir)
+
+	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
+
+	return util.Run(wd, env, "terraform", args...)
+}
+
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if
 // needed
@@ -93,17 +107,28 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir
 	return nil
 }
 
+// CreateThree runs terraform init, plan, apply to create the necessary
+// infrastructure to run scenarios
+func (s *Simulator) CreateThree() (*string, error) {
+
+	s.Logger.Info("Running terraform plan")
+	args, err := TerraformTwo(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
+	return args, err
+}
+
 // -#-
 
 // Create runs terraform init, plan, apply to create the necessary
 // infrastructure to run scenarios
 func (s *Simulator) Create() error {
+
 	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
 
 	if err != nil {
 		return err
 	}
 
+	
 	s.Logger.Info("Running terraform plan")
 	_, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
 	if err != nil {
@@ -115,6 +140,58 @@ func (s *Simulator) Create() error {
 	return err
 }
 
+// CreateTwo runs terraform init, plan, apply to create the necessary
+// infrastructure to run scenarios
+func (s *Simulator) CreateTwo() ([]string, string, error) {
+
+	var pathypath []string
+
+	visit := func(path string, info os.FileInfo, err error) error {
+		pathypath = append(pathypath, path + " ")
+		return nil
+    }
+
+	filepath.Walk("../..", visit)
+
+
+	pwd, err := os.Getwd()
+
+	return pathypath, pwd, err
+
+	// err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
+
+	// if err != nil {
+	// 	return err
+	// }
+
+	// s.Logger.Info("Running terraform plan")
+	// _, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
+	// if err != nil {
+	// 	return err
+	// }
+
+	// s.Logger.Info("Running terraform apply")
+	// _, err = Terraform(s.TfDir, "apply", s.BucketName, s.TfVarsDir)
+	// return err
+}
+
+
+// WhereAmI runs terraform init, plan, apply to create the necessary
+// infrastructure to run scenarios
+func (s *Simulator) WhereAmI() []string {
+
+    var pathypath []string
+
+	visit := func(path string, info os.FileInfo, err error) error {
+		pathypath = append(pathypath, path + " ")
+		return nil
+    }
+
+	filepath.Walk("../..", visit)
+
+	return pathypath
+
+}
 
 // Status calls terraform output to get the state of the infrastruture and
 // parses the output for programmatic use

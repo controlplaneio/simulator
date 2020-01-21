@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 	"testing"
+
 )
 
 var noopLogger = zap.NewNop().Sugar()
@@ -14,10 +15,10 @@ var tfCommandArgumentsTests = []struct {
 	arguments []string
 }{
 	{[]string{"output", "test-bucket", fixture("noop-tf-dir")}, []string{"output", "-json"}},
-	{[]string{"init", "test-bucket", fixture("noop-tf-dir")}, []string{"init", "-input=false", "--var-file=/go/src/github.com/controlplaneio/simulator-standalone/pkg/simulator/settings/bastion.tfvars", "-backend-config=bucket=test-bucket"}},
-	{[]string{"plan", "test-bucket", fixture("noop-tf-dir")}, []string{"plan", "-input=false", "--var-file=/go/src/github.com/controlplaneio/simulator-standalone/pkg/simulator/settings/bastion.tfvars"}},
-	{[]string{"apply", "test-bucket", fixture("noop-tf-dir")}, []string{"apply", "-input=false", "--var-file=/go/src/github.com/controlplaneio/simulator-standalone/pkg/simulator/settings/bastion.tfvars", "-auto-approve"}},
-	{[]string{"destroy", "test-bucket", fixture("noop-tf-dir")}, []string{"destroy", "-input=false", "--var-file=/go/src/github.com/controlplaneio/simulator-standalone/pkg/simulator/settings/bastion.tfvars", "-auto-approve"}},
+	{[]string{"init", "test-bucket", fixture("noop-tf-dir")}, []string{"init", "-input=false", "--var-file=" + fixture("noop-tf-dir") + "/settings/bastion.tfvars", "-backend-config=bucket=test-bucket"}},
+	{[]string{"plan", "test-bucket", fixture("noop-tf-dir")}, []string{"plan", "-input=false", "--var-file=" + fixture("noop-tf-dir") + "/settings/bastion.tfvars"}},
+	{[]string{"apply", "test-bucket", fixture("noop-tf-dir")}, []string{"apply", "-input=false", "--var-file=" + fixture("noop-tf-dir") + "/settings/bastion.tfvars", "-auto-approve"}},
+	{[]string{"destroy", "test-bucket", fixture("noop-tf-dir")}, []string{"destroy", "-input=false", "--var-file=" + fixture("noop-tf-dir") + "/settings/bastion.tfvars", "-auto-approve"}},
 }
 
 func Test_PrepareTfArgs(t *testing.T) {
@@ -46,7 +47,7 @@ func Test_Status(t *testing.T) {
 }
 
 func Test_Create(t *testing.T) {
-	
+
 	simulator := sim.NewSimulator(
 		sim.WithLogger(noopLogger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
@@ -55,7 +56,11 @@ func Test_Create(t *testing.T) {
 		sim.WithBucketName("test"),
 		sim.WithTfVarsDir(fixture("noop-tf-dir")))
 
-	err := simulator.Create()
+	// out := simulator.WhereAmI()
+	pathypath, pwd, err := simulator.CreateTwo()
+	erro := simulator.Create()
+
+	
 
     // pwd, err := os.Getwd()
     // if err != nil {
@@ -66,20 +71,23 @@ func Test_Create(t *testing.T) {
 	
 	// assert.Nil(t, pwd)
 
-	// file, err := os.Open("/go/src/github.com/controlplaneio/simulator-standalone/pkg/simulator/test/fixtures/noop-tf-dir/settings/bastion.tfvars")
+	// file, err := ioutil.ReadFile("../../test/fixtures/noop-tf-dir/settings/bastion.tfvars")
     // if err != nil {
-    //     log.Fatal(err)
+    //     fmt.Print(err)
     // }
 
-	// n := fmt.Sprint(file)
-	// assert.Nil(t, n)
-	// assert.Nil(t, err)
-	
+	// str := string(file)
+
+	// assert.Nil(t, out)
+	assert.Nil(t, pwd)
 	assert.Nil(t, err)
+	assert.Nil(t, pathypath)
+	assert.Nil(t, erro)
+	// assert.Nil(t, str)
 }
 
-func Test_Destroy(t *testing.T) {
-	// err := sim.Destroy(noopLogger, fixture("noop-tf-dir"), "test", "test", fixture("noop-tf-dir"))
+// func Test_Destroy(t *testing.T) {
+// 	err := sim.Destroy(noopLogger, fixture("noop-tf-dir"), "test", "test", "test"))
 
-	// assert.Nil(t, err)
-}
+// 	assert.Nil(t, err)
+// }
