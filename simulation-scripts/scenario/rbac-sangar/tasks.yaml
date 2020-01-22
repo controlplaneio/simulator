@@ -17,7 +17,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: rbac-sangar
-    summary: ""
+    summary: "We installed kubectl into the pod and used the pods elevated permissions to get a sensitive environment variable from another pod."
   "2":
     hints:
     - text: Is there a RoleBinding in this namespace or a ClusterRoleBinding bound
@@ -31,7 +31,7 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We found that there wasn't a rolebinding applied to the service account. Instead we saw that the default service account inherits the 'system:authenticated' group and there were elevated permissions applied to that group."
   "3":
     hints:
     - text: The pod should not mount the default service token.
@@ -41,7 +41,7 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We unmounted the default service account token from the pod."
   "4":
     hints:
     - text: I need to replace the environment variable with a secret.
@@ -49,4 +49,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We replaced the compromised environment variable with a kubernetes secret."

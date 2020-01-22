@@ -15,4 +15,4 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: secret-tank-desant
-    summary: ""
+    summary: "We read some secret data from the filesystem."

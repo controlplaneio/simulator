@@ -20,7 +20,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: policy-echelon-formation
-    summary: ""
+    summary: "Using the elevated permissions on the pod, we managed to manipulate the node /proc to retrieve secrets from another pod."
   "2":
     hints:
     - text: Looks like I need to  stop adding ALL capabilities to the pod.
@@ -38,4 +38,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We used a pod security policy to limit what linux capabilities pods in our cluster can have."

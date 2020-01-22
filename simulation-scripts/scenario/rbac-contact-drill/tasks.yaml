@@ -15,7 +15,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: rbac-contact-drill
-    summary: ""
+    summary: "We managed to hit the kubernetes api from inside the pod and used kubectl to query it."
   "2":
     hints:
     - text: What identity is assigned the pod? Check out the service account directory.
@@ -26,4 +26,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We removed the view secrets permission from the default namespace service account. We then created a new service account with those permissions for the exclusive use of the secrets-caller pod."

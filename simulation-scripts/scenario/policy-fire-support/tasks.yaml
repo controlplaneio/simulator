@@ -7,7 +7,7 @@ starting-point:
 tasks:
   "1":
     hints:
-    - text: I should look around and see if I can find those key.
+    - text: I should look around and see if I can find those keys.
     - text: Hmm I can't seem to open /root-ssh.
     - text: Is sudo installed in this container?
     sort-order: 1
@@ -15,7 +15,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: policy-fire-support
-    summary: ""
+    summary: "Using sudo in the container, we managed to bypass some linux file permissions for a file on the host."
   "2":
     hints:
     - text: I wonder if there is a PodSecurityPolicy on this deployment.

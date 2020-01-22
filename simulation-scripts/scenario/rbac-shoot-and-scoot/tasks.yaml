@@ -13,13 +13,13 @@ tasks:
     - text: That looks like the IP and port for the API server!
     - text: I reckon I can curl that endpoint if I use HTTPS and the -k option
     - text: How do I navigate the HTTP API to find a secret?
-    - text: 'I think this might work: ''curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'''
+    - text: "I think this might work: 'curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'"
     sort-order: 1
     starting-point:
       mode: pod
       pod-name: ""
       pod-namespace: rbac-shoot-and-scoot
-    summary: ""
+    summary: "We used curl and the environment variables in the pod to get a secret from the namespace without passing the api server a token."
   "2":
     hints:
     - text: What user is assigned when hitting the API with no identity?
@@ -29,4 +29,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We removed a cluster role binding giving anonymous requests cluster admin."

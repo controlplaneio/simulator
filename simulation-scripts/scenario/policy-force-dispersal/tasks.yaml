@@ -15,4 +15,4 @@ tasks:
       as-root: true
       mode: node
       node-id: master-0
-    summary: ""
+    summary: "We re-enabled the pod security policy admission controller in the master api config."

@@ -18,7 +18,7 @@ tasks:
       mode: pod
       pod-name: ""
       pod-namespace: policy-vertical-envelopment
-    summary: ""
+    summary: "Using the fact that we were in a privileged container, we mounted the host disk to find a secret."
   "2":
     hints:
     - text: Looks like I need to set privileged to false.
@@ -26,7 +26,7 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We mitigated this vulnerability by editing the pod manifest to remove the privileged flag."
   "3":
     hints:
     - text: I think a PodSecurityPolicy might be useful here.
@@ -38,4 +38,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We implemented a pod security policy to prevent anyone setting the privileged flag without approval."

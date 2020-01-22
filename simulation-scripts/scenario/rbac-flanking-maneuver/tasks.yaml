@@ -17,7 +17,7 @@ tasks:
     starting-point:
       kubectl-access: false
       mode: internal-instance
-    summary: ""
+    summary: "We brute forced access to an SSH pod in the cluster with an active node port and weak password. We then used the pods elevated permissions to get secrets."
   "2":
     hints:
     - text: What identity is assigned the pod?
@@ -28,11 +28,11 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We removed the rolebinding giving elevated permissions to the pod."
   "3":
     hints:
     - text: Don't use passwords for SSH connections, and definitely not easy ones.
     sort-order: 3
     starting-point:
       mode: null
-    summary: ""
+    summary: "We should not use passwords for SSH. Where we do need to use passwords we should not pick simple or obvious ones. "

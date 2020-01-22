@@ -14,7 +14,7 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: We set pull policy of the pod to always.""
   "2":
     hints:
     - text: A kubernetes secret is the best choice here.
@@ -23,4 +23,4 @@ tasks:
     starting-point:
       kubectl-access: true
       mode: internal-instance
-    summary: ""
+    summary: "We replaced the file baked into the container image with a kubernetes secret mounted in to the container at runtime."
