@@ -104,16 +104,16 @@ starting_point() {
     return 1
   fi
   # Identify the starting point mode
-  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point".mode')"
+  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.mode')"
 
   #Determine if mode is internal-instance.
   if [[ "$MODE" == "internal-instance" ]]; then
-    KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."kubectl-access"')"
+    KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.kubectlAccess')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
-      ssh "$INTERNAL_HOST_IP" mv ~/.kube /var/local/
-    elif [[ ! -d ~/.kube ]]; then
-      ssh "$INTERNAL_HOST_IP" mv /var/local/.kube ~/
+      ssh "$INTERNAL_HOST_IP" 'ls -d ~/.kube >/dev/null 2>&1 && mv ~/.kube /var/local/'
+    else
+      ssh "$INTERNAL_HOST_IP" 'ls -d ~/.kube >/dev/null 2>&1 || mv /var/local/.kube ~/'
     fi
 
     ssh_internal
@@ -122,17 +122,17 @@ starting_point() {
 
   #Determine if mode is node.
   if [[ "$MODE" == "node" ]]; then
-    NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."node-id"')"
+    NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.nodeId')"
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
-      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
+      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/nodeId: 'master-//" | sed "s/'//")"
 
       ssh_master "$NODE_NUMBER"
       return
     fi
 
     if [[ "$NODE_TYPE" =~ "node" ]]; then
-      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
+      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/nodeId: 'node-//" | sed "s/'//")"
 
       ssh_node "$NODE_NUMBER"
       return
@@ -225,7 +225,7 @@ welcome() {
   info ' '
   info "You have found a private kubernetes cluster."
   info ' '
-  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster."
+  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} ${COLOUR_BLUE}master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} ${COLOUR_BLUE}nodes in the cluster."
   info ' '
   info "If you want to begin to work on the scenario from its starting point:"
   info ' '
