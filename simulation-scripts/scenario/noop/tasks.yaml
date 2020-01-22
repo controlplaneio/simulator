@@ -1,4 +1,4 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Do nothing
-starting-point: ''
-kind: 'cp.simulator/scenario:1.0.0'
+starting-point: ""
 tasks: {}

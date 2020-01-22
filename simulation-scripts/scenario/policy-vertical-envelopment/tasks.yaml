@@ -1,39 +1,41 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Use privileged container to get host secrets.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'policy-vertical-envelopment'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: policy-vertical-envelopment
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: What mounts do I have in this container.
-      - text: Hmm that's a lot of devices mounted to /dev.
-      - text: Is this a privileged container?
-      - text: I think I can mount the host disk.
-      - text: Looks like the xvda1 is the host disk.
-      - text: The secret I need is in the node-secret directory.
+    - text: What mounts do I have in this container.
+    - text: Hmm that's a lot of devices mounted to /dev.
+    - text: Is this a privileged container?
+    - text: I think I can mount the host disk.
+    - text: Looks like the xvda1 is the host disk.
+    - text: The secret I need is in the node-secret directory.
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'policy-vertical-envelopment'
-  '2':
+      pod-name: ""
+      pod-namespace: policy-vertical-envelopment
+    summary: "Using the fact that we were in a privileged container, we mounted the host disk to find a secret."
+  "2":
+    hints:
+    - text: Looks like I need to set privileged to false.
     sort-order: 2
-    hints:
-      - text: Looks like I need to set privileged to false.
     starting-point:
-      mode: internal-instance
       kubectl-access: true
-  '3':
+      mode: internal-instance
+    summary: "We mitigated this vulnerability by editing the pod manifest to remove the privileged flag."
+  "3":
+    hints:
+    - text: I think a PodSecurityPolicy might be useful here.
+    - text: Remember to set a default policy before enabling the PSP in both the kube-system
+        and policy-vertical-envelopment namespaces
+    - text: I'll need to enable the PSP controller in the api-server.
+    - text: My PSP for Jenkins should prevent 'privileged= true'.
     sort-order: 3
-    hints:
-      - text: I think a PodSecurityPolicy might be useful here.
-      - text: >-
-          Remember to set a default policy before enabling the PSP in both the
-          kube-system and policy-vertical-envelopment namespaces
-      - text: I'll need to enable the PSP controller in the api-server.
-      - text: My PSP for Jenkins should prevent 'privileged= true'.
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance
+    summary: "We implemented a pod security policy to prevent anyone setting the privileged flag without approval."

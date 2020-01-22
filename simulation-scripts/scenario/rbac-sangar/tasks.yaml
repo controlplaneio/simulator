@@ -1,55 +1,52 @@
-objective: >-
-  Figure out additional permissions given to system:authenticated group and
+kind: cp.simulator/scenario:1.0.0
+objective: Figure out additional permissions given to system:authenticated group and
   remove them.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'rbac-sangar'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: rbac-sangar
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: Can I run or install kubectl in here?
-      - text: >-
-          Hmm, I can't see secrets directly. I wonder what the deployment of the
-          application pods looks like?
-      - text: The secret is in an environment variable in the application pods.
+    - text: Can I run or install kubectl in here?
+    - text: Hmm, I can't see secrets directly. I wonder what the deployment of the
+        application pods looks like?
+    - text: The secret is in an environment variable in the application pods.
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'rbac-sangar'
-  '2':
+      pod-name: ""
+      pod-namespace: rbac-sangar
+    summary: "We installed kubectl into the pod and used the pods elevated permissions to get a sensitive environment variable from another pod."
+  "2":
+    hints:
+    - text: Is there a RoleBinding in this namespace or a ClusterRoleBinding bound
+        to the namespace default ServiceAccount?
+    - text: Looks like there is not a direct binding to the ServiceAccount.
+    - text: Using the pod's token we are in the system:authenticated group. Is something
+        bound to that?
+    - text: Looks like the authenticated-view ClusterRoleBinding is giving the group
+        more permissions! It should probably be deleted for now.
     sort-order: 2
-    hints:
-      - text: >-
-          Is there a RoleBinding in this namespace or a ClusterRoleBinding bound
-          to the namespace default ServiceAccount?
-      - text: Looks like there is not a direct binding to the ServiceAccount.
-      - text: >-
-          Using the pod's token we are in the system:authenticated group. Is
-          something bound to that?
-      - text: >-
-          Looks like the authenticated-view ClusterRoleBinding is giving the
-          group more permissions! It should probably be deleted for now.
     starting-point:
-      mode: internal-instance
       kubectl-access: true
-  '3':
+      mode: internal-instance
+    summary: "We found that there wasn't a rolebinding applied to the service account. Instead we saw that the default service account inherits the 'system:authenticated' group and there were elevated permissions applied to that group."
+  "3":
+    hints:
+    - text: The pod should not mount the default service token.
+    - text: The application pods already do this. Maybe I could look there for inspiration.
+    - text: I need to set automountServiceAccountToken to be false
     sort-order: 3
-    hints:
-      - text: The pod should not mount the default service token.
-      - text: >-
-          The application pods already do this. Maybe I could look there for
-          inspiration.
-      - text: I need to set automountServiceAccountToken to be false
     starting-point:
-      mode: internal-instance
       kubectl-access: true
-  '4':
+      mode: internal-instance
+    summary: "We unmounted the default service account token from the pod."
+  "4":
+    hints:
+    - text: I need to replace the environment variable with a secret.
     sort-order: 4
-    hints:
-      - text: I need to replace the environment variable with a secret.
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance
+    summary: "We replaced the compromised environment variable with a kubernetes secret."

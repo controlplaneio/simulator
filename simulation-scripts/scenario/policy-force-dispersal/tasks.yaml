@@ -1,21 +1,18 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Enable PodSecurityPolicy in the API server.
 starting-point:
-  mode: node
-  node-id: 'master-0'
   as-root: true
-kind: 'cp.simulator/scenario:1.0.0'
+  mode: node
+  node-id: master-0
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: >-
-          Hmm, the RBAC looks good. What other factors could influence the
-          permissions?
-      - text: Where does kubeadm keep the master config?
-      - text: >-
-          Looks like the PodSecurityPolicy is missing from the admission
-          controllers.
+    - text: Hmm, the RBAC looks good. What other factors could influence the permissions?
+    - text: Where does kubeadm keep the master config?
+    - text: Looks like the PodSecurityPolicy is missing from the admission controllers.
+    sort-order: 1
     starting-point:
-      mode: node
-      node-id: 'master-0'
       as-root: true
+      mode: node
+      node-id: master-0
+    summary: "We re-enabled the pod security policy admission controller in the master api config."

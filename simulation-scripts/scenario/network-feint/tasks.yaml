@@ -1,34 +1,36 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Use misconfigured svc to compromise db.
 starting-point:
-  mode: internal-instance
   kubectl-access: false
-kind: 'cp.simulator/scenario:1.0.0'
+  mode: internal-instance
 tasks:
-  '1':
+  "1":
+    hints:
+    - text: What's returning the empty responses when the NodePort is queried?
+    - text: Many databases are SQL based, could it be one of the popular ones?
+    - text: I wonder what the default username for each SQL database is?
+    - text: One of the devs mentioned a Postgres database they used didn't have a
+        password, could this be it?
+    - text: Hmm, how do I list tables and view the keys in tables again?
     sort-order: 1
-    hints:
-      - text: What's returning the empty responses when the NodePort is queried?
-      - text: 'Many databases are SQL based, could it be one of the popular ones?'
-      - text: I wonder what the default username for each SQL database is?
-      - text: >-
-          One of the devs mentioned a Postgres database they used didn't have a
-          password, could this be it?
-      - text: 'Hmm, how do I list tables and view the keys in tables again?'
     starting-point:
-      mode: internal-instance
       kubectl-access: false
-  '2':
+      mode: internal-instance
+    summary: "We used psql to query the application database from outside the cluster. This should not be allowed."
+  "2":
+    hints:
+    - text: The database shouldn't be talking to the outside world.
+    - text: The labels on this service are interesting.
     sort-order: 2
-    hints:
-      - text: The database shouldn't be talking to the outside world.
-      - text: The labels on this service are interesting.
     starting-point:
-      mode: internal-instance
       kubectl-access: true
-  '3':
+      mode: internal-instance
+    summary: "The labels on the the frontend service select to many pods. We made the labels more selective to fix the issue."
+  "3":
+    hints:
+    - text: I wonder if a network policy would help here.
     sort-order: 3
-    hints:
-      - text: I wonder if a network policy would help here.
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance
+    summary: "We added a network policy to the namespace to prevent all but approved traffic between pods and the outside."

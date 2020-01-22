@@ -1,28 +1,30 @@
+kind: cp.simulator/scenario:1.0.0
 objective: Get postgres password.
 starting-point:
   mode: pod
-  pod-name: ''
-  pod-namespace: 'container-ambush'
-kind: 'cp.simulator/scenario:1.0.0'
+  pod-name: ""
+  pod-namespace: container-ambush
 tasks:
-  '1':
-    sort-order: 1
+  "1":
     hints:
-      - text: What mounts do we have in this container?
-      - text: Looks like the docker socket is mounted at /var/run/docker.sock.
-      - text: I wonder if i can install Docker in here to use that socket?
-      - text: Let's inspect the other containers running on this host.
-      - text: The nginx container seems to be the one we're looking for.
-      - text: That environment variable looks like a secret!
+    - text: What mounts do we have in this container?
+    - text: Looks like the docker socket is mounted at /var/run/docker.sock.
+    - text: I wonder if i can install Docker in here to use that socket?
+    - text: Let's inspect the other containers running on this host.
+    - text: The nginx container seems to be the one we're looking for.
+    - text: That environment variable looks like a secret!
+    sort-order: 1
     starting-point:
       mode: pod
-      pod-name: ''
-      pod-namespace: 'container-ambush'
-  '2':
-    sort-order: 2
+      pod-name: ""
+      pod-namespace: container-ambush
+    summary: "There was a docker socket mounted into the container. Using it we could query Docker to find the value of an environment variable in another container."
+  "2":
     hints:
-      - text: How did you access the keys? Can you inject a secret another way?
-      - text: The gold standard way of consuming a secret is as a volume mount.
+    - text: How did you access the keys? Can you inject a secret another way?
+    - text: The gold standard way of consuming a secret is as a volume mount.
+    sort-order: 2
     starting-point:
-      mode: internal-instance
       kubectl-access: true
+      mode: internal-instance
+    summary: "We injected the secret value into the container as an environment variable backed by a kubernetes secret."
