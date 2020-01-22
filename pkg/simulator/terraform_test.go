@@ -28,7 +28,6 @@ var tfCommandArgumentsTests = []struct {
 func Test_PrepareTfArgs(t *testing.T) {
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.prepArgs[0], func(t *testing.T) {
-			//TODO: put in tfVarsDir arg, maybe above
 			assert.Equal(t, sim.PrepareTfArgs(tt.prepArgs[0], tt.prepArgs[1], tt.prepArgs[2]), tt.arguments)
 		})
 	}
@@ -61,32 +60,21 @@ func Test_Create(t *testing.T) {
 		sim.WithBucketName("test"),
 		sim.WithTfVarsDir(pwd + "/" + fixture("noop-tf-dir")))
 
-	// out := simulator.WhereAmI()
-	err = simulator.CreateThree()
-
-	
-    // if err != nil {
-    //     fmt.Println(err)
-    //     os.Exit(1)
-    // }
-	// fmt.Println(pwd)
-	
-	// assert.Nil(t, pwd)
-
-	// file, err := ioutil.ReadFile("../../test/fixtures/noop-tf-dir/settings/bastion.tfvars")
-    // if err != nil {
-    //     fmt.Print(err)
-    // }
-
-	// str := string(file)
-
-	// assert.Nil(t, out)
+	err = simulator.Create()
 	assert.Nil(t, err)
-	// assert.Nil(t, str)
 }
 
-// func Test_Destroy(t *testing.T) {
-// 	err := sim.Destroy(noopLogger, fixture("noop-tf-dir"), "test", "test", "test"))
+func Test_Destroy(t *testing.T) {
 
-// 	assert.Nil(t, err)
-// }
+	pwd, err := os.Getwd()
+	simulator := sim.NewSimulator(
+		sim.WithLogger(noopLogger),
+		sim.WithTfDir(fixture("noop-tf-dir")),
+		sim.WithAttackTag("latest"),
+		sim.WithBucketName("test"),
+		sim.WithTfVarsDir(pwd + "/" + fixture("noop-tf-dir")))
+
+	err = simulator.Destroy()
+
+	assert.Nil(t, err)
+}

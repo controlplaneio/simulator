@@ -81,7 +81,7 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 				sim.WithBucketName(bucketName),
 				sim.WithTfVarsDir(tfVarsDir))
 			
-				tfo, err := simulator.Status()
+			tfo, err := simulator.Status()
 			if err != nil {
 				logger.Errorw("Error getting status of infrastructure", zap.Error(err))
 				return err
@@ -107,17 +107,25 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("state-bucket")
-			if bucket == "" {
+			bucketName := viper.GetString("state-bucket")
+			if bucketName == "" {
 				logger.Warnf("Simulator has not been initialised with an S3 bucket")
 				logger.Warn("Please run simulator init")
 				return nil
 			}
+
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
-
 			attackTag := viper.GetString("attack-container-tag")
-			err := sim.Destroy(logger, tfDir, bucket, attackTag, tfVarsDir)
+
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(tfDir),
+				sim.WithAttackTag(attackTag),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(tfVarsDir))
+
+			err := simulator.Destroy()
 			if err != nil {
 				logger.Errorw("Error destroying infrastructure", zap.Error(err))
 			}
