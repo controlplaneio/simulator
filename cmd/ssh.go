@@ -14,13 +14,20 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			bucketName := viper.GetString("state-bucket")
+			scenariosDir := viper.GetString("scenarios-dir")
+			attackTag := viper.GetString("attack-container-tag")
+			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
+
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
-				sim.WithTfDir(viper.GetString("tf-dir")),
-				sim.WithScenariosDir(viper.GetString("scenarios-dir")),
-				sim.WithAttackTag(viper.GetString("attack-container-tag")),
-				sim.WithBucketName(viper.GetString("state-bucket")),
-				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+				sim.WithTfDir(tfDir),
+				sim.WithScenariosDir(scenariosDir),
+				sim.WithAttackTag(attackTag),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(tfVarsDir))
 
 			cfg, err := simulator.SSHConfig()
 			if err != nil {
@@ -54,13 +61,18 @@ func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `attack`,
 		Short: "Connect to an attack container to complete the scenario",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			
+			bucketName := viper.GetString("state-bucket")
+			attackTag := viper.GetString("attack-container-tag")
+			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
-				sim.WithTfDir(viper.GetString("tf-dir")),
-				sim.WithAttackTag(viper.GetString("attack-container-tag")),
-				sim.WithBucketName(viper.GetString("state-bucket")),
-				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+				sim.WithTfDir(tfDir),
+				sim.WithAttackTag(attackTag),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(tfVarsDir))
 
 			return simulator.Attack()
 		},
