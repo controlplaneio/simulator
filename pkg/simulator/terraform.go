@@ -6,10 +6,6 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
-	"os"
-	"path/filepath"
-
 )
 
 // PrepareTfArgs takes a string with the terraform command desired and returns
@@ -53,77 +49,47 @@ func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
 	return util.Run(wd, env, "terraform", args...)
 }
 
-
-// TerraformTwo wraps running terraform as a child process
-func TerraformTwo(wd, cmd string, bucket, tfVarsDir string) []string {
-	args := PrepareTfArgs(cmd, bucket, tfVarsDir)
-
-	// env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
-
-	// return util.Run(wd, env, "terraform", args...)
-	return args
-}
-
-
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if
 // needed
-func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) error {
-	logger.Debug("Terraform.InitIfNeeded() start")
-	logger.Info("Ensuring there is a simulator keypair")
+func (s *Simulator) InitIfNeeded() error {
+	s.Logger.Debug("Terraform.InitIfNeeded() start")
+	s.Logger.Info("Ensuring there is a simulator keypair")
 	_, err := ssh.EnsureKey()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
 
-	logger.Info("Detecting your public IP address")
+	s.Logger.Info("Detecting your public IP address")
 	ip, err := util.DetectPublicIP()
 	if err != nil {
 		return errors.Wrap(err, "Error detecting IP address")
 	}
 	accessCIDR := *ip + "/32"
 
-	logger.Debug("Reading public key")
+	s.Logger.Debug("Reading public key")
 	publickey, err := ssh.PublicKey()
 	if err != nil {
 		return errors.Wrap(err, "Error reading public key")
 	}
 
-	logger.Debugf("terraform Directory: %s", tfDir)
-	logger.Debugf("terraform vars Directory: %s", tfVarsDir)
-	logger.Debugf("Public Key:\n%s", publickey)
-	logger.Debugf("Access CIDR: %s", accessCIDR)
-	logger.Debugf("Remote State Bucket Name: %s", bucket)
-	logger.Debug("Writing terraform tfvars")
-	err = EnsureLatestTfVarsFile(tfVarsDir, *publickey, accessCIDR, bucket, attackTag)
+	s.Logger.Debugf("terraform Directory: %s", s.TfDir)
+	s.Logger.Debugf("terraform vars Directory: %s", s.TfVarsDir)
+	s.Logger.Debugf("Public Key:\n%s", publickey)
+	s.Logger.Debugf("Access CIDR: %s", accessCIDR)
+	s.Logger.Debugf("Remote State Bucket Name: %s", s.BucketName)
+	s.Logger.Debug("Writing terraform tfvars")
+	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}
 
-	logger.Info("Running terraform init")
-	_, err = Terraform(tfDir, "init", bucket, tfVarsDir)
+	s.Logger.Info("Running terraform init")
+	_, err = Terraform(s.TfDir, "init", s.BucketName, s.TfVarsDir)
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
 	}
 
 	return nil
-}
-
-// CreateThree runs terraform init, plan, apply to create the necessary
-// infrastructure to run scenarios
-func (s *Simulator) CreateThree() error {
-
-	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
-
-	if err != nil {
-		return err
-	}
-	
-	s.Logger.Info("Running terraform plan")
-	_, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
-	if err != nil {
-		return err
-	}
-	return err
 }
 
 // -#-
@@ -132,12 +98,11 @@ func (s *Simulator) CreateThree() error {
 // infrastructure to run scenarios
 func (s *Simulator) Create() error {
 
-	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
+	err := s.InitIfNeeded()
 
 	if err != nil {
 		return err
 	}
-
 	
 	s.Logger.Info("Running terraform plan")
 	_, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
@@ -150,63 +115,11 @@ func (s *Simulator) Create() error {
 	return err
 }
 
-// CreateTwo runs terraform init, plan, apply to create the necessary
-// infrastructure to run scenarios
-func (s *Simulator) CreateTwo() ([]string, string, error) {
-
-	var pathypath []string
-
-	visit := func(path string, info os.FileInfo, err error) error {
-		pathypath = append(pathypath, path + " ")
-		return nil
-    }
-
-	filepath.Walk("../..", visit)
-
-
-	pwd, err := os.Getwd()
-
-	return pathypath, pwd, err
-
-	// err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
-
-	// if err != nil {
-	// 	return err
-	// }
-
-	// s.Logger.Info("Running terraform plan")
-	// _, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// s.Logger.Info("Running terraform apply")
-	// _, err = Terraform(s.TfDir, "apply", s.BucketName, s.TfVarsDir)
-	// return err
-}
-
-
-// WhereAmI runs terraform init, plan, apply to create the necessary
-// infrastructure to run scenarios
-func (s *Simulator) WhereAmI() []string {
-
-    var pathypath []string
-
-	visit := func(path string, info os.FileInfo, err error) error {
-		pathypath = append(pathypath, path + " ")
-		return nil
-    }
-
-	filepath.Walk("../..", visit)
-
-	return pathypath
-
-}
-
 // Status calls terraform output to get the state of the infrastruture and
 // parses the output for programmatic use
 func (s *Simulator) Status() (*TerraformOutput, error) {
-	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
+	//err := s.InitIfNeeded()
+	err := s.InitIfNeeded()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error initialising")
 	}
@@ -229,13 +142,13 @@ func (s *Simulator) Status() (*TerraformOutput, error) {
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir string) error {
-	err := InitIfNeeded(logger, tfDir, bucket, attackTag, tfVarsDir)
+func (s *Simulator) Destroy() error {
+	err := s.InitIfNeeded()
 	if err != nil {
 		return errors.Wrap(err, "Error initialising")
 	}
 
-	logger.Info("Running terrraform destroy")
-	_, err = Terraform(tfDir, "destroy", bucket, tfVarsDir)
+	s.Logger.Info("Running terrraform destroy")
+	_, err = Terraform(s.TfDir, "destroy", s.BucketName, s.TfVarsDir)
 	return err
 }
