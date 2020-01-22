@@ -111,8 +111,15 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag, tfVarsDir
 // CreateThree runs terraform init, plan, apply to create the necessary
 // infrastructure to run scenarios
 func (s *Simulator) CreateThree() error {
+
 	err := InitIfNeeded(s.Logger, s.TfDir, s.BucketName, s.AttackTag, s.TfVarsDir)
 
+	if err != nil {
+		return err
+	}
+	
+	s.Logger.Info("Running terraform plan")
+	_, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
 	if err != nil {
 		return err
 	}

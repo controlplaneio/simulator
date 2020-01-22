@@ -70,12 +70,16 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 				return nil
 			}
 
+			attackTag := viper.GetString("attack-container-tag")
+			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
+
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
-				sim.WithTfDir(viper.GetString("tf-dir")),
-				sim.WithAttackTag(viper.GetString("attack-container-tag")),
+				sim.WithTfDir(tfDir),
+				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
-				sim.WithTfVarsDir(viper.GetString("tf-vars-dir")))
+				sim.WithTfVarsDir(tfVarsDir))
 			
 				tfo, err := simulator.Status()
 			if err != nil {
