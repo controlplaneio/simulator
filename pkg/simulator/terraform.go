@@ -20,7 +20,7 @@ func (s *Simulator) PrepareTfArgs(cmd string) []string {
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
-		arguments = append(arguments, "--var-file=" + s.TfVarsDir + "/settings/bastion.tfvars")
+		arguments = append(arguments, "--var-file="+s.TfVarsDir+"/settings/bastion.tfvars")
 
 	}
 
@@ -104,7 +104,7 @@ func (s *Simulator) Create() error {
 	if err != nil {
 		return err
 	}
-	
+
 	s.Logger.Info("Running terraform plan")
 	_, err = s.Terraform("plan")
 	if err != nil {

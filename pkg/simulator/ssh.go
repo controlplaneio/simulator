@@ -46,6 +46,11 @@ func (s *Simulator) Attack() error {
 	}
 
 	s.Logger.Infof("Connecting to", bastion)
+<<<<<<< HEAD
 	return ssh.SSH(bastion)
 
+=======
+	ssh.SSH(bastion)
+	return nil
+>>>>>>> 625ae89eb2e7abc1fd72a056518d5870f24c1efa
 }
