@@ -3,6 +3,8 @@ package util_test
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"os"
 	"testing"
 	"time"
@@ -52,22 +54,22 @@ func Test_EnvOrDefault(t *testing.T) {
 
 func Test_ExpandTilde(t *testing.T) {
 	p, err := util.ExpandTilde("~/.")
-	assert.Nil(t, err, "Got an error")
+	require.NoError(t, err)
 
-	assert.Regexp(t, `^/home/([^/]+)$`, *p)
+	assert.Regexp(t, `^/(home|Users)/([^/]+)$`, *p)
 
 	// Call ExpandTilde again to exercise the cache
 	p2, err := util.ExpandTilde("~/.")
-	assert.Nil(t, err, "Got an error resolving tilde")
+	require.Nil(t, err, "Got an error resolving tilde")
 	assert.Equal(t, *p, *p2, "Cached version differed")
 
 	p3, err := util.ExpandTilde("fail")
-	assert.NotNil(t, err, "Didn't get an error when path didn't start with tilde slash")
+	require.NotNil(t, err, "Didn't get an error when path didn't start with tilde slash")
 	assert.Nil(t, p3, "Got a path when path didn't start with tilde slash")
 	assert.Regexp(t, `^Path was empty or did not start with a tilde and a slash:`, err.Error())
 
 	p4, err := util.ExpandTilde("")
-	assert.NotNil(t, err, "Didn't get an error for empty path")
+	require.NotNil(t, err, "Didn't get an error for empty path")
 	assert.Nil(t, p4, "Got a path when resolving an empty path")
 	assert.Regexp(t, `^Path was empty or did not start with a tilde and a slash:`, err.Error())
 }
