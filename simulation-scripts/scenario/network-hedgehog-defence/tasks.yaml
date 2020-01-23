@@ -2,8 +2,8 @@ kind: cp.simulator/scenario:1.0.0
 objective: Compromised database from outside namespace.
 startingPoint:
   mode: pod
-  podName: ""
-  podNamespace: network-hedgehog-defence
+  podName: "setup"
+  podNamespace: default
 tasks:
   "1":
     hints:
@@ -22,8 +22,8 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
-      podNamespace: network-hedgehog-defence
+      podName: "setup"
+      podNamespace: default
     summary: "Using psql we managed to get some secret data from a pod in another namespace."
   "2":
     hints:

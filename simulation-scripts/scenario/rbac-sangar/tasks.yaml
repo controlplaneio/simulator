@@ -4,7 +4,7 @@ objective:
   remove them.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "frontend"
   podNamespace: rbac-sangar
 tasks:
   "1":
@@ -17,7 +17,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "frontend"
       podNamespace: rbac-sangar
     summary: "We installed kubectl into the pod and used the pods elevated permissions to get a sensitive environment variable from another pod."
   "2":

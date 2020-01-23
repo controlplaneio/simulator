@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Use badly configured database to exfiltrate data.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "frontend"
   podNamespace: network-hammer-and-anvil
 tasks:
   "1":
@@ -19,7 +19,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "frontend"
       podNamespace: network-hammer-and-anvil
     summary: "We SSH'd into a sidecar container of a database pod after finding some credentials in our starting pod. From there we accessed the database directly and through a shared mount to exfiltrate some secret data."
   "2":

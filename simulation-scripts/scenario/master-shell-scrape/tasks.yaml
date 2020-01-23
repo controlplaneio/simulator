@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: API is enabled on --insecure-bind-address and --insecure-port
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "ubuntu"
   podNamespace: master-shell-scrape
 tasks:
   "1":
@@ -16,7 +16,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "ubuntu"
       podNamespace: master-shell-scrape
     summary: "We were able to make privileged api calls to the api server with authenticating."
   "2":

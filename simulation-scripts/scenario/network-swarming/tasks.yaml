@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Use misconfigured svc to compromise db.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "frontend"
   podNamespace: network-swarming
 tasks:
   "1":
@@ -22,7 +22,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "frontend"
       podNamespace: network-swarming
     summary: "We used the db service in the namespace to connect to a database psql and find some secret data. We should not have been able to do this given our starting location."
   "2":

@@ -141,7 +141,10 @@ starting_point() {
 
   #Determine if mode is pod.
   if [[ "$MODE" == "pod" ]]; then
-    echo "Starting point: POD - Not yet implemented. Please use 'ssh_internal' and then 'kubectl exec ...' to start in the relevant pod."
+    POD_NAME="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podName')"
+    POD_NS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podNamespace')"
+    # shellcheck disable=SC2029
+    ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} bash"
     return
   fi
 

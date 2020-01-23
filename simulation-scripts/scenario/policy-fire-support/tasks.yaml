@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Use Sudo to get un readable ssh keys from a host mount.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "jenkins"
   podNamespace: policy-fire-support
 tasks:
   "1":
@@ -13,7 +13,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "jenkins"
       podNamespace: policy-fire-support
     summary: "Using sudo in the container, we managed to bypass some linux file permissions for a file on the host."
   "2":

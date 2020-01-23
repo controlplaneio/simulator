@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Node compromise to get unauth kubelet API access.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "start-pod"
   podNamespace: node-amphibious-operations
 tasks:
   "1":
@@ -24,7 +24,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "start-pod"
       podNamespace: node-amphibious-operations
     summary: "We were able to query the kubelet api directly and get some sensitive data about the pods. We then took this further and used our access to run arbitrary commands inside the pod."
   "2":

@@ -34,7 +34,7 @@ fi
 # error on clobber
 set -o noclobber
 # disable passglob
-if [[ "${BASH_VERSINFO:-0}" -ge 4 ]];  then
+if [[ "${BASH_VERSINFO:-0}" -ge 4 ]]; then
   shopt -s nullglob globstar
 else
   shopt -s nullglob
@@ -170,8 +170,8 @@ get_pods() {
 
   while ! container_statuses && [[ count -le timeout ]]; do
     sleep $increment
-    count=$((count+increment))
-    if ! (( count % 9 )) ; then
+    count=$((count + increment))
+    if ! ((count % 9)); then
       info "Still waiting for pods to be initalised"
     fi
   done
@@ -184,17 +184,17 @@ get_pods() {
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_FILE="${TMP_DIR}/docker-"
 
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >| "${TMP_FILE}"master
-  echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >| "${TMP_FILE}"all-pods
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >| "${TMP_FILE}"node-1
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >| "${TMP_FILE}"node-2
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >|"${TMP_FILE}"master
+  echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >|"${TMP_FILE}"all-pods
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
+  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >|"${TMP_FILE}"node-2
 
 }
 
 fix_ioctl() {
   if [[ ${1} -eq "1000" ]]; then
     ssh \
-      -F "${SSH_CONFIG_FILE}"  \
+      -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
@@ -202,7 +202,7 @@ fix_ioctl() {
       "root@${BASTION_HOST}" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   elif [[ ${1} -eq "0" ]]; then
     ssh \
-      -F "${SSH_CONFIG_FILE}"  \
+      -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
@@ -210,7 +210,7 @@ fix_ioctl() {
       "root@$(get_master)" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   else
     ssh \
-      -F "${SSH_CONFIG_FILE}"  \
+      -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
@@ -219,14 +219,13 @@ fix_ioctl() {
   fi
 }
 
-
 is_host_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
   if [[ ${1} -eq "1000" ]]; then
     ssh \
-      -F "${SSH_CONFIG_FILE}"  \
+      -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
@@ -235,7 +234,7 @@ is_host_accessible() {
       true
   elif [[ ${1} -eq "0" ]]; then
     ssh \
-      -F "${SSH_CONFIG_FILE}"  \
+      -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
@@ -244,7 +243,7 @@ is_host_accessible() {
       true
   else
     ssh \
-      -F "${SSH_CONFIG_FILE}"  \
+      -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
       -o "ConnectTimeout 3" \
@@ -257,18 +256,23 @@ is_host_accessible() {
 copy_challenge_and_tasks() {
   local SCENARIO_DIR="${1}"
 
-  pushd "${SCENARIO_DIR}" > /dev/null
+  pushd "${SCENARIO_DIR}" >/dev/null
   tmpchallenge=$(mktemp)
   tmphash=$(mktemp)
-  base64 -w0 challenge.txt >| "${tmphash}"
+  tmptasks=$(mktemp)
+  base64 -w0 challenge.txt >|"${tmphash}"
   cp challenge.txt "${tmpchallenge}"
-  if grep '##IP\|##NAME\|##HIP' challenge.txt > /dev/null; then
+  if grep '##IP\|##NAME\|##HIP' challenge.txt >/dev/null; then
     template_challenge
+  fi
+
+  if grep 'mode\:\ pod' tasks.yaml >/dev/null; then
+    template_tasks
   fi
 
   info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
-    -F "${SSH_CONFIG_FILE}"  \
+    -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "LogLevel=ERROR" \
@@ -277,7 +281,7 @@ copy_challenge_and_tasks() {
 
   info "Copying scenario hash from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
-    -F "${SSH_CONFIG_FILE}"  \
+    -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "LogLevel=ERROR" \
@@ -286,37 +290,53 @@ copy_challenge_and_tasks() {
 
   info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
-    -F "${SSH_CONFIG_FILE}"  \
+    -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
     -o "LogLevel=ERROR" \
-    tasks.yaml root@${BASTION_HOST}:/home/ubuntu/tasks.yaml
-  popd > /dev/null
+    "${tmptasks}" "root@${BASTION_HOST}:/home/ubuntu/tasks.yaml"
+  rm "${tmptasks}"
+  popd >/dev/null
 }
 
 template_challenge() {
 
-  if grep '##IP' challenge.txt > /dev/null; then
-    TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP'| tr '\n' ' ')
+  if grep '##IP' challenge.txt >/dev/null; then
+    TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ~/.kubesim/docker-all-pods | tr '\n' ' ')
       sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
-  if grep '##NAME' challenge.txt > /dev/null; then
+  if grep '##NAME' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ~/.kubesim/docker-all-pods | tr '\n' ' ')
       sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
-  if grep '##HIP' challenge.txt > /dev/null; then
+  if grep '##HIP' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ~/.kubesim/docker-master-kubectl | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ~/.kubesim/docker-all-pods | tr '\n' ' ')
       sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
+}
+
+template_tasks() {
+  local tasks_json
+  local pod_name
+  local POD_NAME
+  local POD_RESULT
+  tasks_json=$(yq r -j tasks.yaml)
+  cp tasks.yaml "${tmptasks}"
+  POD_NAME=$(echo "${tasks_json}" | jq -r '.tasks[].startingPoint.podName | select (.!=null)')
+  for pod_name in $POD_NAME; do
+    POD_NS=$(echo "${tasks_json}" | jq -r --arg POD_NAME "${pod_name}" '.tasks[].startingPoint | select(.podName | select (.!=null) | contains($POD_NAME)) | .podNamespace')
+    POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
+    sed -i "s/podName\:\ \"${pod_name}\"/podName\:\ \"${POD_RESULT}\"/g" "${tmptasks}"
+  done
 }
 
 find_scenario() {
@@ -326,7 +346,7 @@ find_scenario() {
 
   if [[ "${CHALLENGE_HASH:-}" != "" ]]; then
     for CHALLENGE in scenario/**/challenge.txt; do
-      THIS_CHALLENGE=$(base64 -w0 < "${CHALLENGE}")
+      THIS_CHALLENGE=$(base64 -w0 <"${CHALLENGE}")
       if [[ "${THIS_CHALLENGE}" == "${CHALLENGE_HASH}" ]]; then
         FOUND_SCENARIO=$(basename "$(dirname "${CHALLENGE}")")
         info "Installed scenario found: ${FOUND_SCENARIO}"
@@ -347,34 +367,37 @@ validate_instructions() {
 
   shopt -s extglob
   for FILE in "${SCENARIO_DIR%/}/"*.{sh,do,txt}; do
-    local TYPE; TYPE="$(basename "${FILE}")"
+    local TYPE
+    TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
-      *worker-any.sh) ;;
-      *workers-every.sh) ;;
-      *worker-1.sh) ;;
-      *worker-2.sh) ;;
-      *nodes-every.sh) ;;
-      *master.sh) ;;
+    *worker-any.sh) ;;
+    *workers-every.sh) ;;
+    *worker-1.sh) ;;
+    *worker-2.sh) ;;
+    *nodes-every.sh) ;;
+    *master.sh) ;;
 
-      test.sh) ;;
+    test.sh) ;;
 
-      *reboot-all.do) ;;
-      *reboot-workers.do) ;;
-      *reboot-master.do) ;;
+    *reboot-all.do) ;;
+    *reboot-workers.do) ;;
+    *reboot-master.do) ;;
 
-      no-cleanup.do) ;;
-      challenge.txt) ;;
-      *)
-        error "${TYPE}: type not recognised"
-        ;;
+    no-cleanup.do) ;;
+    challenge.txt) ;;
+    *)
+      error "${TYPE}: type not recognised"
+      ;;
     esac
   done
   shopt -u extglob
 }
 
 run_kubectl_yaml() {
-  local SCENARIO_DIR; SCENARIO_DIR="${1}"
-  local HOST; HOST=$(get_master)
+  local SCENARIO_DIR
+  SCENARIO_DIR="${1}"
+  local HOST
+  HOST=$(get_master)
   local FILES
   local FILES_STRING
 
@@ -396,9 +419,9 @@ run_kubectl_yaml() {
       done)
 
       info "Testing kube yamls are valid"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &> /dev/null
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null
       info "Applying kube yamls to the cluster"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &> /dev/null
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null
     )
   done
 }
@@ -410,36 +433,38 @@ run_scripts() {
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
     info "Running script files. This may take 1-2 mins"
-    local TYPE; TYPE="$(basename "${FILE}")"
+    local TYPE
+    TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
 
-      *worker-any.sh)
-        run_file_on_host "${FILE}" "$(get_node 0)"
-        ;;
-      *worker-1.sh)
-        run_file_on_host "${FILE}" "$(get_node 1)"
-        ;;
-      *worker-2.sh)
-        run_file_on_host "${FILE}" "$(get_node 2)"
-        ;;
-      *workers-every.sh)
-        run_file_on_host "${FILE}" "$(get_node 1)"
-        run_file_on_host "${FILE}" "$(get_node 2)"
-        ;;
-      *nodes-every.sh)
-        run_file_on_host "${FILE}" "$(get_master)"
-        run_file_on_host "${FILE}" "$(get_node 1)"
-        run_file_on_host "${FILE}" "$(get_node 2)"
-        ;;
-      *master.sh)
-        run_file_on_host "${FILE}" "$(get_master)"
-        ;;
+    *worker-any.sh)
+      run_file_on_host "${FILE}" "$(get_node 0)"
+      ;;
+    *worker-1.sh)
+      run_file_on_host "${FILE}" "$(get_node 1)"
+      ;;
+    *worker-2.sh)
+      run_file_on_host "${FILE}" "$(get_node 2)"
+      ;;
+    *workers-every.sh)
+      run_file_on_host "${FILE}" "$(get_node 1)"
+      run_file_on_host "${FILE}" "$(get_node 2)"
+      ;;
+    *nodes-every.sh)
+      run_file_on_host "${FILE}" "$(get_master)"
+      run_file_on_host "${FILE}" "$(get_node 1)"
+      run_file_on_host "${FILE}" "$(get_node 2)"
+      ;;
+    *master.sh)
+      run_file_on_host "${FILE}" "$(get_master)"
+      ;;
 
-       test.sh)
-        : ;;
-      *)
-        error "${TYPE}: type not recognised at run time"
-        ;;
+    test.sh)
+      :
+      ;;
+    *)
+      error "${TYPE}: type not recognised at run time"
+      ;;
     esac
   done
 
@@ -478,7 +503,7 @@ run_cleanup() {
 
     TEMP_FILE=$(mktemp)
     # shellcheck disable=SC2140
-    echo "echo 'cat ""${SCENARIO_DIR}"challenge.txt"' > /opt/challenge.txt" >| "${TEMP_FILE}"
+    echo "echo 'cat ""${SCENARIO_DIR}"challenge.txt"' > /opt/challenge.txt" >|"${TEMP_FILE}"
     SCRIPTS_TO_RUN+=" ${TEMP_FILE}"
   fi
 
@@ -524,14 +549,14 @@ run_file_on_host() {
   local FILE="${1}"
   local HOST="${2}"
   touch "${TMP_DIR}/perturb-script-file-${HOST}.log"
-  cat_script_to_run "${FILE}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log"
+  cat_script_to_run "${FILE}" >>"${TMP_DIR}/perturb-script-file-${HOST}.log"
   exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
   BASH_XTRACEFD=$FD
   (
     set -x
     cat_script_to_run "${FILE}"
-  ) | run_ssh "${HOST}" >> "${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && \
-  unset BASH_XTRACEFD
+  ) | run_ssh "${HOST}" >>"${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 &&
+    unset BASH_XTRACEFD
   exec {FD}>&-
 }
 
@@ -546,10 +571,10 @@ get_node() {
     CAT_SORT='sort --random-sort'
     INDEX=1
   fi
-  echo "${NODE_HOSTS}" \
-    | tr ',' '\n' \
-    | ${CAT_SORT} \
-    | sed -n "${INDEX}p"
+  echo "${NODE_HOSTS}" |
+    tr ',' '\n' |
+    ${CAT_SORT} |
+    sed -n "${INDEX}p"
 }
 
 get_connection_string() {
@@ -559,43 +584,43 @@ get_connection_string() {
 parse_arguments() {
   while [ $# -gt 0 ]; do
     case $1 in
-      -h | --help) usage ;;
-      --dry-run)
-        IS_DRY_RUN=1
-        ;;
-      --auto-populate)
-        shift
-        not_empty_or_usage "${1:-}"
-        IS_AUTOPOPULATE=1
-        AUTOPOPULATE_REGEX="${1}"
-        ;;
-      --force)
-        IS_FORCE=1
-        ;;
-      --skip-check)
-        IS_SKIP_CHECK=1
-        ;;
-      -m | --master)
-        shift
-        not_empty_or_usage "${1:-}"
-        MASTER_HOST="${1}"
-        ;;
-      -n | --nodes)
-        shift
-        not_empty_or_usage "${1:-}"
-        NODE_HOSTS="${1}"
-        ;;
-      -b | --bastion)
-        shift
-        not_empty_or_usage "${1:-}"
-        BASTION_HOST="${1}"
-        ;;
-      --)
-        shift
-        break
-        ;;
-      -*) usage "${1}: unknown option" ;;
-      *) ARGUMENTS+=("$1") ;;
+    -h | --help) usage ;;
+    --dry-run)
+      IS_DRY_RUN=1
+      ;;
+    --auto-populate)
+      shift
+      not_empty_or_usage "${1:-}"
+      IS_AUTOPOPULATE=1
+      AUTOPOPULATE_REGEX="${1}"
+      ;;
+    --force)
+      IS_FORCE=1
+      ;;
+    --skip-check)
+      IS_SKIP_CHECK=1
+      ;;
+    -m | --master)
+      shift
+      not_empty_or_usage "${1:-}"
+      MASTER_HOST="${1}"
+      ;;
+    -n | --nodes)
+      shift
+      not_empty_or_usage "${1:-}"
+      NODE_HOSTS="${1}"
+      ;;
+    -b | --bastion)
+      shift
+      not_empty_or_usage "${1:-}"
+      BASTION_HOST="${1}"
+      ;;
+    --)
+      shift
+      break
+      ;;
+    -*) usage "${1}: unknown option" ;;
+    *) ARGUMENTS+=("$1") ;;
     esac
     shift
   done

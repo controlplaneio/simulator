@@ -4,7 +4,7 @@ objective:
   and reassign to designated role.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "ubuntu"
   podNamespace: rbac-contact-drill
 tasks:
   "1":
@@ -15,7 +15,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "ubuntu"
       podNamespace: rbac-contact-drill
     summary: "We managed to hit the kubernetes api from inside the pod and used kubectl to query it."
   "2":

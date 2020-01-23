@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Node compromise to get readonly kubelet API access.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "start-pod"
   podNamespace: node-raiding
 tasks:
   "1":
@@ -15,7 +15,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "start-pod"
       podNamespace: node-raiding
     summary: "We queried the outdated kublet readonly port to get pod information."
   "2":

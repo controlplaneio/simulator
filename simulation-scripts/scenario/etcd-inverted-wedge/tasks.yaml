@@ -4,7 +4,7 @@ objective:
   node IP. Fix the leakage.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "ubuntu"
   podNamespace: etcd-inverted-wedge
 tasks:
   "1":
@@ -24,7 +24,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "ubuntu"
       podNamespace: etcd-inverted-wedge
     summary: "Etcd allowed us to connect to it without using certificates."
   "2":

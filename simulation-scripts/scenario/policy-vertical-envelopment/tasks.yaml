@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Use privileged container to get host secrets.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "jenkins"
   podNamespace: policy-vertical-envelopment
 tasks:
   "1":
@@ -16,7 +16,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "jenkins"
       podNamespace: policy-vertical-envelopment
     summary: "Using the fact that we were in a privileged container, we mounted the host disk to find a secret."
   "2":

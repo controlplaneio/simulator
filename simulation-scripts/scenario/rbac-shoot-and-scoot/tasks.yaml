@@ -4,7 +4,7 @@ objective:
   them.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "ubuntu"
   podNamespace: rbac-shoot-and-scoot
 tasks:
   "1":
@@ -18,7 +18,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "ubuntu"
       podNamespace: rbac-shoot-and-scoot
     summary: "We used curl and the environment variables in the pod to get a secret from the namespace without passing the api server a token."
   "2":

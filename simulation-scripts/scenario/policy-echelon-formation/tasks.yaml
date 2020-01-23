@@ -2,7 +2,7 @@ kind: cp.simulator/scenario:1.0.0
 objective: Use privileged container to get host secrets.
 startingPoint:
   mode: pod
-  podName: ""
+  podName: "process-monitor"
   podNamespace: policy-echelon-formation
 tasks:
   "1":
@@ -20,15 +20,17 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ""
+      podName: "process-monitor"
       podNamespace: policy-echelon-formation
     summary: "Using the elevated permissions on the pod, we managed to manipulate the node /proc to retrieve secrets from another pod."
   "2":
     hints:
       - text: Looks like I need to  stop adding ALL capabilities to the pod.
     sortOrder: 2
-    startingPoint: ""
-    summary: ""
+    startingPoint:
+      kubectlAccess: true
+      mode: internal-instance
+    summary: "We removed the 'ALL' capabilities from the pod"
   "3":
     hints:
       - text: I think a PodSecurityPolicy might be useful here.
