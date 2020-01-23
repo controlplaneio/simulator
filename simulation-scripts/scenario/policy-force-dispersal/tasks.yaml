@@ -7,12 +7,16 @@ startingPoint:
 tasks:
   "1":
     hints:
-      - text: Hmm, the RBAC looks good. What other factors could influence the permissions?
-      - text: Where does kubeadm keep the master config?
-      - text: Looks like the PodSecurityPolicy is missing from the admission controllers.
+    - penalty: 10
+      text: Hmm, the RBAC looks good. What other factors could influence the permissions?
+    - penalty: 10
+      text: Where does kubeadm keep the master config?
+    - penalty: 10
+      text: Looks like the PodSecurityPolicy is missing from the admission controllers.
     sortOrder: 1
     startingPoint:
       asRoot: true
       mode: node
       nodeId: master-0
-    summary: "We re-enabled the pod security policy admission controller in the master api config."
+    summary: We re-enabled the pod security policy admission controller in the master
+      api config.
