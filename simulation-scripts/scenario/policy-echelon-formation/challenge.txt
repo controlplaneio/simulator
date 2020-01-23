@@ -1,4 +1,4 @@
-Scenario: A new process monitoring tool has been deployed to your cluster. A fellow security engineer has audited the deployment and believes that the current configuration can allow a compromised pod this deployment to further compromise any other container on the same host.
+Scenario: A new process monitoring tool has been deployed to your cluster. A fellow security engineer has audited the deployment and believes that the current configuration can allow a compromised pod in this deployment to further compromise any other container on the same host.
 
 Starting Point: process-monitor pod in the policy-echelon-formation namespace.
 
