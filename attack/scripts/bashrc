@@ -117,44 +117,46 @@ starting_point() {
     fi
 
     ssh_internal
-    return
-  fi
 
   #Determine if mode is node.
-  if [[ "$MODE" == "node" ]]; then
+  elif [[ "$MODE" == "node" ]]; then
     NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.nodeId')"
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/nodeId: 'master-//" | sed "s/'//")"
 
       ssh_master "$NODE_NUMBER"
-      return
-    fi
 
-    if [[ "$NODE_TYPE" =~ "node" ]]; then
+    elif [[ "$NODE_TYPE" =~ "node" ]]; then
       NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/nodeId: 'node-//" | sed "s/'//")"
 
       ssh_node "$NODE_NUMBER"
-      return
+    else
+      warning "An unrecognised node type has been selected. Please report this to the scenario author."
+      info "Please use the ssh helper 'ssh_node ...' to start the task."
+      exit 3
     fi
-  fi
 
   #Determine if mode is pod.
-  if [[ "$MODE" == "pod" ]]; then
+  elif [[ "$MODE" == "pod" ]]; then
     POD_NAME="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podName')"
     POD_NS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podNamespace')"
     # shellcheck disable=SC2029
     ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} bash"
-    return
-  fi
+
+  #Determine if mode is attack.
+  elif [[ "$MODE" == "attack" ]]; then
+    echo "The starting point for this task is in this container. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
 
   #Determine if mode is null.
-  if [[ "$MODE" == "null" ]]; then
-    echo "No Starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
-    return
-  fi
+  elif [[ "$MODE" == "null" ]]; then
+    echo "No starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
 
-  echo "The scenario configuration file is not following the expected format."
+  else
+    warning "An unrecognised starting point has been selected. Please report this to the scenario author."
+    info "Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
+    exit 4
+  fi
 }
 readonly -f starting_point
 export -f starting_point
