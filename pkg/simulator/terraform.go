@@ -11,7 +11,7 @@ import (
 // PrepareTfArgs takes a string with the terraform command desired and returns
 // a slice of strings containing the complete list of arguments including the
 // command to use when exec'ing terraform
-func PrepareTfArgs(cmd string, bucket, tfVarsDir string) []string {
+func (s *Simulator) PrepareTfArgs(cmd string) []string {
 	arguments := []string{cmd}
 
 	if cmd == "output" {
@@ -20,12 +20,12 @@ func PrepareTfArgs(cmd string, bucket, tfVarsDir string) []string {
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
-		arguments = append(arguments, "--var-file=" + tfVarsDir + "/settings/bastion.tfvars")
+		arguments = append(arguments, "--var-file=" + s.TfVarsDir + "/settings/bastion.tfvars")
 
 	}
 
 	if cmd == "init" {
-		providerBucketArg := fmt.Sprintf("-backend-config=bucket=%s", bucket)
+		providerBucketArg := fmt.Sprintf("-backend-config=bucket=%s", s.BucketName)
 		arguments = append(arguments, providerBucketArg)
 	}
 
@@ -37,16 +37,17 @@ func PrepareTfArgs(cmd string, bucket, tfVarsDir string) []string {
 }
 
 // Terraform wraps running terraform as a child process
-func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
-	args := PrepareTfArgs(cmd, bucket, tfVarsDir)
+//func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
+func (s *Simulator) Terraform(cmd string) (*string, error) {
+	args := s.PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
 	if cmd == "output" {
 		// TODO: (rem) deal with non-empty stderr?
-		out, _, err := util.RunSilently(wd, env, "terraform", args...)
+		out, _, err := util.RunSilently(s.TfDir, env, "terraform", args...)
 		return out, err
 	}
 
-	return util.Run(wd, env, "terraform", args...)
+	return util.Run(s.TfDir, env, "terraform", args...)
 }
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if
@@ -84,7 +85,7 @@ func (s *Simulator) InitIfNeeded() error {
 	}
 
 	s.Logger.Info("Running terraform init")
-	_, err = Terraform(s.TfDir, "init", s.BucketName, s.TfVarsDir)
+	_, err = s.Terraform("init")
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
 	}
@@ -105,13 +106,13 @@ func (s *Simulator) Create() error {
 	}
 	
 	s.Logger.Info("Running terraform plan")
-	_, err = Terraform(s.TfDir, "plan", s.BucketName, s.TfVarsDir)
+	_, err = s.Terraform("plan")
 	if err != nil {
 		return err
 	}
 
 	s.Logger.Info("Running terraform apply")
-	_, err = Terraform(s.TfDir, "apply", s.BucketName, s.TfVarsDir)
+	_, err = s.Terraform("apply")
 	return err
 }
 
@@ -125,7 +126,7 @@ func (s *Simulator) Status() (*TerraformOutput, error) {
 	}
 
 	s.Logger.Info("Running terraform output")
-	out, err := Terraform(s.TfDir, "output", s.BucketName, s.TfVarsDir)
+	out, err := s.Terraform("output")
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
@@ -149,6 +150,6 @@ func (s *Simulator) Destroy() error {
 	}
 
 	s.Logger.Info("Running terrraform destroy")
-	_, err = Terraform(s.TfDir, "destroy", s.BucketName, s.TfVarsDir)
+	_, err = s.Terraform("destroy")
 	return err
 }

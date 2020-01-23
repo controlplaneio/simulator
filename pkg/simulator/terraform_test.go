@@ -18,17 +18,24 @@ var tfCommandArgumentsTests = []struct {
 	prepArgs  []string
 	arguments []string
 }{
-	{[]string{"output", "test-bucket", tfVarsDirAbsolutePath}, []string{"output", "-json"}},
-	{[]string{"init", "test-bucket", tfVarsDirAbsolutePath}, []string{"init", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars", "-backend-config=bucket=test-bucket"}},
-	{[]string{"plan", "test-bucket", tfVarsDirAbsolutePath}, []string{"plan", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars"}},
-	{[]string{"apply", "test-bucket", tfVarsDirAbsolutePath}, []string{"apply", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars", "-auto-approve"}},
-	{[]string{"destroy", "test-bucket", tfVarsDirAbsolutePath}, []string{"destroy", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars", "-auto-approve"}},
+	{[]string{"output"}, []string{"output", "-json"}},
+	{[]string{"init"}, []string{"init", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars", "-backend-config=bucket=test-bucket"}},
+	{[]string{"plan"}, []string{"plan", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars"}},
+	{[]string{"apply"}, []string{"apply", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars", "-auto-approve"}},
+	{[]string{"destroy"}, []string{"destroy", "-input=false", "--var-file=" + tfVarsDirAbsolutePath + "/settings/bastion.tfvars", "-auto-approve"}},
 }
 
 func Test_PrepareTfArgs(t *testing.T) {
+
+	pwd, _ := os.Getwd()
+	simulator := sim.NewSimulator(
+		sim.WithLogger(noopLogger),
+		sim.WithBucketName("test-bucket"),
+		sim.WithTfVarsDir( pwd + "/" + fixture("noop-tf-dir")))
+
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.prepArgs[0], func(t *testing.T) {
-			assert.Equal(t, sim.PrepareTfArgs(tt.prepArgs[0], tt.prepArgs[1], tt.prepArgs[2]), tt.arguments)
+			assert.Equal(t, simulator.PrepareTfArgs(tt.prepArgs[0]), tt.arguments)
 		})
 	}
 }
