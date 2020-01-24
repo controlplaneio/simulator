@@ -4,6 +4,8 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"testing"
 )
 
@@ -15,7 +17,7 @@ access_cidr = "10.0.0.1/16"
 attack_container_tag = "latest"
 state_bucket_name = "test-bucket"
 `
-	assert.Equal(t, tfv.String(), expected)
+	assert.Equal(t, expected, tfv.String())
 }
 
 func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
@@ -23,7 +25,11 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	varsFile := tfVarsDir + "/settings/bastion.tfVars"
 
 	err := simulator.EnsureLatestTfVarsFile(tfVarsDir, "ssh-rsa", "10.0.0.1/16", "test-bucket", "latest")
-	assert.Nil(t, err, "Got an error")
-
-	assert.Equal(t, util.MustSlurp(varsFile), "test = true\n")
+	require.NoError(t, err)
+	expected := `access_key = "ssh-rsa"
+access_cidr = "10.0.0.1/16"
+attack_container_tag = "latest"
+state_bucket_name = "test-bucket"
+`
+	assert.Equal(t, expected, util.MustSlurp(varsFile))
 }
