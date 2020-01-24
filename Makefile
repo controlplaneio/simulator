@@ -110,9 +110,8 @@ docker-test: validate-reqs docker-build ## Run the tests
 # -- SIMULATOR CLI
 .PHONY: dep
 dep: ## Install dependencies for other targets
-	mkdir -p ~/go/bin
 	$(GO) mod download
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.23.1
 
 .PHONY: static-analysis
 static-analysis:
@@ -121,7 +120,8 @@ static-analysis:
 .PHONY: build
 build: static-analysis ## Run golang build for the CLI program
 	@echo "+ $@"
-	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
+	$(GO) mod verify
+	$(GO) build -mod=readonly ${GO_LDFLAGS} -a -o ./dist/simulator
 
 .PHONY: is-in-launch
 is-in-launch: ## checks you are running in the launch container
@@ -144,7 +144,7 @@ test-smoke: build ## Run expect smoke test to check happy path works end-to-end
 test-unit: build ## Run golang unit tests for the CLI program
 	@echo "NOTE YOU SHOULD RUN THESE WITH make docker-test"
 	@echo "+ $@"
-	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
+	$(GO) test -mod=readonly -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 .PHONY: test-cleanup
 test-cleanup: ## cleans up automated test artefacts if e.g. you ctrl-c abort a test run
@@ -154,7 +154,7 @@ test-cleanup: ## cleans up automated test artefacts if e.g. you ctrl-c abort a t
 .PHONY: coverage
 test-coverage:  ## Run golang unit tests with coverage and opens a browser with the results
 	@echo "" > count.out
-	$(GO) test -covermode=count -coverprofile=count.out ./...
+	$(GO) test -mod=readonly -covermode=count -coverprofile=count.out ./...
 	$(GO) tool cover -html=count.out
 
 .PHONY: docs
