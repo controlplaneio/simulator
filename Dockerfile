@@ -171,7 +171,7 @@ USER ${build_user}
 
 # Golang build and test
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
-RUN make test-unit
+RUN make dep test-unit
 
 #------------------#
 # Launch Container #

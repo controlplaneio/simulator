@@ -115,7 +115,7 @@ dep: ## Install dependencies for other targets
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2
 
 .PHONY: static-analysis
-static-analysis: dep
+static-analysis:
 	golangci-lint run
 
 .PHONY: build
