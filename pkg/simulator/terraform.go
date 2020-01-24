@@ -46,8 +46,7 @@ func (s *Simulator) Terraform(cmd string) (*string, error) {
 		out, _, err := util.RunSilently(s.TfDir, env, "terraform", args...)
 		return out, err
 	}
-
-	return util.Run(s.TfDir, env, "terraform", args...)
+	return util.RunTwo(s.Logger, s.TfDir, env, "terraform", args...)
 }
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if

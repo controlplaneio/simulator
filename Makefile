@@ -79,7 +79,7 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                         \
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                        \
-		-v "$(shell pwd)/terraform":/app/terraform                      \
+		-v "$(shell pwd)/terraform":/app/terraform:ro                    \
 		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro \
 		--env-file launch-environment                                   \
 		--rm --init -it $(CONTAINER_NAME_LATEST)
@@ -121,7 +121,7 @@ static-analysis: dep
 	golangci-lint run
 
 .PHONY: build
-build: ## Run golang build for the CLI program
+build: static-analysis ## Run golang build for the CLI program
 	@echo "+ $@"
 	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 
