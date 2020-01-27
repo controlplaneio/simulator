@@ -32,12 +32,12 @@ func (s *Simulator) Launch() error {
 	s.Logger.Debug(tfo)
 
 	s.Logger.Infof("Finding details of scenario %s", s.ScenarioID)
-	sID := manifest.Find(s.ScenarioID)
-	s.Logger.Debug(sID)
+	foundScenario := manifest.Find(s.ScenarioID)
+	s.Logger.Debug(foundScenario)
 
 	s.Logger.Debugf(
 		"Making options to pass to perturb from terraorm output and scnenario")
-	po := MakePerturbOptions(*tfo, sID.Path)
+	po := MakePerturbOptions(*tfo, foundScenario.Path)
 	s.Logger.Debug(po)
 
 	s.Logger.Debug("Regenerating SSH config")
@@ -60,7 +60,7 @@ func (s *Simulator) Launch() error {
 			bastion)
 	}
 
-	s.Logger.Infof("Setting up the \"%s\" scenario on the cluster", sID.DisplayName)
+	s.Logger.Infof("Setting up the \"%s\" scenario on the cluster", foundScenario.DisplayName)
 	_, err = Perturb(&po)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 103") {
