@@ -4,8 +4,8 @@ package require Expect
 namespace eval ::simulator::test {
   namespace import ::tcltest::*
 
-  variable EXISTING_TEST_BUCKET_NAME "do-not-delete-simulator-automated-test"
-  variable TEST_BUCKET_NAME "controlplane-simulator-state-automated-test"
+  variable EXISTING_TEST_BUCKET_NAME "do-not-delete-simulator-automated-test-isolated"
+  variable TEST_BUCKET_NAME "controlplane-simulator-state-automated-test-isolated"
   # Careful if you adjust this it will be clobbered with an empty file before every test
   variable TEST_CONFIG_NAME "simulator-automated-test.yaml"
 
