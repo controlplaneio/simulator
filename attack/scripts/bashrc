@@ -111,9 +111,9 @@ starting_point() {
     KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.kubectlAccess')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
-      ssh "$INTERNAL_HOST_IP" 'ls -d ~/.kube >/dev/null 2>&1 && mv ~/.kube /var/local/'
+      ssh "$INTERNAL_HOST_IP" 'compgen -d ~/.kube >/dev/null 2>&1 && mv ~/.kube /var/local/'
     else
-      ssh "$INTERNAL_HOST_IP" 'ls -d ~/.kube >/dev/null 2>&1 || mv /var/local/.kube ~/'
+      ssh "$INTERNAL_HOST_IP" 'compgen -d ~/.kube >/dev/null 2>&1 || mv /var/local/.kube ~/'
     fi
 
     ssh_internal
@@ -123,12 +123,12 @@ starting_point() {
     NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.nodeId')"
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
-      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/nodeId: 'master-//" | sed "s/'//")"
+      NODE_NUMBER="${NODE_TYPE#'master-'}"
 
       ssh_master "$NODE_NUMBER"
 
     elif [[ "$NODE_TYPE" =~ "node" ]]; then
-      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/nodeId: 'node-//" | sed "s/'//")"
+      NODE_NUMBER="${NODE_TYPE#'node-'}"
 
       ssh_node "$NODE_NUMBER"
     else
