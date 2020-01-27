@@ -31,8 +31,7 @@ type Option func(*Simulator)
 
 // NewSimulator constructs a new instance of `Simulator`
 func NewSimulator(options ...Option) *Simulator {
-	var simulator Simulator
-	simulator = Simulator{}
+	simulator := Simulator{}
 
 	for _, option := range options {
 		option(&simulator)

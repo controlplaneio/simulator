@@ -24,7 +24,7 @@ func (s *Simulator) Launch() error {
 	}
 
 	s.Logger.Debugf("Checking status of infrastructure")
-	tfo, err := s.Status()
+	tfo, _ := s.Status()
 
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")

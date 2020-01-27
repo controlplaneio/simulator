@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-var pwd, err = os.Getwd()
+var pwd, _ = os.Getwd()
 var tfVarsDirAbsolutePath = pwd + "/" + fixture("noop-tf-dir")
 var noopLogger = zap.NewNop().Sugar()
 
@@ -40,7 +40,7 @@ func Test_PrepareTfArgs(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
-	pwd, err := os.Getwd()
+	pwd, _ := os.Getwd()
 	simulator := sim.NewSimulator(
 		sim.WithLogger(noopLogger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
@@ -57,7 +57,7 @@ func Test_Status(t *testing.T) {
 
 func Test_Create(t *testing.T) {
 
-	pwd, err := os.Getwd()
+	pwd, _ := os.Getwd()
 	simulator := sim.NewSimulator(
 		sim.WithLogger(noopLogger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
@@ -66,13 +66,13 @@ func Test_Create(t *testing.T) {
 		sim.WithBucketName("test"),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
 
-	err = simulator.Create()
+	err := simulator.Create()
 	assert.Nil(t, err)
 }
 
 func Test_Destroy(t *testing.T) {
 
-	pwd, err := os.Getwd()
+	pwd, _ := os.Getwd()
 	simulator := sim.NewSimulator(
 		sim.WithLogger(noopLogger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
@@ -80,7 +80,7 @@ func Test_Destroy(t *testing.T) {
 		sim.WithBucketName("test"),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
 
-	err = simulator.Destroy()
+	err := simulator.Destroy()
 
 	assert.Nil(t, err)
 }
