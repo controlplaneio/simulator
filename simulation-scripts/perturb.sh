@@ -98,7 +98,7 @@ main() {
     if [[ "${IS_FORCE}" != 1 ]]; then
       if ! is_special_scenario; then
         warning "Scenario ${FOUND_SCENARIO} already deployed"
-        exit 103
+        #exit 103
       fi
     fi
   fi
@@ -268,6 +268,8 @@ copy_challenge_and_tasks() {
 
   if grep 'mode\:\ pod' tasks.yaml >/dev/null; then
     template_tasks
+  else
+    cp tasks.yaml "${tmptasks}"
   fi
 
   info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
