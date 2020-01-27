@@ -1,18 +1,18 @@
 kind: cp.simulator/scenario:1.0.0
 objective: Compromise secret from running workload.
-starting-point:
+startingPoint:
   mode: pod
-  pod-name: ""
-  pod-namespace: secret-tank-desant
+  podName: "nginx"
+  podNamespace: secret-tank-desant
 tasks:
   "1":
     hints:
-    - text: kubectl exec into workload.
-    - text: Workload - enumerate container filesystem.
-    - text: Read AWS creds from file.
-    sort-order: 1
-    starting-point:
+      - text: kubectl exec into workload.
+      - text: Workload - enumerate container filesystem.
+      - text: Read AWS creds from file.
+    sortOrder: 1
+    startingPoint:
       mode: pod
-      pod-name: ""
-      pod-namespace: secret-tank-desant
+      podName: "nginx"
+      podNamespace: secret-tank-desant
     summary: "We read some secret data from the filesystem."

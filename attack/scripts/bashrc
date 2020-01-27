@@ -104,54 +104,59 @@ starting_point() {
     return 1
   fi
   # Identify the starting point mode
-  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point".mode')"
+  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.mode')"
 
   #Determine if mode is internal-instance.
   if [[ "$MODE" == "internal-instance" ]]; then
-    KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."kubectl-access"')"
+    KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.kubectlAccess')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
-      ssh "$INTERNAL_HOST_IP" mv ~/.kube /var/local/
-    elif [[ ! -d ~/.kube ]]; then
-      ssh "$INTERNAL_HOST_IP" mv /var/local/.kube ~/
+      ssh "$INTERNAL_HOST_IP" '[[ $(compgen -d ~/.kube) ]] && mv ~/.kube /var/local/'
+    else
+      ssh "$INTERNAL_HOST_IP" '[[ $(compgen -d ~/.kube) ]] || mv /var/local/.kube ~/'
     fi
 
     ssh_internal
-    return
-  fi
 
   #Determine if mode is node.
-  if [[ "$MODE" == "node" ]]; then
-    NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | ."starting-point"."node-id"')"
+  elif [[ "$MODE" == "node" ]]; then
+    NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.nodeId')"
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
-      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'master-//" | sed "s/'//")"
+      NODE_NUMBER="${NODE_TYPE#'master-'}"
 
       ssh_master "$NODE_NUMBER"
-      return
-    fi
 
-    if [[ "$NODE_TYPE" =~ "node" ]]; then
-      NODE_NUMBER="$(echo "$NODE_TYPE" | sed "s/node-id: 'node-//" | sed "s/'//")"
+    elif [[ "$NODE_TYPE" =~ "node" ]]; then
+      NODE_NUMBER="${NODE_TYPE#'node-'}"
 
       ssh_node "$NODE_NUMBER"
-      return
+    else
+      warning "An unrecognised node type has been selected. Please report this to the scenario author."
+      info "Please use the ssh helper 'ssh_node ...' to start the task."
+      exit 3
     fi
-  fi
 
   #Determine if mode is pod.
-  if [[ "$MODE" == "pod" ]]; then
-    echo "Starting point: POD - Not yet implemented. Please use 'ssh_internal' and then 'kubectl exec ...' to start in the relevant pod."
-    return
-  fi
+  elif [[ "$MODE" == "pod" ]]; then
+    POD_NAME="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podName')"
+    POD_NS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podNamespace')"
+    # shellcheck disable=SC2029
+    ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} bash"
+
+  #Determine if mode is attack.
+  elif [[ "$MODE" == "attack" ]]; then
+    echo "The starting point for this task is in this container. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
 
   #Determine if mode is null.
-  if [[ "$MODE" == "null" ]]; then
-    echo "No Starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
-    return
-  fi
+  elif [[ "$MODE" == "null" ]]; then
+    echo "No starting point has been configured for this task. Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
 
-  echo "The scenario configuration file is not following the expected format."
+  else
+    warning "An unrecognised starting point has been selected. Please report this to the scenario author."
+    info "Please use the ssh helpers 'ssh_internal,' 'ssh_master' and 'ssh_node ...' to start the task."
+    exit 4
+  fi
 }
 readonly -f starting_point
 export -f starting_point
@@ -225,7 +230,7 @@ welcome() {
   info ' '
   info "You have found a private kubernetes cluster."
   info ' '
-  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} nodes in the cluster."
+  info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} ${COLOUR_BLUE}master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} ${COLOUR_BLUE}nodes in the cluster."
   info ' '
   info "If you want to begin to work on the scenario from its starting point:"
   info ' '
