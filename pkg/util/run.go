@@ -3,12 +3,12 @@ package util
 import (
 	"bufio"
 	"bytes"
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 )
 
 // MustResolve returns an absolute path or panics if the underlying sys call
@@ -98,52 +98,4 @@ func RunSilently(wd string, env []string, cmd string, args ...string) (*string, 
 	childOut := outBuf.String()
 
 	return &childOut, &childErr, nil
-}
-
-// RunTwo runs a child process and returns its buffer stdout.  Run also tees the
-// output to stdout of this process, `env` will be appended to the current
-// environment.  `wd` is the working directory for the child
-func RunTwo(logger *zap.SugaredLogger, wd string, env []string, cmd string, args ...string) (*string, error) {
-	child := exec.Command(cmd, args...)
-
-	child.Env = append(os.Environ(), env...)
-
-	childIn, _ := child.StdinPipe()
-	childErr, _ := child.StderrPipe()
-	childOut, _ := child.StdoutPipe()
-	defer childIn.Close()
-	defer childErr.Close()
-	defer childOut.Close()
-
-	dir := MustResolve(wd)
-
-	child.Dir = dir
-
-	// Copy child stdout to stdout but also into a buffer to be returned
-	var buf bytes.Buffer
-	tee := io.TeeReader(childOut, &buf)
-
-	err := child.Start()
-	if err != nil {
-		return nil, errors.Wrapf(err, "Error starting child process %s", cmd)
-	}
-
-	if _, err = io.Copy(os.Stdout, tee); err != nil {
-		return nil, err
-	}
-
-	logger.Info("stdout works")
-	if _, err = io.Copy(os.Stderr, childErr); err != nil {
-		return nil, err
-	}
-	logger.Info("stderr works")
-
-	err = child.Wait()
-	// TODO: (rem) make this parameterisable?
-	if err != nil && err.Error() != "exit status 127" {
-		return nil, errors.Wrapf(err, "Error waiting for child process %s", cmd)
-	}
-
-	out := buf.String()
-	return &out, nil
 }
