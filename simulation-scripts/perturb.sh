@@ -98,7 +98,7 @@ main() {
     if [[ "${IS_FORCE}" != 1 ]]; then
       if ! is_special_scenario; then
         warning "Scenario ${FOUND_SCENARIO} already deployed"
-        #exit 103
+        exit 103
       fi
     fi
   fi
