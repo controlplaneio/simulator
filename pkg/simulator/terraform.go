@@ -20,7 +20,7 @@ func (s *Simulator) PrepareTfArgs(cmd string) []string {
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
-		arguments = append(arguments, fmt.Sprintf("--var-file=%s/settings/bastion.tfvars", s.TfVarsDir)
+		arguments = append(arguments, fmt.Sprintf("--var-file=%s/settings/bastion.tfvars", s.TfVarsDir))
 
 	}
 
