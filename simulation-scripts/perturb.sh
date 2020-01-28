@@ -337,7 +337,7 @@ template_tasks() {
   for pod_name in $POD_NAME; do
     POD_NS=$(echo "${tasks_json}" | jq -r --arg POD_NAME "${pod_name}" '.tasks[].startingPoint | select(.podName | select (.!=null) | contains($POD_NAME)) | .podNamespace')
     POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
-    sed -i "s/podName\:\ \"${pod_name}\"/podName\:\ \"${POD_RESULT}\"/g" "${tmptasks}"
+    sed -i "s/podName\:\ ${pod_name}/podName\:\ ${POD_RESULT}/g" "${tmptasks}"
   done
 }
 
