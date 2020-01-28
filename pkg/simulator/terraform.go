@@ -1,17 +1,17 @@
 package simulator
 
 import (
+	"fmt"
+
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
-	"fmt"
 )
 
 // PrepareTfArgs takes a string with the terraform command desired and returns
 // a slice of strings containing the complete list of arguments including the
 // command to use when exec'ing terraform
-func PrepareTfArgs(cmd string, bucket string) []string {
+func (s *Simulator) PrepareTfArgs(cmd string) []string {
 	arguments := []string{cmd}
 
 	if cmd == "output" {
@@ -20,12 +20,12 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
-		arguments = append(arguments, "--var-file=settings/bastion.tfvars")
+		arguments = append(arguments, fmt.Sprintf("--var-file=%s/settings/bastion.tfvars", s.TfVarsDir))
 
 	}
 
 	if cmd == "init" {
-		providerBucketArg := fmt.Sprintf("-backend-config=bucket=%s", bucket)
+		providerBucketArg := fmt.Sprintf("-backend-config=bucket=%s", s.BucketName)
 		arguments = append(arguments, providerBucketArg)
 	}
 
@@ -37,54 +37,54 @@ func PrepareTfArgs(cmd string, bucket string) []string {
 }
 
 // Terraform wraps running terraform as a child process
-func Terraform(wd, cmd string, bucket string) (*string, error) {
-	args := PrepareTfArgs(cmd, bucket)
+//func Terraform(wd, cmd string, bucket, tfVarsDir string) (*string, error) {
+func (s *Simulator) Terraform(cmd string) (*string, error) {
+	args := s.PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
 	if cmd == "output" {
 		// TODO: (rem) deal with non-empty stderr?
-		out, _, err := util.RunSilently(wd, env, "terraform", args...)
+		out, _, err := util.RunSilently(s.TfDir, env, "terraform", args...)
 		return out, err
 	}
-
-	return util.Run(wd, env, "terraform", args...)
+	return util.Run(s.TfDir, env, "terraform", args...)
 }
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if
 // needed
-func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag string) error {
-	logger.Debug("Terraform.InitIfNeeded() start")
-
-	logger.Info("Ensuring there is a simulator keypair")
+func (s *Simulator) InitIfNeeded() error {
+	s.Logger.Debug("Terraform.InitIfNeeded() start")
+	s.Logger.Info("Ensuring there is a simulator keypair")
 	_, err := ssh.EnsureKey()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
 
-	logger.Info("Detecting your public IP address")
+	s.Logger.Info("Detecting your public IP address")
 	ip, err := util.DetectPublicIP()
 	if err != nil {
 		return errors.Wrap(err, "Error detecting IP address")
 	}
 	accessCIDR := *ip + "/32"
 
-	logger.Debug("Reading public key")
+	s.Logger.Debug("Reading public key")
 	publickey, err := ssh.PublicKey()
 	if err != nil {
 		return errors.Wrap(err, "Error reading public key")
 	}
 
-	logger.Debugf("terraform Directory: %s", tfDir)
-	logger.Debugf("Public Key:\n%s", publickey)
-	logger.Debugf("Access CIDR: %s", accessCIDR)
-	logger.Debugf("Remote State Bucket Name: %s", bucket)
-	logger.Debug("Writing terraform tfvars")
-	err = EnsureLatestTfVarsFile(tfDir, *publickey, accessCIDR, bucket, attackTag)
+	s.Logger.Debugf("terraform Directory: %s", s.TfDir)
+	s.Logger.Debugf("terraform vars Directory: %s", s.TfVarsDir)
+	s.Logger.Debugf("Public Key:\n%s", publickey)
+	s.Logger.Debugf("Access CIDR: %s", accessCIDR)
+	s.Logger.Debugf("Remote State Bucket Name: %s", s.BucketName)
+	s.Logger.Debug("Writing terraform tfvars")
+	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}
 
-	logger.Info("Running terraform init")
-	_, err = Terraform(tfDir, "init", bucket)
+	s.Logger.Info("Running terraform init")
+	_, err = s.Terraform("init")
 	if err != nil {
 		return errors.Wrap(err, "Error initialising terraform")
 	}
@@ -96,41 +96,43 @@ func InitIfNeeded(logger *zap.SugaredLogger, tfDir, bucket, attackTag string) er
 
 // Create runs terraform init, plan, apply to create the necessary
 // infrastructure to run scenarios
-func Create(logger *zap.SugaredLogger, tfDir, bucket, attackTag string) error {
-	err := InitIfNeeded(logger, tfDir, bucket, attackTag)
+func (s *Simulator) Create() error {
+
+	err := s.InitIfNeeded()
 
 	if err != nil {
 		return err
 	}
 
-	logger.Info("Running terraform plan")
-	_, err = Terraform(tfDir, "plan", bucket)
+	s.Logger.Info("Running terraform plan")
+	_, err = s.Terraform("plan")
 	if err != nil {
 		return err
 	}
 
-	logger.Info("Running terraform apply")
-	_, err = Terraform(tfDir, "apply", bucket)
+	s.Logger.Info("Running terraform apply")
+	_, err = s.Terraform("apply")
 	return err
 }
 
 // Status calls terraform output to get the state of the infrastruture and
 // parses the output for programmatic use
-func Status(logger *zap.SugaredLogger, tfDir, bucket, attackTag string) (*TerraformOutput, error) {
-	err := InitIfNeeded(logger, tfDir, bucket, attackTag)
+func (s *Simulator) Status() (*TerraformOutput, error) {
+	//err := s.InitIfNeeded()
+	err := s.InitIfNeeded()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error initialising")
 	}
 
-	logger.Info("Running terraform output")
-	out, err := Terraform(tfDir, "output", bucket)
+	s.Logger.Info("Running terraform output")
+	out, err := s.Terraform("output")
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting terraform outputs")
 	}
 
-	logger.Debug(out)
+	s.Logger.Debug(out)
 
-	logger.Debug("Parsing terraform output")
+	s.Logger.Debug("Parsing terraform output")
 	tfo, err := ParseTerraformOutput(*out)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error parsing terraform outputs")
@@ -140,13 +142,13 @@ func Status(logger *zap.SugaredLogger, tfDir, bucket, attackTag string) (*Terraf
 }
 
 // Destroy call terraform destroy to remove the infrastructure
-func Destroy(logger *zap.SugaredLogger, tfDir, bucket, attackTag string) error {
-	err := InitIfNeeded(logger, tfDir, bucket, attackTag)
+func (s *Simulator) Destroy() error {
+	err := s.InitIfNeeded()
 	if err != nil {
 		return errors.Wrap(err, "Error initialising")
 	}
 
-	logger.Info("Running terrraform destroy")
-	_, err = Terraform(tfDir, "destroy", bucket)
+	s.Logger.Info("Running terrraform destroy")
+	_, err = s.Terraform("destroy")
 	return err
 }

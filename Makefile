@@ -21,6 +21,7 @@ KUBE_SIM_TMP := $(HOME)/.kubesim/
 SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
+SIMULATOR_TFVAR_DIR := $(KUBE_SIM_TMP)/settings
 
 export GOSUMDB=off
 
@@ -88,12 +89,16 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 docker-build-nocache: ## Builds the launch container without the Docker cache
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
+	@mkdir -p $(SIMULATOR_TFVAR_DIR)
+	@touch $(SIMULATOR_TFVAR_DIR)/bastion.tfvars
 	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
 	@mkdir -p ~/.kubesim
 	@touch ~/.kubesim/simulator.yaml
+	@mkdir -p $(SIMULATOR_TFVAR_DIR)
+	@touch $(SIMULATOR_TFVAR_DIR)/bastion.tfvars
 	@docker build -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-test
@@ -101,6 +106,7 @@ docker-test: validate-reqs docker-build ## Run the tests
 	@export AWS_DEFAULT_REGION="testing propagation to AWS_REGION var"; \
 	docker run                                                          \
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
+		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                    \
 		--env-file launch-environment                               \
 		--rm -t $(CONTAINER_NAME_LATEST)                            \
 		/app/test-acceptance.sh

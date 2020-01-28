@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -14,11 +14,22 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
 		RunE: func(cmd *cobra.Command, args []string) error {
+
+			bucketName := viper.GetString("state-bucket")
 			scenariosDir := viper.GetString("scenarios-dir")
-			bucket := viper.GetString("state-bucket")
-			tfDir := viper.GetString("tf-dir")
 			attackTag := viper.GetString("attack-container-tag")
-			cfg, err := simulator.Config(logger, tfDir, scenariosDir, bucket, attackTag)
+			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
+
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(tfDir),
+				sim.WithScenariosDir(scenariosDir),
+				sim.WithAttackTag(attackTag),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(tfVarsDir))
+
+			cfg, err := simulator.SSHConfig()
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
@@ -50,11 +61,20 @@ func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
 		Use:   `attack`,
 		Short: "Connect to an attack container to complete the scenario",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucket := viper.GetString("state-bucket")
-			tfDir := viper.GetString("tf-dir")
+			
+			bucketName := viper.GetString("state-bucket")
 			attackTag := viper.GetString("attack-container-tag")
+			tfDir := viper.GetString("tf-dir")
+			tfVarsDir := viper.GetString("tf-vars-dir")
 
-			return simulator.Attack(logger, tfDir, bucket, attackTag)
+			simulator := sim.NewSimulator(
+				sim.WithLogger(logger),
+				sim.WithTfDir(tfDir),
+				sim.WithAttackTag(attackTag),
+				sim.WithBucketName(bucketName),
+				sim.WithTfVarsDir(tfVarsDir))
+
+			return simulator.Attack()
 		},
 	}
 

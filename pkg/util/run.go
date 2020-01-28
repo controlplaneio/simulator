@@ -3,11 +3,12 @@ package util
 import (
 	"bufio"
 	"bytes"
-	"github.com/pkg/errors"
 	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 )
 
 // MustResolve returns an absolute path or panics if the underlying sys call
@@ -52,6 +53,7 @@ func Run(wd string, env []string, cmd string, args ...string) (*string, error) {
 	if _, err = io.Copy(os.Stdout, tee); err != nil {
 		return nil, err
 	}
+
 	if _, err = io.Copy(os.Stderr, childErr); err != nil {
 		return nil, err
 	}

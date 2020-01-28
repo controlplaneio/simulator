@@ -67,6 +67,12 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentFlags().StringP("tf-vars-dir", "v", "/home/launch/.kubesim",
+		"Path to a directory containing the terraform variables file")
+	if err := viper.BindPFlag("tf-vars-dir", rootCmd.PersistentFlags().Lookup("tf-vars-dir")); err != nil {
+		panic(err)
+	}
+
 	return rootCmd
 }
 
