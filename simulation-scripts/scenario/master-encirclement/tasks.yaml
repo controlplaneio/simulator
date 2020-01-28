@@ -1,21 +1,23 @@
 kind: cp.simulator/scenario:1.0.0
 objective: Enable MutatingAdmissionWebhook admission controller in the API server.
-starting-point:
-  as-root: true
+startingPoint:
+  asRoot: true
   mode: node
-  node-id: master-0
+  nodeId: master-0
 tasks:
   "1":
     hints:
-    - text: Hmm, the webhook configuration looks good. What other factors could influence
-        the permissions?
-    - text: The webhook deployment also looks like it's working
-    - text: Where does kubeadm keep the master config?
-    - text: Looks like the MutatingAdmissionWebhook admission controller has been
-        disabled. I probably need to enable it.
-    sort-order: 1
-    starting-point:
-      as-root: true
+      - text:
+          Hmm, the webhook configuration looks good. What other factors could influence
+          the permissions?
+      - text: The webhook deployment also looks like it's working
+      - text: Where does kubeadm keep the master config?
+      - text:
+          Looks like the MutatingAdmissionWebhook admission controller has been
+          disabled. I probably need to enable it.
+    sortOrder: 1
+    startingPoint:
+      asRoot: true
       mode: node
-      node-id: master-0
+      nodeId: master-0
     summary: "The Mutating Admission Webhook admission controller was disabled. We re-enabled it in the manifest for the api server."

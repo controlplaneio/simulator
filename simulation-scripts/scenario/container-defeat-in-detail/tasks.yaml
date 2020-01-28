@@ -1,30 +1,33 @@
 kind: cp.simulator/scenario:1.0.0
-objective: Exec into a container on master with certificates mounted in to exploit
+objective:
+  Exec into a container on master with certificates mounted in to exploit
   etcd.
-starting-point:
-  kubectl-access: true
+startingPoint:
+  kubectlAccess: true
   mode: internal-instance
 tasks:
   "1":
     hints:
-    - text: I should choose which cert-manager pod to start in carefully.
-    - text: One of these seems to be running on a master, that's probably the best
-        place to start.
-    - text: Let's check the mounts in this container.
-    - text: There are some etcd certs here, I think I was given the IP for the etcd
-        cluster earlier.
-    - text: The key I'm after is probably the '/super/secret one'.
-    sort-order: 1
-    starting-point:
-      kubectl-access: true
+      - text: I should choose which cert-manager pod to start in carefully.
+      - text:
+          One of these seems to be running on a master, that's probably the best
+          place to start.
+      - text: Let's check the mounts in this container.
+      - text:
+          There are some etcd certs here, I think I was given the IP for the etcd
+          cluster earlier.
+      - text: The key I'm after is probably the '/super/secret one'.
+    sortOrder: 1
+    startingPoint:
+      kubectlAccess: true
       mode: internal-instance
     summary: "We managed to retrieve a secret value from etcd using some certificates mounted into the container accidentally."
   "2":
     hints:
-    - text: Let's check the node config.
-    - text: The master is missing its taint!
-    sort-order: 2
-    starting-point:
-      kubectl-access: true
+      - text: Let's check the node config.
+      - text: The master is missing its taint!
+    sortOrder: 2
+    startingPoint:
+      kubectlAccess: true
       mode: internal-instance
     summary: "The master node needed its master taint to be reapplied."
