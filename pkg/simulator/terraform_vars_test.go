@@ -29,7 +29,7 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	defer os.Remove(workDir)
 	require.NoError(t, os.Mkdir(filepath.Join(workDir, "settings"), 0700))
 
-	bastionVarsFile := filepath.Join(workDir, "settings", "bastion.tfVars")
+	bastionVarsFile := filepath.Join(workDir, "settings", "bastion.tfvars")
 	err = ioutil.WriteFile(bastionVarsFile, []byte("any=content"), 0644)
 	require.NoError(t, err)
 
