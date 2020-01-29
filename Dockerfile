@@ -20,7 +20,7 @@ RUN apt-get update                                                              
     unzip
 
 # Download and save golang latest for use in other layers and install
-ARG GO_INSTALL_VERSION=1.13.5
+ARG GO_INSTALL_VERSION=1.13.7
 # hadolint ignore=DL3003,DL3010
 RUN mkdir /downloads                                                  \
     && cd /downloads                                                  \
