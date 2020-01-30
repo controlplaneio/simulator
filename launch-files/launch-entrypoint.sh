@@ -7,13 +7,19 @@ main() {
   trap show_exit_warning EXIT
   trap show_exit_warning SIGTERM
 
-  fix_aws_environment_variables
+  ensure_environment
+  ensure_kubesim_directory
 
   exec "${@:-/bin/bash}"
 }
 
-fix_aws_environment_variables() {
+ensure_environment() {
   export AWS_REGION="${AWS_REGION:-${AWS_DEFAULT_REGION:-}}"
+}
+
+ensure_kubesim_directory() {
+  mkdir -p ~/.kubesim
+  touch ~/.kubesim/simulator.yaml
 }
 
 draw_box() {
