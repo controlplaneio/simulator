@@ -18,21 +18,34 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
   const progress = getProgress(progresspath)
   const currentTask = progress.current_task
 
-  // either the user hasnt started any tasks or they have already been scored
-  // for this task so just change the current task
-  if (currentTask === undefined || progress[currentTask].score !== undefined) {
+  // User hasnt started a task yet
+  if (currentTask === undefined) {
     progress.current_task = task
     progress[task] = {}
     saveProgress(progress, progresspath)
-    log.info(`You are now on ${task}`)
+    log.info(`You are now on task ${task}`)
 
     return true
   }
 
-  const answers = await prompt([{
+  // user has started a task and previously either asked not to be scored or
+  // was already scored
+  if (progress[currentTask].score !== undefined) {
+    progress.current_task = task
+    if (progress[task] === undefined) { progress[task] = {} }
+
+    saveProgress(progress, progresspath)
+    log.info(`You are now on task ${task}`)
+
+    return true
+  }
+
+  // user must have started a task and hasn't yet been scored or skipped scoring
+  logger.info(`Would you like to be scored for task ${currentTask}? (If you choose no you cannot be scored on this task in the future)`)
+  const { answer } = await prompt({
     type: 'expand',
     messsage: `Would you like to be scored for task ${currentTask}? (If you choose no you cannot be scored on this task in the future)`,
-    name: 'scoring',
+    name: 'answer',
     choices: [{
       key: 'y',
       name: 'Yes',
@@ -47,35 +60,36 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
       value: 'cancel'
 
     }]
-  }])
+  })
 
-  if (answers.length !== 1) {
+  if (answer === undefined) {
     // should never happen
     throw new Error(
       'No changes made - expected an answer from the scoring prompt')
   }
 
-  if (answers[0] === 'cancel') {
+  if (answer === 'cancel') {
     log.info(`You cancelled... leaving you on ${currentTask}`)
     return false
   }
 
-  if (answers[0] === 'yes') {
+  if (answer === 'yes') {
     const score = calculateScore(progress, tasks)
     log.info(`Your score for task ${currentTask} was ${score}`)
     progress[currentTask].score = score
-  } else if (answers[0] === 'no') {
+  } else if (answer === 'no') {
     log.info(`You chose not to be scored on ${currentTask}`)
     progress[currentTask].score = 'skip'
   } else {
     // should never happen
     throw new Error(
-      `No changes made - unrecognised answer from scoring prompt: ${answers[0]}`)
+      `No changes made - unrecognised answer from scoring prompt: ${answer}`)
   }
 
   progress.current_task = task
+  if (progress[task] === undefined) { progress[task] = {} }
   saveProgress(progress, progresspath)
-  log.info(`You are now on ${task}`)
+  log.info(`You are now on task ${task}`)
 
   return true
 }

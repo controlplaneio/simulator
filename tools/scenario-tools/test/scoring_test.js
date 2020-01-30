@@ -2,7 +2,7 @@ const test = require('ava')
 const { calculateScore } = require('../lib/scoring')
 
 test('calculateScore returns 100 when no hints seen', t => {
-  const progress = { current_task: 1 }
+  const progress = { current_task: 1, 1: {} }
   const tasks = { 1: { hints: [{ test: 'a hint', penalty: 10 }] } }
 
   const score = calculateScore(progress, tasks)
@@ -10,7 +10,7 @@ test('calculateScore returns 100 when no hints seen', t => {
 })
 
 test('calculateScore returns correct score when one hint seen', t => {
-  const progress = { current_task: 1, 1: 0 }
+  const progress = { current_task: 1, 1: { lastHintIndex: 0 } }
   const tasks = { 1: { hints: [{ test: 'a hint', penalty: 10 }] } }
 
   const score = calculateScore(progress, tasks)
@@ -18,7 +18,7 @@ test('calculateScore returns correct score when one hint seen', t => {
 })
 
 test('calculateScore returns correct score when several hints seen', t => {
-  const progress = { current_task: 1, 1: 1 }
+  const progress = { current_task: 1, 1: { lastHintIndex: 1 } }
   const tasks = { 1: { hints: [{ test: 'a hint', penalty: 10 }, { test: 'a hint', penalty: 7 }] } }
 
   const score = calculateScore(progress, tasks)

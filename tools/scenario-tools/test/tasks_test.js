@@ -26,7 +26,7 @@ test('startTask writes current_task to progress', async t => {
   const progress = readFileSync(progresspath, 'utf-8')
 
   t.true(result, 'should have returned true')
-  t.deepEqual('{"current_task":"Task 1"}', progress, 'should have written progress')
+  t.deepEqual('{"current_task":"Task 1","Task 1":{}}', progress, 'should have written progress')
   t.true(logger.info.called, 'should have logged an inffo message')
 })
 

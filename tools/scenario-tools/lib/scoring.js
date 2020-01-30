@@ -2,7 +2,7 @@ const { MAX_SCORE } = require('./constants')
 
 function calculateScore (progress, tasks) {
   const currentTask = progress.current_task
-  const lastSeenHintIndex = progress[currentTask]
+  const lastSeenHintIndex = progress[currentTask].lastHintIndex
   const hintCount = tasks[currentTask].hints.length
 
   if (lastSeenHintIndex === undefined) {
