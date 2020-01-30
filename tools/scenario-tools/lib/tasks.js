@@ -14,8 +14,11 @@ function startTask (task, taskspath = TASKS_FILE_PATH,
   }
 
   const progress = getProgress(progresspath)
-  progress.current_task = task
-  saveProgress(progress, progresspath)
+
+  if (progress.current_task === undefined) {
+    progress.current_task = task
+    saveProgress(progress, progresspath)
+  }
 
   log.info(`You are now on ${task}`)
 

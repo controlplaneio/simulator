@@ -36,7 +36,7 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
     return logger.info(`You have not seen any hints for ${task}`)
   }
 
-  const lastSeenHintIndex = progress[task]
+  const lastSeenHintIndex = progress[task].lastHintIndex
   const hintcount = tasks[task].hints.length
 
   for (let i = 0; i <= lastSeenHintIndex && i < hintcount; i++) {
@@ -58,11 +58,12 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
   let hintIndex
 
   if (progress[task] === undefined) {
-    hintIndex = progress[task] = 0
+    progress[task] = {}
+    hintIndex = progress[task].lastHintIndex = 0
   } else {
     const { tasks } = loadYamlFile(taskspath)
 
-    hintIndex = progress[task] = ++progress[task]
+    hintIndex = progress[task].lastHintIndex = ++(progress[task].lastHintIndex)
     if (hintIndex >= tasks[task].hints.length) {
       return logger.info('You have seen all the hints for this task')
     }

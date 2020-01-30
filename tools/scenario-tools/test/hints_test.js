@@ -37,15 +37,15 @@ test('nextHint progresses hints for the task', t => {
 
   nextHint('Task 1', taskspath, progresspath, spyinglogger)
   const progress = readFileSync(progresspath, 'utf-8')
-  t.deepEqual('{"Task 1":0}', progress, 'progress wasnt saved after showing first hint')
+  t.deepEqual('{"Task 1":{"lastHintIndex":0}}', progress, 'progress wasnt saved after showing first hint')
   t.false(spyinglogger.error.called, 'shouldnt have logged an error')
 
   nextHint('Task 1', taskspath, progresspath, spyinglogger)
   const progress2 = readFileSync(progresspath, 'utf-8')
-  t.deepEqual('{"Task 1":1}', progress2, 'progress wasnt updated after showing second hint')
+  t.deepEqual('{"Task 1":{"lastHintIndex":1}}', progress2, 'progress wasnt updated after showing second hint')
   t.false(spyinglogger.error.called, 'shouldnt have logged an error')
 
   nextHint('Task 1', taskspath, progresspath, spyinglogger)
   const progress3 = readFileSync(progresspath, 'utf-8')
-  t.deepEqual('{"Task 1":1}', progress3, 'progress should not have updated after showing second hint')
+  t.deepEqual('{"Task 1":{"lastHintIndex":1}}', progress3, 'progress should not have updated after showing second hint')
 })
