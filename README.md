@@ -174,7 +174,7 @@ create</code>
 
 ### Terraform
 
-Refer to the [simulator terraform documentation](./terraform/README.md) 
+Refer to the [simulator terraform documentation](./terraform/README.md)
 
 ### SSH
 
@@ -222,21 +222,20 @@ Development targets are specified in the [Makefile](./Makefile).
 
 <pre>
 setup-dev             Initialise simulation tree with git hooks
-devtools-deps: # Install devtools dependencies 
+devtools-deps         Install devtools dependencies
 devtools              Install devtools
-test-devtools: # Run all the unit tests for the devtools 
+test-devtools         Run all the unit tests for the devtools
 reset                 Clean up files left over by simulator
-validate-requirements  Verify all requirements are met
-previous-tag:        
-release-tag:         
-gpg-preflight:       
+validate-reqs         Verify all requirements are met
 run                   Run the simulator - the build stage of the container runs all the cli tests
-docker-build-no-cache  Builds the launch container
+run-dev               Run the simulator in dev mode without a rebuild
+docker-build-nocache  Builds the launch container without the Docker cache
 docker-build          Builds the launch container
 docker-test           Run the tests
 dep                   Install dependencies for other targets
+static-analysis       Run golangci-lint
 build                 Run golang build for the CLI program
-is-in-launch-container  checks you are running in the launch container
+is-in-launch          checks you are running in the launch container
 test                  run all tests except goss tests
 test-acceptance       Run tcl acceptance tests for the CLI program
 test-smoke            Run expect smoke test to check happy path works end-to-end
@@ -244,7 +243,7 @@ test-unit             Run golang unit tests for the CLI program
 test-cleanup          cleans up automated test artefacts if e.g. you ctrl-c abort a test run
 test-coverage         Run golang unit tests with coverage and opens a browser with the results
 docs                  Generate documentation
-release: gpg-preflight previous-tag release-tag docker-test docker-build build 
+release               Docker container and binary release automation for simulator
 </pre>
 
 ### Git commits
