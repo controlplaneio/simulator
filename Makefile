@@ -74,7 +74,7 @@ gpg-preflight:
 
 # --- DOCKER
 run: validate-reqs docker-build ## Run the simulator - the build stage of the container runs all the cli tests
-	@docker run                                                             \
+	@docker run                                                         \
 		-h launch                                                       \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
 		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                         \
@@ -82,7 +82,21 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 		-v "$(shell pwd)/terraform":/app/terraform                      \
 		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro \
 		--env-file launch-environment                                   \
-		--rm --init -it $(CONTAINER_NAME_LATEST)
+		--rm --init -it $(CONTAINER_NAME_LATEST)						\
+		$(COMMAND)
+
+run-dev: validate-reqs ## Run the simulator in dev mode without a rebuild
+	@docker run                                                         				 \
+		-h launch                                                       				 \
+		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                				 \
+		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                         				 \
+		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                        				 \
+		-v "$(shell pwd)/terraform":/app/terraform                      				 \
+		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro 				 \
+		-v "$(shell pwd)/launch-files/launch-entrypoint.sh":/app/launch-entrypoint.sh:ro \
+		--env-file launch-environment                                  					 \
+		--rm --init -it $(CONTAINER_NAME_LATEST)									     \
+	$(COMMAND)
 
 .PHONY: docker-build-nocache
 docker-build-nocache: ## Builds the launch container without the Docker cache
