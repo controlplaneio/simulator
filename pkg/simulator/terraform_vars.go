@@ -28,7 +28,7 @@ func (tfv *TfVars) String() string {
 
 }
 
-// EnsureLatestTfVarsFile writes an tfvars file if one hasnt already been made
+// EnsureLatestTfVarsFile always writes an tfvars file
 func EnsureLatestTfVarsFile(tfVarsDir, publicKey, accessCIDR, bucket, attackTag string) error {
 	filename := tfVarsDir + "/settings/bastion.tfvars"
 	tfv := NewTfVars(publicKey, accessCIDR, bucket, attackTag)
