@@ -22,6 +22,7 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
   // for this task so just change the current task
   if (currentTask === undefined || progress[currentTask].score !== undefined) {
     progress.current_task = task
+    progress[task] = {}
     saveProgress(progress, progresspath)
     log.info(`You are now on ${task}`)
 
