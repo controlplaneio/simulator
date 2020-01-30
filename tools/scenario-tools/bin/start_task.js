@@ -18,9 +18,11 @@ if (args.length !== 1) {
   process.exit(1)
 }
 
-const success = startTask(args[0])
-if (success) {
+// ignore the result - it will be true/false depending on whether the user
+// actually switched task
+startTask(args[0]).then(_ => {
   process.exit(0)
-} else {
+}, reason => {
+  logger.error(reason.message)
   process.exit(1)
-}
+})

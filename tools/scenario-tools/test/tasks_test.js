@@ -3,18 +3,18 @@ const test = require('ava')
 const { startTask, getCurrentTask } = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
 
-test('startTask warns for invalid task and returns false', t => {
+test('startTask warns for invalid task and returns false', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
   const logger = createSpyingLogger()
 
-  const result = startTask('Invalid', taskspath, progresspath, logger)
+  const result = await startTask('Invalid', taskspath, progresspath, logger)
 
   t.false(result, 'should have returned false')
   t.true(logger.warn.called, 'should have logged a warning')
 })
 
-test('startTask writes current_task to progress', t => {
+test('startTask writes current_task to progress', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
   const logger = createSpyingLogger()
@@ -22,7 +22,7 @@ test('startTask writes current_task to progress', t => {
   // Delete any testoutput from previous runs
   try { unlinkSync(progresspath) } catch {}
 
-  const result = startTask('Task 1', taskspath, progresspath, logger)
+  const result = await startTask('Task 1', taskspath, progresspath, logger)
   const progress = readFileSync(progresspath, 'utf-8')
 
   t.true(result, 'should have returned true')
