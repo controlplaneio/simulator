@@ -22,7 +22,11 @@ func (s *Simulator) PrepareTfArgs(cmd string) []string {
 	if cmd == "init" || cmd == "plan" || cmd == "apply" || cmd == "destroy" {
 		arguments = append(arguments, "-input=false")
 		arguments = append(arguments, fmt.Sprintf("--var-file=%s/settings/bastion.tfvars", s.TfVarsDir))
+		arguments = append(arguments, s.TfDir)
+	}
 
+	if cmd == "plan" || cmd == "apply" {
+		arguments = append(arguments, s.TfDir)
 	}
 
 	if cmd == "init" {
@@ -47,7 +51,14 @@ func (s *Simulator) Terraform(cmd string) (*string, error) {
 		out, _, err := util.RunSilently(s.TfDir, env, "terraform", args...)
 		return out, err
 	}
-	return util.Run(s.TfDir, env, "terraform", args...)
+
+	var workDir string
+	if cmd == "init" || cmd == "plan" || cmd == "apply" {
+		workDir = s.TmpDir
+	} else {
+		workDir = s.TfDir
+	}
+	return util.Run(workDir, env, "terraform", args...)
 }
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if

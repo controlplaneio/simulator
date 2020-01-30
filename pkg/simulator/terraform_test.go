@@ -60,14 +60,15 @@ func Test_Status(t *testing.T) {
 func Test_Create(t *testing.T) {
 
 	pwd, _ := os.Getwd()
-	logger.Out = ioutil.Discard
+	tmpDir, _ := ioutil.TempDir("", "")
 	simulator := sim.NewSimulator(
 		sim.WithLogger(logger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
 		sim.WithScenariosDir("test"),
 		sim.WithAttackTag("latest"),
 		sim.WithBucketName("test"),
-		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
+		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")),
+		sim.WithTmpDir(tmpDir))
 
 	err := simulator.Create()
 	assert.Nil(t, err)
