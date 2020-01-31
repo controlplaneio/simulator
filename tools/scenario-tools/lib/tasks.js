@@ -33,6 +33,11 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
     return true
   }
 
+  if (task === currentTask) {
+    log.warn(`You are already on ${currentTask}`)
+    return false
+  }
+
   // user has started a task and previously either asked not to be scored or
   // was already scored
   if (task !== undefined && progress[currentTask].score !== undefined) {
