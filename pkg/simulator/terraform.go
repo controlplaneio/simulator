@@ -37,6 +37,7 @@ func (s *Simulator) PrepareTfArgs(cmd string) []string {
 		arguments = append(arguments, s.TfDir)
 	}
 
+	fmt.Println(arguments)
 	return arguments
 }
 
@@ -57,6 +58,11 @@ func (s *Simulator) Terraform(cmd string) (*string, error) {
 	} else {
 		workDir = s.TfDir
 	}
+	fmt.Println(cmd)
+	fmt.Println("is commmand and args are ")
+	fmt.Println(args)
+	fmt.Println("and tfdir is " + s.TfDir)
+
 	return util.Run(workDir, env, "terraform", args...)
 }
 

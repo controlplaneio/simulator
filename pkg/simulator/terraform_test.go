@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"testing"
 
+	"fmt"
 	"io/ioutil"
 	"os"
 )
@@ -37,6 +38,7 @@ func Test_PrepareTfArgs(t *testing.T) {
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
 
 	for _, tt := range tfCommandArgumentsTests {
+		fmt.Println("helooooooooooooooooooooooo")
 		t.Run("Test arguments for "+tt.prepArgs[0], func(t *testing.T) {
 			assert.Equal(t, simulator.PrepareTfArgs(tt.prepArgs[0]), tt.arguments)
 		})
@@ -72,7 +74,7 @@ func Test_Create(t *testing.T) {
 		sim.WithBucketName("test"),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")),
 		sim.WithTmpDir(tmpDir))
-
+	fmt.Println("doing create stufffss")
 	err := simulator.Create()
 	assert.Nil(t, err)
 }

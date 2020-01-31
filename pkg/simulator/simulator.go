@@ -82,7 +82,7 @@ func WithTfDir(tfDir string) Option {
 // `NewSimulator`
 func WithTmpDir(tmpDir string) Option {
 	return func(s *Simulator) {
-		s.TfDir = tmpDir
+		s.TmpDir = tmpDir
 	}
 }
 
