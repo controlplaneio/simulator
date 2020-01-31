@@ -157,7 +157,13 @@ USER ${build_user}
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
 
 # Add the full source tree
-COPY --chown=1000 .  /go/src/github.com/controlplaneio/simulator-standalone/
+COPY --chown=1000 Makefile /go/src/github.com/controlplaneio/simulator-standalone/
+COPY --chown=1000 prelude.mk /go/src/github.com/controlplaneio/simulator-standalone/
+COPY --chown=1000 main.go /go/src/github.com/controlplaneio/simulator-standalone/
+COPY --chown=1000 pkg/  /go/src/github.com/controlplaneio/simulator-standalone/pkg
+COPY --chown=1000 cmd/  /go/src/github.com/controlplaneio/simulator-standalone/cmd
+COPY --chown=1000 test/  /go/src/github.com/controlplaneio/simulator-standalone/test
+
 WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
 
 # TODO: (rem) why is this owned by root after the earlier chmod?
@@ -205,7 +211,7 @@ RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
 ENV PATH $PATH:/usr/local/go/bin
 
 # Add login message
-COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/scripts/launch-motd /usr/local/bin/launch-motd
+COPY ./scripts/launch-motd /usr/local/bin/launch-motd
 RUN echo '[ ! -z "$TERM" ] && source /usr/local/bin/launch-motd' >> /etc/bash.bashrc
 
 # Use 3rd party dependencies from build
