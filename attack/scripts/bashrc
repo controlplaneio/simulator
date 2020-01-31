@@ -236,7 +236,15 @@ welcome() {
     envsubst </challenge.txt
   fi
   info ' '
-  info 'To start the first task:'
+  info 'There is a rudimentary beta scoring mechanism. You will be scored based'
+  info 'on how many hints you have seen but it currently does not validate that'
+  info 'you correctly completed the task. This is in the works :)'
+  info ' '
+  info 'To start the first task, when you start a task you will only have one'
+  info 'opportunity to be scored on the task, once it is ended or if you switch'
+  info 'you will either be scored or marked as skipping scoring, you can still'
+  info 'return to the task but scoring will be fixed to the result of your first'
+  info 'attempt:'
   info ' '
   info "  \$ start_task 1"
   info ' '
@@ -253,9 +261,6 @@ welcome() {
   info ' '
   info "  \$ end_task"
   info ' '
-  info ' Ending or switching tasks will trigger a rudimentary beta scoring mechanism.'
-  info ' You will be scored based on how many hints you have seen but it currently'
-  info ' does not validate that you correctly completed the task.  This is in the works :)'
   info ' '
   info "SSH to master(s), node(s), and an internal node with network access to the cluster:"
   info ' '
