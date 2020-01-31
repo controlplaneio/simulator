@@ -6,6 +6,27 @@ const { prompt } = require('inquirer')
 
 const logger = createLogger({})
 
+async function askToBeScored () {
+  return prompt({
+    type: 'expand',
+    name: 'answer',
+    choices: [{
+      key: 'y',
+      name: 'Yes',
+      value: 'yes'
+    }, {
+      key: 'n',
+      name: 'No',
+      value: 'no'
+    }, {
+      key: 'c',
+      name: 'Cancel',
+      value: 'cancel'
+
+    }]
+  })
+}
+
 async function startTask (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const { tasks } = loadYamlFile(taskspath)
@@ -52,26 +73,7 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
 
   // user must have started a task and hasn't yet been scored or skipped scoring
   logger.info(`Would you like to be scored for task ${currentTask}? (If you choose no you cannot be scored on this task in the future)`)
-  const { answer } = await prompt({
-    type: 'expand',
-    messsage: `Would you like to be scored for task ${currentTask}? (If you choose no you cannot be scored on this task in the future)`,
-    name: 'answer',
-    choices: [{
-      key: 'y',
-      name: 'Yes',
-      value: 'yes'
-    }, {
-      key: 'n',
-      name: 'No',
-      value: 'no'
-    }, {
-      key: 'c',
-      name: 'Cancel',
-      value: 'cancel'
-
-    }]
-  })
-
+  const { answer } = await askToBeScored()
   if (answer === undefined) {
     // should never happen
     throw new Error(
