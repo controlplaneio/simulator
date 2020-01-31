@@ -6,7 +6,8 @@ const { prompt } = require('inquirer')
 
 const logger = createLogger({})
 
-async function askToBeScored () {
+async function askToBeScored (currentTask) {
+  logger.info(`Would you like to be scored for task ${currentTask}? (If you choose no you cannot be scored on this task in the future)`)
   return prompt({
     type: 'expand',
     name: 'answer',
@@ -25,6 +26,19 @@ async function askToBeScored () {
 
     }]
   })
+}
+
+function updateProgressWithNewTask (progress, newTask) {
+  progress.current_task = newTask
+
+  if (progress[newTask] === undefined) {
+    progress[newTask] = {
+      lastHintIndex: undefined,
+      score: undefined
+    }
+  }
+
+  return progress
 }
 
 async function startTask (newTask, taskspath = TASKS_FILE_PATH,
@@ -46,8 +60,7 @@ async function startTask (newTask, taskspath = TASKS_FILE_PATH,
 
   // User hasnt started a task yet
   if (currentTask === undefined) {
-    progress.current_task = newTask
-    progress[newTask] = {}
+    updateProgressWithNewTask(progress, newTask)
     saveProgress(progress, progresspath)
     log.info(`You are now on task ${newTask}`)
 
@@ -62,8 +75,7 @@ async function startTask (newTask, taskspath = TASKS_FILE_PATH,
   // user has started a task and previously either asked not to be scored or
   // was already scored
   if (newTask !== undefined && progress[currentTask].score !== undefined) {
-    progress.current_task = newTask
-    if (progress[newTask] === undefined) { progress[newTask] = {} }
+    updateProgressWithNewTask(progress, newTask)
 
     saveProgress(progress, progresspath)
     log.info(`You are now on task ${newTask}`)
@@ -72,10 +84,8 @@ async function startTask (newTask, taskspath = TASKS_FILE_PATH,
   }
 
   // user must have started a task and hasn't yet been scored or skipped scoring
-  logger.info(`Would you like to be scored for task ${currentTask}? (If you choose no you cannot be scored on this task in the future)`)
-  const { answer } = await askToBeScored()
+  const { answer } = await askToBeScored(currentTask)
   if (answer === undefined) {
-    // should never happen
     throw new Error(
       'No changes made - expected an answer from the scoring prompt')
   }
@@ -93,14 +103,12 @@ async function startTask (newTask, taskspath = TASKS_FILE_PATH,
     log.info(`You chose not to be scored on ${currentTask}`)
     progress[currentTask].score = 'skip'
   } else {
-    // should never happen
     throw new Error(
       `No changes made - unrecognised answer from scoring prompt: ${answer}`)
   }
 
   if (newTask !== undefined) {
-    progress.current_task = newTask
-    if (progress[newTask] === undefined) { progress[newTask] = {} }
+    updateProgressWithNewTask(progress, newTask)
     saveProgress(progress, progresspath)
     log.info(`You are now on task ${newTask}`)
   } else {
