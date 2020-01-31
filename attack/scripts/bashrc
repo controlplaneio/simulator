@@ -249,6 +249,14 @@ welcome() {
   info "  \$ next_hint"
   info "  \$ show_hints"
   info ' '
+  info 'To end a task, you can start a new task or:'
+  info ' '
+  info "  \$ end_task"
+  info ' '
+  info ' Ending or switching tasks will trigger a rudimentary beta scoring mechanism.'
+  info ' You will be scored based on how many hints you have seen but it currently'
+  info ' does not validate that you correctly completed the task.  This is in the works :)'
+  info ' '
   info "SSH to master(s), node(s), and an internal node with network access to the cluster:"
   info ' '
   info "  \$ ssh_master 0"
