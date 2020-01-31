@@ -10,13 +10,18 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const { tasks } = loadYamlFile(taskspath)
 
-  if (!tasks[task]) {
+  if (task !== undefined && !tasks[task]) {
     log.warn('Cannot find task')
     return false
   }
 
   const progress = getProgress(progresspath)
   const currentTask = progress.current_task
+
+  if (task === undefined && currentTask === undefined) {
+    log.warn('Cannot end task - you have not started one')
+    return false
+  }
 
   // User hasnt started a task yet
   if (currentTask === undefined) {
@@ -30,7 +35,7 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
 
   // user has started a task and previously either asked not to be scored or
   // was already scored
-  if (progress[currentTask].score !== undefined) {
+  if (task !== undefined && progress[currentTask].score !== undefined) {
     progress.current_task = task
     if (progress[task] === undefined) { progress[task] = {} }
 
@@ -86,10 +91,16 @@ async function startTask (task, taskspath = TASKS_FILE_PATH,
       `No changes made - unrecognised answer from scoring prompt: ${answer}`)
   }
 
-  progress.current_task = task
-  if (progress[task] === undefined) { progress[task] = {} }
-  saveProgress(progress, progresspath)
-  log.info(`You are now on task ${task}`)
+  if (task !== undefined) {
+    progress.current_task = task
+    if (progress[task] === undefined) { progress[task] = {} }
+    saveProgress(progress, progresspath)
+    log.info(`You are now on task ${task}`)
+  } else {
+    delete progress.current_task
+    saveProgress(progress, progresspath)
+    log.info(`You have ended task ${currentTask}`)
+  }
 
   return true
 }

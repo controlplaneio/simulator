@@ -5,6 +5,7 @@
   "main": "index.js",
   "bin": {
     "start_task": "bin/start_task.js",
+    "end_task": "bin/start_task.js",
     "next_hint": "bin/next_hint.js",
     "show_hints": "bin/show_hints.js",
     "scenario": "bin/scenario.js"

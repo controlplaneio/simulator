@@ -13,7 +13,7 @@ const args = cloneArray(process.argv)
 args.shift() // remove `node` from argv
 args.shift() // remove `scenario.js` from argv
 
-if (args.length !== 1) {
+if (process.argv0 === 'start_task' && args.length !== 1) {
   logger.error('Please provide the task you wish to start. These are listed in the instructions')
   process.exit(1)
 }
