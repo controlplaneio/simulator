@@ -37,7 +37,7 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
     return logger.info(`You have not seen any hints for ${task}`)
   }
 
-  const lastSeenHintIndex = progress[task]
+  const lastSeenHintIndex = progress[task].lastHintIndex
   const hintcount = tasks[task].hints.length
 
   for (let i = 0; i <= lastSeenHintIndex && i < hintcount; i++) {
