@@ -69,6 +69,8 @@ function processResponse (answer, progress, tasks, log = logger) {
   return progress
 }
 
+// This is the entrypoint for both `start_task` and `end_task` if no `newTask`
+// argument was supplied we assume this was invoked as `end_task`
 async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const { tasks } = loadYamlFile(taskspath)
@@ -79,21 +81,38 @@ async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   }
 
   const progress = getProgress(progresspath)
+  let newProgress
 
-  const newProgress = await startTask(newTask, tasks, progress, log, askToBeScored)
+  if (newTask !== undefined) {
+    newProgress = await startTask(newTask, tasks, progress, log, askToBeScored)
+  } else {
+    newProgress = await endTask(tasks, progress, log, askToBeScored)
+  }
 
   if (newProgress !== false) {
     saveProgress(newProgress, progresspath)
   }
 }
 
-async function startTask (newTask, tasks, progress, log, prompter) {
+async function endTask (tasks, progress, log, prompter) {
   const currentTask = progress.current_task
 
-  if (newTask === undefined && currentTask === undefined) {
+  if (currentTask === undefined) {
     log.warn('Cannot end task - you have not started one')
     return false
   }
+
+  const { answer } = await prompter(currentTask)
+  const newProgress = processResponse(answer, progress, tasks, log)
+  if (newProgress === false) return false
+
+  progress.current_task = undefined
+  log.info(`You have ended task ${currentTask}`)
+  return progress
+}
+
+async function startTask (newTask, tasks, progress, log, prompter) {
+  const currentTask = progress.current_task
 
   // User is trying to switch to the task they are already on
   if (newTask === currentTask) {
@@ -109,13 +128,13 @@ async function startTask (newTask, tasks, progress, log, prompter) {
 
   // user has started a task and previously either asked not to be scored or
   // was already scored
-  if (newTask !== undefined && progress[currentTask].score !== undefined) {
+  if (progress[currentTask].score !== undefined) {
     log.info(`You are now on task ${newTask}`)
     return updateProgressWithNewTask(progress, newTask)
   }
 
   // user must have started a task and hasn't yet been scored or skipped scoring
-  const { answer } = await askToBeScored(currentTask)
+  const { answer } = await prompter(currentTask)
   const newProgress = processResponse(answer, progress, tasks, log)
   if (newProgress === false) return false
 
@@ -123,10 +142,6 @@ async function startTask (newTask, tasks, progress, log, prompter) {
     log.info(`You are now on task ${newTask}`)
     return updateProgressWithNewTask(newProgress, newTask)
   }
-
-  progress.current_task = undefined
-  log.info(`You have ended task ${currentTask}`)
-  return progress
 }
 
 function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
@@ -135,9 +150,10 @@ function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
 }
 
 module.exports = {
+  endTask,
   getCurrentTask,
   processTask,
-  startTask,
   processResponse,
+  startTask,
   updateProgressWithNewTask
 }

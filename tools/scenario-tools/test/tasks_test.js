@@ -1,6 +1,8 @@
 const { unlinkSync, readFileSync } = require('fs')
+const { spy, fake } = require('sinon')
 const test = require('ava')
 const {
+  endTask,
   getCurrentTask,
   processTask,
   processResponse,
@@ -145,4 +147,87 @@ test('processResponse sets score when answer is yes', t => {
   t.true(logger.info.called, 'should have logged a message')
   t.true(logger.info.calledWith('Your score for task 1 was 90'),
     'should have told the user their score')
+})
+
+test('endTask warns if the user has not started a task', async t => {
+  const progress = {
+    current_task: undefined
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const prompter = spy()
+
+  const result = await endTask(tasks, progress, logger, prompter)
+  t.false(result, 'should have returned false to indicate it did nothing')
+  t.true(logger.warn.called, 'should have warned the user')
+  t.true(logger.warn.calledWith('Cannot end task - you have not started one'))
+})
+
+test('endTask returns false if the user cancels', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const prompter = fake.returns({ answer: 'cancel' })
+
+  const result = await endTask(tasks, progress, logger, prompter)
+  t.false(result, 'should have returned false to indicate it did nothing')
+})
+
+test('endTask skips scoring and ends task when user says no to scoring', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const prompter = fake.returns({ answer: 'no' })
+
+  const result = await endTask(tasks, progress, logger, prompter)
+  t.deepEqual(result, {
+    current_task: undefined,
+    1: { lastHintIndex: 0, score: 'skip' }
+  }, 'should have changed task progress correctly')
+})
+
+test('endTask sets score and ends task when user says yes to scoring', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const prompter = fake.returns({ answer: 'yes' })
+
+  const result = await endTask(tasks, progress, logger, prompter)
+  t.deepEqual(result, {
+    current_task: undefined,
+    1: { lastHintIndex: 0, score: 90 }
+  }, 'should have changed task progress correctly')
 })
