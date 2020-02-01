@@ -11,6 +11,13 @@ const {
 } = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
 
+function fakeTasks () {
+  return {
+    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
+    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
+  }
+}
+
 test('processTask warns for invalid task and returns false', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
@@ -105,13 +112,7 @@ test('processResponse sets score to skip when answer is no', t => {
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const result = processResponse('no', progress, tasks, logger)
 
@@ -130,13 +131,7 @@ test('processResponse sets score when answer is yes', t => {
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const result = processResponse('yes', progress, tasks, logger)
 
@@ -154,13 +149,7 @@ test('endTask warns if the user has not started a task', async t => {
   const progress = {
     current_task: undefined
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
 
@@ -175,13 +164,7 @@ test('endTask returns false if the user cancels', async t => {
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'cancel' })
 
@@ -194,13 +177,7 @@ test('endTask skips scoring and ends task when user says no to scoring', async t
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'no' })
 
@@ -216,13 +193,7 @@ test('endTask sets score and ends task when user says yes to scoring', async t =
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'yes' })
 
@@ -238,13 +209,7 @@ test('startTask warns if user tries to start the same task', async t => {
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
 
@@ -257,13 +222,7 @@ test('startTask warns if user tries to start the same task', async t => {
 
 test('startTask initialises progress when user has no progress', async t => {
   const progress = { }
-  const tasks = {
-    1: {
-      hints: [
-        { test: 'hint 1', penalty: 10 }
-      ]
-    }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
 
@@ -283,10 +242,7 @@ test('startTask updates current_task and doesnt rescore if already scored', asyn
     current_task: 1,
     1: { lastHintIndex: 0, score: 90 }
   }
-  const tasks = {
-    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
-    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
 
@@ -307,10 +263,7 @@ test('startTask updates current_task and skips scoring if answer is no', async t
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
-    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'no' })
 
@@ -330,10 +283,7 @@ test('startTask updates current_task and scores if answer is yes', async t => {
     current_task: 1,
     1: { lastHintIndex: 0, score: undefined }
   }
-  const tasks = {
-    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
-    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
-  }
+  const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'yes' })
 
