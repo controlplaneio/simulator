@@ -6,6 +6,7 @@ const {
   getCurrentTask,
   processTask,
   processResponse,
+  startTask,
   updateProgressWithNewTask
 } = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
@@ -230,4 +231,119 @@ test('endTask sets score and ends task when user says yes to scoring', async t =
     current_task: undefined,
     1: { lastHintIndex: 0, score: 90 }
   }, 'should have changed task progress correctly')
+})
+
+test('startTask warns if user tries to start the same task', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const prompter = spy()
+
+  const result = await startTask(1, tasks, progress, logger, prompter)
+
+  t.false(result, 'should have returned false to indicate it did nothing')
+  t.true(logger.warn.called, 'should have warned the user')
+  t.true(logger.warn.calledWith('You are already on task 1'))
+})
+
+test('startTask initialises progress when user has no progress', async t => {
+  const progress = { }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const prompter = spy()
+
+  const result = await startTask(1, tasks, progress, logger, prompter)
+
+  t.truthy(result, 'should have returned progress')
+  t.true(logger.info.called, 'should have messaged the user')
+  t.true(logger.info.calledWith('You are now on task 1'))
+  t.deepEqual(result, {
+    current_task: 1,
+    1: { lastHintIndex: undefined, score: undefined }
+  }, 'should have initialised progress')
+})
+
+test('startTask updates current_task and doesnt rescore if already scored', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: 90 }
+  }
+  const tasks = {
+    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
+    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
+  }
+  const logger = createSpyingLogger()
+  const prompter = spy()
+
+  const result = await startTask(2, tasks, progress, logger, prompter)
+
+  t.false(prompter.called, 'should not have prompted to do scoring')
+  t.true(logger.info.called, 'should have messaged the user')
+  t.true(logger.info.calledWith('You are now on task 2'))
+  t.deepEqual(result, {
+    current_task: 2,
+    1: { lastHintIndex: 0, score: 90 },
+    2: { lastHintIndex: undefined, score: undefined }
+  }, 'should have only updated current task')
+})
+
+test('startTask updates current_task and skips scoring if answer is no', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
+    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
+  }
+  const logger = createSpyingLogger()
+  const prompter = fake.returns({ answer: 'no' })
+
+  const result = await startTask(2, tasks, progress, logger, prompter)
+
+  t.true(logger.info.called, 'should have messaged the user')
+  t.true(logger.info.calledWith('You are now on task 2'))
+  t.deepEqual(result, {
+    current_task: 2,
+    1: { lastHintIndex: 0, score: 'skip' },
+    2: { lastHintIndex: undefined, score: undefined }
+  }, 'should have only updated current task')
+})
+
+test('startTask updates current_task and scores if answer is yes', async t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: { hints: [{ test: 'hint 1', penalty: 10 }] },
+    2: { hints: [{ test: 'hint 1', penalty: 10 }] }
+  }
+  const logger = createSpyingLogger()
+  const prompter = fake.returns({ answer: 'yes' })
+
+  const result = await startTask(2, tasks, progress, logger, prompter)
+
+  t.true(logger.info.called, 'should have messaged the user')
+  t.true(logger.info.calledWith('You are now on task 2'))
+  t.deepEqual(result, {
+    current_task: 2,
+    1: { lastHintIndex: 0, score: 90 },
+    2: { lastHintIndex: undefined, score: undefined }
+  }, 'should have only updated current task')
 })

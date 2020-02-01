@@ -116,7 +116,7 @@ async function startTask (newTask, tasks, progress, log, prompter) {
 
   // User is trying to switch to the task they are already on
   if (newTask === currentTask) {
-    log.warn(`You are already on ${currentTask}`)
+    log.warn(`You are already on task ${currentTask}`)
     return false
   }
 
