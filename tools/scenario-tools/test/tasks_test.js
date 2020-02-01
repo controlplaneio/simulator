@@ -1,6 +1,6 @@
 const { unlinkSync, readFileSync } = require('fs')
 const test = require('ava')
-const { startTask, getCurrentTask } = require('../lib/tasks')
+const { updateProgressWithNewTask, startTask, getCurrentTask } = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
 
 test('startTask warns for invalid task and returns false', async t => {
@@ -42,4 +42,37 @@ test('getCurrentTask returns undefined when no current task', t => {
 
   const task = getCurrentTask(progresspath)
   t.is(undefined, task)
+})
+
+test('updateProgressWithNewTask sets current_task', t => {
+  const progress = {}
+
+  const result = updateProgressWithNewTask(progress, 1)
+
+  t.is(result.current_task, 1, 'should have set current_task')
+})
+
+test('updateProgressWithNewTask initialises task progress', t => {
+  const progress = {}
+
+  const result = updateProgressWithNewTask(progress, 1)
+
+  t.truthy(result[1], 'should have initialised an object for task progress')
+  t.true(Object.prototype.hasOwnProperty.call(result[1], 'lastHintIndex'),
+    'should have initialised a lastHintIndex property on task')
+  t.true(Object.prototype.hasOwnProperty.call(result[1], 'score'),
+    'should have initialised a score property on task')
+})
+
+test('updateProgressWithNewTask does not overwrite existing progress', t => {
+  const progress = {
+    current_task: 2,
+    1: { lastHintIndex: 1, score: 'skip' },
+    2: { lastHintIndex: undefined, score: undefined }
+  }
+
+  const result = updateProgressWithNewTask(progress, 1)
+
+  t.deepEqual(result[1], { lastHintIndex: 1, score: 'skip' },
+    'should not have changed existing task progress')
 })

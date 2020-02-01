@@ -127,5 +127,6 @@ function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
 
 module.exports = {
   startTask,
-  getCurrentTask
+  getCurrentTask,
+  updateProgressWithNewTask
 }
