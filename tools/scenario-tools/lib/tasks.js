@@ -41,50 +41,7 @@ function updateProgressWithNewTask (progress, newTask) {
   return progress
 }
 
-async function startTask (newTask, taskspath = TASKS_FILE_PATH,
-  progresspath = PROGRESS_FILE_PATH, log = logger) {
-  const { tasks } = loadYamlFile(taskspath)
-
-  if (newTask !== undefined && !tasks[newTask]) {
-    log.warn('Cannot find task')
-    return false
-  }
-
-  const progress = getProgress(progresspath)
-  const currentTask = progress.current_task
-
-  if (newTask === undefined && currentTask === undefined) {
-    log.warn('Cannot end task - you have not started one')
-    return false
-  }
-
-  // User hasnt started a task yet
-  if (currentTask === undefined) {
-    updateProgressWithNewTask(progress, newTask)
-    saveProgress(progress, progresspath)
-    log.info(`You are now on task ${newTask}`)
-
-    return true
-  }
-
-  if (newTask === currentTask) {
-    log.warn(`You are already on ${currentTask}`)
-    return false
-  }
-
-  // user has started a task and previously either asked not to be scored or
-  // was already scored
-  if (newTask !== undefined && progress[currentTask].score !== undefined) {
-    updateProgressWithNewTask(progress, newTask)
-
-    saveProgress(progress, progresspath)
-    log.info(`You are now on task ${newTask}`)
-
-    return true
-  }
-
-  // user must have started a task and hasn't yet been scored or skipped scoring
-  const { answer } = await askToBeScored(currentTask)
+function scoreTask (answer, progress, tasks, currentTask, log = logger) {
   if (answer === undefined) {
     throw new Error(
       'No changes made - expected an answer from the scoring prompt')
@@ -106,18 +63,65 @@ async function startTask (newTask, taskspath = TASKS_FILE_PATH,
     throw new Error(
       `No changes made - unrecognised answer from scoring prompt: ${answer}`)
   }
+}
 
-  if (newTask !== undefined) {
-    updateProgressWithNewTask(progress, newTask)
-    saveProgress(progress, progresspath)
-    log.info(`You are now on task ${newTask}`)
-  } else {
-    delete progress.current_task
-    saveProgress(progress, progresspath)
-    log.info(`You have ended task ${currentTask}`)
+async function startTask (newTask, taskspath = TASKS_FILE_PATH,
+  progresspath = PROGRESS_FILE_PATH, log = logger) {
+  const { tasks } = loadYamlFile(taskspath)
+
+  if (newTask !== undefined && !tasks[newTask]) {
+    log.warn('Cannot find task')
+    return false
   }
 
-  return true
+  const progress = getProgress(progresspath)
+
+  const newProgress = await processTask(newTask, tasks, progress, log, askToBeScored)
+
+  if (newProgress !== false) {
+    saveProgress(newProgress, progresspath)
+  }
+}
+
+async function processTask (newTask, tasks, progress, log, prompter) {
+  const currentTask = progress.current_task
+
+  if (newTask === undefined && currentTask === undefined) {
+    log.warn('Cannot end task - you have not started one')
+    return false
+  }
+
+  // User is trying to switch to the task they are already on
+  if (newTask === currentTask) {
+    log.warn(`You are already on ${currentTask}`)
+    return false
+  }
+
+  // User hasnt started a task yet
+  if (currentTask === undefined) {
+    log.info(`You are now on task ${newTask}`)
+    return updateProgressWithNewTask(progress, newTask)
+  }
+
+  // user has started a task and previously either asked not to be scored or
+  // was already scored
+  if (newTask !== undefined && progress[currentTask].score !== undefined) {
+    log.info(`You are now on task ${newTask}`)
+    return updateProgressWithNewTask(progress, newTask)
+  }
+
+  // user must have started a task and hasn't yet been scored or skipped scoring
+  const { answer } = await askToBeScored(currentTask)
+  scoreTask(answer, progress, tasks, currentTask, log)
+
+  if (newTask !== undefined) {
+    log.info(`You are now on task ${newTask}`)
+    return updateProgressWithNewTask(progress, newTask)
+  }
+
+  delete progress.current_task
+  log.info(`You have ended task ${currentTask}`)
+  return progress
 }
 
 function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
