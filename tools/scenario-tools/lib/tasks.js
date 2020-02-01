@@ -69,7 +69,7 @@ function processResponse (answer, progress, tasks, log = logger) {
   return progress
 }
 
-async function startTask (newTask, taskspath = TASKS_FILE_PATH,
+async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const { tasks } = loadYamlFile(taskspath)
 
@@ -80,14 +80,14 @@ async function startTask (newTask, taskspath = TASKS_FILE_PATH,
 
   const progress = getProgress(progresspath)
 
-  const newProgress = await processTask(newTask, tasks, progress, log, askToBeScored)
+  const newProgress = await startTask(newTask, tasks, progress, log, askToBeScored)
 
   if (newProgress !== false) {
     saveProgress(newProgress, progresspath)
   }
 }
 
-async function processTask (newTask, tasks, progress, log, prompter) {
+async function startTask (newTask, tasks, progress, log, prompter) {
   const currentTask = progress.current_task
 
   if (newTask === undefined && currentTask === undefined) {

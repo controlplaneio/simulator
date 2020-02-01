@@ -2,24 +2,24 @@ const { unlinkSync, readFileSync } = require('fs')
 const test = require('ava')
 const {
   getCurrentTask,
-  startTask,
+  processTask,
   processResponse,
   updateProgressWithNewTask
 } = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
 
-test('startTask warns for invalid task and returns false', async t => {
+test('processTask warns for invalid task and returns false', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
   const logger = createSpyingLogger()
 
-  const result = await startTask('Invalid', taskspath, progresspath, logger)
+  const result = await processTask('Invalid', taskspath, progresspath, logger)
 
   t.false(result, 'should have returned false')
   t.true(logger.warn.called, 'should have logged a warning')
 })
 
-test('startTask writes current_task to progress', async t => {
+test('processTask writes current_task to progress', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
   const logger = createSpyingLogger()
@@ -27,7 +27,7 @@ test('startTask writes current_task to progress', async t => {
   // Delete any testoutput from previous runs
   try { unlinkSync(progresspath) } catch {}
 
-  await startTask('Task 1', taskspath, progresspath, logger)
+  await processTask('Task 1', taskspath, progresspath, logger)
   const progress = readFileSync(progresspath, 'utf-8')
 
   t.deepEqual('{"current_task":"Task 1","Task 1":{}}', progress, 'should have written progress')

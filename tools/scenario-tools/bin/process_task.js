@@ -2,7 +2,7 @@
 
 const { createLogger } = require('../lib/logger')
 const { cloneArray } = require('../lib/helpers')
-const { startTask } = require('../lib/tasks.js')
+const { processTask } = require('../lib/tasks.js')
 
 const logger = createLogger({})
 
@@ -20,7 +20,7 @@ if (process.argv0 === 'start_task' && args.length !== 1) {
 
 // ignore the result - it will be true/false depending on whether the user
 // actually switched task
-startTask(args[0]).then(_ => {
+processTask(args[0]).then(_ => {
   process.exit(0)
 }, reason => {
   logger.error(reason.message)
