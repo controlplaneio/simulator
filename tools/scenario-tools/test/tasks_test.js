@@ -18,6 +18,13 @@ function fakeTasks () {
   }
 }
 
+function onTask1 (score) {
+  return {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: score }
+  }
+}
+
 test('processTask warns for invalid task and returns false', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
@@ -98,20 +105,14 @@ test('processResponse throws when answer is not defined', t => {
 })
 
 test('processResponse returns false when answer is cancel', t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const result = processResponse('cancel', progress)
 
   t.false(result, 'should have returned false')
 })
 
 test('processResponse sets score to skip when answer is no', t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1(undefined)
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const result = processResponse('no', progress, tasks, logger)
@@ -127,10 +128,7 @@ test('processResponse sets score to skip when answer is no', t => {
 })
 
 test('processResponse sets score when answer is yes', t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const result = processResponse('yes', progress, tasks, logger)
@@ -160,10 +158,7 @@ test('endTask warns if the user has not started a task', async t => {
 })
 
 test('endTask returns false if the user cancels', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'cancel' })
@@ -173,10 +168,7 @@ test('endTask returns false if the user cancels', async t => {
 })
 
 test('endTask skips scoring and ends task when user says no to scoring', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'no' })
@@ -189,10 +181,7 @@ test('endTask skips scoring and ends task when user says no to scoring', async t
 })
 
 test('endTask sets score and ends task when user says yes to scoring', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'yes' })
@@ -205,10 +194,7 @@ test('endTask sets score and ends task when user says yes to scoring', async t =
 })
 
 test('startTask warns if user tries to start the same task', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
@@ -238,10 +224,7 @@ test('startTask initialises progress when user has no progress', async t => {
 })
 
 test('startTask updates current_task and doesnt rescore if already scored', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: 90 }
-  }
+  const progress = onTask1(90)
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
@@ -259,10 +242,7 @@ test('startTask updates current_task and doesnt rescore if already scored', asyn
 })
 
 test('startTask updates current_task and skips scoring if answer is no', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'no' })
@@ -279,10 +259,7 @@ test('startTask updates current_task and skips scoring if answer is no', async t
 })
 
 test('startTask updates current_task and scores if answer is yes', async t => {
-  const progress = {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: undefined }
-  }
+  const progress = onTask1()
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = fake.returns({ answer: 'yes' })
