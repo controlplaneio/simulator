@@ -1,6 +1,11 @@
 const { unlinkSync, readFileSync } = require('fs')
 const test = require('ava')
-const { updateProgressWithNewTask, startTask, getCurrentTask } = require('../lib/tasks')
+const {
+  getCurrentTask,
+  startTask,
+  processResponse,
+  updateProgressWithNewTask
+} = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
 
 test('startTask warns for invalid task and returns false', async t => {
@@ -22,10 +27,9 @@ test('startTask writes current_task to progress', async t => {
   // Delete any testoutput from previous runs
   try { unlinkSync(progresspath) } catch {}
 
-  const result = await startTask('Task 1', taskspath, progresspath, logger)
+  await startTask('Task 1', taskspath, progresspath, logger)
   const progress = readFileSync(progresspath, 'utf-8')
 
-  t.true(result, 'should have returned true')
   t.deepEqual('{"current_task":"Task 1","Task 1":{}}', progress, 'should have written progress')
   t.true(logger.info.called, 'should have logged an inffo message')
 })
@@ -75,4 +79,70 @@ test('updateProgressWithNewTask does not overwrite existing progress', t => {
 
   t.deepEqual(result[1], { lastHintIndex: 1, score: 'skip' },
     'should not have changed existing task progress')
+})
+
+test('processResponse throws when answer is not defined', t => {
+  t.throws(() => processResponse(undefined), {
+    message: 'No changes made - expected an answer from the scoring prompt'
+  }, 'should have thrown an error')
+})
+
+test('processResponse returns false when answer is cancel', t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const result = processResponse('cancel', progress)
+
+  t.false(result, 'should have returned false')
+})
+
+test('processResponse sets score to skip when answer is no', t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const result = processResponse('no', progress, tasks, logger)
+
+  t.truthy(result, 'should have returned new progress')
+  t.deepEqual(result, {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: 'skip' }
+  }, 'should have set score to skip')
+  t.true(logger.info.called, 'should have logged a message')
+  t.true(logger.info.calledWith('You chose not to be scored on task 1'),
+    'should have told the user they chose not to be scored')
+})
+
+test('processResponse sets score when answer is yes', t => {
+  const progress = {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: undefined }
+  }
+  const tasks = {
+    1: {
+      hints: [
+        { test: 'hint 1', penalty: 10 }
+      ]
+    }
+  }
+  const logger = createSpyingLogger()
+  const result = processResponse('yes', progress, tasks, logger)
+
+  t.truthy(result, 'should have returned new progress')
+  t.deepEqual(result, {
+    current_task: 1,
+    1: { lastHintIndex: 0, score: 90 }
+  }, 'should have set score to skip')
+  t.true(logger.info.called, 'should have logged a message')
+  t.true(logger.info.calledWith('Your score for task 1 was 90'),
+    'should have told the user their score')
 })

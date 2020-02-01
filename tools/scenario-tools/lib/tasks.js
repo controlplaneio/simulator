@@ -41,11 +41,13 @@ function updateProgressWithNewTask (progress, newTask) {
   return progress
 }
 
-function scoreTask (answer, progress, tasks, currentTask, log = logger) {
+function processResponse (answer, progress, tasks, log = logger) {
   if (answer === undefined) {
     throw new Error(
       'No changes made - expected an answer from the scoring prompt')
   }
+
+  const currentTask = progress.current_task
 
   if (answer === 'cancel') {
     log.info(`You cancelled... leaving you on ${currentTask}`)
@@ -57,12 +59,14 @@ function scoreTask (answer, progress, tasks, currentTask, log = logger) {
     log.info(`Your score for task ${currentTask} was ${score}`)
     progress[currentTask].score = score
   } else if (answer === 'no') {
-    log.info(`You chose not to be scored on ${currentTask}`)
+    log.info(`You chose not to be scored on task ${currentTask}`)
     progress[currentTask].score = 'skip'
   } else {
     throw new Error(
       `No changes made - unrecognised answer from scoring prompt: ${answer}`)
   }
+
+  return progress
 }
 
 async function startTask (newTask, taskspath = TASKS_FILE_PATH,
@@ -112,14 +116,15 @@ async function processTask (newTask, tasks, progress, log, prompter) {
 
   // user must have started a task and hasn't yet been scored or skipped scoring
   const { answer } = await askToBeScored(currentTask)
-  scoreTask(answer, progress, tasks, currentTask, log)
+  const newProgress = processResponse(answer, progress, tasks, log)
+  if (newProgress === false) return false
 
   if (newTask !== undefined) {
     log.info(`You are now on task ${newTask}`)
-    return updateProgressWithNewTask(progress, newTask)
+    return updateProgressWithNewTask(newProgress, newTask)
   }
 
-  delete progress.current_task
+  progress.current_task = undefined
   log.info(`You have ended task ${currentTask}`)
   return progress
 }
@@ -130,7 +135,9 @@ function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
 }
 
 module.exports = {
-  startTask,
   getCurrentTask,
+  processTask,
+  startTask,
+  processResponse,
   updateProgressWithNewTask
 }
