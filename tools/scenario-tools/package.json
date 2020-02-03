@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "start_task": "bin/start_task.js",
+    "start_task": "bin/process_task.js",
+    "end_task": "bin/process_task.js",
     "next_hint": "bin/next_hint.js",
     "show_hints": "bin/show_hints.js",
     "scenario": "bin/scenario.js"
@@ -34,6 +35,7 @@
     "command-line-arguments": "^1.1.1",
     "command-line-commands": "^3.0.1",
     "command-line-usage": "^6.1.0",
+    "inquirer": "^7.0.4",
     "js-yaml": "^3.13.1",
     "logform": "^2.1.2",
     "triple-beam": "^1.3.0",

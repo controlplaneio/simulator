@@ -4,6 +4,8 @@ GITHUB_ORG := controlplaneio
 DOCKER_HUB_ORG := controlplane
 VERSION := 0.1-dev
 
+LOCAL_DEV_SIMULATION := $(abspath ../simulation-scripts/scenario/etcd-inverted-wedge)
+
 include ../prelude.mk
 
 .DEFAULT_GOAL := help
@@ -15,9 +17,10 @@ all: test
 
 .PHONY: docker-run
 docker-run: docker-test ## Runs the attack container
-	docker run                                  \
-		-h attack                                 \
-		--rm --init -it $(CONTAINER_NAME_LATEST)  \
+	docker run \
+		-h attack \
+		-v $(LOCAL_DEV_SIMULATION)/tasks.yaml:/tasks.yaml \
+		--rm --init -it $(CONTAINER_NAME_LATEST) \
 		bash
 
 .PHONY: docker-build
@@ -26,7 +29,7 @@ docker-build: ## Builds the attack container
 
 .PHONY: docker-test
 docker-test: docker-build ## Run the attack container tests
-	@docker run                        \
+	@docker run \
 		--rm -t $(CONTAINER_NAME_LATEST) \
 		goss validate
 

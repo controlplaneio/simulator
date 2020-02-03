@@ -21,6 +21,7 @@ function showHint (task, index, taskspath = TASKS_FILE_PATH, log = logger) {
   const hint = tasks[task].hints[index]
 
   log.info(hint.text)
+  log.info(`This hint incurred a penalty of ${hint.penalty} to your score`)
 }
 
 function showHints (task, taskspath = TASKS_FILE_PATH,
@@ -36,7 +37,7 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
     return logger.info(`You have not seen any hints for ${task}`)
   }
 
-  const lastSeenHintIndex = progress[task]
+  const lastSeenHintIndex = progress[task].lastHintIndex
   const hintcount = tasks[task].hints.length
 
   for (let i = 0; i <= lastSeenHintIndex && i < hintcount; i++) {
@@ -58,15 +59,21 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
   let hintIndex
 
   if (progress[task] === undefined) {
-    hintIndex = progress[task] = 0
-  } else {
-    const { tasks } = loadYamlFile(taskspath)
-
-    hintIndex = progress[task] = ++progress[task]
-    if (hintIndex >= tasks[task].hints.length) {
-      return logger.info('You have seen all the hints for this task')
-    }
+    progress[task] = {}
   }
+
+  if (progress[task].lastHintIndex === undefined) {
+    hintIndex = progress[task].lastHintIndex = 0
+  } else {
+    hintIndex = progress[task].lastHintIndex = progress[task].lastHintIndex + 1
+  }
+
+  const { tasks } = loadYamlFile(taskspath)
+
+  if (hintIndex >= tasks[task].hints.length) {
+    return logger.info('You have seen all the hints for this task')
+  }
+
   saveProgress(progress, progresspath)
 
   showHint(task, hintIndex, taskspath, log)
