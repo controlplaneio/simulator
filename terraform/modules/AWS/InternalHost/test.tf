@@ -1,14 +1,15 @@
 resource "null_resource" "internal_host_test" {
-
   connection {
-    bastion_host        = "${var.bastion_public_ip}"
-    bastion_private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
-    host                = "${aws_instance.simulator_internal_host.private_ip}"
+    bastion_host        = var.bastion_public_ip
+    bastion_private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    host                = aws_instance.simulator_internal_host.private_ip
     type                = "ssh"
     user                = "root"
+
     // disable ssh-agent support
     agent       = "false"
-    private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
+    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+
     // Increase the timeout so the server has time to reboot
     timeout = "10m"
   }
@@ -31,3 +32,4 @@ resource "null_resource" "internal_host_test" {
     ]
   }
 }
+

@@ -1,4 +1,5 @@
-resource "random_uuid" "s3_iam_role_uuid" {}
+resource "random_uuid" "s3_iam_role_uuid" {
+}
 
 // Create S3 bucket
 
@@ -7,7 +8,12 @@ resource "aws_s3_bucket" "k8sjoin" {
   acl           = "private"
   force_destroy = true
 
-  tags = "${merge(var.default_tags, map("Name", "Simulator Kubernetes S3 Bucket"))}"
+  tags = merge(
+    var.default_tags,
+    {
+      "Name" = "Simulator Kubernetes S3 Bucket"
+    },
+  )
 }
 
 // Create IAM role, policy and instance profile
@@ -31,13 +37,19 @@ resource "aws_iam_role" "simulator_s3_access_role" {
   ]
 }
 EOF
-  tags               = "${merge(var.default_tags, map("Name", "Simulator S3 Bucket Role"))}"
-}
 
+
+  tags = merge(
+    var.default_tags,
+    {
+      "Name" = "Simulator S3 Bucket Role"
+    },
+  )
+}
 
 resource "aws_iam_role_policy" "simulator_s3_access_policy" {
   name = "simulator-s3-host-policy-${random_uuid.s3_iam_role_uuid.result}"
-  role = "${aws_iam_role.simulator_s3_access_role.id}"
+  role = aws_iam_role.simulator_s3_access_role.id
 
   policy = <<EOF
 {
@@ -60,11 +72,11 @@ resource "aws_iam_role_policy" "simulator_s3_access_policy" {
   ]
 }
 EOF
+
 }
 
 resource "aws_iam_instance_profile" "simulator_instance_profile" {
   name = "simulator-instance-profile-${random_uuid.s3_iam_role_uuid.result}"
-  role = "${aws_iam_role.simulator_s3_access_role.name}"
+  role = aws_iam_role.simulator_s3_access_role.name
 }
-
 
