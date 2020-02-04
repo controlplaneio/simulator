@@ -14,8 +14,11 @@ type Simulator struct {
 	// BucketName is the remote state bucket to use for terraform
 	BucketName string
 	// AttackTag is the docker tag for the attack container that terraform will use
-	// when creating the infrastructure
+	// when creating the infrastructure: e.g. latest
 	AttackTag string
+	// AttackRepo is the docker repo for the attack container that terraform will use
+	// when creating the infrastructure: e.g. controlplane/simulator-attack
+	AttackRepo string
 	// scenarioID is the unique identifier of the scenario used for the launch function
 	ScenarioID string
 	// TfVarsDir is the location to store the terraform variables file that are detected
@@ -53,6 +56,14 @@ func WithLogger(logger *zap.SugaredLogger) Option {
 func WithAttackTag(attackTag string) Option {
 	return func(s *Simulator) {
 		s.AttackTag = attackTag
+	}
+}
+
+// WithAttackRepo returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithAttackRepo(attackRepo string) Option {
+	return func(s *Simulator) {
+		s.AttackRepo = attackRepo
 	}
 }
 

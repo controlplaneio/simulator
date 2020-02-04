@@ -78,7 +78,7 @@ func (s *Simulator) InitIfNeeded() error {
 	s.Logger.Debugf("Access CIDR: %s", accessCIDR)
 	s.Logger.Debugf("Remote State Bucket Name: %s", s.BucketName)
 	s.Logger.Debug("Writing terraform tfvars")
-	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag)
+	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}

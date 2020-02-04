@@ -1,7 +1,7 @@
 NAME := simulator
 CONTAINER_BASE_NAME := simulator-attack
 GITHUB_ORG := controlplaneio
-DOCKER_HUB_ORG := controlplane
+DOCKER_HUB_ORG ?= controlplane
 VERSION := 0.1-dev
 
 LOCAL_DEV_SIMULATION := $(abspath ../simulation-scripts/scenario/etcd-inverted-wedge)

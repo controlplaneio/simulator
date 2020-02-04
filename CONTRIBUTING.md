@@ -38,11 +38,21 @@ We welcome pull requests!
 
 - edit code in the `./attack` directory
 - commit changes on branch
-- From the root of the repo, `cd attack && CONTAINER_TAG=super-cool-feature make docker-push` to push the tagged attack container
+- From the root of the repo, `cd attack && DOCKER_HUB_ORG=<dockerhub-user> CONTAINER_TAG=super-cool-feature make docker-push` to push the tagged attack container
 - `cd .. && make run` to run the launch container
-- `simulator infra create --attack-container-tag=super-cool-feature`
+- `simulator infra create --attack-container-tag=super-cool-feature --attack-container-repo=<dockerhub-user>/simulator-attack`
 
-The tag is defined by a Terraform variable called "attack_container_tag". The variable is threaded through from the deployment to the bastion and is then templated into the cloud-config to pull the appropriate tag and launch that tag when the
-ubuntu user logs in (done by `simulator ssh attack`).
+### Implementation details
 
-The golang binary has a corresponding `--attack-container-tag` flag and configuration variable to control what this is set to. This is written to `tfvars` during initialisation so that it propagates all the way through.
+The tag and repo are defined by Terraform variables called
+"attack_container_tag" and "attack_container_repo". The variables are threaded
+through from the deployment to the bastion and then templated into the
+cloud-config to pull the appropriate tag from the appropriate repo and launch
+that tag when the `ubuntu` user logs in (done by `simulator ssh attack`).
+
+The Golang binary has corresponding `--attack-container-tag` and
+`--attack-container-repo` flags and configuration variables to control what
+these are set to. They are written to `tfvars` during initialisation so that
+they propagate all the way through.
+
+
