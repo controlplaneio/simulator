@@ -39,3 +39,11 @@ docker-push: docker-test ## pushes the last build docker image
 	docker push "${CONTAINER_NAME}"
 	#docker push "${CONTAINER_NAME_LATEST}"
 
+release: docker-build
+ifndef RELEASE_TAG
+	$(error RELEASE_TAG is undefined)
+endif
+	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator-attack:$(RELEASE_TAG)
+	docker push "${CONTAINER_NAME_LATEST}"
+	docker push $(DOCKER_HUB_ORG)/simulator-attack:$(RELEASE_TAG)
+
