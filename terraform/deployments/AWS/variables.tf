@@ -66,6 +66,11 @@ variable "attack_container_tag" {
   default     = "latest"
 }
 
+variable "attack_container_repo" {
+  description = "the docker repo of the attack container to use"
+  default     = "controlplane/simulator-attack"
+}
+
 variable "state_bucket_name" {
   description = "name of the s3 state bucket"
   default     = "not-defined"

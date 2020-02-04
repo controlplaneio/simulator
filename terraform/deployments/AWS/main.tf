@@ -36,6 +36,7 @@ module "Bastion" {
   node_ip_addresses        = "${join(",", "${module.Kubernetes.K8sNodesPrivateIp}")}"
   internal_host_private_ip = "${module.InternalHost.InternalHostPrivateIp}"
   attack_container_tag     = "${var.attack_container_tag}"
+  attack_container_repo    = "${var.attack_container_repo}"
   default_tags             = "${local.aws_tags}"
 }
 
