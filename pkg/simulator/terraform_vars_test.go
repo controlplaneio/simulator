@@ -14,10 +14,12 @@ import (
 
 func Test_TfVars_String(t *testing.T) {
 	t.Parallel()
-	tfv := simulator.NewTfVars("ssh-rsa", "10.0.0.1/16", "test-bucket", "latest")
+	tfv := simulator.NewTfVars("ssh-rsa", "10.0.0.1/16", "test-bucket",
+		"latest", "controlplane/simulator-attack")
 	expected := `access_key = "ssh-rsa"
 access_cidr = "10.0.0.1/16"
 attack_container_tag = "latest"
+attack_container_repo = "controlplane/simulator-attack"
 state_bucket_name = "test-bucket"
 `
 	assert.Equal(t, expected, tfv.String())
@@ -33,11 +35,13 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	err = ioutil.WriteFile(bastionVarsFile, []byte("any=content"), 0644)
 	require.NoError(t, err)
 
-	err = simulator.EnsureLatestTfVarsFile(workDir, "ssh-rsa", "10.0.0.1/16", "test-bucket", "latest")
+	err = simulator.EnsureLatestTfVarsFile(workDir, "ssh-rsa", "10.0.0.1/16",
+		"test-bucket", "latest", "controlplane/simulator-attack")
 	require.NoError(t, err)
 	expected := `access_key = "ssh-rsa"
 access_cidr = "10.0.0.1/16"
 attack_container_tag = "latest"
+attack_container_repo = "controlplane/simulator-attack"
 state_bucket_name = "test-bucket"
 `
 	assert.Equal(t, expected, util.MustSlurp(bastionVarsFile))

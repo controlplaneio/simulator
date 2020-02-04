@@ -59,6 +59,12 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentFlags().StringP("attack-container-repo", "a", "controlplane/simulator-attack",
+		"The attack container repo to pull pull from on the bastion")
+	if err := viper.BindPFlag("attack-container-repo", rootCmd.PersistentFlags().Lookup("attack-container-repo")); err != nil {
+		panic(err)
+	}
+
 	// TODO: (rem) this is also used to locate the perturb.sh script which may be
 	// subsumed by this app
 	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",

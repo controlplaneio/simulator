@@ -23,6 +23,7 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 			scenariosDir := viper.GetString("scenarios-dir")
 			attackTag := viper.GetString("attack-container-tag")
+			attackRepo := viper.GetString("attack-container-repo")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 
@@ -33,14 +34,15 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 				sim.WithTfDir(tfDir),
 				sim.WithScenariosDir(scenariosDir),
 				sim.WithAttackTag(attackTag),
+				sim.WithAttackRepo(attackRepo),
 				sim.WithBucketName(bucketName),
 				sim.WithTfVarsDir(tfVarsDir))
-			
+
 			err := simulator.Create()
 			if err != nil {
 				logger.Errorw("Error creating infrastructure", zap.Error(err))
 			}
-			
+
 			cfg, err := simulator.SSHConfig()
 			if err != nil {
 				return errors.Wrap(err, "Error getting SSH config")
@@ -80,7 +82,7 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
 				sim.WithTfVarsDir(tfVarsDir))
-			
+
 			tfo, err := simulator.Status()
 			if err != nil {
 				logger.Errorw("Error getting status of infrastructure", zap.Error(err))
