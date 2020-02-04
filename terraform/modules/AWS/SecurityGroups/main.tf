@@ -1,20 +1,21 @@
 // generate random uuid to append to all names of resources
 // to ensure unique
 
-resource "random_uuid" "unique" {}
+resource "random_uuid" "unique" {
+}
 
 // Public subnet (Bastion) security group
 // restricts ingress to identifier ip address, egress open
 
 resource "aws_security_group" "simulator_bastion_sg" {
   name   = "simulator-bastion-sg-${random_uuid.unique.result}"
-  vpc_id = "${var.vpc_id}"
+  vpc_id = var.vpc_id
 
   ingress {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = ["${var.access_cidr}"]
+    cidr_blocks = [var.access_cidr]
   }
 
   egress {
@@ -24,7 +25,12 @@ resource "aws_security_group" "simulator_bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(var.default_tags, map("Name", "Simulator Bastion Security Group"))}"
+  tags = merge(
+    var.default_tags,
+    {
+      "Name" = "Simulator Bastion Security Group"
+    },
+  )
 }
 
 // Private subnet security group
@@ -33,20 +39,20 @@ resource "aws_security_group" "simulator_bastion_sg" {
 
 resource "aws_security_group" "simulator_controlplane_sg" {
   name   = "simulator-controlplane-sg-${random_uuid.unique.result}"
-  vpc_id = "${var.vpc_id}"
+  vpc_id = var.vpc_id
 
   ingress {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = ["${var.public_subnet_cidr_block}"]
+    cidr_blocks = [var.public_subnet_cidr_block]
   }
 
   ingress {
     protocol    = -1
     from_port   = 0
     to_port     = 0
-    cidr_blocks = ["${var.private_subnet_cidr_block}"]
+    cidr_blocks = [var.private_subnet_cidr_block]
   }
 
   egress {
@@ -56,7 +62,11 @@ resource "aws_security_group" "simulator_controlplane_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = "${merge(var.default_tags, map("Name", "simulator Controlplane Security Group"))}"
+  tags = merge(
+    var.default_tags,
+    {
+      "Name" = "simulator Controlplane Security Group"
+    },
+  )
 }
-
 
