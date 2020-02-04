@@ -74,7 +74,7 @@ variable "state_bucket_name" {
 
 variable "default_tags" {
   description = "Default tags for all resources"
-  type        = "map"
+  type        = map(string)
   default = {
     Product = "simulator"
   }

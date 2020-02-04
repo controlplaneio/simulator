@@ -22,7 +22,7 @@ variable "private_subnet_id" {
 
 variable "default_tags" {
   description = "Default tags for all resources"
-  type        = "map"
+  type        = map(string)
 }
 
 variable "bastion_public_ip" {
@@ -32,6 +32,8 @@ variable "bastion_public_ip" {
 variable "iam_instance_profile_id" {
   description = "IAM instance S3 access profile id"
 }
+
 variable "s3_bucket_name" {
   description = "Name  of s3 bucket"
 }
+

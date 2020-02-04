@@ -30,7 +30,7 @@ variable "node_ip_addresses" {
 
 variable "default_tags" {
   description = "Default tags for all resources"
-  type        = "map"
+  type        = map(string)
 }
 
 variable "attack_container_tag" {
@@ -40,3 +40,4 @@ variable "attack_container_tag" {
 variable "internal_host_private_ip" {
   description = "The Internal Host Private IP address"
 }
+

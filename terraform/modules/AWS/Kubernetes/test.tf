@@ -1,15 +1,20 @@
 resource "null_resource" "master_test" {
-  count = "${var.number_of_master_instances}"
+  count = var.number_of_master_instances
 
   connection {
-    bastion_host        = "${var.bastion_public_ip}"
-    bastion_private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
-    host                = "${element(aws_instance.simulator_master_instances.*.private_ip, count.index)}"
-    type                = "ssh"
-    user                = "root"
+    bastion_host        = var.bastion_public_ip
+    bastion_private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    host = element(
+      aws_instance.simulator_master_instances.*.private_ip,
+      count.index,
+    )
+    type = "ssh"
+    user = "root"
+
     // disable ssh-agent support
     agent       = "false"
-    private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
+    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+
     // Increase the timeout so the server has time to reboot
     timeout = "10m"
   }
@@ -34,17 +39,22 @@ resource "null_resource" "master_test" {
 }
 
 resource "null_resource" "node_test" {
-  count = "${var.number_of_cluster_instances}"
+  count = var.number_of_cluster_instances
 
   connection {
-    bastion_host        = "${var.bastion_public_ip}"
-    bastion_private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
-    host                = "${element(aws_instance.simulator_node_instances.*.private_ip, count.index)}"
-    type                = "ssh"
-    user                = "root"
+    bastion_host        = var.bastion_public_ip
+    bastion_private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    host = element(
+      aws_instance.simulator_node_instances.*.private_ip,
+      count.index,
+    )
+    type = "ssh"
+    user = "root"
+
     // disable ssh-agent support
     agent       = "false"
-    private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
+    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+
     // Increase the timeout so the server has time to reboot
     timeout = "10m"
   }
@@ -67,3 +77,4 @@ resource "null_resource" "node_test" {
     ]
   }
 }
+

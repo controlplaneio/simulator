@@ -1,16 +1,19 @@
 resource "null_resource" "bastion_test" {
   triggers = {
-    attack_container_tag = "${var.attack_container_tag}"
+    attack_container_tag = var.attack_container_tag
   }
 
   // Ensure we can SSH as root for the goss tests and also for preturb.sh
+  // Ensure we can SSH as root for the goss tests and also for preturb.sh
   connection {
-    host = "${aws_instance.simulator_bastion.public_ip}"
+    host = aws_instance.simulator_bastion.public_ip
     type = "ssh"
     user = "root"
+
     // disable ssh-agent support
     agent       = "false"
-    private_key = "${file(pathexpand("~/.ssh/cp_simulator_rsa"))}"
+    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+
     // Increase the timeout so the server has time to reboot
     timeout = "10m"
   }
@@ -21,7 +24,7 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    content     = "${data.template_file.goss_template.rendered}"
+    content     = data.template_file.goss_template.rendered
     destination = "/root/goss.yaml"
   }
 
@@ -33,3 +36,4 @@ resource "null_resource" "bastion_test" {
     ]
   }
 }
+

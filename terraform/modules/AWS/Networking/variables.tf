@@ -15,6 +15,6 @@ variable "private_subnet_cidr" {
 
 variable "default_tags" {
   description = "Default tags for all resources"
-  type        = "map"
+  type        = map(string)
 }
 
