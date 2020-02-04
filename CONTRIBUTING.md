@@ -42,15 +42,15 @@ We welcome pull requests!
 - `cd .. && make run` to run the launch container
 - `simulator infra create --attack-container-tag=super-cool-feature --attack-container-repo=<dockerhub-user>/simulator-attack`
 
-### Implementation detailsj
+### Implementation details
 
 The tag and repo are defined by Terraform variables called
 "attack_container_tag" and "attack_container_repo". The variables are threaded
 through from the deployment to the bastion and then templated into the
 cloud-config to pull the appropriate tag from the appropriate repo and launch
-that tag when the ubuntu user logs in (done by `simulator ssh attack`).
+that tag when the `ubuntu` user logs in (done by `simulator ssh attack`).
 
-The golang binary has corresponding `--attack-container-tag` and
+The Golang binary has corresponding `--attack-container-tag` and
 `--attack-container-repo` flags and configuration variables to control what
 these are set to. They are written to `tfvars` during initialisation so that
 they propagate all the way through.
