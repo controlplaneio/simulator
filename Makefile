@@ -3,7 +3,7 @@ NAME := simulator
 # Note these are used for the golang module name which was created before the
 # migration from controlplane's github to the kubernetes-simulator org
 GITHUB_ORG := controlplaneio
-DOCKER_HUB_ORG := controlplane
+DOCKER_HUB_ORG ?= controlplane
 GO_MODULE_NAME := simulator-standalone
 
 # --- Boilerplate
