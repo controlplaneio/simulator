@@ -59,7 +59,7 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
-	rootCmd.PersistentFlags().StringP("attack-container-repo", "a", "controlplane/simulator-attack",
+	rootCmd.PersistentFlags().StringP("attack-container-repo", "r", "controlplane/simulator-attack",
 		"The attack container repo to pull pull from on the bastion")
 	if err := viper.BindPFlag("attack-container-repo", rootCmd.PersistentFlags().Lookup("attack-container-repo")); err != nil {
 		panic(err)

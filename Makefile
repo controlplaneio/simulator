@@ -121,7 +121,6 @@ dep: go.mod ## Install dependencies for other targets
 
 .PHONY: static-analysis
 static-analysis: dep
-	ls -al
 	golangci-lint run
 
 .PHONY: build
