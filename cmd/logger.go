@@ -1,58 +1,29 @@
 package cmd
 
 import (
-	"github.com/pkg/errors"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	"github.com/sirupsen/logrus"
+	"os"
 )
 
-func newLogger(logLevel string, zapEncoding string) (*zap.SugaredLogger, error) {
-	level := zap.NewAtomicLevelAt(zapcore.InfoLevel)
-	switch logLevel {
-	case "debug":
-		level = zap.NewAtomicLevelAt(zapcore.DebugLevel)
-	case "info":
-		level = zap.NewAtomicLevelAt(zapcore.InfoLevel)
-	case "warn":
-		level = zap.NewAtomicLevelAt(zapcore.WarnLevel)
-	case "error":
-		level = zap.NewAtomicLevelAt(zapcore.ErrorLevel)
-	case "fatal":
-		level = zap.NewAtomicLevelAt(zapcore.FatalLevel)
-	case "panic":
-		level = zap.NewAtomicLevelAt(zapcore.PanicLevel)
+func newLogger(level string) *logrus.Logger {
+	log := logrus.New()
+	log.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+	log.Out = os.Stdout
+
+	if level == "" {
+		level = "info"
 	}
 
-	zapEncoderConfig := zapcore.EncoderConfig{
-		TimeKey:        "timestamp",
-		LevelKey:       "severity",
-		NameKey:        "logger",
-		CallerKey:      "caller",
-		MessageKey:     "message",
-		StacktraceKey:  "stacktrace",
-		LineEnding:     zapcore.DefaultLineEnding,
-		EncodeLevel:    zapcore.CapitalColorLevelEncoder,
-		EncodeTime:     zapcore.ISO8601TimeEncoder,
-		EncodeDuration: zapcore.SecondsDurationEncoder,
-		EncodeCaller:   zapcore.ShortCallerEncoder,
-	}
-
-	zapConfig := zap.Config{
-		Level:       level,
-		Development: false,
-		Sampling: &zap.SamplingConfig{
-			Initial:    100,
-			Thereafter: 100,
-		},
-		Encoding:         zapEncoding,
-		EncoderConfig:    zapEncoderConfig,
-		OutputPaths:      []string{"stderr"},
-		ErrorOutputPaths: []string{"stderr"},
-	}
-
-	logger, err := zapConfig.Build()
+	parsedLevel, err := logrus.ParseLevel(level)
 	if err != nil {
-		return nil, errors.Wrap(err, "Error building logging config")
+		log.WithFields(logrus.Fields{
+			"Level": level,
+			"Error": err,
+		}).Error("Error parsing loglevel")
 	}
-	return logger.Sugar(), nil
+	log.SetLevel(parsedLevel)
+
+	return log
 }

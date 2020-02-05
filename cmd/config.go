@@ -1,12 +1,12 @@
 package cmd
 
 import (
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
-func newConfigGetCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newConfigGetCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `get <key>`,
 		Short: "Gets the value of a setting",
@@ -34,13 +34,7 @@ func newConfigCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	logger, err := newLogger(viper.GetString("loglevel"), "console")
-	if err != nil {
-		logger.Fatalf("can't re-initialize zap logger: %v", err)
-	}
-
-	defer logger.Sync() //nolint:errcheck
-
+	logger := newLogger(viper.GetString("loglevel"))
 	cmd.AddCommand(newConfigGetCommand(logger))
 
 	return cmd

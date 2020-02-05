@@ -2,16 +2,17 @@ package simulator_test
 
 import (
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 	"testing"
 
+	"io/ioutil"
 	"os"
 )
 
 var pwd, _ = os.Getwd()
 var testVarFileArg = "--var-file=" + pwd + "/" + fixture("noop-tf-dir") + "/settings/bastion.tfvars"
-var noopLogger = zap.NewNop().Sugar()
+var logger = logrus.New()
 
 var tfCommandArgumentsTests = []struct {
 	prepArgs  []string
@@ -25,10 +26,10 @@ var tfCommandArgumentsTests = []struct {
 }
 
 func Test_PrepareTfArgs(t *testing.T) {
-
 	pwd, _ := os.Getwd()
+	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(
-		sim.WithLogger(noopLogger),
+		sim.WithLogger(logger),
 		sim.WithBucketName("test-bucket"),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
 
@@ -41,8 +42,9 @@ func Test_PrepareTfArgs(t *testing.T) {
 
 func Test_Status(t *testing.T) {
 	pwd, _ := os.Getwd()
+	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(
-		sim.WithLogger(noopLogger),
+		sim.WithLogger(logger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
 		sim.WithScenariosDir("test"),
 		sim.WithAttackTag("latest"),
@@ -58,8 +60,9 @@ func Test_Status(t *testing.T) {
 func Test_Create(t *testing.T) {
 
 	pwd, _ := os.Getwd()
+	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(
-		sim.WithLogger(noopLogger),
+		sim.WithLogger(logger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
 		sim.WithScenariosDir("test"),
 		sim.WithAttackTag("latest"),
@@ -73,8 +76,9 @@ func Test_Create(t *testing.T) {
 func Test_Destroy(t *testing.T) {
 
 	pwd, _ := os.Getwd()
+	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(
-		sim.WithLogger(noopLogger),
+		sim.WithLogger(logger),
 		sim.WithTfDir(fixture("noop-tf-dir")),
 		sim.WithAttackTag("latest"),
 		sim.WithBucketName("test"),

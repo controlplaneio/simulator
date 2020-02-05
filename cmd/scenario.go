@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 	"strings"
 )
 
-func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `list`,
 		Short: "Lists available scenarios",
@@ -19,7 +19,9 @@ func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 			manifest, err := scenario.LoadManifest(manifestPath)
 
 			if err != nil {
-				logger.Errorw("Error loading scenario manifest", zap.Error(err))
+				logger.WithFields(logrus.Fields{
+					"Error": err,
+				}).Error("Error loading scenario manifest")
 				return err
 			}
 
@@ -38,7 +40,7 @@ func newScenarioListCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `launch <id>`,
 		Short: "Launches a scenario",
@@ -62,10 +64,16 @@ func newScenarioLaunchCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 			if err := simulator.Launch(); err != nil {
 				if strings.HasPrefix(err.Error(), "Scenario not found") {
-					logger.Warn(err.Error())
+					logger.WithFields(logrus.Fields{
+						"error":    err,
+						"scenario": args[0],
+					}).Warn("Scenario not found")
+
 					return nil
 				}
-				logger.Errorw("Error launching scenario", zap.Error(err))
+				logger.WithFields(logrus.Fields{
+					"error": err,
+				}).Error("Error launching scenario")
 			}
 
 			return nil
@@ -83,11 +91,7 @@ func newScenarioCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	logger, err := newLogger(viper.GetString("loglevel"), "console")
-	if err != nil {
-		logger.Fatalf("can't re-initialize zap logger: %v", err)
-	}
-	defer logger.Sync() //nolint:errcheck
+	logger := newLogger(viper.GetString("loglevel"))
 
 	cmd.AddCommand(newScenarioListCommand(logger))
 	cmd.AddCommand(newScenarioLaunchCommand(logger))

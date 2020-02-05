@@ -1,14 +1,14 @@
 package simulator
 
 import (
-	"go.uber.org/zap"
+	"github.com/sirupsen/logrus"
 )
 
 // Simulator represents a session with simulator and holds all the configuration
 // necessary to run simulator
 type Simulator struct {
 	// Logger is the logger the simulator will use
-	Logger *zap.SugaredLogger
+	Logger *logrus.Logger
 	// TfDir is the path to the terraform code used to standup the simulator cluster
 	TfDir string
 	// BucketName is the remote state bucket to use for terraform
@@ -45,7 +45,7 @@ func NewSimulator(options ...Option) *Simulator {
 
 // WithLogger returns a configurer for creating a `Simulator` instance with
 // `NewSimulator`
-func WithLogger(logger *zap.SugaredLogger) Option {
+func WithLogger(logger *logrus.Logger) Option {
 	return func(s *Simulator) {
 		s.Logger = logger
 	}

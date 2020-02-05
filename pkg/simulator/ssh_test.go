@@ -11,7 +11,7 @@ func Test_Config(t *testing.T) {
 	t.Skip("Need to mock out terraform output")
 	t.Parallel()
 	simulator := simulator.NewSimulator(
-		simulator.WithLogger(noopLogger),
+		simulator.WithLogger(logger),
 		simulator.WithTfDir(fixture("noop-tf-dir")),
 		simulator.WithScenariosDir(fixture("valid")),
 		simulator.WithAttackTag("Latest"),

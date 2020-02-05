@@ -4,12 +4,12 @@ import (
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
-func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newSSHConfigCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `config`,
 		Short: "Prints the stanzas to add to ssh config to connect to your cluster",
@@ -40,7 +40,7 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 			}
 
 			if !shouldwrite {
-				logger.Info(*cfg)
+				logger.Info(cfg)
 			}
 
 			err = ssh.EnsureSSHConfig(*cfg)
@@ -56,12 +56,12 @@ func newSSHConfigCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newSSHAttackCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newSSHAttackCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `attack`,
 		Short: "Connect to an attack container to complete the scenario",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			
+
 			bucketName := viper.GetString("state-bucket")
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
@@ -90,11 +90,7 @@ func newSSHCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	logger, err := newLogger(viper.GetString("loglevel"), "console")
-	if err != nil {
-		logger.Fatalf("can't re-initialize zap logger: %v", err)
-	}
-	defer logger.Sync() //nolint:errcheck
+	logger := newLogger(viper.GetString("loglevel"))
 
 	cmd.AddCommand(newSSHConfigCommand(logger))
 	cmd.AddCommand(newSSHAttackCommand(logger))

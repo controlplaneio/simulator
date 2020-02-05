@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 	"os"
 	"strings"
 )
 
-func saveBucketConfig(logger *zap.SugaredLogger, bucket string) {
+func saveBucketConfig(logger *logrus.Logger, bucket string) {
 	logger.Info("Saving state bucket name to config")
 	viper.Set("state-bucket", bucket)
 	if err := viper.WriteConfig(); err != nil {
-		// TODO(rem): better messaging for the user - this is a first step
-		// to fix the linting errors - the behaviour is better than before
-		// at least we print a stackdump now
-		panic(err)
+		logger.WithFields(logrus.Fields{
+			"Error":      err,
+			"BucketName": bucket,
+		}).Fatal("Unable to write config")
 	}
 }
 
@@ -30,12 +30,7 @@ func newInitCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucket := viper.GetString("state-bucket")
 
-			logger, err := newLogger(viper.GetString("loglevel"), "console")
-			if err != nil {
-				logger.Fatalf("Can't re-initialize zap logger: %v", err)
-			}
-
-			defer logger.Sync() //nolint:errcheck
+			logger := newLogger(viper.GetString("loglevel"))
 
 			if bucket == "" {
 				logger.Info("No state bucket name found in config or on commandline arguments")
@@ -50,10 +45,14 @@ func newInitCommand() *cobra.Command {
 
 				bucket = strings.TrimSpace(bucket)
 
-				logger.Infof("Creating s3 bucket %s for terraform remote state\n", bucket)
+				logger.WithFields(logrus.Fields{
+					"BucketName": bucket,
+				}).Info("Creating s3 bucket for terraform remote state")
 				if err = simulator.CreateRemoteStateBucket(logger, bucket); err != nil {
 					if strings.HasPrefix(errors.Cause(err).Error(), "BucketAlreadyOwnedByYou") {
-						logger.Infof("%s already exists and you own it", bucket)
+						logger.WithFields(logrus.Fields{
+							"BucketName": bucket,
+						}).Info("Bucket already exists and you own it")
 						saveBucketConfig(logger, bucket)
 						return nil
 					}
@@ -65,7 +64,9 @@ func newInitCommand() *cobra.Command {
 				return nil
 			}
 
-			logger.Warnf("Simulator is already configured to use an S3 bucket named %s", bucket)
+			logger.WithFields(logrus.Fields{
+				"BucketName": bucket,
+			}).Warn("Simulator is already configured to use an S3 bucket")
 			logger.Warn("Please remove the state-bucket from simulator.yaml to create another")
 			return nil
 		},

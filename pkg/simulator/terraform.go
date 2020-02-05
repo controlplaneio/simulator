@@ -6,6 +6,7 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // PrepareTfArgs takes a string with the terraform command desired and returns
@@ -72,12 +73,13 @@ func (s *Simulator) InitIfNeeded() error {
 		return errors.Wrap(err, "Error reading public key")
 	}
 
-	s.Logger.Debugf("terraform Directory: %s", s.TfDir)
-	s.Logger.Debugf("terraform vars Directory: %s", s.TfVarsDir)
-	s.Logger.Debugf("Public Key:\n%s", publickey)
-	s.Logger.Debugf("Access CIDR: %s", accessCIDR)
-	s.Logger.Debugf("Remote State Bucket Name: %s", s.BucketName)
-	s.Logger.Debug("Writing terraform tfvars")
+	s.Logger.WithFields(logrus.Fields{
+		"TfDir":      s.TfDir,
+		"TfVarsDir":  s.TfVarsDir,
+		"PublicKey":  publickey,
+		"AccessCIDR": accessCIDR,
+		"BucketName": s.BucketName,
+	}).Debug("Writing Terraform tfvars file")
 	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
