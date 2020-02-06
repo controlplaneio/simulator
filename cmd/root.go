@@ -5,9 +5,9 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
 var cfgFile string
@@ -20,7 +20,7 @@ debugging Kubernetes
 `,
 }
 
-var logger *zap.SugaredLogger //nolint:deadcode,unused
+var logger *logrus.Logger //nolint:deadcode,unused
 
 func newCmdRoot() *cobra.Command {
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config-file", "c", "", "Path to the simulator config file")

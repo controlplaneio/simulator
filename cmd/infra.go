@@ -4,19 +4,19 @@ import (
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/zap"
 )
 
-func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `create`,
 		Short: "Runs terraform to create the required infrastructure for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucketName := viper.GetString("state-bucket")
 			if bucketName == "" {
-				logger.Warnf("Simulator has not been initialised with an S3 bucket")
+				logger.Warn("Simulator has not been initialised with an S3 bucket")
 				logger.Warn("Please run simulator init")
 				return nil
 			}
@@ -27,7 +27,9 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 
-			logger.Infof("Created s3 bucket %s for terraform remote state\n", bucketName)
+			logger.WithFields(logrus.Fields{
+				"BucketName": bucketName,
+			}).Info("Created s3 bucket for terraform remote state")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
@@ -40,7 +42,9 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 			err := simulator.Create()
 			if err != nil {
-				logger.Errorw("Error creating infrastructure", zap.Error(err))
+				logger.WithFields(logrus.Fields{
+					"Error": err,
+				}).Error("Error creating infrastructure")
 			}
 
 			cfg, err := simulator.SSHConfig()
@@ -60,14 +64,14 @@ func newCreateCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newStatusCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `status`,
 		Short: "Gets the status of the infrastructure",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucketName := viper.GetString("state-bucket")
 			if bucketName == "" {
-				logger.Warnf("Simulator has not been initialised with an S3 bucket")
+				logger.Warn("Simulator has not been initialised with an S3 bucket")
 				logger.Warn("Please run simulator init")
 				return nil
 			}
@@ -85,16 +89,20 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 			tfo, err := simulator.Status()
 			if err != nil {
-				logger.Errorw("Error getting status of infrastructure", zap.Error(err))
+				logger.WithFields(logrus.Fields{
+					"Error": err,
+				}).Error("Error getting status of infrastructure")
 				return err
 			}
 
 			if tfo.BastionPublicIP.Value == "" {
 				logger.Error("No Infrastructure found")
 			} else {
-				logger.Infof("Bastion IP: %s", tfo.BastionPublicIP.Value)
-				logger.Infof("Master IPs: %v", tfo.MasterNodesPrivateIP.Value)
-				logger.Infof("Cluster IPs: %v", tfo.ClusterNodesPrivateIP.Value)
+				logger.WithFields(logrus.Fields{
+					"BastionIP": tfo.BastionPublicIP.Value,
+					"MasterIP":  tfo.MasterNodesPrivateIP.Value,
+					"NodeIPs":   tfo.ClusterNodesPrivateIP.Value,
+				}).Info("Infrastructure Status")
 			}
 
 			return err
@@ -104,14 +112,14 @@ func newStatusCommand(logger *zap.SugaredLogger) *cobra.Command {
 	return cmd
 }
 
-func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
+func newDestroyCommand(logger *logrus.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `destroy`,
 		Short: "Tears down the infrastructure created for scenarios",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			bucketName := viper.GetString("state-bucket")
 			if bucketName == "" {
-				logger.Warnf("Simulator has not been initialised with an S3 bucket")
+				logger.Warn("Simulator has not been initialised with an S3 bucket")
 				logger.Warn("Please run simulator init")
 				return nil
 			}
@@ -129,7 +137,9 @@ func newDestroyCommand(logger *zap.SugaredLogger) *cobra.Command {
 
 			err := simulator.Destroy()
 			if err != nil {
-				logger.Errorw("Error destroying infrastructure", zap.Error(err))
+				logger.WithFields(logrus.Fields{
+					"Error": err,
+				}).Error("Error destroying infrastructure")
 			}
 
 			return err
@@ -147,10 +157,7 @@ func newInfraCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
-	logger, err := newLogger(viper.GetString("loglevel"), "console")
-	if err != nil {
-		logger.Fatalf("Can't re-initialize zap logger: %v", err)
-	}
+	logger := newLogger(viper.GetString("loglevel"))
 
 	cmd.AddCommand(newCreateCommand(logger))
 	cmd.AddCommand(newStatusCommand(logger))

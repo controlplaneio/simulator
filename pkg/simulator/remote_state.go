@@ -5,11 +5,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/pkg/errors"
-	"go.uber.org/zap"
+	"github.com/sirupsen/logrus"
 )
 
 // CreateRemoteStateBucket initialises a remote-state bucket
-func CreateRemoteStateBucket(logger *zap.SugaredLogger, bucket string) error {
+func CreateRemoteStateBucket(logger *logrus.Logger, bucket string) error {
 	sess, err := session.NewSession(&aws.Config{})
 	if err != nil {
 		return err
@@ -21,13 +21,17 @@ func CreateRemoteStateBucket(logger *zap.SugaredLogger, bucket string) error {
 		return errors.Wrapf(err, "Unable to create bucket %q", bucket)
 	}
 
-	logger.Infof("Waiting for bucket %q to be created...", bucket)
+	logger.WithFields(logrus.Fields{
+		"BucketName": bucket,
+	}).Info("Waiting for bucket to be created")
 	if err := svc.WaitUntilBucketExists(&s3.HeadBucketInput{
 		Bucket: aws.String(bucket),
 	}); err != nil {
 		return errors.Wrapf(err, "Error occurred while waiting for bucket to be created, %v", bucket)
 	}
 
-	logger.Infof("Bucket %q successfully created", bucket)
+	logger.WithFields(logrus.Fields{
+		"BucketName": bucket,
+	}).Infof("Bucket successfully created")
 	return nil
 }

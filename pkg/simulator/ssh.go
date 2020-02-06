@@ -3,6 +3,7 @@ package simulator
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // SSHConfig returns a pointer to string containing the stanzas to add to an ssh
@@ -25,7 +26,7 @@ func (s *Simulator) SSHConfig() (*string, error) {
 // Attack establishes an SSH connection to the attack container running on the
 // bastion host ready for the user to attempt to complete a scenario
 func (s *Simulator) Attack() error {
-	s.Logger.Debugf("Checking status of infrastructure")
+	s.Logger.Debug("Checking status of infrastructure")
 
 	tfo, err := s.Status()
 	if err != nil {
@@ -34,17 +35,22 @@ func (s *Simulator) Attack() error {
 
 	bastion := tfo.BastionPublicIP.Value
 
-	s.Logger.Debugf("Checking infrastructure is usable")
+	s.Logger.Debug("Checking infrastructure is usable")
 	if !tfo.IsUsable() {
 		return errors.Errorf("No infrastructure, please run simulator infra create")
 	}
 
-	s.Logger.Infof("Keyscanning %s and updating known hosts", bastion)
+	s.Logger.WithFields(logrus.Fields{
+		"BastionIP": bastion,
+	}).Infof("Keyscanning bastion and updating known hosts")
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrap(err, "Error writing known hosts")
 	}
 
-	s.Logger.Infof("Connecting to", bastion)
+	s.Logger.WithFields(logrus.Fields{
+		"BastionIP": bastion,
+	}).Info("Connecting to bastion")
+
 	return ssh.SSH(bastion)
 }

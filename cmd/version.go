@@ -17,12 +17,7 @@ func newVersionCommand() *cobra.Command {
 		Use:   `version`,
 		Short: "Prints simulator version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			logger, err := newLogger(viper.GetString("loglevel"), "console")
-			if err != nil {
-				logger.Fatalf("Can't re-initialize zap logger: %v", err)
-			}
-
-			defer logger.Sync() //nolint:errcheck
+			logger := newLogger(viper.GetString("loglevel"))
 
 			logger.Infof("version %s\n", version)
 			logger.Infof("git commit %s\n", commit)

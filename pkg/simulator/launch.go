@@ -6,24 +6,29 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 )
 
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
 // the infrastructure has been created.  Returns an error if the infrastructure
 // is not ready or something goes wrong
 func (s *Simulator) Launch() error {
-	s.Logger.Debugf("Loading scenario manifest from %s", s.ScenariosDir)
+	s.Logger.WithFields(logrus.Fields{
+		"ScenariosDir": s.ScenariosDir,
+	}).Debug("Loading scenario manifest")
 	manifest, err := scenario.LoadManifest(s.ScenariosDir)
 	if err != nil {
 		return errors.Wrap(err, "Error loading scenario manifest file")
 	}
 
-	s.Logger.Debugf("Checking manifest contains %s", s.ScenarioID)
+	s.Logger.WithFields(logrus.Fields{
+		"ScenarioID": s.ScenarioID,
+	}).Debug("Checking manifest contains scenario")
 	if !manifest.Contains(s.ScenarioID) {
 		return errors.Errorf("Scenario not found: %s", s.ScenarioID)
 	}
 
-	s.Logger.Debugf("Checking status of infrastructure")
+	s.Logger.Debug("Checking status of infrastructure")
 	tfo, _ := s.Status()
 
 	if !tfo.IsUsable() {
@@ -31,11 +36,13 @@ func (s *Simulator) Launch() error {
 	}
 	s.Logger.Debug(tfo)
 
-	s.Logger.Infof("Finding details of scenario %s", s.ScenarioID)
+	s.Logger.WithFields(logrus.Fields{
+		"ScenarioID": s.ScenarioID,
+	}).Infof("Finding details of scenario")
 	foundScenario := manifest.Find(s.ScenarioID)
 	s.Logger.Debug(foundScenario)
 
-	s.Logger.Debugf(
+	s.Logger.Debug(
 		"Making options to pass to perturb from terraorm output and scnenario")
 	po := MakePerturbOptions(*tfo, foundScenario.Path)
 	s.Logger.Debug(po)
@@ -53,14 +60,18 @@ func (s *Simulator) Launch() error {
 	}
 
 	bastion := tfo.BastionPublicIP.Value
-	s.Logger.Infof("Keyscanning %s and updating known hosts", bastion)
+	s.Logger.WithFields(logrus.Fields{
+		"BastionIP": bastion,
+	}).Info("Keyscanning bastion and updating known hosts")
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s",
 			bastion)
 	}
 
-	s.Logger.Infof("Setting up the \"%s\" scenario on the cluster", foundScenario.DisplayName)
+	s.Logger.WithFields(logrus.Fields{
+		"Scenario": foundScenario.DisplayName,
+	}).Info("Setting up the scenario on the cluster")
 	_, err = Perturb(&po)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 103") {
