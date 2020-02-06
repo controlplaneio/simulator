@@ -3,6 +3,7 @@ package simulator
 import (
 	"fmt"
 
+	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
@@ -42,12 +43,12 @@ func (s *Simulator) PrepareTfArgs(cmd string) []string {
 func (s *Simulator) Terraform(cmd string) (*string, error) {
 	args := s.PrepareTfArgs(cmd)
 	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
+	cm := childminder.NewChildMinder(s.Logger, s.TfDir, env, "terraform", args...)
 	if cmd == "output" {
-		// TODO: (rem) deal with non-empty stderr?
-		out, _, err := util.RunSilently(s.TfDir, env, "terraform", args...)
+		out, _, err := cm.RunSilently()
 		return out, err
 	}
-	return util.Run(s.TfDir, env, "terraform", args...)
+	return cm.Run()
 }
 
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if

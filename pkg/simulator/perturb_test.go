@@ -1,11 +1,13 @@
 package simulator_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/stretchr/testify/assert"
 	"net"
 	"os"
 	"testing"
+
+	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_ToArguments_And_String(t *testing.T) {
@@ -46,7 +48,7 @@ func Test_MakePerturbOptions(t *testing.T) {
 func Test_Perturb(t *testing.T) {
 	os.Setenv("SIMULATOR_SCENARIOS_DIR", fixture("noop-perturb"))
 	po := simulator.PerturbOptions{}
-	_, err := simulator.Perturb(&po)
+	_, err := simulator.Perturb(&po, logrus.New())
 
 	assert.Nil(t, err, "Got an error")
 }

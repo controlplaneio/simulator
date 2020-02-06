@@ -1,6 +1,7 @@
 package ssh
 
 import (
+	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"os"
@@ -36,7 +37,7 @@ func KeyScan(bastion string) (*string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting process working directory")
 	}
-
-	out, _, err := util.RunSilently(wd, os.Environ(), "ssh-keyscan", "-H", bastion)
+	cm := childminder.NewChildMinder(nil, wd, os.Environ(), "ssh-keyscan", "-H", bastion)
+	out, _, err := cm.RunSilently()
 	return out, err
 }
