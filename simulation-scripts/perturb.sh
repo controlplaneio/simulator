@@ -682,31 +682,24 @@ usage() {
 
 success() {
   [ "${*:-}" ] && RESPONSE="$*" || RESPONSE="Unknown Success"
-  printf "%s\n" "$(log_message_prefix)${COLOUR_GREEN}${RESPONSE}${COLOUR_RESET}"
+  printf "%s\n" "${RESPONSE}"
 }
 
 info() {
   [ "${*:-}" ] && INFO="$*" || INFO="Unknown Info"
-  printf "%s\n" "$(log_message_prefix)${COLOUR_BLUE}${INFO}${COLOUR_RESET}"
+  printf "%s\n" "${INFO}$"
 }
 
 warning() {
   [ "${*:-}" ] && ERROR="$*" || ERROR="Unknown Warning"
-  printf "%s\n" "$(log_message_prefix)${COLOUR_RED}${ERROR}${COLOUR_RESET}"
+  printf "%s\n" "${ERROR}"
 } 1>&2
 
 error() {
   [ "${*:-}" ] && ERROR="$*" || ERROR="Unknown Error"
-  printf "%s\n" "$(log_message_prefix)${COLOUR_RED}${ERROR}${COLOUR_RESET}"
+  printf "%s\n" "${ERROR}"
   exit 3
 } 1>&2
-
-log_message_prefix() {
-  TIMESTAMP="[$(date +'%Y-%m-%dT%H:%M:%S%z')]"
-  THIS_SCRIPT_SHORT=${THIS_SCRIPT/$DIR/.}
-  tput bold 2>/dev/null
-  echo -n "${TIMESTAMP} ${THIS_SCRIPT_SHORT}: "
-}
 
 is_empty() {
   [[ -z ${1-} ]] && return 0 || return 1
@@ -724,8 +717,6 @@ not_empty_or_usage() {
 
 TERM="xterm-color"
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
-COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
-COLOUR_BLUE=$(tput setaf 4 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
 main "$@"
