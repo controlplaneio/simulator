@@ -159,12 +159,12 @@ func (cm *ChildMinder) Run() (*string, error) {
 		return nil, errors.Wrapf(err, "Error starting child process %s", cm.CommandPath)
 	}
 
+	wg.Wait()
 	err = child.Wait()
 	// TODO: (rem) make this parameterisable?
 	if err != nil && err.Error() != "exit status 127" {
 		return nil, errors.Wrapf(err, "Error waiting for child process %s", cm.CommandPath)
 	}
-	wg.Wait()
 
 	out := buf.String()
 	return &out, nil
