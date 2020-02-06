@@ -22,7 +22,7 @@ func CreateRemoteStateBucket(logger *logrus.Logger, bucket string) error {
 	}
 
 	logger.WithFields(logrus.Fields{
-		"bucketName": bucket,
+		"BucketName": bucket,
 	}).Info("Waiting for bucket to be created")
 	if err := svc.WaitUntilBucketExists(&s3.HeadBucketInput{
 		Bucket: aws.String(bucket),
@@ -31,7 +31,7 @@ func CreateRemoteStateBucket(logger *logrus.Logger, bucket string) error {
 	}
 
 	logger.WithFields(logrus.Fields{
-		"bucketName": bucket,
+		"BucketName": bucket,
 	}).Infof("Bucket successfully created")
 	return nil
 }

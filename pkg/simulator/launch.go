@@ -14,7 +14,7 @@ import (
 // is not ready or something goes wrong
 func (s *Simulator) Launch() error {
 	s.Logger.WithFields(logrus.Fields{
-		"scenariosDir": s.ScenariosDir,
+		"ScenariosDir": s.ScenariosDir,
 	}).Debug("Loading scenario manifest")
 	manifest, err := scenario.LoadManifest(s.ScenariosDir)
 	if err != nil {
@@ -22,7 +22,7 @@ func (s *Simulator) Launch() error {
 	}
 
 	s.Logger.WithFields(logrus.Fields{
-		"scenarioID": s.ScenarioID,
+		"ScenarioID": s.ScenarioID,
 	}).Debug("Checking manifest contains scenario")
 	if !manifest.Contains(s.ScenarioID) {
 		return errors.Errorf("Scenario not found: %s", s.ScenarioID)
@@ -37,7 +37,7 @@ func (s *Simulator) Launch() error {
 	s.Logger.Debug(tfo)
 
 	s.Logger.WithFields(logrus.Fields{
-		"scenarioID": s.ScenarioID,
+		"ScenarioID": s.ScenarioID,
 	}).Infof("Finding details of scenario")
 	foundScenario := manifest.Find(s.ScenarioID)
 	s.Logger.Debug(foundScenario)

@@ -65,14 +65,14 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 			if err := simulator.Launch(); err != nil {
 				if strings.HasPrefix(err.Error(), "Scenario not found") {
 					logger.WithFields(logrus.Fields{
-						"error":    err,
-						"scenario": args[0],
+						"Error":    err,
+						"Scenario": args[0],
 					}).Warn("Scenario not found")
 
 					return nil
 				}
 				logger.WithFields(logrus.Fields{
-					"error": err,
+					"Error": err,
 				}).Error("Error launching scenario")
 			}
 
