@@ -3,6 +3,7 @@ package childminder
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
@@ -64,10 +65,7 @@ func (cm *ChildMinder) ForwardStdOut(stdoutPipe io.Reader, wg *sync.WaitGroup) {
 	for {
 		line, err := stdoutReader.ReadString('\n')
 		if len(line) > 0 {
-			cm.Logger.WithFields(logrus.Fields{
-				"Command": cm.CommandPath,
-				"Args":    cm.CommandArguments,
-			}).Info(line)
+			cm.Logger.Infof(fmt.Sprintf("[%s] %s", cm.CommandPath, line))
 		}
 
 		if err == io.EOF {
