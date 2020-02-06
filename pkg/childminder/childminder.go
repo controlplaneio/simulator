@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sync"
 
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -58,10 +59,10 @@ func MustResolve(wd string) string {
 
 // ForwardStdOut takes a child process's stdout pipe and reads it
 // line by line passing the output through the ChildMinder's logger
-func (cm *ChildMinder) ForwardStdOut(stdoutPipe io.Reader) {
+func (cm *ChildMinder) ForwardStdOut(stdoutPipe io.Reader, wg *sync.WaitGroup) {
 	stdoutReader := bufio.NewReader(stdoutPipe)
 	for {
-		line, err := stdoutReader.ReadBytes('\n')
+		line, err := stdoutReader.ReadString('\n')
 		if len(line) > 0 {
 			cm.Logger.WithFields(logrus.Fields{
 				"Command": cm.CommandPath,
@@ -75,6 +76,7 @@ func (cm *ChildMinder) ForwardStdOut(stdoutPipe io.Reader) {
 				"Args":    cm.CommandArguments,
 				"Error":   err,
 			}).Debug("Stdout pipe has been closed")
+			wg.Done()
 			return
 		}
 
@@ -84,16 +86,18 @@ func (cm *ChildMinder) ForwardStdOut(stdoutPipe io.Reader) {
 				"Args":    cm.CommandArguments,
 				"Error":   err,
 			}).Error("Error reading stdout pipe")
+			wg.Done()
+			return
 		}
 	}
 }
 
 // ForwardStdErr takes a child process's stderr pipe and reads it
 // line by line passing the output through the ChildMinder's logger
-func (cm *ChildMinder) ForwardStdErr(stderrPipe io.Reader) {
+func (cm *ChildMinder) ForwardStdErr(stderrPipe io.Reader, wg *sync.WaitGroup) {
 	stderrReader := bufio.NewReader(stderrPipe)
 	for {
-		line, err := stderrReader.ReadBytes('\n')
+		line, err := stderrReader.ReadString('\n')
 		if len(line) > 0 {
 			cm.Logger.WithFields(logrus.Fields{
 				"Command": cm.CommandPath,
@@ -107,6 +111,7 @@ func (cm *ChildMinder) ForwardStdErr(stderrPipe io.Reader) {
 				"Args":    cm.CommandArguments,
 				"Error":   err,
 			}).Debug("Stderr pipe has been closed")
+			wg.Done()
 			return
 		}
 
@@ -116,6 +121,8 @@ func (cm *ChildMinder) ForwardStdErr(stderrPipe io.Reader) {
 				"Args":    cm.CommandArguments,
 				"Error":   err,
 			}).Error("Error reading stderr pipe")
+			wg.Done()
+			return
 		}
 	}
 }
@@ -143,8 +150,11 @@ func (cm *ChildMinder) Run() (*string, error) {
 	var buf bytes.Buffer
 	tee := io.TeeReader(childOut, &buf)
 
-	go cm.ForwardStdOut(tee)
-	go cm.ForwardStdErr(childErr)
+	var wg sync.WaitGroup
+
+	go cm.ForwardStdOut(tee, &wg)
+	go cm.ForwardStdErr(childErr, &wg)
+	wg.Add(2)
 
 	err := child.Start()
 	if err != nil {
@@ -156,6 +166,7 @@ func (cm *ChildMinder) Run() (*string, error) {
 	if err != nil && err.Error() != "exit status 127" {
 		return nil, errors.Wrapf(err, "Error waiting for child process %s", cm.CommandPath)
 	}
+	wg.Wait()
 
 	out := buf.String()
 	return &out, nil
