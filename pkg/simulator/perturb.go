@@ -1,9 +1,12 @@
 package simulator
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"net"
 	"strings"
+
+	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/sirupsen/logrus"
 )
 
 // PerturbOptions represents the parameters required by the perturb.sh script
@@ -68,10 +71,10 @@ const (
 )
 
 // Perturb runs the perturb script with the supplied options
-func Perturb(po *PerturbOptions) (*string, error) {
+func Perturb(po *PerturbOptions, logger *logrus.Logger) (*string, error) {
 	args := po.ToArguments()
 	env := []string{}
 	wd := util.EnvOrDefault(perturbPathEnvVar, defaultPerturbPath)
-	// TODO: (rem) check that public IP hasn't changed
-	return util.Run(wd, env, "./perturb.sh", args...)
+	cm := childminder.NewChildMinder(logger, wd, env, "./perturb.sh", args...)
+	return cm.Run()
 }

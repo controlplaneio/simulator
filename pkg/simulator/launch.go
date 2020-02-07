@@ -72,7 +72,7 @@ func (s *Simulator) Launch() error {
 	s.Logger.WithFields(logrus.Fields{
 		"Scenario": foundScenario.DisplayName,
 	}).Info("Setting up the scenario on the cluster")
-	_, err = Perturb(&po)
+	_, err = Perturb(&po, s.Logger)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 103") {
 			s.Logger.Error("Scenario clash error from perturb.sh")

@@ -1,15 +1,24 @@
-package util_test
+package childminder_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
+
+func fixture(name string) string {
+	return "../../test/fixtures/" + name
+}
 
 func Test_Run(t *testing.T) {
 	expected := util.MustSlurp(fixture("tf-help.txt"))
-	out, err := util.Run("./", []string{}, "terraform", "help")
+	logger := logrus.New()
+	cm := childminder.NewChildMinder(logger, "./", []string{}, "terraform", "help")
+	out, err := cm.Run()
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "out was nil")
@@ -19,7 +28,9 @@ func Test_Run(t *testing.T) {
 
 func Test_Run_invalid_working_dir(t *testing.T) {
 	wd := strings.Repeat("deadbeef", 1024)
-	out, err := util.Run(wd, []string{}, "terraform", "help")
+	logger := logrus.New()
+	cm := childminder.NewChildMinder(logger, wd, []string{}, "terraform", "help")
+	out, err := cm.Run()
 
 	assert.NotNil(t, err, "Got no error")
 	assert.Nil(t, out, "Got output")
@@ -28,7 +39,9 @@ func Test_Run_invalid_working_dir(t *testing.T) {
 
 func Test_Run_silently(t *testing.T) {
 	expected := util.MustSlurp(fixture("tf-help.txt"))
-	out, _, err := util.RunSilently("./", []string{}, "terraform", "help")
+	logger := logrus.New()
+	cm := childminder.NewChildMinder(logger, "./", []string{}, "terraform", "help")
+	out, _, err := cm.RunSilently()
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "out was nil")

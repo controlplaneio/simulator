@@ -3,6 +3,7 @@ package ssh
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
@@ -54,8 +55,9 @@ func GenerateKey(privatekeypath string) (*string, error) {
 		return nil, errors.Wrap(err, "Error getting process working directory")
 	}
 
-	out, stderr, err := util.RunSilently(wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C",
+	cm := childminder.NewChildMinder(nil, wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C",
 		"simulator-key", "-N", "")
+	out, stderr, err := cm.RunSilently()
 	if *stderr != "" {
 		fmt.Println(*stderr)
 	}
