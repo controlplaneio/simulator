@@ -5,4 +5,4 @@ Starting Point: master node
 
 Difficulty: Medium
 
-Task 1: Can you find out why the pod was allowed to schedule?
+Task 1: Can you find out why the pod was allowed to schedule and fix it?

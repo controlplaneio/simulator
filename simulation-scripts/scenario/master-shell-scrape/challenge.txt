@@ -5,5 +5,5 @@ Starting Point: ubuntu pod in the master-shell-scrape namespace.
 
 Difficulty : Medium
 
-Task 1: Figure out how this is possible by making an API call from the cluster.
+Task 1: Figure out how this is possible by making an API call from the cluster to access secret credentials.
 Task 2: Amend the configuration so nothing can access the API beyond their intended RBAC capabilities.

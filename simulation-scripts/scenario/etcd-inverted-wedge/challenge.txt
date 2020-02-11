@@ -4,7 +4,7 @@ Starting Point: ubuntu pod in the etcd-inverted-wedge namespace.
 
 Difficulty: Hard
 
-Task 1: How can you access secrets from inside the ubuntu pod in the cluster.
+Task 1: Prove you can access secrets from inside the ubuntu pod in the cluster by accessing credentials.
 Task 2: How can you resolve this access issue.
 
 Your cluster is running with a master IP of: $MASTER_IP_ADDRESSES

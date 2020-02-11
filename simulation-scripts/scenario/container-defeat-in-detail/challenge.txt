@@ -8,5 +8,5 @@ Difficulty: Medium
 Task 1: Can you demonstrate that the extra pods are a significant concern by retrieving a flag from etcd?
 Details: etcd is running at $MASTER_IP_ADDRESSES.
 
-Task 2: The node-cert-manager should only be running on the workers, what can you do to fix its scheduling?
+Task 2: The node-cert-manager should only be running on the workers, what industry standard feature can you put in place to fix its scheduling?
 Details: The DaemonSet itself should not be edited for this task.
