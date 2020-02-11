@@ -1,3 +1,5 @@
+category: policy
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Enable PodSecurityPolicy in the API server.
 startingPoint:

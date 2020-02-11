@@ -1,3 +1,5 @@
+category: container
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Exec into a container on master with certificates mounted in to exploit
   etcd.

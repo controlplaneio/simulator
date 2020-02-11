@@ -1,3 +1,5 @@
+category: container
+difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
 objective: Get postgres password.
 startingPoint:

@@ -1,3 +1,5 @@
+category: master
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: API is enabled on --insecure-bind-address and --insecure-port
 startingPoint:
