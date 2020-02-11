@@ -1,6 +1,5 @@
 #! /bin/bash
-# This script will add a penalty value to each hint object.
-# In order to update all penalty values, simply re-run the script with the new value replacing '10'. This may cause some cosmetic key reordering in the final yaml.
+# This script will find the category and difficulty of each scenario and add these values to new fields in the tasks.yaml.
 for dir in simulation-scripts/scenario/*/; do
     echo "${dir}"
     category=$(echo "${dir}" | cut -f3 -d"/" | cut -f1 -d"-")
