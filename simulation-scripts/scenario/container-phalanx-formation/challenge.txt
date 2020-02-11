@@ -1,4 +1,5 @@
-Scenario: During a routine audit of an application, it was noticed that there is a bug in its logging mechanism. Some old passwords that are used with this application were also recently rotated due to concerns that they may be compromised.
+Scenario: During a routine audit of an application, it was noticed that there is a bug in its logging mechanism. 
+Some old passwords that are used with this application were also recently rotated due to concerns that they may be compromised.
 
 Starting Point: Kubectl access
 
