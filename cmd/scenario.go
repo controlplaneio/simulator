@@ -33,13 +33,13 @@ func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 			}
 
 			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{"Name", "Description", "ID"})
+			table.SetHeader([]string{"Name", "Category", "Difficulty", "Description", "ID"})
 			table.SetRowLine(true)
-			table.SetHeaderColor(tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold})
+			table.SetHeaderColor(tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold})
 			var output []string
 			fmt.Println("Available scenarios:")
 			for _, s := range manifest.Scenarios {
-				output = []string{s.DisplayName, s.Description, s.Id}
+				output = []string{s.DisplayName, s.Category, s.Difficulty, s.Description, s.Id}
 				table.Append(output)
 			}
 			table.Render()

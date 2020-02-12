@@ -1,9 +1,10 @@
 package scenario
 
 import (
-	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
+
+	"github.com/pkg/errors"
 )
 
 // Scenario structure representing a scenario
@@ -19,6 +20,8 @@ type Scenario struct {
 	Difficulty string `yaml:"difficulty"`
 	// A short description of the scenario to be used in the user interfaces
 	Description string `yaml:"description"`
+	// The category of the scenario to be used in the user interfaces
+	Category string `yaml:"category"`
 }
 
 // Validate a scenario relative to its manifest
