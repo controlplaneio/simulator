@@ -1,3 +1,5 @@
+category: network
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Compromised database from outside namespace.
 startingPoint:

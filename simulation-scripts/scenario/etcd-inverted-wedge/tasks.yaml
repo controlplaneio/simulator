@@ -1,3 +1,5 @@
+category: etcd
+difficulty: Hard
 kind: cp.simulator/scenario:1.0.0
 objective: Discover uncertified etcd, reach it with only network access and master
   node IP. Fix the leakage.

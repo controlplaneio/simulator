@@ -1,3 +1,5 @@
+category: secret
+difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
 objective: Compromise secret from running workload.
 startingPoint:

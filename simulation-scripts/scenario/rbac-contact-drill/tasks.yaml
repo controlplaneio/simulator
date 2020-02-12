@@ -1,3 +1,5 @@
+category: rbac
+difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
 objective: Figure out additional permissions given to the default service account
   and reassign to designated role.

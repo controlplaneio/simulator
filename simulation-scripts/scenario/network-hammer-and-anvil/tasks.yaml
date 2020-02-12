@@ -1,3 +1,5 @@
+category: network
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Use badly configured database to exfiltrate data.
 startingPoint:
