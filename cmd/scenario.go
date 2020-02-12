@@ -87,7 +87,7 @@ func newScenarioDescribeCommand(logger *logrus.Logger) *cobra.Command {
 			}
 			challengeText := string(challengeContent)
 
-			fmt.Println("Name: " + scenario.DisplayName)
+			fmt.Println("Name: " + scenario.DisplayName + "\n")
 			fmt.Println(challengeText)
 
 			return nil
