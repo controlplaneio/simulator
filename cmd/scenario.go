@@ -2,16 +2,19 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
+
+	"io/ioutil"
+	"path/filepath"
 
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"io/ioutil"
-	"path/filepath"
 )
 
 func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
@@ -29,14 +32,17 @@ func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 				return err
 			}
 
+			table := tablewriter.NewWriter(os.Stdout)
+			table.SetHeader([]string{"Name", "Category", "Difficulty", "Description", "ID"})
+			table.SetRowLine(true)
+			table.SetHeaderColor(tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold}, tablewriter.Colors{tablewriter.Bold})
+			var output []string
 			fmt.Println("Available scenarios:")
 			for _, s := range manifest.Scenarios {
-				fmt.Println("")
-				fmt.Println("Name: " + s.DisplayName)
-				fmt.Println("Description: " + s.Description)
-				fmt.Println("ID: " + s.Id)
+				output = []string{s.DisplayName, s.Category, s.Difficulty, s.Description, s.Id}
+				table.Append(output)
 			}
-
+			table.Render()
 			return nil
 		},
 	}
