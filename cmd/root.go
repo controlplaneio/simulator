@@ -42,6 +42,18 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentFlags().StringP("difficulty", "d", "",
+		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
+	if err := viper.BindPFlag("difficulty", rootCmd.PersistentFlags().Lookup("difficulty")); err != nil {
+		panic(err)
+	}
+
+	rootCmd.PersistentFlags().StringP("category", "g", "",
+		"Sorts the list of scenarios by only showing scenarios of specified category")
+	if err := viper.BindPFlag("category", rootCmd.PersistentFlags().Lookup("category")); err != nil {
+		panic(err)
+	}
+
 	rootCmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
 	if err := viper.BindPFlag("loglevel", rootCmd.PersistentFlags().Lookup("loglevel")); err != nil {
 		panic(err)

@@ -10,6 +10,7 @@ import (
 
 	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -32,6 +33,18 @@ func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 				return err
 			}
 
+			difficulty := viper.GetString("difficulty")
+			difficultyValues := []string{"easy", "medium", "hard", "Easy", "Medium", "Hard", ""}
+			_, err = util.IsStringInSlice(difficulty, difficultyValues)
+			if err != nil {
+				logger.WithFields(logrus.Fields{
+					"Error": err,
+				}).Error("Error sorting by difficulty")
+				return err
+			}
+
+			category := viper.GetString("category")
+
 			table := tablewriter.NewWriter(os.Stdout)
 			table.SetHeader([]string{"Name", "Category", "Difficulty", "Description", "ID"})
 			table.SetRowLine(true)
@@ -39,8 +52,10 @@ func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 			var output []string
 			fmt.Println("Available scenarios:")
 			for _, s := range manifest.Scenarios {
-				output = []string{s.DisplayName, s.Category, s.Difficulty, s.Description, s.Id}
-				table.Append(output)
+				if (strings.EqualFold(category, s.Category) || category == "") && (strings.EqualFold(difficulty, s.Difficulty) || difficulty == "") {
+					output = []string{s.DisplayName, s.Category, s.Difficulty, s.Description, s.Id}
+					table.Append(output)
+				}
 			}
 			table.Render()
 			return nil

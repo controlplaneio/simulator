@@ -52,6 +52,17 @@ func Test_EnvOrDefault(t *testing.T) {
 	assert.Equal(t, val, "custom", "Did not read env var")
 }
 
+func Test_IsStringInSlice(t *testing.T) {
+	b, err := util.IsStringInSlice("test", []string{"not-test", "test"})
+
+	assert.Nil(t, err, "Got an error")
+	assert.True(t, b, "String was not in slice")
+
+	b, err = util.IsStringInSlice("test", []string{"not-test", "also-not-test"})
+	assert.NotNil(t, err, "Got an error")
+	assert.False(t, b, "String was present in slice")
+}
+
 func Test_ExpandTilde(t *testing.T) {
 	p, err := util.ExpandTilde("~/.")
 	require.NoError(t, err)
