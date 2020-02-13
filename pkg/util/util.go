@@ -184,3 +184,15 @@ func EnvOrDefault(key, def string) string {
 
 	return d
 }
+
+// IsStringInSlice checks if string a apperas in list list and returns
+// a boolean and error if it isn't
+// present in string
+func IsStringInSlice(a string, list []string) (bool, error) {
+	for _, b := range list {
+		if b == a {
+			return true, nil
+		}
+	}
+	return false, errors.Errorf("Input needs to be one of %s. You put %s", list, a)
+}

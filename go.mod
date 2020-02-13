@@ -5,6 +5,7 @@ require (
 	github.com/fatih/structs v1.1.0
 	github.com/glendc/go-external-ip v0.0.0-20170425150139-139229dcdddd
 	github.com/magiconair/properties v1.8.1 // indirect
+	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pelletier/go-toml v1.4.0 // indirect
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.2.0
