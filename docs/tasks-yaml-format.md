@@ -1,22 +1,28 @@
 # Tasks YAML file Format
 
-### Boilerplate
+## Top Level
 
-* YAML version
+There are five top level fields in the spec:
+
 ```YAML
+category: sample
+difficulty: Easy
+objective: Sample yaml
 kind: cp.simulator/scenario:<semver-version>
+tasks: 
+  ...
 ```
 
-* Scenario tags (categories)
-```YAML
-tags:
- - AWS
- - Debug
-```
+* `category`is the broad subject of the scenario, for example one might be RBAC. 
+* The `difficulty` describes how hard the scenario is. 
+* `objective` is a short sentence about the goals of the scenario. 
+* `kind` is the version of tasks.yaml used in this file.
+* `tasks:` is explained in more detail below:
 
-### Tasks and Hints
+## Tasks and Hints
 
-e.g.
+An example of a tasks stanza can be seen below:
+
 ```YAML
 tasks:
   "1":
@@ -24,39 +30,47 @@ tasks:
     hints:
       - text: "blah blah blah"
         penalty: 5
-      - text: |
-              compromise the frobnicator
+      - text: compromise the frobnicator
+        penalty: 10
   "2":
     sortOrder: 2
     hints:
       - text: "hint 1"
+        penalty: 10
       - text: "hint 2"
+        penalty: 15
 ```
 
-* Should we merge CHALLENGE.txt into the scenario yaml?
-* We could split the challenge text so the tasks each have their own descriptions
+* Each task is identified by its name which **must** be a number enclosed in quotes.
+* The `sortOrder` is used to sort the tasks for more advanced functions. For now each task name matches with its `sortOrder`
+* The `hints` stanza contains two fields for the hints themselves and the penalty for viewing a hint:
+  * Text is a string value displayed to the user when the use `next_hint`
+  * Penalty is the value subtracted from the users score when they use `next_hint`
 
-### Starting point
 
-Where we dump the user when they do `simulator ssh attack` and type `start`
+## Starting point
 
-**Proposed specification in hints.yaml**
+The `startingPoint` is a stanza within each task stanza that controls where the user is placed within the cluster when they start a task and run `starting_point` from within the attack container. `startingPoint` has several possible modes:
 
-Default behaviour:
+Do not put the user anywhere. This useful for harder scenarios where the whole cluster may be involved:
+
 ```YAML
 startingPoint:
   mode: attack
 ```
 
-Land user sshed onto an internal VM instance that is not part of the kubernetes
-cluster but is in the private subnet:
+User ssh's onto an internal VM instance that is not part of the kubernetes cluster but is in the private subnet:
+
 ```YAML
 startingPoint:
   mode: internal-instance
   kubectlAccess: true
 ```
 
-Land user sshed onto a node:
+* `kubectlAccess` can be set to `true` or `false` to control whether the user can use `kubectl` to reach the cluster.
+
+User ssh's onto a node:
+
 ```YAML
 startingPoint:
   mode: node
@@ -64,24 +78,54 @@ startingPoint:
   asRoot: true
 ```
 
-Land user exec'ed into a pod:
+User exec's into a specific pod:
+
 ```YAML
 startingPoint:
   mode: pod
   podName: "compromised-pod"
   podNamespace: "default"
 ```
-Do not put the user anywhere. This useful for harder scenarios where the whole
-cluster may be involved:
+
+Default behaviour:
+
 ```YAML
 startingPoint:
   mode: null
 ```
 
-### Kubernetes Kind
+* Will also display a warning about an unconfigured `startingPoint`. To suppress this use the functionally identical `mode: attack`.
 
-Not enough scenarios to specify platforms or versions or requirements etc.  Let's revisit when we design more scenarios:
+## Sample `tasks.yaml`
 
 ```YAML
-local: <True|False>
+category: sample
+difficulty: Easy
+kind: cp.simulator/scenario:1.0.0
+objective: Sample yaml
+tasks:
+  "1":
+    hints:
+    - penalty: 10
+      text: sample 1
+    - penalty: 10
+      text: test 1
+    - penalty: 10
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: test
+      podNamespace: sample
+    summary: Sample summary 1
+  "2":
+    hints:
+    - penalty: 10
+      text: sample 2
+    - penalty: 10
+      text: test 2
+    sortOrder: 2
+    startingPoint:
+      kubectlAccess: true
+      mode: internal-instance
+    summary: Sample summary 2
 ```
