@@ -29,6 +29,9 @@ type Simulator struct {
 	ScenariosDir string
 	// disableIPDetection enables IP checks used for cidr access. Enabled by default.
 	DisableIPDetection bool
+	// Extra CIDRs to be added to the bastion security group to allow SSH from arbitrary
+	// locations
+	ExtraCIDRs string
 }
 
 // Option is a type used to configure a `Simulator` instance
@@ -114,5 +117,13 @@ func WithBucketName(bucketName string) Option {
 func WithoutIPDetection(disableIPDetection bool) Option {
 	return func(s *Simulator) {
 		s.DisableIPDetection = disableIPDetection
+	}
+}
+
+// WithExtraCIDRs returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithExtraCIDRs(extraCIDRs string) Option {
+	return func(s *Simulator) {
+		s.ExtraCIDRs = extraCIDRs
 	}
 }

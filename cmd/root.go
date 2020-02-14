@@ -48,7 +48,7 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
-	rootCmd.PersistentFlags().StringP("category", "g", "",
+	rootCmd.PersistentFlags().StringP("category", "f", "",
 		"Sorts the list of scenarios by only showing scenarios of specified category")
 	if err := viper.BindPFlag("category", rootCmd.PersistentFlags().Lookup("category")); err != nil {
 		panic(err)
@@ -74,6 +74,12 @@ func newCmdRoot() *cobra.Command {
 	rootCmd.PersistentFlags().StringP("attack-container-repo", "r", "controlplane/simulator-attack",
 		"The attack container repo to pull from on the bastion")
 	if err := viper.BindPFlag("attack-container-repo", rootCmd.PersistentFlags().Lookup("attack-container-repo")); err != nil {
+		panic(err)
+	}
+
+	rootCmd.PersistentFlags().StringP("extra-cidrs", "e", "",
+		"Extra CIDRs that will be allowed to access to the bastion host. MUST be a valid CIDR and a list MUST be comma delimited")
+	if err := viper.BindPFlag("extra-cidrs", rootCmd.PersistentFlags().Lookup("extra-cidrs")); err != nil {
 		panic(err)
 	}
 
