@@ -48,7 +48,7 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
-	rootCmd.PersistentFlags().StringP("category", "f", "",
+	rootCmd.PersistentFlags().StringP("category", "g", "",
 		"Sorts the list of scenarios by only showing scenarios of specified category")
 	if err := viper.BindPFlag("category", rootCmd.PersistentFlags().Lookup("category")); err != nil {
 		panic(err)
