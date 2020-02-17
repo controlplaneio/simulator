@@ -2,19 +2,15 @@ category: secret
 difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
 objective: Compromise secret from running workload.
-startingPoint:
-  mode: pod
-  podName: nginx
-  podNamespace: secret-tank-desant
 tasks:
   "1":
     hints:
-    - penalty: 10
-      text: kubectl exec into workload.
-    - penalty: 10
-      text: Workload - enumerate container filesystem.
-    - penalty: 10
-      text: Read AWS creds from file.
+      - penalty: 10
+        text: kubectl exec into workload.
+      - penalty: 10
+        text: Workload - enumerate container filesystem.
+      - penalty: 10
+        text: Read AWS creds from file.
     sortOrder: 1
     startingPoint:
       mode: pod

@@ -2,48 +2,49 @@ category: network
 difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Use misconfigured svc to compromise db.
-startingPoint:
-  kubectlAccess: false
-  mode: internal-instance
 tasks:
   "1":
     hints:
-    - penalty: 10
-      text: What's returning the empty responses when the NodePort is queried?
-    - penalty: 10
-      text: Many databases are SQL based, could it be one of the popular ones?
-    - penalty: 10
-      text: I wonder what the default username for each SQL database is?
-    - penalty: 10
-      text: One of the devs mentioned a Postgres database they used didn't have a
-        password, could this be it?
-    - penalty: 10
-      text: Hmm, how do I list tables and view the keys in tables again?
+      - penalty: 10
+        text: What's returning the empty responses when the NodePort is queried?
+      - penalty: 10
+        text: Many databases are SQL based, could it be one of the popular ones?
+      - penalty: 10
+        text: I wonder what the default username for each SQL database is?
+      - penalty: 10
+        text:
+          One of the devs mentioned a Postgres database they used didn't have a
+          password, could this be it?
+      - penalty: 10
+        text: Hmm, how do I list tables and view the keys in tables again?
     sortOrder: 1
     startingPoint:
       kubectlAccess: false
       mode: internal-instance
-    summary: We used psql to query the application database from outside the cluster.
+    summary:
+      We used psql to query the application database from outside the cluster.
       This should not be allowed.
   "2":
     hints:
-    - penalty: 10
-      text: The database shouldn't be talking to the outside world.
-    - penalty: 10
-      text: The labels on this service are interesting.
+      - penalty: 10
+        text: The database shouldn't be talking to the outside world.
+      - penalty: 10
+        text: The labels on this service are interesting.
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary: The labels on the the frontend service select to many pods. We made the
+    summary:
+      The labels on the the frontend service select to many pods. We made the
       labels more selective to fix the issue.
   "3":
     hints:
-    - penalty: 10
-      text: I wonder if a network policy would help here.
+      - penalty: 10
+        text: I wonder if a network policy would help here.
     sortOrder: 3
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary: We added a network policy to the namespace to prevent all but approved
+    summary:
+      We added a network policy to the namespace to prevent all but approved
       traffic between pods and the outside.
