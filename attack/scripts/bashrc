@@ -246,11 +246,11 @@ welcome() {
   info 'can still return to the task but scoring will be fixed to the result of'
   info 'your first attempt.'
   info ' '
-  info 'To start the first task:'
+  info 'To start a task, type start_task followed by the task number, e.g:'
   info ' '
   info "  \$ start_task 1"
   info ' '
-  info "Begin to work on the scenario from its starting point:"
+  info "Begin to work on the scenario from its starting point, from somewhere inside the infrastructure:"
   info ' '
   info "  \$ starting_point"
   info ' '
