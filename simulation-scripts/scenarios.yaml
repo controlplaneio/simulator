@@ -25,7 +25,7 @@ scenarios:
     difficulty: Hard
     description: "Secrets are leaking from your cluster; can you discover how?"
     category: ETCD
-  - name: Master shell scrape
+  - name: Master Shell Scrape
     path: ./scenario/master-shell-scrape
     id: master-shell-scrape
     difficulty: Medium
