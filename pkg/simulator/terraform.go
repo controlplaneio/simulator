@@ -162,7 +162,7 @@ func (s *Simulator) Destroy() error {
 		return errors.Wrap(err, "Error initialising")
 	}
 
-	s.Logger.Info("Running terrraform destroy")
+	s.Logger.Info("Running terraform destroy")
 	_, err = s.Terraform("destroy")
 	return err
 }
