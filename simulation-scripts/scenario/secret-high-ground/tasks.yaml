@@ -1,4 +1,4 @@
-category: secret
+category: Secret
 difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
 objective: Fix a pull policy and then add a secret to the pod.

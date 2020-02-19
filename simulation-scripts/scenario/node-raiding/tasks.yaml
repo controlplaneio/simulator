@@ -1,4 +1,4 @@
-category: node
+category: Node
 difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Node compromise to get readonly kubelet API access.
