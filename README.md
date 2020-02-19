@@ -44,6 +44,8 @@ Refer to [Simulator CLI Usage](#simulator-cli-usage)
 
 ### Creating Environment And Lauching Scenario
 
+Before you launch your environment, please see the **How It All Works** section to ensure you have the necessary credentials and permissions in place and know what you are standing up. 
+
 _Create a remote state bucket for terraform_
 <pre>
 simulator init
@@ -89,7 +91,7 @@ _Start task_
 start_task 1
 </pre>
 
-The <code>start_task</code> command is used to inform the simulator which task you are undertaking, and therefore what hints are available to aid you with that task.
+The <code>start_task</code> command is used to inform the simulator which task you are undertaking with the number associated with, and therefore what hints are available to aid you with that task.
 
 _Accessing hints_
 <pre>
@@ -105,6 +107,19 @@ show_hints
 
 The <code>show_hints</code> command will display all the hints you have requested to that point, in the task you have started.
 
+_Ending a task_
+<pre>
+end_task
+</pre>
+
+or 
+
+<pre>
+start_task 2
+</pre>
+
+The <code>end_task</code> command will end the task you are currently on and score you. This will also happen if you move onto the a new task with the <code>start_task</code> command. When you end a task in one of these ways, you will be scored 100 points deducted the amount of hints you have displayed for that task at a value of -10 each. This is customizable through the task yamls.
+
 ### Cleaning Up Environment
 
 _Destroy your cluster when you are done_
@@ -115,7 +130,7 @@ Once you have finished you **must** destroy the environment to ensure that no ad
 
 ### Scenarios
 
-The following scenarios are available:
+While you can write your own, the following scenarios are currently shipped with the simulator:
 
 <pre>
      container-ambush
