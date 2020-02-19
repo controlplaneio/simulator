@@ -80,7 +80,7 @@ _Login to the environment_
 simulator ssh attack
 </pre>
 
-Running <code>simulator ssh attack</code> logs you into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster, how to show hints and start tasks, etc are displayed.  <code>starting_point</code> logs you into the correct starting point as per the challenge.
+Running <code>simulator ssh attack</code> logs you into a container running on the Bastion host.  Upon login, an outline of the challenge will be displayed.  In addition, shortcuts for logging into the master, or nodes, of the Kubernetes cluster and how to show hints and start tasks are displayed.  <code>starting_point</code> logs you into the correct starting point as per the challenge.
 
 From within the ssh attack container you have access to a range of helper commands such as <code>start_task</code>, <code>next_hint</code> and <code>show_hints</code>.
 
@@ -91,7 +91,7 @@ _Start task_
 start_task 1
 </pre>
 
-The <code>start_task</code> command is used to inform the simulator which task you are undertaking with the number associated with, and therefore what hints are available to aid you with that task.
+The <code>start_task</code> command is used to inform the simulator which task you are undertaking with the number associated, and therefore what hints are available to aid you with that task.
 
 _Accessing hints_
 <pre>
@@ -118,7 +118,7 @@ or
 start_task 2
 </pre>
 
-The <code>end_task</code> command will end the task you are currently on and score you. This will also happen if you move onto the a new task with the <code>start_task</code> command. When you end a task in one of these ways, you will be scored 100 points deducted the amount of hints you have displayed for that task at a value of -10 each. This is customizable through the task yamls.
+The <code>end_task</code> command will end the task you are currently on and score you. This will also happen if you move onto the a new task with the <code>start_task</code> command. When you end a task in one of these ways, you will be scored 100 points minus the amount of hints you have displayed for that task at a value of -10 each. This is customizable through the task yamls.
 
 ### Cleaning Up Environment
 
