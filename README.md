@@ -44,6 +44,8 @@ Refer to [Simulator CLI Usage](#simulator-cli-usage)
 
 ### Creating Environment And Lauching Scenario
 
+Before you launch your environment, please see the **How It All Works** section to ensure you have the necessary credentials and permissions in place and know what you are standing up. 
+
 _Create a remote state bucket for terraform_
 <pre>
 simulator init
@@ -62,20 +64,25 @@ simulator scenario list
 </pre>
 This will list all currently available scenrios
 
+_To get a better idea of what is involved in each scenario, e.g. node-shock-tactics_
+<pre>
+simulator scenario describe node-shock-tactics
+</pre>
+
 _Launch a scenario (sets up your cluster)_
 <pre>
 simulator scenario launch node-shock-tactics
 </pre>
 This will launch your selected scenario.
 
-_Login the environment_
+_Login to the environment_
 <pre>
 simulator ssh attack
 </pre>
 
-Once you run <code>simulator ssh attack</code> you will be logged into a container running on the Bastion host.  Upon login an outline of the challenge will be displayed.  In addition, short cuts for logging into the master, or nodes, of the Kubernetes cluster are displayed.  Use these shortcuts to log into the correct starting point as outlined in the challenge.  **Note** that some starting points will require you are on the cluster first to access to starting point.
+Running <code>simulator ssh attack</code> logs you into a container running on the Bastion host.  Upon login, an outline of the challenge will be displayed.  In addition, shortcuts for logging into the master, or nodes, of the Kubernetes cluster and how to show hints and start tasks are displayed.  <code>starting_point</code> logs you into the correct starting point as per the challenge.
 
-From within this container you have access to helper command <code>start_task</code>, <code>next_hint</code> and <code>show_hints</code>.
+From within the ssh attack container you have access to a range of helper commands such as <code>start_task</code>, <code>next_hint</code> and <code>show_hints</code>.
 
 ![Bastion container initial login](./docs/bastion.png)
 
@@ -84,7 +91,7 @@ _Start task_
 start_task 1
 </pre>
 
-The <code>start_task</code> command is used to inform the simulator which task you are undertaking, and therefore what hints are available to aid you with that task.
+The <code>start_task</code> command is used to inform the simulator which task you are undertaking with the number associated, and therefore what hints are available to aid you with that task.
 
 _Accessing hints_
 <pre>
@@ -100,6 +107,19 @@ show_hints
 
 The <code>show_hints</code> command will display all the hints you have requested to that point, in the task you have started.
 
+_Ending a task_
+<pre>
+end_task
+</pre>
+
+or 
+
+<pre>
+start_task 2
+</pre>
+
+The <code>end_task</code> command will end the task you are currently on and score you. This will also happen if you move onto the a new task with the <code>start_task</code> command. When you end a task in one of these ways, you will be scored 100 points minus the amount of hints you have displayed for that task at a value of -10 each. This is customizable through the task yamls.
+
 ### Cleaning Up Environment
 
 _Destroy your cluster when you are done_
@@ -110,7 +130,7 @@ Once you have finished you **must** destroy the environment to ensure that no ad
 
 ### Scenarios
 
-The following scenarios are available:
+While you can write your own, the following scenarios are currently shipped with the simulator:
 
 <pre>
      container-ambush
