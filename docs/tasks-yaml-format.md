@@ -83,8 +83,24 @@ User exec's into a specific pod:
 ```YAML
 startingPoint:
   mode: pod
-  podName: "compromised-pod"
-  podNamespace: "default"
+  podName: compromised-pod
+  podNamespace: default
+```
+
+The pod starting point can also use two optional fields:
+
+* `containerName` to choose a specific container in a pod to start in. This is required for multi-container pods.
+* `podHost` to choose a pod on a specific host. Options are one of `master-0`, `node-0` or `node-1`. It is recommended to use this option with a `DaemonSet` as it can be guaranteed that a pod exists on your chosen host.
+
+A starting point using these options is below:
+
+```YAML
+startingPoint:
+  mode: pod
+  podName: compromised-pod
+  podNamespace: default
+  containerName: container-2
+  podHost: node-0
 ```
 
 Default behaviour:
