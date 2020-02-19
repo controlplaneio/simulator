@@ -1,4 +1,4 @@
-category: network
+category: Network
 difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
 objective: Use misconfigured svc to compromise db.

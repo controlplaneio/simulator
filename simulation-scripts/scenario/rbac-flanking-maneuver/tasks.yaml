@@ -1,4 +1,4 @@
-category: rbac
+category: RBAC
 difficulty: Hard
 kind: cp.simulator/scenario:1.0.0
 objective: SSH into vulnerable workload, wget secrets using permissive SA.

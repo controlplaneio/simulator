@@ -1,4 +1,4 @@
-category: policy
+category: Policy
 difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Use privileged container to get host secrets.

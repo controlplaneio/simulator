@@ -1,4 +1,4 @@
-category: master
+category: Master
 difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
 objective: Enable MutatingAdmissionWebhook admission controller in the API server.
