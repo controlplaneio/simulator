@@ -129,6 +129,7 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
+			enableIPDetection := viper.GetBool("enable-ip-detection")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			simulator := sim.NewSimulator(
@@ -138,6 +139,7 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 				sim.WithAttackTag(attackTag),
 				sim.WithScenarioID(args[0]),
 				sim.WithBucketName(bucketName),
+				sim.WithIPDetection(enableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			if err := simulator.Launch(); err != nil {

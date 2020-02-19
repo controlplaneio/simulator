@@ -91,6 +91,12 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentFlags().StringP("enable-ip-detection", "i", "true",
+		"Checks public IP. If you disable for `simulator infra create`, make sure you know what you are doing.")
+	if err := viper.BindPFlag("enable-ip-detection", rootCmd.PersistentFlags().Lookup("enable-ip-detection")); err != nil {
+		panic(err)
+	}
+
 	return rootCmd
 }
 

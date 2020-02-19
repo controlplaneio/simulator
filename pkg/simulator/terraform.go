@@ -54,6 +54,13 @@ func (s *Simulator) Terraform(cmd string) (*string, error) {
 // InitIfNeeded checks the IP address and SSH key and updates the tfvars if
 // needed
 func (s *Simulator) InitIfNeeded() error {
+
+	var i interface{} = s.EnableIPDetection
+	_, isBool := i.(bool)
+	if !isBool {
+		return errors.New("enable-ip-detection is not a boolean")
+	}
+
 	s.Logger.Debug("Terraform.InitIfNeeded() start")
 	s.Logger.Info("Ensuring there is a simulator keypair")
 	_, err := ssh.EnsureKey()
@@ -61,13 +68,17 @@ func (s *Simulator) InitIfNeeded() error {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
 
-	s.Logger.Info("Detecting your public IP address")
-	ip, err := util.DetectPublicIP()
-	if err != nil {
-		return errors.Wrap(err, "Error detecting IP address")
+	var accessCIDR string
+	if s.EnableIPDetection {
+		s.Logger.Info("Detecting your public IP address")
+		ip, err := util.DetectPublicIP()
+		if err != nil {
+			return errors.Wrap(err, "Error detecting IP address")
+		}
+		accessCIDR = *ip + "/32"
+	} else {
+		accessCIDR = ""
 	}
-	accessCIDR := *ip + "/32"
-
 	s.Logger.Debug("Reading public key")
 	publickey, err := ssh.PublicKey()
 	if err != nil {

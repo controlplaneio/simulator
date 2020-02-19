@@ -20,6 +20,7 @@ func newSSHConfigCommand(logger *logrus.Logger) *cobra.Command {
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
+			enableIPDetection := viper.GetBool("enable-ip-detection")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
@@ -27,6 +28,7 @@ func newSSHConfigCommand(logger *logrus.Logger) *cobra.Command {
 				sim.WithScenariosDir(scenariosDir),
 				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
+				sim.WithIPDetection(enableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			cfg, err := simulator.SSHConfig()
@@ -66,12 +68,14 @@ func newSSHAttackCommand(logger *logrus.Logger) *cobra.Command {
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
+			enableIPDetection := viper.GetBool("enable-ip-detection")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
 				sim.WithTfDir(tfDir),
 				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
+				sim.WithIPDetection(enableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			return simulator.Attack()
