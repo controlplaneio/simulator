@@ -1,5 +1,5 @@
 Scenario: Your audit logs indicate that an anonymous user has been exec'ing into workloads on your nodes, $NODE_IP_ADDRESSES and getting secrets out of them.
-You have confirmed that the Kubernetes API server is set up to authenticate and authorise every request.
+You have confirmed that the Kubernetes API server is set up to authenticate and authorise every valid request.
 
 Starting Point: start-pod pod in the node-amphibious-operations namespace
 

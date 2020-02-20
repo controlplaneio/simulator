@@ -55,10 +55,10 @@ func (s *Simulator) Terraform(cmd string) (*string, error) {
 // needed
 func (s *Simulator) InitIfNeeded() error {
 
-	var i interface{} = s.EnableIPDetection
+	var i interface{} = s.DisableIPDetection
 	_, isBool := i.(bool)
 	if !isBool {
-		return errors.New("enable-ip-detection is not a boolean")
+		return errors.New("disable-ip-detection is not a boolean")
 	}
 
 	s.Logger.Debug("Terraform.InitIfNeeded() start")
@@ -69,15 +69,15 @@ func (s *Simulator) InitIfNeeded() error {
 	}
 
 	var accessCIDR string
-	if s.EnableIPDetection {
+	if s.DisableIPDetection {
+		accessCIDR = ""
+	} else {
 		s.Logger.Info("Detecting your public IP address")
 		ip, err := util.DetectPublicIP()
 		if err != nil {
 			return errors.Wrap(err, "Error detecting IP address")
 		}
 		accessCIDR = *ip + "/32"
-	} else {
-		accessCIDR = ""
 	}
 	s.Logger.Debug("Reading public key")
 	publickey, err := ssh.PublicKey()

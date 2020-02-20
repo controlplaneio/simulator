@@ -15,7 +15,7 @@ func Test_Config(t *testing.T) {
 		simulator.WithTfDir(fixture("noop-tf-dir")),
 		simulator.WithScenariosDir(fixture("valid")),
 		simulator.WithAttackTag("Latest"),
-		simulator.WithIPDetection(true),
+		simulator.WithoutIPDetection(false),
 		simulator.WithTfVarsDir("test"))
 
 	cfg, err := simulator.SSHConfig()
