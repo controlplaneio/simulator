@@ -25,6 +25,6 @@ Once all sources have returned an IP or timed out, the IP with most votes wins a
 
 ## Reconfiguring the Whitelisted IP
 
-While limiting the IPs ability to SSH to the bastion is obviously great for security it does pose a user experience issue. Users may have their IPs change due to network conditions, restarts or simply moving location. It would be wasteful to completely reprovision a cluster every time this happens and the user would lose the progress on their current scenario.
+While limiting the IPs that are able to SSH to the bastion is obviously great for security it does pose a user experience issue. Users may have their IPs change due to network conditions, restarts or simply moving location. It would be wasteful to completely reprovision a cluster every time this happens and the user would lose the progress on their current scenario.
 
 If it is known that the user IP has changed or SSH is timing out, the security groups can be reconfigured by running `simulator infra create`. Simulator will notice the discrepancy between the security group and the current IP and then take action to remedy it.
