@@ -27,6 +27,8 @@ type Simulator struct {
 	// ScenariosDir is the location of the scenarios for perturb to use when perturbing
 	// the cluster
 	ScenariosDir string
+	// disableIPDetection enables IP checks used for cidr access. Enabled by default.
+	DisableIPDetection bool
 }
 
 // Option is a type used to configure a `Simulator` instance
@@ -104,5 +106,13 @@ func WithScenariosDir(scenariosDir string) Option {
 func WithBucketName(bucketName string) Option {
 	return func(s *Simulator) {
 		s.BucketName = bucketName
+	}
+}
+
+// WithoutIPDetection returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithoutIPDetection(disableIPDetection bool) Option {
+	return func(s *Simulator) {
+		s.DisableIPDetection = disableIPDetection
 	}
 }

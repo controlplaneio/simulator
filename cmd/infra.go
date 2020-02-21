@@ -26,6 +26,7 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 			attackRepo := viper.GetString("attack-container-repo")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
+			disableIPDetection := viper.GetBool("disable-ip-detection")
 
 			logger.WithFields(logrus.Fields{
 				"BucketName": bucketName,
@@ -38,6 +39,7 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 				sim.WithAttackTag(attackTag),
 				sim.WithAttackRepo(attackRepo),
 				sim.WithBucketName(bucketName),
+				sim.WithoutIPDetection(disableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			err := simulator.Create()
@@ -79,12 +81,14 @@ func newStatusCommand(logger *logrus.Logger) *cobra.Command {
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
+			disableIPDetection := viper.GetBool("disable-ip-detection")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
 				sim.WithTfDir(tfDir),
 				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
+				sim.WithoutIPDetection(disableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			tfo, err := simulator.Status()
@@ -127,12 +131,14 @@ func newDestroyCommand(logger *logrus.Logger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 			attackTag := viper.GetString("attack-container-tag")
+			disableIPDetection := viper.GetBool("disable-ip-detection")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
 				sim.WithTfDir(tfDir),
 				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
+				sim.WithoutIPDetection(disableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			err := simulator.Destroy()

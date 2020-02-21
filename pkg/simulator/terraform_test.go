@@ -31,6 +31,7 @@ func Test_PrepareTfArgs(t *testing.T) {
 	simulator := sim.NewSimulator(
 		sim.WithLogger(logger),
 		sim.WithBucketName("test-bucket"),
+		sim.WithoutIPDetection(false),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
 
 	for _, tt := range tfCommandArgumentsTests {
@@ -49,6 +50,7 @@ func Test_Status(t *testing.T) {
 		sim.WithScenariosDir("test"),
 		sim.WithAttackTag("latest"),
 		sim.WithBucketName("test"),
+		sim.WithoutIPDetection(false),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
 
 	tfo, err := simulator.Status()
