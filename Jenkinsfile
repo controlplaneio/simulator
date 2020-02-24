@@ -38,9 +38,13 @@ pipeline {
         docker {
           image 'docker.io/controlplane/gcloud-sdk:latest'
             args '-v /var/run/docker.sock:/var/run/docker.sock ' +
-            '--user=root ' +
-            '--cap-drop=ALL ' +
-            '--cap-add=DAC_OVERRIDE'
+                 '--tmpfs /tmp ' +
+                 '--user=root ' +
+                 '--cap-drop=ALL ' +
+                 '--cap-add=DAC_OVERRIDE ' +
+                 '--cap-add=DAC_READ_SEARCH ' +
+                 '--cap-add=CHOWN ' +
+                 '--cap-add=FOWNER '
         }
       }
 
