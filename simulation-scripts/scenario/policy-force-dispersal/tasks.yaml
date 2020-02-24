@@ -10,7 +10,7 @@ tasks:
       - penalty: 10
         text: Where does kubeadm keep the master config?
       - penalty: 10
-        text: Looks like the PodSecurityPolicy is missing from the admission controllers. Add it and delete the pod to see it fail to recreate.
+        text: Looks like the PodSecurityPolicy is missing from the admission controllers. Add it and scale the pods up and down to see it fail to reschedule.
     sortOrder: 1
     startingPoint:
       asRoot: true
