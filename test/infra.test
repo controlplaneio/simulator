@@ -6,6 +6,7 @@ namespace eval ::simulator::test {
 
   variable BEFORE {
     catch { unset result }
+    spawn mkdir -p /home/launch/.kubesim/settings/
     set env(SIMULATOR_TF_DIR) "./test/fixtures/noop-tf-dir"
     set env(SIMULATOR_STATE_BUCKET) "dummy-test-bucket"
     set env(SIMULATOR_CLI_TEST_OUTPUT) "./test/test.debug"
