@@ -106,7 +106,6 @@ docker-test: validate-reqs docker-build ## Run the tests
 	@export AWS_DEFAULT_REGION="testing propagation to AWS_REGION var"; \
 	docker run                                                          \
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
-		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                    \
 		--env-file launch-environment                               \
 		--rm -t $(CONTAINER_NAME_LATEST)                            \
 		/app/test-acceptance.sh
