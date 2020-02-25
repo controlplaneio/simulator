@@ -2,10 +2,10 @@ package ssh
 
 import (
 	"encoding/base64"
-	"fmt"
 	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"os"
 	"strings"
@@ -49,25 +49,22 @@ func PublicKey() (*string, error) {
 // GenerateKey runs ssh-keygen silently to create an SSH key with the same
 // provided using preconfigured settings It returns a pointer to a string
 // containing the buffered stdout or an error if any occurred
-func GenerateKey(privatekeypath string) (*string, error) {
+func GenerateKey(privatekeypath string, logger *logrus.Logger) (*string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting process working directory")
 	}
 
-	cm := childminder.NewChildMinder(nil, wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C",
+	cm := childminder.NewChildMinder(logger, wd, os.Environ(), "ssh-keygen", "-f", privatekeypath, "-t", "rsa", "-C",
 		"simulator-key", "-N", "")
-	out, stderr, err := cm.RunSilently()
-	if *stderr != "" {
-		fmt.Println(*stderr)
-	}
+	out, err := cm.Run()
 
 	return out, err
 }
 
 // EnsureKey ensures there is a well-known simulator key available and returns
 // true if it generates a new one or an error if any
-func EnsureKey() (bool, error) {
+func EnsureKey(logger *logrus.Logger) (bool, error) {
 	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
 		return false, errors.Wrap(err, "Error resolving key path")
@@ -83,7 +80,7 @@ func EnsureKey() (bool, error) {
 		return false, nil
 	}
 
-	_, err = GenerateKey(*abspath)
+	_, err = GenerateKey(*abspath, logger)
 	if err != nil {
 		return true, errors.Wrap(err, "Error generating key")
 	}

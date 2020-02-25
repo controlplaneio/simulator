@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_EnsureKeyKnownHosts(t *testing.T) {
+func Test_EnsureKnownHosts(t *testing.T) {
 	t.Skip("Need to orchestrate an SSH server for testing")
 	err := ssh.EnsureKnownHosts("localhost")
 	assert.NotNil(t, err, "Expected no error")

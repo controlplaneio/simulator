@@ -2,12 +2,13 @@ package ssh_test
 
 import (
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func Test_PrivateKeyFile_returns_AuthMethod(t *testing.T) {
-	_, err := ssh.EnsureKey()
+	_, err := ssh.EnsureKey(logrus.New())
 	assert.Nil(t, err, "Expected no error ensuring keypair")
 
 	auth, err := ssh.PrivateKeyFile()
@@ -16,7 +17,7 @@ func Test_PrivateKeyFile_returns_AuthMethod(t *testing.T) {
 }
 
 func Test_PublicKey_returns_Key_file_contents(t *testing.T) {
-	_, err := ssh.EnsureKey()
+	_, err := ssh.EnsureKey(logrus.New())
 	assert.Nil(t, err, "Expected no error ensuring keypair")
 
 	key, err := ssh.PublicKey()

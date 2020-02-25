@@ -4,11 +4,12 @@ import (
 	"testing"
 
 	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {
-	_, err := ssh.EnsureKey()
+	_, err := ssh.EnsureKey(logrus.New())
 	assert.Nil(t, err, "Expected no error ensuring keypair")
 	auths, err := ssh.GetAuthMethods()
 

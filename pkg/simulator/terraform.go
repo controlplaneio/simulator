@@ -63,7 +63,7 @@ func (s *Simulator) InitIfNeeded() error {
 
 	s.Logger.Debug("Terraform.InitIfNeeded() start")
 	s.Logger.Info("Ensuring there is a simulator keypair")
-	_, err := ssh.EnsureKey()
+	_, err := ssh.EnsureKey(s.Logger)
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
