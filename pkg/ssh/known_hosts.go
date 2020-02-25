@@ -4,14 +4,15 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"os"
 )
 
 // EnsureKnownHosts scans the bastion host for its SSH keys and writes them to
 // a custom known hosts location for promptless interaction with the
 // infrastructure.  Return an error if any occurred
-func EnsureKnownHosts(bastion string) error {
-	hostkeys, err := KeyScan(bastion)
+func EnsureKnownHosts(bastion string, logger *logrus.Logger) error {
+	hostkeys, err := KeyScan(bastion, logger)
 	if err != nil {
 		return errors.Wrap(err, "Error running ssh-keyscan")
 	}
@@ -32,12 +33,12 @@ func EnsureKnownHosts(bastion string) error {
 // KeyScan runs ssh-keyscan silently against the provided bastion address. It
 // returns a pointer to a string containing its buffered stdout or an error if
 // any occurred
-func KeyScan(bastion string) (*string, error) {
+func KeyScan(bastion string, logger *logrus.Logger) (*string, error) {
 	wd, err := os.Getwd()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error getting process working directory")
 	}
-	cm := childminder.NewChildMinder(nil, wd, os.Environ(), "ssh-keyscan", "-H", bastion)
+	cm := childminder.NewChildMinder(logger, wd, os.Environ(), "ssh-keyscan", "-H", bastion)
 	out, _, err := cm.RunSilently()
 	return out, err
 }

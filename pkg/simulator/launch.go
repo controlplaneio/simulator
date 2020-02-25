@@ -63,7 +63,7 @@ func (s *Simulator) Launch() error {
 	s.Logger.WithFields(logrus.Fields{
 		"BastionIP": bastion,
 	}).Info("Keyscanning bastion and updating known hosts")
-	err = ssh.EnsureKnownHosts(bastion)
+	err = ssh.EnsureKnownHosts(bastion, s.Logger)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s",
 			bastion)
