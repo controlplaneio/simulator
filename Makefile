@@ -146,7 +146,6 @@ test-smoke: build ## Run expect smoke test to check happy path works end-to-end
 
 .PHONY: test-unit
 test-unit: build ## Run golang unit tests for the CLI program
-	@echo "NOTE YOU SHOULD RUN THESE WITH make docker-test"
 	@echo "+ $@"
 	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
