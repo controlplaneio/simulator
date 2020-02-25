@@ -1,5 +1,6 @@
 variable "access_cidr" {
   description = "cidr range of client connection"
+  type        = list(string)
 }
 
 variable "vpc_id" {
@@ -18,4 +19,3 @@ variable "default_tags" {
   description = "Default tags for all resources"
   type        = map(string)
 }
-

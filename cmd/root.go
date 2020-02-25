@@ -77,6 +77,12 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentFlags().StringP("extra-cidrs", "e", "",
+		"Extra CIDRs that will be allowed to access to the bastion host. MUST be a valid CIDR and a list MUST be comma delimited")
+	if err := viper.BindPFlag("extra-cidrs", rootCmd.PersistentFlags().Lookup("extra-cidrs")); err != nil {
+		panic(err)
+	}
+
 	// TODO: (rem) this is also used to locate the perturb.sh script which may be
 	// subsumed by this app
 	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",

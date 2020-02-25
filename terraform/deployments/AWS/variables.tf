@@ -7,6 +7,7 @@ variable "access_key" {
 
 variable "access_cidr" {
   description = "cidr range of client connection"
+  type        = list(string)
 }
 
 // Variables below are to have defined defaults

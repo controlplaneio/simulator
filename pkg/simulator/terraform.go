@@ -91,8 +91,9 @@ func (s *Simulator) InitIfNeeded() error {
 		"PublicKey":  publickey,
 		"AccessCIDR": accessCIDR,
 		"BucketName": s.BucketName,
+		"ExtraCIDRs": s.ExtraCIDRs,
 	}).Debug("Writing Terraform tfvars file")
-	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo)
+	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo, s.ExtraCIDRs)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}

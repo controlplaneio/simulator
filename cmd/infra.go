@@ -27,6 +27,7 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 			disableIPDetection := viper.GetBool("disable-ip-detection")
+			extraCIDRs := viper.GetString("extra-cidrs")
 
 			logger.WithFields(logrus.Fields{
 				"BucketName": bucketName,
@@ -40,7 +41,8 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 				sim.WithAttackRepo(attackRepo),
 				sim.WithBucketName(bucketName),
 				sim.WithoutIPDetection(disableIPDetection),
-				sim.WithTfVarsDir(tfVarsDir))
+				sim.WithTfVarsDir(tfVarsDir),
+				sim.WithExtraCIDRs(extraCIDRs))
 
 			err := simulator.Create()
 			if err != nil {
