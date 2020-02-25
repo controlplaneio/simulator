@@ -45,7 +45,7 @@ func (s *Simulator) Terraform(cmd string) (*string, error) {
 	env := []string{"TF_IS_IN_AUTOMATION=1", "TF_INPUT=0"}
 	cm := childminder.NewChildMinder(s.Logger, s.TfDir, env, "terraform", args...)
 	if cmd == "output" {
-		out, _, err := cm.RunSilently()
+		out, err := cm.Run()
 		return out, err
 	}
 	return cm.Run()
