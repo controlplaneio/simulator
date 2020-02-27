@@ -141,8 +141,15 @@ starting_point() {
   elif [[ "$MODE" == "pod" ]]; then
     POD_NAME="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podName')"
     POD_NS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.podNamespace')"
-    # shellcheck disable=SC2029
-    ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} bash"
+    CONTAINER_NAME="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.containerName')"
+
+    if [[ ${CONTAINER_NAME} != "null" ]]; then
+      # shellcheck disable=SC2029
+      ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} -c ${CONTAINER_NAME} ${POD_NAME} bash"
+    else
+      # shellcheck disable=SC2029
+      ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} bash"
+    fi
 
   #Determine if mode is attack.
   elif [[ "$MODE" == "attack" ]]; then

@@ -336,7 +336,20 @@ template_tasks() {
   POD_NAME=$(echo "${tasks_json}" | jq -r '.tasks[].startingPoint.podName | select (.!=null)')
   for pod_name in $POD_NAME; do
     POD_NS=$(echo "${tasks_json}" | jq -r --arg POD_NAME "${pod_name}" '.tasks[].startingPoint | select(.podName | select (.!=null) | contains($POD_NAME)) | .podNamespace')
-    POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
+    POD_HOST=$(echo "${tasks_json}" | jq -r --arg POD_NAME "${pod_name}" '.tasks[].startingPoint | select(.podName | select (.!=null) | contains($POD_NAME)) | .podHost')
+    if [[ ${POD_HOST} != "null" ]]; then
+      if [[ ${POD_HOST} =~ "master" ]]; then
+        POD_HOST_IP="$(get_master)"
+      elif [[ ${POD_HOST} =~ "node" ]]; then
+        POD_HOST_IP="$(get_node $(("$(echo "${POD_HOST}" | tail -c 2)" + 1)))"
+      else
+        warning "Unknown podHost in startingpoint"
+        exit 1
+      fi
+      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_HOST_IP "${POD_HOST_IP}" --arg POD_NS "${POD_NS}" '.items[] | select(.status.hostIP | contains($POD_HOST_IP)) | .metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
+    else
+      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
+    fi
     sed -i "s/podName\:\ ${pod_name}/podName\:\ ${POD_RESULT}/g" "${tmptasks}"
   done
 }
