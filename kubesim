@@ -1,12 +1,16 @@
 #!/bin/bash
-
+set -e
 if [[ -z ${AWS_SHARED_CREDENTIALS_FILE} ]]; then
   SIMULATOR_AWS_CREDS_PATH=${HOME}/.aws/
 else
   SIMULATOR_AWS_CREDS_PATH="$(dirname "${AWS_SHARED_CREDENTIALS_FILE}")"
 fi
 
-CONTAINER_NAME=controlplane/simulator:latest
+IMAGE_NAME=controlplane/simulator
+TAGS=$(docker run --rm goodwithtech/dockertags:v0.1.2 -f json $IMAGE_NAME)
+LATEST=$(docker run --rm tomoyamachi/jq -nr --argjson j "$TAGS" '$j | .[0].tags[0]')
+CONTAINER_NAME="$IMAGE_NAME":"$LATEST"
+
 SSH_CONFIG_PATH=${HOME}/.kubesim/
 KUBE_SIM_TMP=${HOME}/.kubesim/
 SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
