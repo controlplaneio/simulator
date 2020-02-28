@@ -8,7 +8,7 @@
 # Simulator
 
 A distributed systems and infrastructure simulator for attacking and debugging
-Kubernetes: <code>simulator</code> creates a kuberntes cluster for you in your AWS
+Kubernetes: <code>simulator</code> creates a Kubernetes cluster for you in your AWS
 account; runs scenarios which misconfigure it and/or leave it vulnerable to
 compromise and trains you in mitigating against these vulnerabilities.
 
@@ -20,13 +20,7 @@ For details on why we created this project and our ultimate goals take a look at
 
 Ensure the [AWS requirements](#aws-configuration) are met and configured.
 
-The quickest way to get up and running is to simply:
-
-<pre>
-source <(curl https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim)
-</pre>
-
-or clone this repository and run:
+Clone this repository and run:
 
 <pre>
 make run
