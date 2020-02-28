@@ -8,7 +8,7 @@
 # Simulator
 
 A distributed systems and infrastructure simulator for attacking and debugging
-Kubernetes: <code>simulator</code> creates a kuberntes cluster for you in your AWS
+Kubernetes: <code>simulator</code> creates a Kubernetes cluster for you in your AWS
 account; runs scenarios which misconfigure it and/or leave it vulnerable to
 compromise and trains you in mitigating against these vulnerabilities.
 
@@ -20,13 +20,7 @@ For details on why we created this project and our ultimate goals take a look at
 
 Ensure the [AWS requirements](#aws-configuration) are met and configured.
 
-The quickest way to get up and running is to simply:
-
-<pre>
-source <(curl https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim)
-</pre>
-
-or clone this repository and run:
+Clone this repository and run:
 
 <pre>
 make run
@@ -37,20 +31,17 @@ make run
 This will drop you into a bash shell in a launch container.  You will have a
 program on the <code>PATH</code> named <code>simulator</code> to interact with.
 
-Refer to [Simulator CLI Usage](#simulator-cli-usage)
-
-
 ## Simulator CLI Usage
 
 ### Creating Environment And Lauching Scenario
 
-Before you launch your environment, please see the **How It All Works** section to ensure you have the necessary credentials and permissions in place and know what you are standing up. 
+Before you launch your environment, please see the **How It All Works** section to ensure you have the necessary credentials and permissions in place and know what you are standing up.
 
 _Create a remote state bucket for terraform_
 <pre>
 simulator init
 </pre>
-You will be asked for a name of a S3 bucket, which must be globally unique as pre AWS standards.  If this does not exist it will be created, else the existing bucket will be used.  This is used to store Terraform state to.
+You will be asked for the name for a S3 bucket for the Terraform remote state, which must be globally unique as per AWS standards.  If this does not exist it will be created, otherwise the existing bucket will be used.
 
 _Create the infra if it isn't there_
 <pre>
@@ -62,7 +53,7 @@ _List available scenarios_
 <pre>
 simulator scenario list
 </pre>
-This will list all currently available scenrios
+This will list all currently available scenarios.  You can filter the list by difficulty or category using the appropriate arguments
 
 _To get a better idea of what is involved in each scenario, e.g. node-shock-tactics_
 <pre>
@@ -80,7 +71,7 @@ _Login to the environment_
 simulator ssh attack
 </pre>
 
-Running <code>simulator ssh attack</code> logs you into a container running on the Bastion host.  Upon login, an outline of the challenge will be displayed.  In addition, shortcuts for logging into the master, or nodes, of the Kubernetes cluster and how to show hints and start tasks are displayed.  <code>starting_point</code> logs you into the correct starting point as per the challenge.
+Running <code>simulator ssh attack</code> logs you into a container running on the Bastion host.  Upon login, an outline of the challenge will be displayed.  In addition, shortcuts for logging into the master, or nodes, of the Kubernetes cluster and how to show hints and start tasks are displayed.  <code>starting_point</code> logs you into the correct starting point for the task you have started in the scenario.
 
 From within the ssh attack container you have access to a range of helper commands such as <code>start_task</code>, <code>next_hint</code> and <code>show_hints</code>.
 
@@ -112,13 +103,13 @@ _Ending a task_
 end_task
 </pre>
 
-or 
+or
 
 <pre>
 start_task 2
 </pre>
 
-The <code>end_task</code> command will end the task you are currently on and score you. This will also happen if you move onto the a new task with the <code>start_task</code> command. When you end a task in one of these ways, you will be scored 100 points minus the amount of hints you have displayed for that task at a value of -10 each. This is customizable through the task yamls.
+The <code>end_task</code> command will end the task you are currently on and score you. This will also happen if you move onto the a new task with the <code>start_task</code> command. When you end a task in one of these ways, you will be scored 100 points minus the amount of hints you have displayed for that task at a value of -10 each. This is defined in the scenario task manifest.
 
 ### Cleaning Up Environment
 
@@ -126,11 +117,11 @@ _Destroy your cluster when you are done_
 <pre>
 simulator infra destroy
 </pre>
-Once you have finished you **must** destroy the environment to ensure that no additional costs are incurred.  This command is actioned from within the launch container.
+Once you have finished you should destroy the environment to ensure that no additional costs are incurred.  You run this command in the launch container.
 
 ### Scenarios
 
-While you can write your own, the following scenarios are currently shipped with the simulator:
+The following scenarios are currently shipped with the simulator:
 
 <pre>
      container-ambush
@@ -158,6 +149,8 @@ While you can write your own, the following scenarios are currently shipped with
      secret-tank-desant
 </pre>
 
+But you can write your own and we really welcome any contributions of new scenarios :)
+
 ## How It All Works
 
 ### Infrastructure Design
@@ -172,8 +165,8 @@ CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cl
 Please follow these.
 
 You can provide your credentials via the <code>AWS_ACCESS_KEY_ID</code> and
-<code>AWS_SECRET_ACCESS_KEY</code>, environment variables, representing your AWS Access Key
-and AWS Secret Key, respectively. Note that setting your AWS credentials using
+<code>AWS_SECRET_ACCESS_KEY</code> environment variables, containing your AWS Access Key
+and AWS Secret Key respectively. Note that setting your AWS credentials using
 either these (or legacy) environment variables will override the use of
 <code>AWS_SHARED_CREDENTIALS_FILE</code> and <code>AWS_PROFILE</code>. The <code>AWS_DEFAULT_REGION</code> and
 <code>AWS_SESSION_TOKEN</code> environment variables are also used, if applicable.
@@ -185,7 +178,7 @@ https://www.terraform.io/docs/backends/types/s3.html
 ### Troubleshooting AWS
 
 - If you get a timeout when running <code>simulator infra create</code> after about 10 minutes, the region you are using
-is probably running slowly.  You must run <code>simulator infra destroy</code> and then retry <code>simulator infra
+is probably running slowly.  You should run <code>simulator infra destroy</code> and then retry <code>simulator infra
 create</code>
 - <code>AWS_REGION</code> vs <code>AWS_DEFAULT_REGION</code> - There have been
 [some issues](https://github.com/aws/aws-sdk-go/issues/2103) with the
@@ -194,11 +187,11 @@ create</code>
 
 ### Terraform
 
-Refer to the [simulator terraform documentation](./terraform/README.md) 
+Refer to the [simulator terraform documentation](./terraform/README.md)
 
 ### SSH
 
-Simulator whether run in the launch container or on the host machine will generate its own SSH RSA key pair.  It will configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config separate from any other configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and are files starting <code>cp_simulator_</code>
+Simulator, whether run in the launch container or on the host machine, will generate its own SSH RSA key pair.  It will configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config separate from any other SSH configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and are files starting <code>cp_simulator_</code>
 
 **If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
 next run**
@@ -232,7 +225,7 @@ cp kubesim /usr/local/bin
 
 ### Git hooks
 
-To ensure all Git hooks are in place run the following
+To ensure all Git hooks are in place run the following:
 
 <pre>
 make setup-dev
@@ -240,39 +233,12 @@ make setup-dev
 
 Development targets are specified in the [Makefile](./Makefile).
 
-<pre>
-setup-dev             Initialise simulation tree with git hooks
-devtools-deps: # Install devtools dependencies 
-devtools              Install devtools
-test-devtools: # Run all the unit tests for the devtools 
-reset                 Clean up files left over by simulator
-validate-requirements  Verify all requirements are met
-previous-tag:        
-release-tag:         
-gpg-preflight:       
-run                   Run the simulator - the build stage of the container runs all the cli tests
-docker-build-no-cache  Builds the launch container
-docker-build          Builds the launch container
-docker-test           Run the tests
-dep                   Install dependencies for other targets
-build                 Run golang build for the CLI program
-is-in-launch-container  checks you are running in the launch container
-test                  run all tests except goss tests
-test-acceptance       Run tcl acceptance tests for the CLI program
-test-smoke            Run expect smoke test to check happy path works end-to-end
-test-unit             Run golang unit tests for the CLI program
-test-cleanup          cleans up automated test artefacts if e.g. you ctrl-c abort a test run
-test-coverage         Run golang unit tests with coverage and opens a browser with the results
-docs                  Generate documentation
-release: gpg-preflight previous-tag release-tag docker-test docker-build build 
-</pre>
+You can see all the available targets with descriptions by running `make help`
 
 ### Git commits
 
 We follow [the conventional commit specification](https://www.conventionalcommits.org/en/v1.0.0-beta.4/).
-Please ensure your commit messages adhere to this spec.  If you submit a pull request
-without following them be aware we will squash and merge your work with a message
-that does.
+Please ensure your commit messages adhere to this spec.
 
 ## Architecture
 
@@ -286,9 +252,9 @@ that does.
 
 * [Simulator CLI tool](./cmd) - Runs in the launch container and orchestrates everything
 * [Launch container](./Dockerfile) - Isolates the scripts from the host
-* [Terraform Scripts for infrastructure provisioning](./terraform) - AWS infra
-* [Perturb.sh](./simulation-scripts/perturb.sh) - sets up a scenario on a cluster
-* [Scenarios](./simulation-scripts/scenario)
+* [Terraform Scripts for infrastructure provisioning](./terraform) - AWS infrastructure
+* [Perturb.sh](./simulation-scripts/perturb.sh) - Sets up a scenario on a cluster
+* [Scenarios](./simulation-scripts/scenario) - The scenario setup scripts and definitions
 * [Attack container](./attack) - Runs on the bastion providing all the tools needed to attack a
 cluster in the given cloud provider
 
@@ -308,6 +274,7 @@ The simulator API docs are available on godoc.org:
 
 * [Scenario](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/scenario)
 * [Simulator](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/simulator)
+* [ChildMinder](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/childminder)
 * [SSH](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/ssh)
 * [Util](https://godoc.org/github.com/controlplaneio/simulator-standalone/pkg/util)
 

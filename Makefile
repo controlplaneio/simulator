@@ -119,7 +119,7 @@ dep: go.mod ## Install dependencies for other targets
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2
 
 .PHONY: static-analysis
-static-analysis: dep
+static-analysis: dep ## Runs static analysis tools over golang code for known problem
 	golangci-lint run
 
 .PHONY: build
@@ -128,11 +128,11 @@ build: static-analysis ## Run golang build for the CLI program
 	$(GO) build ${GO_LDFLAGS} -a -o ./dist/simulator
 
 .PHONY: is-in-launch
-is-in-launch: ## checks you are running in the launch container
+is-in-launch: ## Checks you are running in the launch container
 	[ $(HOST) == "launch" ]
 
 .PHONY: test
-test:  test-unit test-acceptance ## run all tests except goss tests
+test:  test-unit test-acceptance ## Run all tests except goss tests
 
 .PHONY: test-acceptance
 test-acceptance: is-in-launch build ## Run tcl acceptance tests for the CLI program
@@ -151,7 +151,7 @@ test-unit: build ## Run golang unit tests for the CLI program
 	$(GO) test -race -coverprofile=coverage.txt -covermode=atomic ./...
 
 .PHONY: test-cleanup
-test-cleanup: ## cleans up automated test artefacts if e.g. you ctrl-c abort a test run
+test-cleanup: ## Cleans up automated test artefacts if e.g. you ctrl-c abort a test run
 	@aws s3 rb s3://controlplane-simulator-state-automated-test || true
 	@truncate -s 0 simulator-automated-test.yaml || true
 
