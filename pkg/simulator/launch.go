@@ -3,16 +3,17 @@ package simulator
 import (
 	"strings"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+
+	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 )
 
 // Launch runs perturb.sh to setup a scenario with the supplied `id` assuming
 // the infrastructure has been created.  Returns an error if the infrastructure
 // is not ready or something goes wrong
-func (s *Simulator) Launch() error {
+func (s *Simulator) Launch(po PerturbOptions) error {
 	s.Logger.WithFields(logrus.Fields{
 		"ScenariosDir": s.ScenariosDir,
 	}).Debug("Loading scenario manifest")
@@ -44,7 +45,7 @@ func (s *Simulator) Launch() error {
 
 	s.Logger.Debug(
 		"Making options to pass to perturb from terraorm output and scnenario")
-	po := MakePerturbOptions(*tfo, foundScenario.Path)
+	po.MakePerturbOptions(*tfo, foundScenario.Path)
 	s.Logger.Debug(po)
 
 	s.Logger.Debug("Regenerating SSH config")

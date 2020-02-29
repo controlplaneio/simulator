@@ -61,7 +61,6 @@ func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 			return nil
 		},
 	}
-
 	return cmd
 }
 
@@ -131,6 +130,9 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			disableIPDetection := viper.GetBool("disable-ip-detection")
 			tfVarsDir := viper.GetString("tf-vars-dir")
+			perturbOpt := sim.PerturbOptions{
+				Force: viper.GetBool("force"),
+			}
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
@@ -142,7 +144,7 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 				sim.WithoutIPDetection(disableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
-			if err := simulator.Launch(); err != nil {
+			if err := simulator.Launch(perturbOpt); err != nil {
 				if strings.HasPrefix(err.Error(), "Scenario not found") {
 					logger.WithFields(logrus.Fields{
 						"Error":    err,
@@ -158,6 +160,11 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 
 			return nil
 		},
+	}
+	cmd.PersistentFlags().BoolP("force", "f", false,
+		"If true, force launches a new scenario")
+	if err := viper.BindPFlag("force", cmd.PersistentFlags().Lookup("force")); err != nil {
+		panic(err)
 	}
 
 	return cmd
