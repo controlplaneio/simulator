@@ -1,13 +1,15 @@
 package util_test
 
 import (
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"testing"
+	"time"
+
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	"os"
-	"testing"
-	"time"
 )
 
 func fixture(name string) string {
@@ -109,4 +111,39 @@ func Test_EnsureFile(t *testing.T) {
 
 func Test_MustRemove(t *testing.T) {
 	util.MustRemove("./non-existent-file")
+}
+
+func Test_OverwriteFile(t *testing.T) {
+	tests := []struct {
+		name       string
+		filename   string
+		deletefile string
+		content    string
+	}{
+		{
+			name:       "samedir",
+			filename:   "test.yaml",
+			deletefile: "test.yaml",
+			content:    "hello",
+		},
+		{
+			name:       "nestdir",
+			filename:   filepath.Join("testdir", "1", "test.yaml"),
+			deletefile: "./testdir",
+			content:    "hello",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := util.OverwriteFile(tt.filename, tt.content)
+			assert.NoError(t, err, tt.name)
+			defer func() {
+				err = os.RemoveAll(tt.deletefile)
+				assert.NoError(t, err, tt.name)
+			}()
+			bytes, err := ioutil.ReadFile(tt.filename)
+			assert.NoError(t, err, tt.name)
+			assert.Equal(t, tt.content, string(bytes), tt.name)
+		})
+	}
 }

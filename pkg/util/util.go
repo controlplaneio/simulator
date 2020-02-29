@@ -154,6 +154,9 @@ func EnsureFile(path, contents string) (bool, error) {
 // OverwriteFile writes the supplied contents overwriting the path if it
 // already exists.  It returns an error if any occurred
 func OverwriteFile(path, contents string) error {
+	if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
+		return err
+	}
 	file, err := os.Create(path)
 	if err != nil {
 		return err
