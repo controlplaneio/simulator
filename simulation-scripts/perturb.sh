@@ -700,7 +700,7 @@ success() {
 
 info() {
   [ "${*:-}" ] && INFO="$*" || INFO="Unknown Info"
-  printf "%s\n" "${INFO}$"
+  printf "%s\n" "${INFO}"
 }
 
 warning() {
