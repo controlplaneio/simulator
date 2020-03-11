@@ -34,7 +34,7 @@ type Simulator struct {
 	// locations
 	ExtraCIDRs string
 	// StateProvider manages retrieving and persisting SSH state
-	StateProvider ssh.SSHState
+	StateProvider ssh.StateProvider
 }
 
 // Option is a type used to configure a `Simulator` instance
@@ -49,7 +49,7 @@ func NewSimulator(options ...Option) *Simulator {
 	}
 
 	if simulator.StateProvider == nil {
-		simulator.StateProvider = ssh.LocalState{}
+		simulator.StateProvider = ssh.LocalStateProvider{}
 	}
 
 	return &simulator
@@ -137,7 +137,7 @@ func WithExtraCIDRs(extraCIDRs string) Option {
 
 // WithStateProvider returns a configurer for creating a `Simulator` instance with
 // `NewSimulator`
-func WithStateProvider(stateProvider ssh.SSHState) Option {
+func WithStateProvider(stateProvider ssh.StateProvider) Option {
 	return func(s *Simulator) {
 		s.StateProvider = stateProvider
 	}

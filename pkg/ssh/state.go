@@ -8,20 +8,20 @@ import (
 	"strings"
 )
 
-// SSHState provides methods for storing or retrieving state about a user and
+// StateProvider provides methods for storing or retrieving state about a user and
 // their cluster
-type SSHState interface {
+type StateProvider interface {
 	GetSSHKeyPair() (*KeyPair, error)
 	SaveSSHConfig(config string) error
 	GetSSHConfig() (*string, error)
 }
 
-// LocalState is the default State provider and persists all state into the
+// LocalStateProvider is the default State provider and persists all state into the
 // local ~/.kubesim directory
-type LocalState struct{}
+type LocalStateProvider struct{}
 
 // GetSSHKeyPair returns an existing SSH keypair or creates one locally
-func (ls LocalState) GetSSHKeyPair() (*KeyPair, error) {
+func (ls LocalStateProvider) GetSSHKeyPair() (*KeyPair, error) {
 	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error resolving key path")
@@ -54,7 +54,7 @@ func (ls LocalState) GetSSHKeyPair() (*KeyPair, error) {
 }
 
 // GetSSHKeyPair retieves
-func (ls LocalState) getSSHKeyPair() (*KeyPair, error) {
+func (ls LocalStateProvider) getSSHKeyPair() (*KeyPair, error) {
 	publicKeyPath, err := util.ExpandTilde(PublicKeyPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error resolving %s", PublicKeyPath)
@@ -75,15 +75,15 @@ func (ls LocalState) getSSHKeyPair() (*KeyPair, error) {
 		return nil, errors.Wrapf(err, "Error reading %s", PublicKeyPath)
 	}
 	ret := KeyPair{
-		PublicKey:  SSHPublicKey(strings.Trim(*publickey, "\n")),
-		PrivateKey: SSHPrivateKey(*privatekey),
+		PublicKey:  PublicKey(strings.Trim(*publickey, "\n")),
+		PrivateKey: PrivateKey(*privatekey),
 	}
 	return &ret, nil
 }
 
 // SaveSSHConfig saves the config supplied to the local ~/.ssh directory
-func (ls LocalState) SaveSSHConfig(config string) error {
-	abspath, err := util.ExpandTilde(SSHConfigPath)
+func (ls LocalStateProvider) SaveSSHConfig(config string) error {
+	abspath, err := util.ExpandTilde(ConfigPath)
 	if err != nil {
 		return errors.Wrap(err, "Error resolving SSH config path")
 	}
@@ -97,15 +97,15 @@ func (ls LocalState) SaveSSHConfig(config string) error {
 }
 
 // GetSSHConfig reads the config from the local ~/.ssh directory
-func (ls LocalState) GetSSHConfig() (*string, error) {
-	abspath, err := util.ExpandTilde(SSHConfigPath)
+func (ls LocalStateProvider) GetSSHConfig() (*string, error) {
+	abspath, err := util.ExpandTilde(ConfigPath)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Error resolving %s", SSHConfigPath)
+		return nil, errors.Wrapf(err, "Error resolving %s", ConfigPath)
 	}
 
 	config, err := util.Slurp(*abspath)
 	if err != nil {
-		return nil, errors.Wrapf(err, "Error reading %s", SSHConfigPath)
+		return nil, errors.Wrapf(err, "Error reading %s", ConfigPath)
 	}
 	return config, nil
 }

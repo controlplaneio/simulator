@@ -8,7 +8,7 @@ import (
 )
 
 func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {
-	ls := ssh.LocalState{}
+	ls := ssh.LocalStateProvider{}
 	kp, err := ls.GetSSHKeyPair()
 	assert.Nil(t, err, "Expected no error ensuring keypair")
 	auths, err := ssh.GetAuthMethods(*kp)

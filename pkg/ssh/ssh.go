@@ -35,7 +35,7 @@ func SSH(host string, kp KeyPair) error {
 
 	fmt.Printf("Connecting to %s\n", host)
 
-	abspath, err := util.ExpandTilde(SSHKnownHostsPath)
+	abspath, err := util.ExpandTilde(KnownHostsPath)
 	if err != nil {
 		return errors.Wrap(err, "Error resolving known_hosts path")
 	}

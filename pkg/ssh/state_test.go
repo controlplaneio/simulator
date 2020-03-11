@@ -7,7 +7,7 @@ import (
 )
 
 func Test_GetSSHKeyPair(t *testing.T) {
-	ls := ssh.LocalState{}
+	ls := ssh.LocalStateProvider{}
 
 	kp, err := ls.GetSSHKeyPair()
 	assert.Nil(t, err, "Expected no error ensuring keypair")
