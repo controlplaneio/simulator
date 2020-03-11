@@ -8,22 +8,9 @@ import (
 	"strings"
 )
 
-// SSHPrivateKey represents an SSH PrivateKey
-type SSHPrivateKey string
-
-// SSHPublicKey represents an SSH PublicKey
-type SSHPublicKey string
-
-// KeyPair has an SSH Private and Public key pair
-type KeyPair struct {
-	PublicKey  SSHPublicKey
-	PrivateKey SSHPrivateKey
-}
-
 // SSHState provides methods for storing or retrieving state about a user and
 // their cluster
 type SSHState interface {
-	SaveSSHKeyPair(keyPair KeyPair) error
 	GetSSHKeyPair() (*KeyPair, error)
 	SaveSSHConfig(config string) error
 	GetSSHConfig() (*string, error)
@@ -33,8 +20,8 @@ type SSHState interface {
 // local ~/.kubesim directory
 type LocalState struct{}
 
-// NewSSHKeyPair creates an SSH keypair locally
-func (ls LocalState) NewSSHKeyPair() (*KeyPair, error) {
+// GetSSHKeyPair returns an existing SSH keypair or creates one locally
+func (ls LocalState) GetSSHKeyPair() (*KeyPair, error) {
 	abspath, err := util.ExpandTilde(PrivateKeyPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error resolving key path")
@@ -47,7 +34,7 @@ func (ls LocalState) NewSSHKeyPair() (*KeyPair, error) {
 
 	// key already exists return it
 	if exists {
-		return ls.GetSSHKeyPair()
+		return ls.getSSHKeyPair()
 	}
 
 	wd, err := os.Getwd()
@@ -63,11 +50,11 @@ func (ls LocalState) NewSSHKeyPair() (*KeyPair, error) {
 		return nil, errors.Wrap(err, "Error generating keypair")
 	}
 
-	return ls.GetSSHKeyPair()
+	return ls.getSSHKeyPair()
 }
 
 // GetSSHKeyPair retieves
-func (ls LocalState) GetSSHKeyPair() (*KeyPair, error) {
+func (ls LocalState) getSSHKeyPair() (*KeyPair, error) {
 	publicKeyPath, err := util.ExpandTilde(PublicKeyPath)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Error resolving %s", PublicKeyPath)
@@ -89,7 +76,7 @@ func (ls LocalState) GetSSHKeyPair() (*KeyPair, error) {
 	}
 	ret := KeyPair{
 		PublicKey:  SSHPublicKey(strings.Trim(*publickey, "\n")),
-		PrivateKey: SSHPrivateKey(strings.Trim(*privatekey, "\n")),
+		PrivateKey: SSHPrivateKey(*privatekey),
 	}
 	return &ret, nil
 }

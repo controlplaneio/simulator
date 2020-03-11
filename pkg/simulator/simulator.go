@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/sirupsen/logrus"
 )
 
@@ -32,6 +33,8 @@ type Simulator struct {
 	// Extra CIDRs to be added to the bastion security group to allow SSH from arbitrary
 	// locations
 	ExtraCIDRs string
+	// StateProvider manages retrieving and persisting SSH state
+	StateProvider ssh.SSHState
 }
 
 // Option is a type used to configure a `Simulator` instance
@@ -43,6 +46,10 @@ func NewSimulator(options ...Option) *Simulator {
 
 	for _, option := range options {
 		option(&simulator)
+	}
+
+	if simulator.StateProvider == nil {
+		simulator.StateProvider = ssh.LocalState{}
 	}
 
 	return &simulator
@@ -125,5 +132,13 @@ func WithoutIPDetection(disableIPDetection bool) Option {
 func WithExtraCIDRs(extraCIDRs string) Option {
 	return func(s *Simulator) {
 		s.ExtraCIDRs = extraCIDRs
+	}
+}
+
+// WithStateProvider returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithStateProvider(stateProvider ssh.SSHState) Option {
+	return func(s *Simulator) {
+		s.StateProvider = stateProvider
 	}
 }

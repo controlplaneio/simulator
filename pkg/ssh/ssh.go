@@ -5,61 +5,30 @@ import (
 	"github.com/controlplaneio/simulator-standalone/pkg/util"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/agent"
 	"golang.org/x/crypto/ssh/knownhosts"
 	"golang.org/x/crypto/ssh/terminal"
-	"net"
 	"os"
 )
 
 // GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls
 // back to reading the keyfile directly in case of a missing SSH_AUTH_SOCK env
 // var or an error dialing the unix socket
-func GetAuthMethods() ([]ssh.AuthMethod, error) {
-	// Check we have the ssh-agent AUTH SOCK and short circuit if we don't - just
-	// create a signer from the keyfile
-	authSock := os.Getenv("SSH_AUTH_SOCK")
-	if authSock == "" {
-		keyFileAuth, err := PrivateKeyFile()
-		if err != nil {
-			return nil, errors.Wrap(err, "Error getting auth methods for private key")
-		}
-
-		fmt.Println("KeyFile")
-		fmt.Printf("%+v", keyFileAuth)
-		return []ssh.AuthMethod{keyFileAuth}, nil
-	}
-
-	// Try to get a signer from ssh-agent
-	sock, err := net.Dial("unix", os.Getenv("SSH_AUTH_SOCK"))
+func GetAuthMethods(kp KeyPair) ([]ssh.AuthMethod, error) {
+	keyFileAuth, err := kp.PrivateKey.ToAuthMethod()
 	if err != nil {
-		// Fallback to keyfile if we failed to connect
-		keyFileAuth, err := PrivateKeyFile()
-		if err != nil {
-			return nil, err
-		}
-
-		return []ssh.AuthMethod{keyFileAuth}, nil
+		return nil, errors.Wrap(err, "Error getting auth methods for private key")
 	}
 
-	// Use the signers from ssh-agent
-	agent := agent.NewClient(sock)
-
-	signers, err := agent.Signers()
-	if err != nil {
-		return nil, err
-	}
-
-	return []ssh.AuthMethod{ssh.PublicKeys(signers...)}, nil
+	return []ssh.AuthMethod{keyFileAuth}, nil
 }
 
 // SSH establishes an interactive Secure Shell session to the supplied host as
 // user ubuntu and on port 22. SSH uses ssh-agent to get the key to use
-func SSH(host string) error {
+func SSH(host string, kp KeyPair) error {
 	port := "22"
 	user := "ubuntu"
 
-	auths, err := GetAuthMethods()
+	auths, err := GetAuthMethods(kp)
 	if err != nil {
 		return errors.Wrap(err, "Error getting auth methods")
 	}
@@ -90,12 +59,12 @@ func SSH(host string) error {
 		},
 	}
 
-	return StartInteractiveSSHShell(&cfg, "tcp", host, port)
+	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp)
 }
 
 // StartInteractiveSSHShell starts an interactive SSH shell with the supplied
 // ClientConfig
-func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string) error {
+func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair) error {
 	var (
 		session *ssh.Session
 		conn    *ssh.Client
@@ -106,11 +75,6 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	if conn, err = ssh.Dial(network, addr, sshConfig); err != nil {
 		fmt.Printf("Failed to dial: %s", err)
 		return errors.Wrapf(err, "Error dialing %s", addr)
-	}
-
-	encodedkey, err := Base64PrivateKey(PrivateKeyPath)
-	if err != nil {
-		return errors.Wrap(err, "Error base 64 encoding the private key")
 	}
 
 	if session, err = conn.NewSession(); err != nil {
@@ -143,7 +107,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	session.Stdin = os.Stdin
 	session.Stderr = os.Stderr
 
-	if err = session.Setenv("BASE64_SSH_KEY", *encodedkey); err != nil {
+	if err = session.Setenv("BASE64_SSH_KEY", kp.PrivateKey.ToBase64()); err != nil {
 		fmt.Printf("Failed to send SetEnv request: %s", err)
 		return errors.Wrap(err, "Failed to send BASE_64_SSH_KEY env var using Setenv")
 	}

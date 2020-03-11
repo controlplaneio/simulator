@@ -23,8 +23,6 @@ HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
 SIMULATOR_TFVAR_DIR := $(KUBE_SIM_TMP)/settings
 
-linter := $(HOME)/go/bin/golangci-lint
-
 export GOSUMDB=off
 
 # --- Make
@@ -115,7 +113,7 @@ docker-test: validate-reqs docker-build ## Run the tests
 	cd attack && make docker-test
 
 # -- SIMULATOR CLI
-dep: go.mod $(linter) ## Install dependencies for other targets
+dep: go.mod ## Install dependencies for other targets
 	mkdir -p ~/go/bin
 	$(GO) mod download
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2

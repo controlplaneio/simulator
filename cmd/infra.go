@@ -2,7 +2,6 @@ package cmd
 
 import (
 	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -56,7 +55,7 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 				return errors.Wrap(err, "Error getting SSH config")
 			}
 
-			err = ssh.EnsureSSHConfig(*cfg)
+			err = simulator.StateProvider.SaveSSHConfig(*cfg)
 			if err != nil {
 				return errors.Wrapf(err, "Error writing SSH config")
 			}
