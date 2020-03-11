@@ -1,8 +1,8 @@
 package ssh
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/childminder"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
 	"os"
 )

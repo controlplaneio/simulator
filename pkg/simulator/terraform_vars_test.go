@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

@@ -8,9 +8,9 @@ import (
 	"io/ioutil"
 	"path/filepath"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
-	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/scenario"
+	sim "github.com/kubernetes-simulator/simulator/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

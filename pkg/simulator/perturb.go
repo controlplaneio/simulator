@@ -4,8 +4,8 @@ import (
 	"net"
 	"strings"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/childminder"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/sirupsen/logrus"
 )
 

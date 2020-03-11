@@ -1,7 +1,7 @@
 package scenario_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
+	"github.com/kubernetes-simulator/simulator/pkg/scenario"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

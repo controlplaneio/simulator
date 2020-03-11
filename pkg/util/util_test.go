@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

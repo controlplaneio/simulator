@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

@@ -1,4 +1,4 @@
-module github.com/controlplaneio/simulator-standalone
+module github.com/kubernetes-simulator/simulator
 
 require (
 	github.com/aws/aws-sdk-go v1.21.7

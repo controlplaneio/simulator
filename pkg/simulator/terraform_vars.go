@@ -3,7 +3,7 @@ package simulator
 import (
 	"strings"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 )
 
 // TfVars struct representing the input variables for terraform to create the

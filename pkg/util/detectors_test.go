@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

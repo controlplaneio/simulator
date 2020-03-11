@@ -1,7 +1,7 @@
 package simulator_test
 
 import (
-	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	sim "github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
