@@ -1,10 +1,8 @@
 # --- Project configuration
 NAME := simulator
-# Note these are used for the golang module name which was created before the
-# migration from controlplane's github to the kubernetes-simulator org
-GITHUB_ORG := controlplaneio
+GITHUB_ORG := kubernetes-simulator
 DOCKER_HUB_ORG ?= controlplane
-GO_MODULE_NAME := simulator-standalone
+GO_MODULE_NAME := simulator
 
 # --- Boilerplate
 include prelude.mk
