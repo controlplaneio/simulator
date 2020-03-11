@@ -2,6 +2,7 @@ package simulator_test
 
 import (
 	sim "github.com/kubernetes-simulator/simulator/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -42,6 +43,7 @@ func Test_PrepareTfArgs(t *testing.T) {
 }
 
 func Test_Status(t *testing.T) {
+	os.Remove(ssh.PublicKeyPath)
 	pwd, _ := os.Getwd()
 	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(

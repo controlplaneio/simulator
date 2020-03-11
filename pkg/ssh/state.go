@@ -1,6 +1,7 @@
 package ssh
 
 import (
+	"fmt"
 	"github.com/kubernetes-simulator/simulator/pkg/childminder"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
@@ -45,8 +46,10 @@ func (ls LocalStateProvider) GetSSHKeyPair() (*KeyPair, error) {
 	cm := childminder.NewChildMinder(nil, wd, os.Environ(), "ssh-keygen",
 		"-f", *abspath, "-t", "rsa", "-C",
 		"simulator-key", "-N", "")
-	_, _, err = cm.RunSilently()
+	stdout, stderr, err := cm.RunSilently()
 	if err != nil {
+		fmt.Println(*stdout)
+		fmt.Println(*stderr)
 		return nil, errors.Wrap(err, "Error generating keypair")
 	}
 

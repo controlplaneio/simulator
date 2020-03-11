@@ -51,7 +51,6 @@ test-devtools: ## Run all the unit tests for the devtools
 
 .PHONY: reset
 reset: ## Clean up files left over by simulator
-	@rm -rf ~/.ssh/cp_simulator_*
 	@rm -f -- ~/.kubesim/*
 
 .PHONY: validate-reqs
@@ -78,7 +77,6 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 	@docker run                                                             \
 		-h launch                                                       \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
-		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                         \
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                        \
 		-v "$(shell pwd)/terraform":/app/terraform                      \
 		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro \

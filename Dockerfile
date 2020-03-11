@@ -138,9 +138,8 @@ ARG build_user=build
 RUN useradd -ms /bin/bash ${build_user} \
 # Create golang src directory
     &&  mkdir -p /go/src/github.com/controlplaneio/simulator-standalone \
-# Create an empty public ssh key file for the tests
-    && mkdir -p /home/${build_user}/.ssh                                           \
-    && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
+# Create an empty public kubesim directory the tests
+    && mkdir -p /home/${build_user}/.kubesim                            \
 # Create module cache and copy manifest files
     &&  mkdir -p /home/${build_user}/go/pkg/mod
 
