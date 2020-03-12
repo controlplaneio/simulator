@@ -44,6 +44,7 @@ func Test_PrepareTfArgs(t *testing.T) {
 
 func Test_Status(t *testing.T) {
 	os.Remove(ssh.PublicKeyPath)
+	os.Remove(ssh.PrivateKeyPath)
 	pwd, _ := os.Getwd()
 	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(

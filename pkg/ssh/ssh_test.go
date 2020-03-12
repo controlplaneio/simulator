@@ -11,6 +11,7 @@ import (
 
 func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {
 	os.Remove(ssh.PublicKeyPath)
+	os.Remove(ssh.PrivateKeyPath)
 	ls := ssh.LocalStateProvider{}
 	kp, err := ls.GetSSHKeyPair()
 	fmt.Printf("%-v", kp)

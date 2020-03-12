@@ -3,7 +3,7 @@ resource "null_resource" "master_test" {
 
   connection {
     bastion_host        = var.bastion_public_ip
-    bastion_private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    bastion_private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
     host = element(
       aws_instance.simulator_master_instances.*.private_ip,
       count.index,
@@ -13,7 +13,7 @@ resource "null_resource" "master_test" {
 
     // disable ssh-agent support
     agent       = "false"
-    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
     timeout = "10m"
@@ -43,7 +43,7 @@ resource "null_resource" "node_test" {
 
   connection {
     bastion_host        = var.bastion_public_ip
-    bastion_private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    bastion_private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
     host = element(
       aws_instance.simulator_node_instances.*.private_ip,
       count.index,
@@ -53,7 +53,7 @@ resource "null_resource" "node_test" {
 
     // disable ssh-agent support
     agent       = "false"
-    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
     timeout = "10m"
