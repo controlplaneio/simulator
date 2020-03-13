@@ -1,12 +1,14 @@
 package ssh
 
 import (
-	"fmt"
+	"github.com/kubernetes-simulator/simulator/pkg/progress"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
 	"golang.org/x/crypto/ssh/terminal"
+	"log"
+	"net/http"
 	"os"
 )
 
@@ -33,7 +35,7 @@ func SSH(host string, kp KeyPair) error {
 		return errors.Wrap(err, "Error getting auth methods")
 	}
 
-	fmt.Printf("Connecting to %s\n", host)
+	log.Printf("Connecting to %s\n", host)
 
 	abspath, err := util.ExpandTilde(KnownHostsPath)
 	if err != nil {
@@ -62,6 +64,22 @@ func SSH(host string, kp KeyPair) error {
 	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp)
 }
 
+// StartRemoteListener sets up a remote listener on the SSH connection
+func StartRemoteListener(client *ssh.Client) {
+	listener, err := client.Listen("tcp", "0.0.0.0:51234")
+	if err != nil {
+		log.Printf("Unable to start remote listener on SSH connection: %-v\n", err)
+		return
+	}
+
+	var handler progress.HTTPHandler
+
+	if err := http.Serve(listener, handler); err != nil {
+		log.Printf("Unable to serve HTTP on the remote listener: %-v\n", err)
+
+	}
+}
+
 // StartInteractiveSSHShell starts an interactive SSH shell with the supplied
 // ClientConfig
 func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair) error {
@@ -71,14 +89,23 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		err     error
 	)
 
+	f, err := os.OpenFile(util.MustExpandTilde("~/.kubesim/ssh-log"),
+		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+
+	log.SetOutput(f)
+
 	addr := host + ":" + port
 	if conn, err = ssh.Dial(network, addr, sshConfig); err != nil {
-		fmt.Printf("Failed to dial: %s", err)
+		log.Printf("Failed to dial: %s", err)
 		return errors.Wrapf(err, "Error dialing %s", addr)
 	}
 
 	if session, err = conn.NewSession(); err != nil {
-		fmt.Printf("Failed to create session: %s", err)
+		log.Printf("Failed to create session: %s", err)
 		return errors.Wrap(err, "Error establishing SSH session")
 	}
 	defer session.Close()
@@ -98,8 +125,10 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		}()
 	}
 
+	go StartRemoteListener(conn)
+
 	if err = setupPty(fileDescriptor, session); err != nil {
-		fmt.Printf("Failed to set up pseudo terminal: %s", err)
+		log.Printf("Failed to set up pseudo terminal: %s", err)
 		return errors.Wrap(err, "Error setting up pseudo terminal")
 	}
 
@@ -108,12 +137,12 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	session.Stderr = os.Stderr
 
 	if err = session.Setenv("BASE64_SSH_KEY", kp.PrivateKey.ToBase64()); err != nil {
-		fmt.Printf("Failed to send SetEnv request: %s", err)
+		log.Printf("Failed to send SetEnv request: %s", err)
 		return errors.Wrap(err, "Failed to send BASE_64_SSH_KEY env var using Setenv")
 	}
 
 	if err = session.Shell(); err != nil {
-		fmt.Printf("Failed to start interactive shell: %s", err)
+		log.Printf("Failed to start interactive shell: %s", err)
 		return errors.Wrap(err, "Failed to start interactive shell")
 	}
 
