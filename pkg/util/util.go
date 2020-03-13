@@ -53,6 +53,16 @@ func ExpandTilde(path string) (*string, error) {
 	return &p, nil
 }
 
+// MustExpandTilde is the panicky version of ExpandTilde
+func MustExpandTilde(path string) string {
+	resolved, err := ExpandTilde(path)
+	if err != nil {
+		panic(err)
+	}
+
+	return *resolved
+}
+
 // FileExists checks whether a path exists
 func FileExists(path string) (bool, error) {
 	_, err := os.Stat(path)

@@ -6,12 +6,13 @@ import (
 	"testing"
 
 	"github.com/kubernetes-simulator/simulator/pkg/ssh"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {
-	os.Remove(ssh.PublicKeyPath)
-	os.Remove(ssh.PrivateKeyPath)
+	os.Remove(util.MustExpandTilde(ssh.PublicKeyPath))
+	os.Remove(util.MustExpandTilde(ssh.PrivateKeyPath))
 	ls := ssh.LocalStateProvider{}
 	kp, err := ls.GetSSHKeyPair()
 	fmt.Printf("%-v", kp)
