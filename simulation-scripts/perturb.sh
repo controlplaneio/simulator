@@ -44,7 +44,7 @@ fi
 IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
 IS_SKIP_CHECK=0
-SSH_CONFIG_FILE="$HOME/.ssh/cp_simulator_config"
+SSH_CONFIG_FILE="$HOME/.kubesim/cp_simulator_config"
 
 # resolved directory and self
 DIR=$(cd "$(dirname "$0")" && pwd)
