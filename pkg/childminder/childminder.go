@@ -191,8 +191,9 @@ func (cm *ChildMinder) RunSilently() (*string, *string, error) {
 	err = child.Wait()
 	// TODO: (rem) make this parameterisable?
 	if err != nil && err.Error() != "exit status 127" {
+		childOut := outBuf.String()
 		childErr := errBuf.String()
-		return nil, &childErr, err
+		return &childOut, &childErr, err
 	}
 
 	childErr := errBuf.String()

@@ -1,10 +1,8 @@
 # --- Project configuration
 NAME := simulator
-# Note these are used for the golang module name which was created before the
-# migration from controlplane's github to the kubernetes-simulator org
-GITHUB_ORG := controlplaneio
+GITHUB_ORG := kubernetes-simulator
 DOCKER_HUB_ORG ?= controlplane
-GO_MODULE_NAME := simulator-standalone
+GO_MODULE_NAME := simulator
 
 # --- Boilerplate
 include prelude.mk
@@ -51,7 +49,6 @@ test-devtools: ## Run all the unit tests for the devtools
 
 .PHONY: reset
 reset: ## Clean up files left over by simulator
-	@rm -rf ~/.ssh/cp_simulator_*
 	@rm -f -- ~/.kubesim/*
 
 .PHONY: validate-reqs
@@ -78,7 +75,6 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 	@docker run                                                             \
 		-h launch                                                       \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
-		-v $(SSH_CONFIG_PATH):/home/launch/.ssh                         \
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                        \
 		-v "$(shell pwd)/terraform":/app/terraform                      \
 		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro \
@@ -116,7 +112,7 @@ docker-test: validate-reqs docker-build ## Run the tests
 dep: go.mod ## Install dependencies for other targets
 	mkdir -p ~/go/bin
 	$(GO) mod download
-	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.22.2
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b ~/go/bin v1.23.8
 
 .PHONY: static-analysis
 static-analysis: dep ## Runs static analysis tools over golang code for known problem

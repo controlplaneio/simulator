@@ -1,7 +1,7 @@
 package simulator
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -52,5 +52,10 @@ func (s *Simulator) Attack() error {
 		"BastionIP": bastion,
 	}).Info("Connecting to bastion")
 
-	return ssh.SSH(bastion)
+	kp, err := s.StateProvider.GetSSHKeyPair()
+	if err != nil {
+		return errors.Wrap(err, "Error getting SSH keypair")
+	}
+
+	return ssh.SSH(bastion, *kp)
 }

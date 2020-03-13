@@ -191,7 +191,7 @@ Refer to the [simulator terraform documentation](./terraform/README.md)
 
 ### SSH
 
-Simulator, whether run in the launch container or on the host machine, will generate its own SSH RSA key pair.  It will configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config separate from any other SSH configs you may have. All simulator-related SSH files are written to <code>~/.ssh</code> and are files starting <code>cp_simulator_</code>
+Simulator, whether run in the launch container or on the host machine, will generate its own SSH RSA key pair.  It will configure the cluster to allow access only with this keypair and automates writing SSH config and keyscanning the bastion on your behalf using custom SSH config and known_hosts files.  This keeps all simulator-related SSH config separate from any other SSH configs you may have. All simulator-related SSH files are written to <code>~/.kubesim</code> and are files starting <code>cp_simulator_</code>
 
 **If you delete any of the files then simulator will recreate them and reconfigure the infrastructure as necessary on the
 next run**

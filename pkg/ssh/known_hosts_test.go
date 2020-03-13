@@ -1,7 +1,7 @@
 package ssh_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

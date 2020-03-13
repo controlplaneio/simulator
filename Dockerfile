@@ -137,46 +137,45 @@ ENV PATH $PATH:/usr/local/go/bin
 ARG build_user=build
 RUN useradd -ms /bin/bash ${build_user} \
 # Create golang src directory
-    &&  mkdir -p /go/src/github.com/controlplaneio/simulator-standalone \
-# Create an empty public ssh key file for the tests
-    && mkdir -p /home/${build_user}/.ssh                                           \
-    && echo  "ssh-rsa FOR TESTING" > /home/${build_user}/.ssh/cp_simulator_rsa.pub \
+    &&  mkdir -p /go/src/github.com/kubernetes-simulator/simulator \
+# Create an empty public kubesim directory the tests
+    && mkdir -p /home/${build_user}/.kubesim                            \
 # Create module cache and copy manifest files
     &&  mkdir -p /home/${build_user}/go/pkg/mod
 
-COPY ./go.* /go/src/github.com/controlplaneio/simulator-standalone/
+COPY ./go.* /go/src/github.com/kubernetes-simulator/simulator/
 
 # Give ownership of module cache and src tree to build user
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone \
+RUN chown -R ${build_user}:${build_user} /go/src/github.com/kubernetes-simulator/simulator \
     && chown -R ${build_user}:${build_user} /home/${build_user}
 
 # Run all build and test steps as build user
 USER ${build_user}
 
 # Install golang module dependencies before copying source to cache them in their own layer
-WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
+WORKDIR /go/src/github.com/kubernetes-simulator/simulator
 
 # Add the full source tree
-COPY --chown=1000 Makefile /go/src/github.com/controlplaneio/simulator-standalone/
-COPY --chown=1000 prelude.mk /go/src/github.com/controlplaneio/simulator-standalone/
-COPY --chown=1000 main.go /go/src/github.com/controlplaneio/simulator-standalone/
-COPY --chown=1000 pkg/  /go/src/github.com/controlplaneio/simulator-standalone/pkg
-COPY --chown=1000 cmd/  /go/src/github.com/controlplaneio/simulator-standalone/cmd
-COPY --chown=1000 test/  /go/src/github.com/controlplaneio/simulator-standalone/test
+COPY --chown=1000 Makefile /go/src/github.com/kubernetes-simulator/simulator/
+COPY --chown=1000 prelude.mk /go/src/github.com/kubernetes-simulator/simulator/
+COPY --chown=1000 main.go /go/src/github.com/kubernetes-simulator/simulator/
+COPY --chown=1000 pkg/  /go/src/github.com/kubernetes-simulator/simulator/pkg
+COPY --chown=1000 cmd/  /go/src/github.com/kubernetes-simulator/simulator/cmd
+COPY --chown=1000 test/  /go/src/github.com/kubernetes-simulator/simulator/test
 
-WORKDIR /go/src/github.com/controlplaneio/simulator-standalone/
+WORKDIR /go/src/github.com/kubernetes-simulator/simulator/
 
 # TODO: (rem) why is this owned by root after the earlier chmod?
 USER root
 # We're using sh not bash at this point
 # hadolint ignore=DL4006
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/controlplaneio/simulator-standalone/ \
+RUN chown -R ${build_user}:${build_user} /go/src/github.com/kubernetes-simulator/simulator/ \
     && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
 
 USER ${build_user}
 
 # Golang build and test
-WORKDIR /go/src/github.com/controlplaneio/simulator-standalone
+WORKDIR /go/src/github.com/kubernetes-simulator/simulator
 RUN make test-unit
 
 #------------------#
@@ -221,7 +220,7 @@ COPY --from=dependencies /usr/local/bin/goss /usr/local/bin/goss
 COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 
 # Copy statically linked simulator binary
-COPY --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/dist/simulator /usr/local/bin/simulator
+COPY --from=build-and-test /go/src/github.com/kubernetes-simulator/simulator/dist/simulator /usr/local/bin/simulator
 
 # Setup non-root launch user
 ARG launch_user=launch
@@ -232,7 +231,7 @@ RUN useradd -ms /bin/bash ${launch_user} \
     && chown -R ${launch_user}:${launch_user} /home/${launch_user}/.kubesim
 
 # Copy acceptance and smoke tests
-COPY --chown=1000 --from=build-and-test /go/src/github.com/controlplaneio/simulator-standalone/test/ /app/test/
+COPY --chown=1000 --from=build-and-test /go/src/github.com/kubernetes-simulator/simulator/test/ /app/test/
 
 
 WORKDIR /app

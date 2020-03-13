@@ -3,9 +3,8 @@ package simulator
 import (
 	"fmt"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/childminder"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -63,7 +62,7 @@ func (s *Simulator) InitIfNeeded() error {
 
 	s.Logger.Debug("Terraform.InitIfNeeded() start")
 	s.Logger.Info("Ensuring there is a simulator keypair")
-	_, err := ssh.EnsureKey()
+	_, err := s.StateProvider.GetSSHKeyPair()
 	if err != nil {
 		return errors.Wrap(err, "Error ensuring SSH key")
 	}
@@ -80,20 +79,21 @@ func (s *Simulator) InitIfNeeded() error {
 		accessCIDR = *ip + "/32"
 	}
 	s.Logger.Debug("Reading public key")
-	publickey, err := ssh.PublicKey()
+
+	keypair, err := s.StateProvider.GetSSHKeyPair()
 	if err != nil {
-		return errors.Wrap(err, "Error reading public key")
+		return errors.Wrap(err, "Error reading SSH keypair")
 	}
 
 	s.Logger.WithFields(logrus.Fields{
 		"TfDir":      s.TfDir,
 		"TfVarsDir":  s.TfVarsDir,
-		"PublicKey":  publickey,
+		"PublicKey":  string(keypair.PublicKey),
 		"AccessCIDR": accessCIDR,
 		"BucketName": s.BucketName,
 		"ExtraCIDRs": s.ExtraCIDRs,
 	}).Debug("Writing Terraform tfvars file")
-	err = EnsureLatestTfVarsFile(s.TfVarsDir, *publickey, accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo, s.ExtraCIDRs)
+	err = EnsureLatestTfVarsFile(s.TfVarsDir, string(keypair.PublicKey), accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo, s.ExtraCIDRs)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}

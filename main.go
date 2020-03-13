@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/controlplaneio/simulator-standalone/cmd"
+	"github.com/kubernetes-simulator/simulator/cmd"
 )
 
 func main() {

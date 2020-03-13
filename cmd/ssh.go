@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	sim "github.com/controlplaneio/simulator-standalone/pkg/simulator"
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	sim "github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -45,7 +44,7 @@ func newSSHConfigCommand(logger *logrus.Logger) *cobra.Command {
 				logger.Info(cfg)
 			}
 
-			err = ssh.EnsureSSHConfig(*cfg)
+			err = simulator.StateProvider.SaveSSHConfig(*cfg)
 			if err != nil {
 				return errors.Wrapf(err, "Error writing SSH config")
 			}

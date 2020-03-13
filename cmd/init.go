@@ -3,7 +3,7 @@ package cmd
 import (
 	"bufio"
 	"fmt"
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/pkg/errors"
 	"text/template"
 )
@@ -73,8 +74,8 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 	bastionCfg := SSHConfig{
 		Alias:              "bastion",
 		Hostname:           tfo.BastionPublicIP.Value,
-		KeyFilePath:        "~/.ssh/cp_simulator_rsa",
-		KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
+		KeyFilePath:        ssh.PrivateKeyPath,
+		KnownHostsFilePath: ssh.KnownHostsPath,
 	}
 	err = bastionConfigTmpl.Execute(&buf, bastionCfg)
 	if err != nil {
@@ -85,8 +86,8 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 		c := SSHConfig{
 			Alias:              fmt.Sprintf("master-%d", i),
 			Hostname:           ip,
-			KeyFilePath:        "~/.ssh/cp_simulator_rsa",
-			KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
+			KeyFilePath:        ssh.PrivateKeyPath,
+			KnownHostsFilePath: ssh.KnownHostsPath,
 			BastionIP:          tfo.BastionPublicIP.Value,
 		}
 
@@ -100,8 +101,8 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 		c := SSHConfig{
 			Alias:              fmt.Sprintf("node-%d", i),
 			Hostname:           ip,
-			KeyFilePath:        "~/.ssh/cp_simulator_rsa",
-			KnownHostsFilePath: "~/.ssh/cp_simulator_known_hosts",
+			KeyFilePath:        ssh.PrivateKeyPath,
+			KnownHostsFilePath: ssh.KnownHostsPath,
 			BastionIP:          tfo.BastionPublicIP.Value,
 		}
 		err = k8sConfigTmpl.Execute(&buf, c)

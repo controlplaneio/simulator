@@ -3,8 +3,8 @@ package simulator
 import (
 	"strings"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/scenario"
-	"github.com/controlplaneio/simulator-standalone/pkg/ssh"
+	"github.com/kubernetes-simulator/simulator/pkg/scenario"
+	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
@@ -54,7 +54,7 @@ func (s *Simulator) Launch() error {
 	}
 
 	s.Logger.Info("Updating SSH config")
-	err = ssh.EnsureSSHConfig(*cfg)
+	err = s.StateProvider.SaveSSHConfig(*cfg)
 	if err != nil {
 		return errors.Wrap(err, "Error writing SSH config")
 	}

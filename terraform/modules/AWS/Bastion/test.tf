@@ -12,7 +12,7 @@ resource "null_resource" "bastion_test" {
 
     // disable ssh-agent support
     agent       = "false"
-    private_key = file(pathexpand("~/.ssh/cp_simulator_rsa"))
+    private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
     timeout = "10m"

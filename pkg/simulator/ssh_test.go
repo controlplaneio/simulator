@@ -3,7 +3,7 @@ package simulator_test
 import (
 	"testing"
 
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/stretchr/testify/assert"
 )
 

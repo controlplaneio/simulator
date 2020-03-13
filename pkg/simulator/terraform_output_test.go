@@ -1,7 +1,7 @@
 package simulator_test
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/simulator"
+	"github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
@@ -63,28 +63,28 @@ func Test_ToSSHConfig(t *testing.T) {
   Hostname 8.8.8.8
   User root
   RequestTTY force
-  IdentityFile ~/.ssh/cp_simulator_rsa
-  UserKnownHostsFile ~/.ssh/cp_simulator_known_hosts
+  IdentityFile ~/.kubesim/cp_simulator_rsa
+  UserKnownHostsFile ~/.kubesim/cp_simulator_known_hosts
 Host master-0 127.0.0.1
   Hostname 127.0.0.1
   User root
   RequestTTY force
-  IdentityFile ~/.ssh/cp_simulator_rsa
-  UserKnownHostsFile ~/.ssh/cp_simulator_known_hosts
+  IdentityFile ~/.kubesim/cp_simulator_rsa
+  UserKnownHostsFile ~/.kubesim/cp_simulator_known_hosts
   ProxyJump bastion
 Host node-0 127.0.0.2
   Hostname 127.0.0.2
   User root
   RequestTTY force
-  IdentityFile ~/.ssh/cp_simulator_rsa
-  UserKnownHostsFile ~/.ssh/cp_simulator_known_hosts
+  IdentityFile ~/.kubesim/cp_simulator_rsa
+  UserKnownHostsFile ~/.kubesim/cp_simulator_known_hosts
   ProxyJump bastion
 Host node-1 127.0.0.3
   Hostname 127.0.0.3
   User root
   RequestTTY force
-  IdentityFile ~/.ssh/cp_simulator_rsa
-  UserKnownHostsFile ~/.ssh/cp_simulator_known_hosts
+  IdentityFile ~/.kubesim/cp_simulator_rsa
+  UserKnownHostsFile ~/.kubesim/cp_simulator_known_hosts
   ProxyJump bastion
 `
 

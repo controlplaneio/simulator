@@ -7,7 +7,6 @@ else
 fi
 
 CONTAINER_NAME=controlplane/simulator:latest
-SSH_CONFIG_PATH=${HOME}/.kubesim/
 KUBE_SIM_TMP=${HOME}/.kubesim/
 SIMULATOR_CONFIG_FILE=${KUBE_SIM_TMP}/simulator.yaml
 
@@ -20,7 +19,6 @@ docker pull ${CONTAINER_NAME}
 docker run                                                          \
   -h launch                                                         \
   -v "${SIMULATOR_AWS_CREDS_PATH}":/home/launch/.aws                \
-  -v "${SSH_CONFIG_PATH}":/home/launch/.ssh                         \
   -v "${KUBE_SIM_TMP}":/home/launch/.kubesim                        \
   -e "AWS_ACCESS_KEY_ID"                                            \
   -e "AWS_SECRET_ACCESS_KEY"                                        \

@@ -1,8 +1,8 @@
 package ssh
 
 import (
-	"github.com/controlplaneio/simulator-standalone/pkg/childminder"
-	"github.com/controlplaneio/simulator-standalone/pkg/util"
+	"github.com/kubernetes-simulator/simulator/pkg/childminder"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
 	"os"
 )
@@ -16,7 +16,7 @@ func EnsureKnownHosts(bastion string) error {
 		return errors.Wrap(err, "Error running ssh-keyscan")
 	}
 
-	abspath, err := util.ExpandTilde(SSHKnownHostsPath)
+	abspath, err := util.ExpandTilde(KnownHostsPath)
 	if err != nil {
 		return errors.Wrap(err, "Error resolving SSH known hosts path")
 	}
