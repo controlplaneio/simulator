@@ -1,6 +1,7 @@
 package progress_test
 
 import (
+	"github.com/go-test/deep"
 	"github.com/kubernetes-simulator/simulator/pkg/progress"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ var progressTemplateSrc = `{
 }`
 
 func makeProgress(name string) {
-	_ = os.Remove(progress.ProgressPath)
+	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
 	progressTmpl, err := template.New("progress-template").Parse(progressTemplateSrc)
 	if err != nil {
 		panic(err)
@@ -43,7 +44,7 @@ func makeProgress(name string) {
 	}
 }
 
-func Test_GetProgress(t *testing.T) {
+func Test_GetProgress_with_existing_progress(t *testing.T) {
 	lsp := progress.LocalStateProvider{}
 	name := "test-scenario"
 	makeProgress(name)
@@ -61,4 +62,68 @@ func Test_GetProgress(t *testing.T) {
 		},
 	}, *actual, "Expected matching scenario progress to be returned")
 
+}
+
+func Test_GetProgress_with_no_existing_progress(t *testing.T) {
+	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
+	lsp := progress.LocalStateProvider{}
+
+	actual, err := lsp.GetProgress("test-scenario")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Nil(t, err, "Expected no error")
+	assert.Nil(t, actual, "Expected no progress")
+}
+
+func makeScenarioProgress(name string) progress.ScenarioProgress {
+	score := 100
+	sp := progress.ScenarioProgress{
+		Name:        name,
+		CurrentTask: 2,
+		Tasks: []progress.TaskProgress{
+			progress.TaskProgress{
+				ID:             1,
+				LastHintIndex:  1,
+				Score:          &score,
+				ScoringSkipped: false},
+		},
+	}
+
+	return sp
+}
+
+func Test_SaveProgress_with_no_existing_Progress(t *testing.T) {
+	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
+	lsp := progress.LocalStateProvider{}
+	name := "test-scenario"
+	sp := makeScenarioProgress(name)
+	err := lsp.SaveProgress(sp)
+	assert.Nil(t, err, "Expected no error saving progress")
+
+	actual, err := lsp.GetProgress(sp.Name)
+	assert.Nil(t, err, "Expected no error getting progress")
+	if diff := deep.Equal(sp, *actual); diff != nil {
+		t.Error(diff)
+	}
+
+}
+
+func Test_SaveProgress_with_existing_Progress(t *testing.T) {
+	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
+	lsp := progress.LocalStateProvider{}
+	name := "test-scenario"
+
+	makeProgress(name)
+	sp := makeScenarioProgress(name)
+
+	err := lsp.SaveProgress(sp)
+	assert.Nil(t, err, "Expected no error saving progress")
+
+	actual, err := lsp.GetProgress(sp.Name)
+	assert.Nil(t, err, "Expected no error getting progress")
+	if diff := deep.Equal(sp, *actual); diff != nil {
+		t.Error(diff)
+	}
 }

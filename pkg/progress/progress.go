@@ -43,11 +43,44 @@ type StateProvider interface {
 	SaveProgress(p ScenarioProgress) error
 }
 
-// GetProgress retrieves the user's progress for the provided scenario
-func (lpp LocalStateProvider) GetProgress(scenario string) (*ScenarioProgress, error) {
+// fileExists checks that a filename exists and is not a directory
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func writeProgress(p *Progress) error {
+	path, err := util.ExpandTilde(ProgressPath)
+	if err != nil {
+		return errors.Wrap(err, "Error resolving progress path")
+	}
+
+	data, err := json.Marshal(&p)
+	if err != nil {
+		panic(err)
+	}
+
+	if err = ioutil.WriteFile(*path, data, 0660); err != nil {
+		return errors.Wrap(err, "Error writing progress file")
+	}
+
+	return nil
+}
+
+func getProgress() (*Progress, error) {
 	path, err := util.ExpandTilde(ProgressPath)
 	if err != nil {
 		return nil, errors.Wrap(err, "Error resolving progress path")
+	}
+
+	if !fileExists(*path) {
+		p := Progress{}
+		if err = writeProgress(&p); err != nil {
+			return nil, err
+		}
 	}
 
 	file, err := os.Open(*path)
@@ -63,6 +96,16 @@ func (lpp LocalStateProvider) GetProgress(scenario string) (*ScenarioProgress, e
 
 	if err = json.Unmarshal(bytes, &p); err != nil {
 		return nil, errors.Wrap(err, "Error unmarshaling progress json")
+	}
+
+	return &p, nil
+}
+
+// GetProgress retrieves the user's progress for the provided scenario
+func (lsp LocalStateProvider) GetProgress(scenario string) (*ScenarioProgress, error) {
+	p, err := getProgress()
+	if err != nil {
+		return nil, err
 	}
 
 	var retVal ScenarioProgress
@@ -82,8 +125,38 @@ func (lpp LocalStateProvider) GetProgress(scenario string) (*ScenarioProgress, e
 	return nil, nil
 }
 
+func remove(slice []ScenarioProgress, i int) []ScenarioProgress {
+	copy(slice[i:], slice[i+1:])
+	return slice[:len(slice)-1]
+}
+
 // SaveProgress persists the user's progress on a scenairio to the local
 // ~/.kubesim folder
-func (lpp LocalStateProvider) SaveProgress(p ScenarioProgress) error {
+func (lsp LocalStateProvider) SaveProgress(update ScenarioProgress) error {
+	p, err := getProgress()
+	if err != nil {
+		return err
+	}
+
+	found := false
+	index := 0
+	for i, sp := range p.Scenarios {
+		if sp.Name == update.Name {
+			found = true
+			index = i
+			break
+		}
+	}
+
+	if found {
+		p.Scenarios = remove(p.Scenarios, index)
+	}
+
+	p.Scenarios = append(p.Scenarios, update)
+
+	if err = writeProgress(p); err != nil {
+		return err
+	}
+
 	return nil
 }
