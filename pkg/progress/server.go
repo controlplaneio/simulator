@@ -9,7 +9,16 @@ import (
 
 // HTTPHandler processes HTTP requests received on the SSH reverse tunnel
 // recording the users progress
-type HTTPHandler struct{}
+type HTTPHandler struct {
+	StateProvider StateProvider
+}
+
+// NewHTTPHandler constructs a new HTTPHandler instance
+func NewHTTPHandler(sp StateProvider) HTTPHandler {
+	return HTTPHandler{
+		StateProvider: sp,
+	}
+}
 
 func writeOkResponse(rw http.ResponseWriter) {
 	rw.WriteHeader(http.StatusOK)

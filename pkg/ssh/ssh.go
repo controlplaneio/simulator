@@ -72,7 +72,7 @@ func StartRemoteListener(client *ssh.Client) {
 		return
 	}
 
-	var handler progress.HTTPHandler
+	handler := progress.NewHTTPHandler(progress.LocalStateProvider{})
 
 	if err := http.Serve(listener, handler); err != nil {
 		log.Printf("Unable to serve HTTP on the remote listener: %-v\n", err)
