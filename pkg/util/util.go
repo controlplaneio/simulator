@@ -41,7 +41,7 @@ func ExpandTilde(path string) (*string, error) {
 
 		usr, err := user.Current()
 		if err != nil {
-			return nil, errors.Wrapf(err, "Error finding %s in home", path)
+			return nil, errors.Wrap(err, "Error getting current user")
 		}
 
 		homedir = usr.HomeDir
