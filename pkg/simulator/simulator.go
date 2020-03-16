@@ -1,6 +1,7 @@
 package simulator
 
 import (
+	"github.com/kubernetes-simulator/simulator/pkg/progress"
 	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/sirupsen/logrus"
 )
@@ -33,8 +34,10 @@ type Simulator struct {
 	// Extra CIDRs to be added to the bastion security group to allow SSH from arbitrary
 	// locations
 	ExtraCIDRs string
-	// StateProvider manages retrieving and persisting SSH state
-	StateProvider ssh.StateProvider
+	// SSHStateProvider manages retrieving and persisting SSH state
+	SSHStateProvider ssh.StateProvider
+	// ProgressStateProvider manages retrieving and persisting progress state
+	ProgressStateProvider progress.StateProvider
 }
 
 // Option is a type used to configure a `Simulator` instance
@@ -48,8 +51,12 @@ func NewSimulator(options ...Option) *Simulator {
 		option(&simulator)
 	}
 
-	if simulator.StateProvider == nil {
-		simulator.StateProvider = ssh.LocalStateProvider{}
+	if simulator.SSHStateProvider == nil {
+		simulator.SSHStateProvider = ssh.LocalStateProvider{}
+	}
+
+	if simulator.ProgressStateProvider == nil {
+		simulator.ProgressStateProvider = progress.LocalStateProvider{}
 	}
 
 	return &simulator
@@ -137,8 +144,16 @@ func WithExtraCIDRs(extraCIDRs string) Option {
 
 // WithStateProvider returns a configurer for creating a `Simulator` instance with
 // `NewSimulator`
-func WithStateProvider(stateProvider ssh.StateProvider) Option {
+func WithSSHStateProvider(stateProvider ssh.StateProvider) Option {
 	return func(s *Simulator) {
-		s.StateProvider = stateProvider
+		s.SSHStateProvider = stateProvider
+	}
+}
+
+// WithProgressStateProvider returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithProgressStateProvider(stateProvider progress.StateProvider) Option {
+	return func(s *Simulator) {
+		s.ProgressStateProvider = stateProvider
 	}
 }

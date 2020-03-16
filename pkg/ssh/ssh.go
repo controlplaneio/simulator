@@ -26,7 +26,7 @@ func GetAuthMethods(kp KeyPair) ([]ssh.AuthMethod, error) {
 
 // SSH establishes an interactive Secure Shell session to the supplied host as
 // user ubuntu and on port 22. SSH uses ssh-agent to get the key to use
-func SSH(host string, kp KeyPair) error {
+func SSH(host string, kp KeyPair, sp progress.StateProvider) error {
 	port := "22"
 	user := "ubuntu"
 
@@ -61,18 +61,18 @@ func SSH(host string, kp KeyPair) error {
 		},
 	}
 
-	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp)
+	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp, sp)
 }
 
 // StartRemoteListener sets up a remote listener on the SSH connection
-func StartRemoteListener(client *ssh.Client) {
+func StartRemoteListener(client *ssh.Client, sp progress.StateProvider) {
 	listener, err := client.Listen("tcp", "0.0.0.0:51234")
 	if err != nil {
 		log.Printf("Unable to start remote listener on SSH connection: %-v\n", err)
 		return
 	}
 
-	handler := progress.NewHTTPHandler(progress.LocalStateProvider{})
+	handler := progress.NewHTTPHandler(sp)
 
 	if err := http.Serve(listener, handler); err != nil {
 		log.Printf("Unable to serve HTTP on the remote listener: %-v\n", err)
@@ -82,7 +82,7 @@ func StartRemoteListener(client *ssh.Client) {
 
 // StartInteractiveSSHShell starts an interactive SSH shell with the supplied
 // ClientConfig
-func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair) error {
+func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair, sp progress.StateProvider) error {
 	var (
 		session *ssh.Session
 		conn    *ssh.Client
@@ -125,7 +125,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		}()
 	}
 
-	go StartRemoteListener(conn)
+	go StartRemoteListener(conn, sp)
 
 	if err = setupPty(fileDescriptor, session); err != nil {
 		log.Printf("Failed to set up pseudo terminal: %s", err)
