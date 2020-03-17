@@ -5,22 +5,21 @@ objective: Find a secret in a log file.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: So I need to start in the container-phalanx-formation namespace.
-      - penalty: 10
-        text:
-          Looks like the 'log' container in the app pod is ubuntu. Might be best
-          to start there.
-      - penalty: 10
-        text: Looking at the filesystem, there seems to be a mount at /log.
-      - penalty: 10
-        text: Is there anything in the log file in /log?
-      - penalty: 10
-        text: What happens if I grep that file for a 'password'.
+    - penalty: 10
+      text: So I need to start in the container-phalanx-formation namespace.
+    - penalty: 10
+      text: Looks like the 'log' container in the app pod is ubuntu. Might be best
+        to start there.
+    - penalty: 10
+      text: Looking at the filesystem, there seems to be a mount at /log.
+    - penalty: 10
+      text: Is there anything in the log file in /log?
+    - penalty: 10
+      text: What happens if I grep that file for a 'password'.
     sortOrder: 1
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary:
-      By using our kubectl access we were able to exec into a pod and read
+    summary: By using our kubectl access we were able to exec into a pod and read
       sensitive information from a malfunctioning logging mechanism.
+name: container-phalanx-formation

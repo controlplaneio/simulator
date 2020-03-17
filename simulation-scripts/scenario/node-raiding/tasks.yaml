@@ -5,14 +5,13 @@ objective: Node compromise to get readonly kubelet API access.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: Have you looked into the the kubelet?
-      - penalty: 10
-        text: The kubelet readonly API sits on port 10255.
-      - penalty: 10
-        text:
-          Get anything directly from the kubelet API, circumventing the Kubernetes
-          server API, e.g. curl http://<node-IP>:10255/pods
+    - penalty: 10
+      text: Have you looked into the the kubelet?
+    - penalty: 10
+      text: The kubelet readonly API sits on port 10255.
+    - penalty: 10
+      text: Get anything directly from the kubelet API, circumventing the Kubernetes
+        server API, e.g. curl http://<node-IP>:10255/pods
     sortOrder: 1
     startingPoint:
       mode: pod
@@ -21,19 +20,18 @@ tasks:
     summary: We queried the outdated kublet readonly port to get pod information.
   "2":
     hints:
-      - penalty: 10
-        text: You need to fix /var/lib/kubelet/config.yaml.
-      - penalty: 10
-        text: readOnly port should be 0.
-      - penalty: 10
-        text:
-          "'systemctl daemon-reload; systemctl restart kubelet.service' applies
-          the config changes."
+    - penalty: 10
+      text: You need to fix /var/lib/kubelet/config.yaml.
+    - penalty: 10
+      text: readOnly port should be 0.
+    - penalty: 10
+      text: '''systemctl daemon-reload; systemctl restart kubelet.service'' applies
+        the config changes.'
     sortOrder: 2
     startingPoint:
       asRoot: true
       mode: node
       nodeId: node-0
-    summary:
-      We disabled the readonly port in the kubelet config and restarted the
+    summary: We disabled the readonly port in the kubelet config and restarted the
       service.
+name: node-raiding

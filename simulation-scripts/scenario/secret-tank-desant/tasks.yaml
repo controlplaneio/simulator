@@ -5,15 +5,16 @@ objective: Compromise secret from running workload.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: kubectl exec into workload.
-      - penalty: 10
-        text: Workload - enumerate container filesystem.
-      - penalty: 10
-        text: Read AWS creds from file.
+    - penalty: 10
+      text: kubectl exec into workload.
+    - penalty: 10
+      text: Workload - enumerate container filesystem.
+    - penalty: 10
+      text: Read AWS creds from file.
     sortOrder: 1
     startingPoint:
       mode: pod
       podName: nginx
       podNamespace: secret-tank-desant
     summary: We read some secret data from the filesystem.
+name: secret-tank-desant

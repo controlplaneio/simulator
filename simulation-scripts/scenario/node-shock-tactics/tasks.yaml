@@ -5,37 +5,36 @@ objective: Node escalation to workload compromise.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: How would you escalate yourself on this node?
-      - penalty: 10
-        text: Is there a file in /etc/ you can manipulate?
-      - penalty: 10
-        text: Where do pods store their secrets?
-      - penalty: 10
-        text: Incorrect permissions on /etc/shadow.
-      - penalty: 10
-        text: /etc/shadow manipulation.
-      - penalty: 10
-        text: Set root password for host.
-      - penalty: 10
-        text: Login as root.
+    - penalty: 10
+      text: How would you escalate yourself on this node?
+    - penalty: 10
+      text: Is there a file in /etc/ you can manipulate?
+    - penalty: 10
+      text: Where do pods store their secrets?
+    - penalty: 10
+      text: Incorrect permissions on /etc/shadow.
+    - penalty: 10
+      text: /etc/shadow manipulation.
+    - penalty: 10
+      text: Set root password for host.
+    - penalty: 10
+      text: Login as root.
     sortOrder: 1
     startingPoint:
       kubectlAccess: false
       mode: internal-instance
-    summary:
-      We manipulated some malformed /etc/shadow permissions to escalate ourselves
+    summary: We manipulated some malformed /etc/shadow permissions to escalate ourselves
       to root on the node.
   "2":
     hints:
-      - penalty: 10
-        text: "'df -h' as host root to see tmpfs mounts."
-      - penalty: 10
-        text: Read creds from tmpfs volume.
+    - penalty: 10
+      text: '''df -h'' as host root to see tmpfs mounts.'
+    - penalty: 10
+      text: Read creds from tmpfs volume.
     sortOrder: 2
     startingPoint:
       kubectlAccess: false
       mode: internal-instance
-    summary:
-      We used our root privileges to read secret data from tmpfs mount inside
+    summary: We used our root privileges to read secret data from tmpfs mount inside
       the container.
+name: node-shock-tactics

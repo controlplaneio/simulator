@@ -5,14 +5,12 @@ objective: API is enabled on --insecure-bind-address and --insecure-port
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text:
-          Have a look at your environment variables with ```printenv```. Does anything
-          look suspicious?
-      - penalty: 10
-        text:
-          Looks like you may be able to access the Kubernetes API on port 8080.
-          Try curling some of the end-points. You may need to download curl.
+    - penalty: 10
+      text: Have a look at your environment variables with ```printenv```. Does anything
+        look suspicious?
+    - penalty: 10
+      text: Looks like you may be able to access the Kubernetes API on port 8080.
+        Try curling some of the end-points. You may need to download curl.
     sortOrder: 1
     startingPoint:
       mode: pod
@@ -21,20 +19,18 @@ tasks:
     summary: We were able to make privileged api calls to the api server with authenticating.
   "2":
     hints:
-      - penalty: 10
-        text:
-          The API appears to be open on the Master node without certification. Have
-          a look at the API configuration and see why that is.
-      - penalty: 10
-        text:
-          --insecure-bind-address and --insecure-port is enabled on the API in the
-          manifest at /etc/kubernetes/manifests/kube-apiserver.yaml. Set the insecure
-          port to 0 and delete the binding.
+    - penalty: 10
+      text: The API appears to be open on the Master node without certification. Have
+        a look at the API configuration and see why that is.
+    - penalty: 10
+      text: --insecure-bind-address and --insecure-port is enabled on the API in the
+        manifest at /etc/kubernetes/manifests/kube-apiserver.yaml. Set the insecure
+        port to 0 and delete the binding.
     sortOrder: 2
     startingPoint:
       asRoot: true
       mode: node
       nodeId: master-0
-    summary:
-      We disabled the --insecure bind port and address options in the api server
+    summary: We disabled the --insecure bind port and address options in the api server
       manifest.
+name: master-shell-scrape

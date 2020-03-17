@@ -1,42 +1,41 @@
 category: RBAC
 difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
-objective:
-  Figure out additional permissions given to system:anonymous role and remove
+objective: Figure out additional permissions given to system:anonymous role and remove
   them.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: Can you hit the API from inside the pod? What is the DNS resolvable name?
-      - penalty: 10
-        text: What do we get from `printenv`?
-      - penalty: 10
-        text: That looks like the IP and port for the API server!
-      - penalty: 10
-        text: I reckon I can curl that endpoint if I use HTTPS and the -k option
-      - penalty: 10
-        text: How do I navigate the HTTP API to find a secret?
-      - penalty: 10
-        text: "I think this might work: 'curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'"
+    - penalty: 10
+      text: Can you hit the API from inside the pod? What is the DNS resolvable name?
+    - penalty: 10
+      text: What do we get from `printenv`?
+    - penalty: 10
+      text: That looks like the IP and port for the API server!
+    - penalty: 10
+      text: I reckon I can curl that endpoint if I use HTTPS and the -k option
+    - penalty: 10
+      text: How do I navigate the HTTP API to find a secret?
+    - penalty: 10
+      text: 'I think this might work: ''curl -k https://<your-host-and-port>/api/v1/namespaces/rbac-shoot-and-scoot/serets/credentials'''
     sortOrder: 1
     startingPoint:
       mode: pod
       podName: ubuntu
       podNamespace: rbac-shoot-and-scoot
-    summary:
-      We used curl and the environment variables in the pod to get a secret
+    summary: We used curl and the environment variables in the pod to get a secret
       from the namespace without passing the api server a token.
   "2":
     hints:
-      - penalty: 10
-        text: What user is assigned when hitting the API with no identity?
-      - penalty: 10
-        text: Have a look at the rolebindings and clusterrolebindings
-      - penalty: 10
-        text: system:anonymous has a clusterrolebinding to admin. Remove this binding.
+    - penalty: 10
+      text: What user is assigned when hitting the API with no identity?
+    - penalty: 10
+      text: Have a look at the rolebindings and clusterrolebindings
+    - penalty: 10
+      text: system:anonymous has a clusterrolebinding to admin. Remove this binding.
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
     summary: We removed a cluster role binding giving anonymous requests cluster admin.
+name: rbac-shoot-and-scoot

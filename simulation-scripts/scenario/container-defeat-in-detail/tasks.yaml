@@ -1,41 +1,38 @@
 category: Container
 difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
-objective:
-  Exec into a container on master with certificates mounted in to exploit
+objective: Exec into a container on master with certificates mounted in to exploit
   etcd.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: I should choose which cert-manager pod to start in carefully.
-      - penalty: 10
-        text:
-          One of these seems to be running on a master, that's probably the best
-          place to start.
-      - penalty: 10
-        text: Let's check the mounts in this container.
-      - penalty: 10
-        text:
-          There are some etcd certs here, I think I was given the IP for the etcd
-          cluster earlier.
-      - penalty: 10
-        text: The key I'm after is probably the '/super/secret one'.
+    - penalty: 10
+      text: I should choose which cert-manager pod to start in carefully.
+    - penalty: 10
+      text: One of these seems to be running on a master, that's probably the best
+        place to start.
+    - penalty: 10
+      text: Let's check the mounts in this container.
+    - penalty: 10
+      text: There are some etcd certs here, I think I was given the IP for the etcd
+        cluster earlier.
+    - penalty: 10
+      text: The key I'm after is probably the '/super/secret one'.
     sortOrder: 1
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary:
-      We managed to retrieve a secret value from etcd using some certificates
+    summary: We managed to retrieve a secret value from etcd using some certificates
       mounted into the container accidentally.
   "2":
     hints:
-      - penalty: 10
-        text: Let's check the node config.
-      - penalty: 10
-        text: The master is missing its taint!
+    - penalty: 10
+      text: Let's check the node config.
+    - penalty: 10
+      text: The master is missing its taint!
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
     summary: The master node needed its master taint to be reapplied.
+name: container-defeat-in-detail
