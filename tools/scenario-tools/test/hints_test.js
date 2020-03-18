@@ -1,7 +1,11 @@
-const { unlinkSync, readFileSync } = require('fs')
+const axios = require('axios')
+const nock = require('nock')
 const test = require('ava')
+const { PROGRESS_SERVER_URL } = require('../lib/io')
 const { showHint, nextHint } = require('../lib/hints')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
+
+axios.defaults.adapter = require('axios/lib/adapters/http')
 
 test('showHint shows a valid hint for a valid task', t => {
   const spyinglogger = createSpyingLogger()
@@ -27,28 +31,25 @@ test('showHint warns for a hint out of range for an valid task', t => {
   t.false(spyinglogger.info.called, 'should not have logged a hint')
 })
 
-test('nextHint progresses hints for the task', t => {
+test.serial('nextHint progresses hints for the task', async t => {
   const spyinglogger = createSpyingLogger()
   const progresspath = testoutput('nexthinttest.json')
   const taskspath = fixture('tasks.yaml')
+  const posts = []
+  nock.cleanAll()
+  nock(PROGRESS_SERVER_URL)
+    .persist()
+    .get('/?scenario=test-scenario')
+    .reply(404)
+  nock(PROGRESS_SERVER_URL)
+    .persist()
+    .post('/', body => posts.push(JSON.stringify(body)))
+    .reply(200)
 
-  // delete any test output hanging around
-  try { unlinkSync(progresspath) } catch {}
-
-  nextHint(1, taskspath, progresspath, spyinglogger)
-  const progress = readFileSync(progresspath, 'utf-8')
+  // First POST will be the POST to save the initial progress so we start
+  // start testing from index 1
+  await nextHint(1, taskspath, progresspath, spyinglogger)
   t.deepEqual('{"name":"test-scenario","currentTask":null,"tasks":[{"id":1,"lastHintIndex":0,"score":null,"scoringSkipped":false}]}',
-    progress, 'progress wasnt saved after showing first hint')
+    posts[1], 'progress wasnt saved after showing first hint')
   t.false(spyinglogger.error.called, 'shouldnt have logged an error')
-
-  nextHint(1, taskspath, progresspath, spyinglogger)
-  const progress2 = readFileSync(progresspath, 'utf-8')
-  t.deepEqual('{"name":"test-scenario","currentTask":null,"tasks":[{"id":1,"lastHintIndex":1,"score":null,"scoringSkipped":false}]}',
-    progress2, 'progress wasnt updated after showing second hint')
-  t.false(spyinglogger.error.called, 'shouldnt have logged an error')
-
-  nextHint(1, taskspath, progresspath, spyinglogger)
-  const progress3 = readFileSync(progresspath, 'utf-8')
-  t.deepEqual('{"name":"test-scenario","currentTask":null,"tasks":[{"id":1,"lastHintIndex":1,"score":null,"scoringSkipped":false}]}',
-    progress3, 'progress should not have updated after showing second hint')
 })

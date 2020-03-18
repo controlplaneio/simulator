@@ -27,14 +27,17 @@
   "devDependencies": {
     "ava": "^2.4.0",
     "esm": "^3.2.25",
+    "nock": "^12.0.3",
     "sinon": "^7.5.0",
     "standard": "^14.3.1"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "command-line-args": "^5.0.2",
     "command-line-arguments": "^1.1.1",
     "command-line-commands": "^3.0.1",
     "command-line-usage": "^6.1.0",
+    "http-status-codes": "^1.4.0",
     "inquirer": "^7.0.4",
     "js-yaml": "^3.13.1",
     "logform": "^2.1.2",

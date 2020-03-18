@@ -86,7 +86,7 @@ async function processTask (newTask, taskspath = TASKS_FILE_PATH,
     return false
   }
 
-  const progress = getProgress(name, progresspath)
+  const progress = await getProgress(name, progresspath)
 
   let newProgress
 
@@ -97,7 +97,7 @@ async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   }
 
   if (newProgress !== false) {
-    saveProgress(newProgress, progresspath)
+    await saveProgress(newProgress, progresspath)
   }
 }
 
@@ -151,11 +151,11 @@ async function startTask (newTask, tasks, progress, log, prompter) {
   }
 }
 
-function getCurrentTask (progresspath = PROGRESS_FILE_PATH,
+async function getCurrentTask (progresspath = PROGRESS_FILE_PATH,
   taskspath = TASKS_FILE_PATH) {
   const { name } = loadYamlFile(taskspath)
 
-  const progress = getProgress(name, progresspath)
+  const progress = await getProgress(name, progresspath)
   return progress.currentTask
 }
 

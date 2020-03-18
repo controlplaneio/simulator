@@ -24,10 +24,10 @@ function showHint (task, index, taskspath = TASKS_FILE_PATH, log = logger) {
   log.info(`This hint incurred a penalty of ${hint.penalty} to your score`)
 }
 
-function showHints (task, taskspath = TASKS_FILE_PATH,
+async function showHints (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const { name, tasks } = loadYamlFile(taskspath)
-  const progress = getProgress(name, progresspath)
+  const progress = await getProgress(name, progresspath)
 
   if (!tasks[task]) {
     return logger.warn('Cannot find task')
@@ -50,14 +50,14 @@ function showHints (task, taskspath = TASKS_FILE_PATH,
   }
 }
 
-function nextHint (task, taskspath = TASKS_FILE_PATH,
+async function nextHint (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   if (!task) {
     return logger.error('No task provided to nextHint')
   }
   const { name, tasks } = loadYamlFile(taskspath)
 
-  const progress = getProgress(name, progresspath)
+  const progress = await getProgress(name, progresspath)
   let hintIndex
 
   let taskProgress = progress.tasks.find(t => t.id === task)
@@ -82,7 +82,7 @@ function nextHint (task, taskspath = TASKS_FILE_PATH,
     return logger.info('You have seen all the hints for this task')
   }
 
-  saveProgress(progress, progresspath)
+  await saveProgress(progress, progresspath)
 
   showHint(task, hintIndex, taskspath, log)
 }

@@ -1,6 +1,8 @@
-const { unlinkSync, readFileSync } = require('fs')
+const axios = require('axios')
+const nock = require('nock')
 const { spy, fake } = require('sinon')
 const test = require('ava')
+const { PROGRESS_SERVER_URL } = require('../lib/io')
 const {
   endTask,
   getCurrentTask,
@@ -10,6 +12,8 @@ const {
   updateProgressWithNewTask
 } = require('../lib/tasks')
 const { fixture, testoutput, createSpyingLogger } = require('./helpers')
+
+axios.defaults.adapter = require('axios/lib/adapters/http')
 
 function fakeTasks () {
   return {
@@ -42,38 +46,55 @@ test('processTask warns for invalid task and returns false', async t => {
   t.true(logger.warn.called, 'should have logged a warning')
 })
 
-test('processTask writes currentTask to progress', async t => {
+test.serial('processTask posts currentTask', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
   const logger = createSpyingLogger()
-
-  // Delete any testoutput from previous runs
-  try { unlinkSync(progresspath) } catch {}
+  const posts = []
+  nock.cleanAll()
+  nock(PROGRESS_SERVER_URL)
+    .persist()
+    .get('/?scenario=test-scenario')
+    .reply(404)
+  nock(PROGRESS_SERVER_URL)
+    .persist()
+    .post('/', body => posts.push(JSON.stringify(body)))
+    .reply(200)
 
   await processTask(1, taskspath, progresspath, logger)
-  const progress = readFileSync(progresspath, 'utf-8')
 
+  t.log(posts)
   t.deepEqual('{"name":"test-scenario","currentTask":1,"tasks":[{"id":1,"lastHintIndex":null,"score":null,"scoringSkipped":false}]}',
-    progress, 'should have written progress')
+    posts[posts.length - 1], 'should have written progress')
   t.true(logger.info.called, 'should have logged an info message')
 })
 
-test('getCurrentTask returns the current task', t => {
+test.serial('getCurrentTask returns the current task', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = fixture('progress.json')
+  nock.cleanAll()
+  nock(PROGRESS_SERVER_URL)
+    .get('/?scenario=test-scenario')
+    .reply(200, { name: 'test-scenario', currentTask: 1, tasks: [] })
 
-  const task = getCurrentTask(progresspath, taskspath)
+  const task = await getCurrentTask(progresspath, taskspath)
   t.is(1, task)
 })
 
-test('getCurrentTask returns null when no current task', t => {
+test.serial('getCurrentTask returns null when no current task', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = fixture('does-not-exist.json')
+  nock.cleanAll()
+  nock(PROGRESS_SERVER_URL)
+    .persist()
+    .get('/?scenario=test-scenario')
+    .reply(404)
+  nock(PROGRESS_SERVER_URL)
+    .persist()
+    .post('/')
+    .reply(200)
 
-  // Delete any testoutput from previous runs
-  try { unlinkSync(progresspath) } catch {}
-
-  const task = getCurrentTask(progresspath, taskspath)
+  const task = await getCurrentTask(progresspath, taskspath)
   t.is(null, task)
 })
 

@@ -7,11 +7,19 @@ const { showHints } = require('../lib/hints.js')
 const logger = createLogger({})
 require('../lib/error-handler')
 
-const task = getCurrentTask()
-if (task === undefined) {
-  logger.error('You have not started a task.  Please run `start_task` to select your task')
-  process.exit(1)
-}
+getCurrentTask().then(task => {
+  if (task === undefined) {
+    logger.error('You have not started a task.  Please run `start_task` to select your task')
+    process.exit(1)
+  }
 
-showHints(Number(task))
-process.exit(0)
+  showHints(Number(task)).then(_ => {
+    process.exit(0)
+  }, reason => {
+    logger.error(reason.message)
+    process.exit(1)
+  }, reason => {
+    logger.error(reason.message)
+    process.exit(1)
+  })
+})
