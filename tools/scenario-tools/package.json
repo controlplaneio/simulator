@@ -17,7 +17,7 @@
   },
   "ava": {
     "files": [
-      "test/**/*",
+      "test/**/*_test.js",
       "!test/helpers.js"
     ]
   },

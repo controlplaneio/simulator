@@ -29,13 +29,15 @@ async function askToBeScored (currentTask) {
 }
 
 function updateProgressWithNewTask (progress, newTask) {
-  progress.current_task = newTask
+  progress.currentTask = newTask
 
-  if (progress[newTask] === undefined) {
-    progress[newTask] = {
-      lastHintIndex: undefined,
-      score: undefined
-    }
+  if (progress.tasks.find(t => t.id === newTask) === undefined) {
+    progress.tasks.push({
+      id: Number(newTask),
+      lastHintIndex: null,
+      score: null,
+      scoringSkipped: false
+    })
   }
 
   return progress
@@ -47,7 +49,7 @@ function processResponse (answer, progress, tasks, log = logger) {
       'No changes made - expected an answer from the scoring prompt')
   }
 
-  const currentTask = progress.current_task
+  const currentTask = progress.currentTask
 
   if (answer === 'cancel') {
     log.info(`You cancelled... leaving you on ${currentTask}`)
@@ -57,10 +59,14 @@ function processResponse (answer, progress, tasks, log = logger) {
   if (answer === 'yes') {
     const score = calculateScore(progress, tasks)
     log.info(`Your score for task ${currentTask} was ${score}`)
-    progress[currentTask].score = score
+    const task = progress.tasks.find(t => t.id === currentTask)
+    task.score = score
+    task.scoringSkipped = false
   } else if (answer === 'no') {
     log.info(`You chose not to be scored on task ${currentTask}`)
-    progress[currentTask].score = 'skip'
+    const task = progress.tasks.find(t => t.id === currentTask)
+    task.score = null
+    task.scoringSkipped = true
   } else {
     throw new Error(
       `No changes made - unrecognised answer from scoring prompt: ${answer}`)
@@ -73,14 +79,15 @@ function processResponse (answer, progress, tasks, log = logger) {
 // argument was supplied we assume this was invoked as `end_task`
 async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
-  const { tasks } = loadYamlFile(taskspath)
+  const { name, tasks } = loadYamlFile(taskspath)
 
   if (newTask !== undefined && !tasks[newTask]) {
     log.warn('Cannot find task')
     return false
   }
 
-  const progress = getProgress(progresspath)
+  const progress = getProgress(name, progresspath)
+
   let newProgress
 
   if (newTask !== undefined) {
@@ -95,9 +102,9 @@ async function processTask (newTask, taskspath = TASKS_FILE_PATH,
 }
 
 async function endTask (tasks, progress, log, prompter) {
-  const currentTask = progress.current_task
+  const currentTask = progress.currentTask
 
-  if (currentTask === undefined) {
+  if (currentTask === null) {
     log.warn('Cannot end task - you have not started one')
     return false
   }
@@ -106,13 +113,13 @@ async function endTask (tasks, progress, log, prompter) {
   const newProgress = processResponse(answer, progress, tasks, log)
   if (newProgress === false) return false
 
-  progress.current_task = undefined
+  progress.currentTask = null
   log.info(`You have ended task ${currentTask}`)
   return progress
 }
 
 async function startTask (newTask, tasks, progress, log, prompter) {
-  const currentTask = progress.current_task
+  const currentTask = progress.currentTask
 
   // User is trying to switch to the task they are already on
   if (newTask === currentTask) {
@@ -121,14 +128,14 @@ async function startTask (newTask, tasks, progress, log, prompter) {
   }
 
   // User hasnt started a task yet
-  if (currentTask === undefined) {
+  if (currentTask === null) {
     log.info(`You are now on task ${newTask}`)
     return updateProgressWithNewTask(progress, newTask)
   }
 
   // user has started a task and previously either asked not to be scored or
   // was already scored
-  if (progress[currentTask].score !== undefined) {
+  if (progress.tasks.find(t => t.id === currentTask).score !== null) {
     log.info(`You are now on task ${newTask}`)
     return updateProgressWithNewTask(progress, newTask)
   }
@@ -138,15 +145,18 @@ async function startTask (newTask, tasks, progress, log, prompter) {
   const newProgress = processResponse(answer, progress, tasks, log)
   if (newProgress === false) return false
 
-  if (newTask !== undefined) {
+  if (newTask !== null) {
     log.info(`You are now on task ${newTask}`)
     return updateProgressWithNewTask(newProgress, newTask)
   }
 }
 
-function getCurrentTask (progresspath = PROGRESS_FILE_PATH) {
-  const progress = getProgress(progresspath)
-  return progress.current_task
+function getCurrentTask (progresspath = PROGRESS_FILE_PATH,
+  taskspath = TASKS_FILE_PATH) {
+  const { name } = loadYamlFile(taskspath)
+
+  const progress = getProgress(name, progresspath)
+  return progress.currentTask
 }
 
 module.exports = {

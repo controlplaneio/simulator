@@ -13,5 +13,5 @@ if (task === undefined) {
   process.exit(1)
 }
 
-showHints(task)
+showHints(Number(task))
 process.exit(0)

@@ -4,11 +4,15 @@ const { resolve, join } = require('path')
 
 const PROGRESS_FILE_PATH = '/progress.json'
 
-// TODO(rem): retrieve from S3 Bucket
-function getProgress (p = PROGRESS_FILE_PATH) {
+function getProgress (name, p = PROGRESS_FILE_PATH) {
   const absPath = resolve(p)
   if (!existsSync(absPath)) {
-    writeFileSync(absPath, '{}')
+    const progress = {
+      name: name,
+      currentTask: null,
+      tasks: []
+    }
+    writeFileSync(absPath, JSON.stringify(progress))
   }
 
   const contents = readFileSync(absPath, 'utf-8')

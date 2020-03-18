@@ -1,8 +1,9 @@
+name: "test-scenario"
 objective: Test objective
 starting-point: ""
 kind: 'cp.simulator/scenario:1.0.0'
 tasks:
-  Task 1:
+  1:
     sort-order: 1
     hints:
       - text: test hint 1

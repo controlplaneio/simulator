@@ -54,11 +54,18 @@ func Test_GetProgress_with_existing_progress(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	var currentTask, lastHintIndex *int
+	currentTask = new(int)
+	*currentTask = 1
+
+	lastHintIndex = new(int)
+	*lastHintIndex = 2
+
 	assert.Equal(t, progress.ScenarioProgress{
 		Name:        name,
-		CurrentTask: 1,
+		CurrentTask: currentTask,
 		Tasks: []progress.TaskProgress{
-			progress.TaskProgress{ID: 1, LastHintIndex: 2, Score: nil},
+			progress.TaskProgress{ID: 1, LastHintIndex: lastHintIndex, Score: nil},
 		},
 	}, *actual, "Expected matching scenario progress to be returned")
 
@@ -79,13 +86,20 @@ func Test_GetProgress_with_no_existing_progress(t *testing.T) {
 
 func makeScenarioProgress(name string) progress.ScenarioProgress {
 	score := 100
+	var currentTask, lastHintIndex *int
+	currentTask = new(int)
+	*currentTask = 2
+
+	lastHintIndex = new(int)
+	*lastHintIndex = 1
+
 	sp := progress.ScenarioProgress{
 		Name:        name,
-		CurrentTask: 2,
+		CurrentTask: currentTask,
 		Tasks: []progress.TaskProgress{
 			progress.TaskProgress{
 				ID:             1,
-				LastHintIndex:  1,
+				LastHintIndex:  lastHintIndex,
 				Score:          &score,
 				ScoringSkipped: false},
 		},

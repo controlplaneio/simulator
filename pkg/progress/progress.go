@@ -15,7 +15,7 @@ const ProgressPath = "~/.kubesim/progress.json"
 // TaskProgress represents a user's progress on a particular task
 type TaskProgress struct {
 	ID             int  `json:"id"`
-	LastHintIndex  int  `json:"lastHintIndex"`
+	LastHintIndex  *int `json:"lastHintIndex"`
 	Score          *int `json:"score"`
 	ScoringSkipped bool `json:"scoringSkipped"`
 }
@@ -23,7 +23,7 @@ type TaskProgress struct {
 // ScenarioProgress represents a user's progress on a particular scenario
 type ScenarioProgress struct {
 	Name        string         `json:"name"`
-	CurrentTask int            `json:"currentTask"`
+	CurrentTask *int           `json:"currentTask"`
 	Tasks       []TaskProgress `json:"tasks"`
 }
 

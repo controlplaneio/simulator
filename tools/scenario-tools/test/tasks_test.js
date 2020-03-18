@@ -19,9 +19,15 @@ function fakeTasks () {
 }
 
 function onTask1 (score) {
+  if (!score) {
+    score = null
+  }
+  const scoringSkipped = false
+
   return {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: score }
+    name: 'testing-scenario',
+    currentTask: 1,
+    tasks: [{ id: 1, lastHintIndex: 0, score: score, scoringSkipped }]
   }
 }
 
@@ -36,7 +42,7 @@ test('processTask warns for invalid task and returns false', async t => {
   t.true(logger.warn.called, 'should have logged a warning')
 })
 
-test('processTask writes current_task to progress', async t => {
+test('processTask writes currentTask to progress', async t => {
   const taskspath = fixture('tasks.yaml')
   const progresspath = testoutput('progress.json')
   const logger = createSpyingLogger()
@@ -44,58 +50,83 @@ test('processTask writes current_task to progress', async t => {
   // Delete any testoutput from previous runs
   try { unlinkSync(progresspath) } catch {}
 
-  await processTask('Task 1', taskspath, progresspath, logger)
+  await processTask(1, taskspath, progresspath, logger)
   const progress = readFileSync(progresspath, 'utf-8')
 
-  t.deepEqual('{"current_task":"Task 1","Task 1":{}}', progress, 'should have written progress')
-  t.true(logger.info.called, 'should have logged an inffo message')
+  t.deepEqual('{"name":"test-scenario","currentTask":1,"tasks":[{"id":1,"lastHintIndex":null,"score":null,"scoringSkipped":false}]}',
+    progress, 'should have written progress')
+  t.true(logger.info.called, 'should have logged an info message')
 })
 
 test('getCurrentTask returns the current task', t => {
+  const taskspath = fixture('tasks.yaml')
   const progresspath = fixture('progress.json')
 
-  const task = getCurrentTask(progresspath)
-  t.is('Task 1', task)
+  const task = getCurrentTask(progresspath, taskspath)
+  t.is(1, task)
 })
 
-test('getCurrentTask returns undefined when no current task', t => {
+test('getCurrentTask returns null when no current task', t => {
+  const taskspath = fixture('tasks.yaml')
   const progresspath = fixture('does-not-exist.json')
 
-  const task = getCurrentTask(progresspath)
-  t.is(undefined, task)
+  // Delete any testoutput from previous runs
+  try { unlinkSync(progresspath) } catch {}
+
+  const task = getCurrentTask(progresspath, taskspath)
+  t.is(null, task)
 })
 
-test('updateProgressWithNewTask sets current_task', t => {
-  const progress = {}
-
-  const result = updateProgressWithNewTask(progress, 1)
-
-  t.is(result.current_task, 1, 'should have set current_task')
-})
-
-test('updateProgressWithNewTask initialises task progress', t => {
-  const progress = {}
-
-  const result = updateProgressWithNewTask(progress, 1)
-
-  t.truthy(result[1], 'should have initialised an object for task progress')
-  t.true(Object.prototype.hasOwnProperty.call(result[1], 'lastHintIndex'),
-    'should have initialised a lastHintIndex property on task')
-  t.true(Object.prototype.hasOwnProperty.call(result[1], 'score'),
-    'should have initialised a score property on task')
-})
-
-test('updateProgressWithNewTask does not overwrite existing progress', t => {
+test('updateProgressWithNewTask sets currentTask', t => {
   const progress = {
-    current_task: 2,
-    1: { lastHintIndex: 1, score: 'skip' },
-    2: { lastHintIndex: undefined, score: undefined }
+    name: 'testing-scenario',
+    currentTask: null,
+    tasks: []
   }
 
   const result = updateProgressWithNewTask(progress, 1)
 
-  t.deepEqual(result[1], { lastHintIndex: 1, score: 'skip' },
-    'should not have changed existing task progress')
+  t.is(result.currentTask, 1, 'should have set currentTask')
+})
+
+test('updateProgressWithNewTask initialises task progress', t => {
+  const progress = {
+    name: 'testing-scenario',
+    currentTask: null,
+    tasks: []
+  }
+
+  const result = updateProgressWithNewTask(progress, 1)
+
+  t.truthy(result.tasks[0], 'should have initialised an object for task progress')
+  t.true(Object.prototype.hasOwnProperty.call(result.tasks[0], 'id'),
+    'should have initialised an id property on task')
+  t.true(Object.prototype.hasOwnProperty.call(result.tasks[0], 'lastHintIndex'),
+    'should have initialised a lastHintIndex property on task')
+  t.true(Object.prototype.hasOwnProperty.call(result.tasks[0], 'score'),
+    'should have initialised a score property on task')
+  t.true(Object.prototype.hasOwnProperty.call(result.tasks[0], 'scoringSkipped'),
+    'should have initialised a scoringSkipped property on task')
+})
+
+test('updateProgressWithNewTask does not overwrite existing progress', t => {
+  const progress = {
+    name: 'testing-scenario',
+    currentTask: 2,
+    tasks: [
+      { id: 1, lastHintIndex: 1, score: null, scoringSkipped: true },
+      { id: 2, lastHintIndex: 0, score: null, scoringSkipped: false }
+    ]
+  }
+
+  const result = updateProgressWithNewTask(progress, 1)
+
+  t.deepEqual(result.tasks.find(t => t.id === 1), {
+    id: 1,
+    lastHintIndex: 1,
+    score: null,
+    scoringSkipped: true
+  }, 'should not have changed existing task progress')
 })
 
 test('processResponse throws when answer is not defined', t => {
@@ -111,7 +142,7 @@ test('processResponse returns false when answer is cancel', t => {
   t.false(result, 'should have returned false')
 })
 
-test('processResponse sets score to skip when answer is no', t => {
+test('processResponse sets scoringSkipped when answer is no', t => {
   const progress = onTask1(undefined)
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
@@ -119,8 +150,9 @@ test('processResponse sets score to skip when answer is no', t => {
 
   t.truthy(result, 'should have returned new progress')
   t.deepEqual(result, {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: 'skip' }
+    name: 'testing-scenario',
+    currentTask: 1,
+    tasks: [{ id: 1, lastHintIndex: 0, score: null, scoringSkipped: true }]
   }, 'should have set score to skip')
   t.true(logger.info.called, 'should have logged a message')
   t.true(logger.info.calledWith('You chose not to be scored on task 1'),
@@ -135,8 +167,9 @@ test('processResponse sets score when answer is yes', t => {
 
   t.truthy(result, 'should have returned new progress')
   t.deepEqual(result, {
-    current_task: 1,
-    1: { lastHintIndex: 0, score: 90 }
+    name: 'testing-scenario',
+    currentTask: 1,
+    tasks: [{ id: 1, lastHintIndex: 0, score: 90, scoringSkipped: false }]
   }, 'should have set score to skip')
   t.true(logger.info.called, 'should have logged a message')
   t.true(logger.info.calledWith('Your score for task 1 was 90'),
@@ -145,7 +178,9 @@ test('processResponse sets score when answer is yes', t => {
 
 test('endTask warns if the user has not started a task', async t => {
   const progress = {
-    current_task: undefined
+    name: 'testing-scenario',
+    currentTask: null,
+    tasks: []
   }
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
@@ -175,8 +210,9 @@ test('endTask skips scoring and ends task when user says no to scoring', async t
 
   const result = await endTask(tasks, progress, logger, prompter)
   t.deepEqual(result, {
-    current_task: undefined,
-    1: { lastHintIndex: 0, score: 'skip' }
+    name: 'testing-scenario',
+    currentTask: null,
+    tasks: [{ id: 1, lastHintIndex: 0, score: null, scoringSkipped: true }]
   }, 'should have changed task progress correctly')
 })
 
@@ -188,8 +224,9 @@ test('endTask sets score and ends task when user says yes to scoring', async t =
 
   const result = await endTask(tasks, progress, logger, prompter)
   t.deepEqual(result, {
-    current_task: undefined,
-    1: { lastHintIndex: 0, score: 90 }
+    name: 'testing-scenario',
+    currentTask: null,
+    tasks: [{ id: 1, lastHintIndex: 0, score: 90, scoringSkipped: false }]
   }, 'should have changed task progress correctly')
 })
 
@@ -207,7 +244,11 @@ test('startTask warns if user tries to start the same task', async t => {
 })
 
 test('startTask initialises progress when user has no progress', async t => {
-  const progress = { }
+  const progress = {
+    name: 'testing-scenario',
+    currentTask: null,
+    tasks: []
+  }
   const tasks = fakeTasks()
   const logger = createSpyingLogger()
   const prompter = spy()
@@ -218,8 +259,11 @@ test('startTask initialises progress when user has no progress', async t => {
   t.true(logger.info.called, 'should have messaged the user')
   t.true(logger.info.calledWith('You are now on task 1'))
   t.deepEqual(result, {
-    current_task: 1,
-    1: { lastHintIndex: undefined, score: undefined }
+    name: 'testing-scenario',
+    currentTask: 1,
+    tasks: [
+      { id: 1, lastHintIndex: null, score: null, scoringSkipped: false }
+    ]
   }, 'should have initialised progress')
 })
 
@@ -235,9 +279,12 @@ test('startTask updates current_task and doesnt rescore if already scored', asyn
   t.true(logger.info.called, 'should have messaged the user')
   t.true(logger.info.calledWith('You are now on task 2'))
   t.deepEqual(result, {
-    current_task: 2,
-    1: { lastHintIndex: 0, score: 90 },
-    2: { lastHintIndex: undefined, score: undefined }
+    name: 'testing-scenario',
+    currentTask: 2,
+    tasks: [
+      { id: 1, lastHintIndex: 0, score: 90, scoringSkipped: false },
+      { id: 2, lastHintIndex: null, score: null, scoringSkipped: false }
+    ]
   }, 'should have only updated current task')
 })
 
@@ -252,9 +299,12 @@ test('startTask updates current_task and skips scoring if answer is no', async t
   t.true(logger.info.called, 'should have messaged the user')
   t.true(logger.info.calledWith('You are now on task 2'))
   t.deepEqual(result, {
-    current_task: 2,
-    1: { lastHintIndex: 0, score: 'skip' },
-    2: { lastHintIndex: undefined, score: undefined }
+    name: 'testing-scenario',
+    currentTask: 2,
+    tasks: [
+      { id: 1, lastHintIndex: 0, score: null, scoringSkipped: true },
+      { id: 2, lastHintIndex: null, score: null, scoringSkipped: false }
+    ]
   }, 'should have only updated current task')
 })
 
@@ -269,8 +319,11 @@ test('startTask updates current_task and scores if answer is yes', async t => {
   t.true(logger.info.called, 'should have messaged the user')
   t.true(logger.info.calledWith('You are now on task 2'))
   t.deepEqual(result, {
-    current_task: 2,
-    1: { lastHintIndex: 0, score: 90 },
-    2: { lastHintIndex: undefined, score: undefined }
+    name: 'testing-scenario',
+    currentTask: 2,
+    tasks: [
+      { id: 1, lastHintIndex: 0, score: 90, scoringSkipped: false },
+      { id: 2, lastHintIndex: null, score: null, scoringSkipped: false }
+    ]
   }, 'should have only updated current task')
 })

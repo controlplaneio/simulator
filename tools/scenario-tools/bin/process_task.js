@@ -20,7 +20,7 @@ if (process.argv0 === 'start_task' && args.length !== 1) {
 
 // ignore the result - it will be true/false depending on whether the user
 // actually switched task
-processTask(args[0]).then(_ => {
+processTask(Number(args[0])).then(_ => {
   process.exit(0)
 }, reason => {
   logger.error(reason.message)

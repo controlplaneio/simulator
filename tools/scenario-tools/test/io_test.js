@@ -28,8 +28,8 @@ test('writeYamlFile serializes a js object to yaml', t => {
 })
 
 test('getProgress parses a JSON file', t => {
-  const actual = getProgress(fixture('test-progress.json'))
-  t.deepEqual({ 'Task 1': 1 }, actual)
+  const actual = getProgress(fixture('tasks.yaml'), fixture('test-progress.json'))
+  t.deepEqual({ name: 'test-scenario', currentTask: null, tasks: [] }, actual)
 })
 
 test('saveProgress writes a JSON file', t => {
