@@ -14,6 +14,7 @@ RUN apt-get update                                                              
     ca-certificates                                                               \
     gettext-base                                                                  \
     hping3                                                                        \
+    iproute2                                                                      \
     jq                                                                            \
     man-db                                                                        \
     nmap                                                                          \
