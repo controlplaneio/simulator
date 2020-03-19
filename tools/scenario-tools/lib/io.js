@@ -13,7 +13,7 @@ const { createLogger } = require('../lib/logger')
 const logger = createLogger({})
 
 const PROGRESS_FILE_PATH = '/progress.json'
-const PROGRESS_SERVER_URL = 'http://localhost:51432'
+const PROGRESS_SERVER_URL = 'http://localhost:51234'
 
 async function getProgress (name, p = PROGRESS_FILE_PATH) {
   let response
