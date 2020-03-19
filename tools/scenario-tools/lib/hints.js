@@ -33,7 +33,7 @@ async function showHints (task, taskspath = TASKS_FILE_PATH,
     return logger.warn('Cannot find task')
   }
 
-  const taskProgress = progress.tasks.find(t => t === task)
+  const taskProgress = progress.tasks.find(t => t.id === task)
   if (taskProgress === undefined || taskProgress.lastHintIndex === null) {
     return logger.info(`You have not seen any hints for ${task}`)
   }

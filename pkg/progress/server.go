@@ -24,7 +24,6 @@ func NewHTTPHandler(sp StateProvider, logger *logrus.Logger) HTTPHandler {
 }
 
 func (hh HTTPHandler) writeOkResponse(rw http.ResponseWriter, sp *ScenarioProgress) {
-	hh.Logger.Info("Got HTTP request")
 	rw.WriteHeader(http.StatusOK)
 	rw.Header().Set("Content-Type", "application/json")
 	bytes, err := json.Marshal(sp)
@@ -45,6 +44,7 @@ func (hh HTTPHandler) writeOkResponse(rw http.ResponseWriter, sp *ScenarioProgre
 // a scenario
 func (hh HTTPHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
+		hh.Logger.Info("Got HTTP request for scenario progress")
 		scenario := req.URL.Query().Get("scenario")
 		if scenario == "" {
 			hh.Logger.Warn("Missing scenario name")
@@ -52,6 +52,9 @@ func (hh HTTPHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		hh.Logger.WithFields(logrus.Fields{
+			"Scenario": scenario,
+		}).Info("Fetching scenario progress")
 		progress, err := hh.StateProvider.GetProgress(scenario)
 		if err != nil {
 			hh.Logger.WithFields(logrus.Fields{
@@ -70,6 +73,10 @@ func (hh HTTPHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		hh.Logger.WithFields(logrus.Fields{
+			"Scenario": scenario,
+			"Progress": progress,
+		}).Info("Responding with scenario progress")
 		hh.writeOkResponse(rw, progress)
 		return
 	}
@@ -85,8 +92,8 @@ func (hh HTTPHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
-		hh.Logger.Println("Got POST of scenario progress")
-		hh.Logger.Println(string(body))
+		hh.Logger.Info("Got POST of scenario progress")
+		hh.Logger.Info(string(body))
 
 		var progress ScenarioProgress
 		if err := json.Unmarshal(body, &progress); err != nil {
@@ -97,6 +104,17 @@ func (hh HTTPHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 			return
 		}
 
+		hh.Logger.WithFields(logrus.Fields{
+			"ScenarioProgress": progress,
+		}).Info("Saving scenario progress")
+		if err := hh.StateProvider.SaveProgress(progress); err != nil {
+			hh.Logger.WithFields(logrus.Fields{
+				"Error": err,
+			}).Error("Error saving progress")
+			http.Error(rw, "Internal Server Error", http.StatusInternalServerError)
+		}
+
+		hh.Logger.Info("Responding 200 OK")
 		hh.writeOkResponse(rw, &progress)
 		return
 	}

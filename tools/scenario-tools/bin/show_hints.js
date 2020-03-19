@@ -13,7 +13,7 @@ getCurrentTask().then(task => {
     process.exit(1)
   }
 
-  showHints(Number(task)).then(_ => {
+  showHints(task).then(_ => {
     process.exit(0)
   }, reason => {
     logger.error(reason.message)
