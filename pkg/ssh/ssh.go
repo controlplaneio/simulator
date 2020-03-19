@@ -4,10 +4,10 @@ import (
 	"github.com/kubernetes-simulator/simulator/pkg/progress"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
 	"golang.org/x/crypto/ssh/terminal"
-	"log"
 	"net/http"
 	"os"
 )
@@ -30,12 +30,27 @@ func SSH(host string, kp KeyPair, sp progress.StateProvider) error {
 	port := "22"
 	user := "ubuntu"
 
+	logpath, err := util.ExpandTilde("~/.kubesim/ssh.log")
+	if err != nil {
+		return errors.Wrap(err, "Error resolving SSH logfile path")
+	}
+
+	file, err := os.OpenFile(*logpath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+	if err != nil {
+		return errors.Wrap(err, "Error opening file for SSH logging")
+	}
+
+	logger := logrus.New()
+	logger.SetOutput(file)
+
 	auths, err := GetAuthMethods(kp)
 	if err != nil {
 		return errors.Wrap(err, "Error getting auth methods")
 	}
 
-	log.Printf("Connecting to %s\n", host)
+	logger.WithFields(logrus.Fields{
+		"Host": host,
+	}).Print("SSH connecting")
 
 	abspath, err := util.ExpandTilde(KnownHostsPath)
 	if err != nil {
@@ -44,7 +59,8 @@ func SSH(host string, kp KeyPair, sp progress.StateProvider) error {
 
 	knownHostsCallback, err := knownhosts.New(*abspath)
 	if err != nil {
-		return errors.Wrap(err, "Error configuring ssh client to use known_hosts file")
+		return errors.Wrap(err,
+			"Error configuring ssh client to use known_hosts file")
 	}
 
 	cfg := ssh.ClientConfig{
@@ -61,51 +77,55 @@ func SSH(host string, kp KeyPair, sp progress.StateProvider) error {
 		},
 	}
 
-	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp, sp)
+	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp, sp, logger)
 }
 
 // StartRemoteListener sets up a remote listener on the SSH connection
-func StartRemoteListener(client *ssh.Client, sp progress.StateProvider) {
-	listener, err := client.Listen("tcp", "0.0.0.0:51234")
+func StartRemoteListener(client *ssh.Client, sp progress.StateProvider, logger *logrus.Logger) {
+	address := "127.0.0.1:51234"
+	logger.WithFields(logrus.Fields{
+		"Address": address,
+	}).Info("Starting remote listener")
+	listener, err := client.Listen("tcp", address)
 	if err != nil {
-		log.Printf("Unable to start remote listener on SSH connection: %-v\n", err)
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Unable to start remote listener on SSH connection")
+
 		return
 	}
 
-	handler := progress.NewHTTPHandler(sp)
+	handler := progress.NewHTTPHandler(sp, logger)
 
+	logger.Info("Serving HTTP on the remote listener")
 	if err := http.Serve(listener, handler); err != nil {
-		log.Printf("Unable to serve HTTP on the remote listener: %-v\n", err)
-
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Unable to serve HTTP on the remote listener")
 	}
 }
 
 // StartInteractiveSSHShell starts an interactive SSH shell with the supplied
 // ClientConfig
-func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair, sp progress.StateProvider) error {
+func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair, sp progress.StateProvider, logger *logrus.Logger) error {
 	var (
 		session *ssh.Session
 		conn    *ssh.Client
 		err     error
 	)
 
-	f, err := os.OpenFile(util.MustExpandTilde("~/.kubesim/ssh-log"),
-		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	defer f.Close()
-
-	log.SetOutput(f)
-
 	addr := host + ":" + port
 	if conn, err = ssh.Dial(network, addr, sshConfig); err != nil {
-		log.Printf("Failed to dial: %s", err)
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Failed to dial")
 		return errors.Wrapf(err, "Error dialing %s", addr)
 	}
 
 	if session, err = conn.NewSession(); err != nil {
-		log.Printf("Failed to create session: %s", err)
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Failed to create session")
 		return errors.Wrap(err, "Error establishing SSH session")
 	}
 	defer session.Close()
@@ -115,6 +135,9 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		// See this for more information http://www.linusakesson.net/programming/tty/
 		originalState, err := terminal.MakeRaw(fileDescriptor)
 		if err != nil {
+			logger.WithFields(logrus.Fields{
+				"Error": err,
+			}).Error("Failed to put terminal in raw mode")
 			return errors.Wrap(err, "Error setting stdin terminal to raw mode")
 		}
 		defer func() {
@@ -125,10 +148,12 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		}()
 	}
 
-	go StartRemoteListener(conn, sp)
+	go StartRemoteListener(conn, sp, logger)
 
-	if err = setupPty(fileDescriptor, session); err != nil {
-		log.Printf("Failed to set up pseudo terminal: %s", err)
+	if err = setupPty(fileDescriptor, session, logger); err != nil {
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Failed to set up pseudo terminal")
 		return errors.Wrap(err, "Error setting up pseudo terminal")
 	}
 
@@ -137,12 +162,16 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	session.Stderr = os.Stderr
 
 	if err = session.Setenv("BASE64_SSH_KEY", kp.PrivateKey.ToBase64()); err != nil {
-		log.Printf("Failed to send SetEnv request: %s", err)
+		logrus.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Failed to send SetEnv request")
 		return errors.Wrap(err, "Failed to send BASE_64_SSH_KEY env var using Setenv")
 	}
 
 	if err = session.Shell(); err != nil {
-		log.Printf("Failed to start interactive shell: %s", err)
+		logrus.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Failed to start interactive shell")
 		return errors.Wrap(err, "Failed to start interactive shell")
 	}
 
@@ -151,7 +180,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 
 // See http://www.tldp.org/HOWTO/Text-Terminal-HOWTO-7.html#ss7.2 for more info
 // on pseudo terminals
-func setupPty(stdinFd int, session *ssh.Session) error {
+func setupPty(stdinFd int, session *ssh.Session, logger *logrus.Logger) error {
 	// https://tools.ietf.org/html/rfc4254#section-8 for more information about
 	// terminal modes
 	modes := ssh.TerminalModes{
@@ -162,11 +191,17 @@ func setupPty(stdinFd int, session *ssh.Session) error {
 
 	termWidth, termHeight, err := terminal.GetSize(stdinFd)
 	if err != nil {
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error getting size of stdin terminal")
 		return errors.Wrap(err, "Error getting size of stdin terminal")
 	}
 
 	if err := session.RequestPty("xterm", termHeight, termWidth, modes); err != nil {
 		session.Close()
+		logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error sending pty request for an xterm over ssh session")
 		return errors.Wrap(err, "Error sending pty request for an xterm over ssh session")
 	}
 

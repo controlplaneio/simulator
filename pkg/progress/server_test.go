@@ -2,12 +2,20 @@ package progress_test
 
 import (
 	"github.com/kubernetes-simulator/simulator/pkg/progress"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 )
+
+func NullLogger() *logrus.Logger {
+	log := logrus.New()
+	log.SetOutput(ioutil.Discard)
+	return log
+}
 
 func Test_ServeHTTP_GET_missing_scenario(t *testing.T) {
 	req, err := http.NewRequest("GET", "/", strings.NewReader(""))
@@ -16,7 +24,7 @@ func Test_ServeHTTP_GET_missing_scenario(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{})
+	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -31,7 +39,7 @@ func Test_ServeHTTP_GET_no_progress(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{})
+	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -46,7 +54,7 @@ func Test_ServeHTTP_GET_with_progress(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{})
+	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -60,7 +68,7 @@ func Test_ServeHTTP_POST(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{})
+	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -74,7 +82,7 @@ func Test_ServeHTTP_invalid_method(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.HTTPHandler{}
+	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -89,7 +97,7 @@ func Test_ServeHTTP_POST_with_garbage(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{})
+	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
 
 	hh.ServeHTTP(rr, req)
 

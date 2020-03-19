@@ -2,9 +2,9 @@ package progress
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -12,27 +12,31 @@ import (
 // recording the users progress
 type HTTPHandler struct {
 	StateProvider StateProvider
+	Logger        *logrus.Logger
 }
 
 // NewHTTPHandler constructs a new HTTPHandler instance
-func NewHTTPHandler(sp StateProvider) HTTPHandler {
+func NewHTTPHandler(sp StateProvider, logger *logrus.Logger) HTTPHandler {
 	return HTTPHandler{
 		StateProvider: sp,
+		Logger:        logger,
 	}
 }
 
-func writeOkResponse(rw http.ResponseWriter, sp *ScenarioProgress) {
+func (hh HTTPHandler) writeOkResponse(rw http.ResponseWriter, sp *ScenarioProgress) {
+	hh.Logger.Info("Got HTTP request")
 	rw.WriteHeader(http.StatusOK)
 	rw.Header().Set("Content-Type", "application/json")
 	bytes, err := json.Marshal(sp)
 	if err != nil {
-		http.Error(rw, "Error marshaling progress to json", http.StatusInternalServerError)
+		http.Error(rw, "Error marshaling progress to json",
+			http.StatusInternalServerError)
 		return
 	}
 
 	if _, err := io.WriteString(rw, string(bytes)); err != nil {
 		http.Error(rw, "Error writing body", http.StatusInternalServerError)
-		log.Println("Error writing body for GET request")
+		hh.Logger.Println("Error writing body for GET request")
 		return
 	}
 }
@@ -43,47 +47,62 @@ func (hh HTTPHandler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	if req.Method == "GET" {
 		scenario := req.URL.Query().Get("scenario")
 		if scenario == "" {
+			hh.Logger.Warn("Missing scenario name")
 			http.Error(rw, "Missing scenario name", http.StatusBadRequest)
 			return
 		}
 
 		progress, err := hh.StateProvider.GetProgress(scenario)
 		if err != nil {
+			hh.Logger.WithFields(logrus.Fields{
+				"Error":    err,
+				"Scenario": scenario,
+			}).Error("Error getting scenario progress")
 			http.Error(rw, "Error getting progress", http.StatusInternalServerError)
 			return
 		}
 
 		if progress == nil {
+			hh.Logger.WithFields(logrus.Fields{
+				"Scenario": scenario,
+			}).Info("No scenario progress found")
 			http.NotFound(rw, req)
 			return
 		}
 
-		writeOkResponse(rw, progress)
+		hh.writeOkResponse(rw, progress)
 		return
 	}
 
 	if req.Method == "POST" {
-		log.Println("Got HTTP POST Request")
+		hh.Logger.Println("Got HTTP POST Request")
 		body, err := ioutil.ReadAll(req.Body)
 		if err != nil {
-			log.Printf("Error reading POST body: %-v\n", err)
+			hh.Logger.WithFields(logrus.Fields{
+				"Error": err,
+			}).Error("Error reading POST body")
 			http.Error(rw, "Error recording progress", http.StatusInternalServerError)
 			return
 		}
 
-		log.Println("Got POST of scenario progress")
-		log.Println(string(body))
+		hh.Logger.Println("Got POST of scenario progress")
+		hh.Logger.Println(string(body))
 
 		var progress ScenarioProgress
 		if err := json.Unmarshal(body, &progress); err != nil {
-			log.Printf("Error unmarshaling POST body: %-v\n", err)
+			hh.Logger.WithFields(logrus.Fields{
+				"Error": err,
+			}).Error("Error unmarshaling POST body")
 			http.Error(rw, "Malformed POST body", http.StatusBadRequest)
 			return
 		}
 
-		writeOkResponse(rw, &progress)
+		hh.writeOkResponse(rw, &progress)
 		return
 	}
 
+	hh.Logger.WithFields(logrus.Fields{
+		"Method": req.Method,
+	}).Warn("Disallowed HTTP method")
 	http.Error(rw, "Method not allowed", http.StatusMethodNotAllowed)
 }
