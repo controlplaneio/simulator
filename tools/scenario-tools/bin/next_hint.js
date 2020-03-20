@@ -13,6 +13,7 @@ args.shift() // remove `node` from argv
 args.shift() // remove `scenario.js` from argv
 
 if (args.length === 1 && args[0] === '--debug') {
+  console.log('Setting global DEBUG flag')
   global.DEBUG = true
 }
 
