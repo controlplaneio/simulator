@@ -3,6 +3,7 @@ package progress
 import (
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
 
 	"encoding/json"
 	"io/ioutil"
@@ -34,7 +35,16 @@ type Progress struct {
 
 // LocalStateProvider persists and retrieves a user's progress to the local
 // ~/.kubesim folder
-type LocalStateProvider struct{}
+type LocalStateProvider struct {
+	Logger *logrus.Logger
+}
+
+// NewLocalStateProvider returns an instance of LocalStateProvider
+func NewLocalStateProvider(logger *logrus.Logger) LocalStateProvider {
+	return LocalStateProvider{
+		Logger: logger,
+	}
+}
 
 // StateProvider defines the contract for retrieving and persisting a user's
 // progress
@@ -52,50 +62,74 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func writeProgress(p *Progress) error {
+func (lsp LocalStateProvider) writeProgress(p *Progress) error {
 	path, err := util.ExpandTilde(ProgressPath)
 	if err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error resolving progress path")
 		return errors.Wrap(err, "Error resolving progress path")
 	}
 
 	data, err := json.Marshal(&p)
 	if err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error":    err,
+			"Progress": p,
+		}).Fatal("Error marshaling progres to JSON")
 		panic(err)
 	}
 
 	if err = ioutil.WriteFile(*path, data, 0660); err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error":    err,
+			"Path":     *path,
+			"Progress": p,
+		}).Error("Error writing progress to disk")
 		return errors.Wrap(err, "Error writing progress file")
 	}
 
 	return nil
 }
 
-func getProgress() (*Progress, error) {
+func (lsp LocalStateProvider) getProgress() (*Progress, error) {
 	path, err := util.ExpandTilde(ProgressPath)
 	if err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error resolving progress path")
 		return nil, errors.Wrap(err, "Error resolving progress path")
 	}
 
 	if !fileExists(*path) {
 		p := Progress{}
-		if err = writeProgress(&p); err != nil {
+		if err = lsp.writeProgress(&p); err != nil {
 			return nil, err
 		}
 	}
 
 	file, err := os.Open(*path)
 	if err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error opening progress file")
 		return nil, errors.Wrap(err, "Error opening progress file")
 	}
 
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error reading progress file")
 		return nil, errors.Wrap(err, "Error reading progress file")
 	}
 	var p Progress
 
 	if err = json.Unmarshal(bytes, &p); err != nil {
-		return nil, errors.Wrap(err, "Error unmarshaling progress json")
+		lsp.Logger.WithFields(logrus.Fields{
+			"Error": err,
+		}).Error("Error unmarshaling progress JSON")
+		return nil, errors.Wrap(err, "Error unmarshaling progress JSON")
 	}
 
 	return &p, nil
@@ -103,7 +137,7 @@ func getProgress() (*Progress, error) {
 
 // GetProgress retrieves the user's progress for the provided scenario
 func (lsp LocalStateProvider) GetProgress(scenario string) (*ScenarioProgress, error) {
-	p, err := getProgress()
+	p, err := lsp.getProgress()
 	if err != nil {
 		return nil, err
 	}
@@ -119,8 +153,17 @@ func (lsp LocalStateProvider) GetProgress(scenario string) (*ScenarioProgress, e
 	}
 
 	if found {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Scenario": scenario,
+			"Progress": retVal,
+		}).Info("Found existing progress")
 		return &retVal, nil
 	}
+
+	lsp.Logger.WithFields(logrus.Fields{
+		"Scenario": scenario,
+		"Progress": retVal,
+	}).Info("No existing progress found")
 
 	return nil, nil
 }
@@ -133,12 +176,13 @@ func remove(slice []ScenarioProgress, i int) []ScenarioProgress {
 // SaveProgress persists the user's progress on a scenairio to the local
 // ~/.kubesim folder
 func (lsp LocalStateProvider) SaveProgress(update ScenarioProgress) error {
-	p, err := getProgress()
+	p, err := lsp.getProgress()
 	if err != nil {
 		return err
 	}
 
 	found := false
+	var existing ScenarioProgress
 	index := 0
 	for i, sp := range p.Scenarios {
 		if sp.Name == update.Name {
@@ -149,12 +193,25 @@ func (lsp LocalStateProvider) SaveProgress(update ScenarioProgress) error {
 	}
 
 	if found {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Scenario":         update.Name,
+			"ExistingProgress": existing,
+		}).Info("Found existing progress to remove")
 		p.Scenarios = remove(p.Scenarios, index)
 	}
 
+	lsp.Logger.WithFields(logrus.Fields{
+		"Scenario":    update.Name,
+		"NewProgress": update,
+	}).Info("Adding new progress")
 	p.Scenarios = append(p.Scenarios, update)
 
-	if err = writeProgress(p); err != nil {
+	if err = lsp.writeProgress(p); err != nil {
+		lsp.Logger.WithFields(logrus.Fields{
+			"Scenario":    update.Name,
+			"NewProgress": update,
+			"Error":       err,
+		}).Error("Error writing progress")
 		return err
 	}
 

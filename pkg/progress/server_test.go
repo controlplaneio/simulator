@@ -24,7 +24,8 @@ func Test_ServeHTTP_GET_missing_scenario(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
+	hh := progress.NewHTTPHandler(progress.NewLocalStateProvider(NullLogger()),
+		NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -39,7 +40,8 @@ func Test_ServeHTTP_GET_no_progress(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
+	hh := progress.NewHTTPHandler(progress.NewLocalStateProvider(NullLogger()),
+		NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -54,7 +56,8 @@ func Test_ServeHTTP_GET_with_progress(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
+	hh := progress.NewHTTPHandler(progress.NewLocalStateProvider(NullLogger()),
+		NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -68,7 +71,7 @@ func Test_ServeHTTP_POST(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
+	hh := progress.NewHTTPHandler(progress.NewLocalStateProvider(NullLogger()), NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -82,7 +85,8 @@ func Test_ServeHTTP_invalid_method(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
+	hh := progress.NewHTTPHandler(progress.NewLocalStateProvider(NullLogger()),
+		NullLogger())
 
 	hh.ServeHTTP(rr, req)
 
@@ -97,7 +101,8 @@ func Test_ServeHTTP_POST_with_garbage(t *testing.T) {
 	}
 
 	rr := httptest.NewRecorder()
-	hh := progress.NewHTTPHandler(progress.LocalStateProvider{}, NullLogger())
+	hh := progress.NewHTTPHandler(progress.NewLocalStateProvider(NullLogger()),
+		NullLogger())
 
 	hh.ServeHTTP(rr, req)
 

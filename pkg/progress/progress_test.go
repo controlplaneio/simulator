@@ -45,7 +45,7 @@ func makeProgress(name string) {
 }
 
 func Test_GetProgress_with_existing_progress(t *testing.T) {
-	lsp := progress.LocalStateProvider{}
+	lsp := progress.NewLocalStateProvider(NullLogger())
 	name := "test-scenario"
 	makeProgress(name)
 
@@ -73,7 +73,7 @@ func Test_GetProgress_with_existing_progress(t *testing.T) {
 
 func Test_GetProgress_with_no_existing_progress(t *testing.T) {
 	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
-	lsp := progress.LocalStateProvider{}
+	lsp := progress.NewLocalStateProvider(NullLogger())
 
 	actual, err := lsp.GetProgress("test-scenario")
 	if err != nil {
@@ -110,7 +110,7 @@ func makeScenarioProgress(name string) progress.ScenarioProgress {
 
 func Test_SaveProgress_with_no_existing_Progress(t *testing.T) {
 	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
-	lsp := progress.LocalStateProvider{}
+	lsp := progress.NewLocalStateProvider(NullLogger())
 	name := "test-scenario"
 	sp := makeScenarioProgress(name)
 	err := lsp.SaveProgress(sp)
@@ -126,7 +126,7 @@ func Test_SaveProgress_with_no_existing_Progress(t *testing.T) {
 
 func Test_SaveProgress_with_existing_Progress(t *testing.T) {
 	_ = os.Remove(util.MustExpandTilde(progress.ProgressPath))
-	lsp := progress.LocalStateProvider{}
+	lsp := progress.NewLocalStateProvider(NullLogger())
 	name := "test-scenario"
 
 	makeProgress(name)

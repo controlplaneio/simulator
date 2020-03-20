@@ -56,7 +56,7 @@ func NewSimulator(options ...Option) *Simulator {
 	}
 
 	if simulator.ProgressStateProvider == nil {
-		simulator.ProgressStateProvider = progress.LocalStateProvider{}
+		simulator.ProgressStateProvider = progress.NewLocalStateProvider(simulator.Logger)
 	}
 
 	return &simulator
