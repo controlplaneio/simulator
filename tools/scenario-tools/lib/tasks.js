@@ -29,9 +29,11 @@ async function askToBeScored (currentTask) {
 }
 
 function updateProgressWithNewTask (progress, newTask) {
+  logger.debug('updating progress.currentTask with new task', { progress, newTask })
   progress.currentTask = newTask
 
   if (progress.tasks.find(t => t.id === newTask) === undefined) {
+    logger.debug('Did not find new task in progress')
     progress.tasks.push({
       id: Number(newTask),
       lastHintIndex: null,
@@ -50,6 +52,7 @@ function processResponse (answer, progress, tasks, log = logger) {
   }
 
   const currentTask = progress.currentTask
+  logger.debug('Processing response, current task', currentTask)
 
   if (answer === 'cancel') {
     log.info(`You cancelled... leaving you on ${currentTask}`)
@@ -60,11 +63,13 @@ function processResponse (answer, progress, tasks, log = logger) {
     const score = calculateScore(progress, tasks)
     log.info(`Your score for task ${currentTask} was ${score}`)
     const task = progress.tasks.find(t => t.id === currentTask)
+    logger.debug('Setting score for currentTask', { currentTask, task, score })
     task.score = score
     task.scoringSkipped = false
   } else if (answer === 'no') {
     log.info(`You chose not to be scored on task ${currentTask}`)
     const task = progress.tasks.find(t => t.id === currentTask)
+    logger.debug('Setting scoreSkipped for currentTask', { currentTask, task })
     task.score = null
     task.scoringSkipped = true
   } else {
@@ -86,17 +91,24 @@ async function processTask (newTask, taskspath = TASKS_FILE_PATH,
     return false
   }
 
+  logger.debug('Getting scenario progress', { scenarioName: name })
   const progress = await getProgress(name, progresspath)
+  logger.debug('Got progress', { progress })
 
   let newProgress
 
   if (newTask !== undefined) {
+    logger.debug('Given newTask so starting task', { newTask, progress })
     newProgress = await startTask(newTask, tasks, progress, log, askToBeScored)
+    logger.debug('New progress', { newProgress })
   } else {
+    logger.debug('No newTask so ending task', { progress })
     newProgress = await endTask(tasks, progress, log, askToBeScored)
+    logger.debug('New progress', { newProgress })
   }
 
   if (newProgress !== false) {
+    logger.debug('Saving new progress', { newProgress })
     await saveProgress(newProgress, progresspath)
   }
 }
@@ -120,6 +132,7 @@ async function endTask (tasks, progress, log, prompter) {
 
 async function startTask (newTask, tasks, progress, log, prompter) {
   const currentTask = progress.currentTask
+  logger.debug('Current task', { currentTask, progress })
 
   // User is trying to switch to the task they are already on
   if (newTask === currentTask) {
