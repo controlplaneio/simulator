@@ -30,23 +30,12 @@ func SSH(host string, kp KeyPair, sp progress.StateProvider) error {
 	port := "22"
 	user := "ubuntu"
 
-	logpath, err := util.ExpandTilde("~/.kubesim/ssh.log")
-	if err != nil {
-		return errors.Wrap(err, "Error resolving SSH logfile path")
-	}
-
-	file, err := os.OpenFile(*logpath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-	if err != nil {
-		return errors.Wrap(err, "Error opening file for SSH logging")
-	}
-
-	logger := logrus.New()
-	logger.SetOutput(file)
-
 	auths, err := GetAuthMethods(kp)
 	if err != nil {
 		return errors.Wrap(err, "Error getting auth methods")
 	}
+
+	logger := sp.GetLogger()
 
 	logger.WithFields(logrus.Fields{
 		"Host": host,
@@ -77,12 +66,13 @@ func SSH(host string, kp KeyPair, sp progress.StateProvider) error {
 		},
 	}
 
-	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp, sp, logger)
+	return StartInteractiveSSHShell(&cfg, "tcp", host, port, kp, sp)
 }
 
 // StartRemoteListener sets up a remote listener on the SSH connection
-func StartRemoteListener(client *ssh.Client, sp progress.StateProvider, logger *logrus.Logger) {
+func StartRemoteListener(client *ssh.Client, sp progress.StateProvider) {
 	address := "127.0.0.1:51234"
+	logger := sp.GetLogger()
 	logger.WithFields(logrus.Fields{
 		"Address": address,
 	}).Info("Starting remote listener")
@@ -107,13 +97,14 @@ func StartRemoteListener(client *ssh.Client, sp progress.StateProvider, logger *
 
 // StartInteractiveSSHShell starts an interactive SSH shell with the supplied
 // ClientConfig
-func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair, sp progress.StateProvider, logger *logrus.Logger) error {
+func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host string, port string, kp KeyPair, sp progress.StateProvider) error {
 	var (
 		session *ssh.Session
 		conn    *ssh.Client
 		err     error
 	)
 
+	logger := sp.GetLogger()
 	addr := host + ":" + port
 	if conn, err = ssh.Dial(network, addr, sshConfig); err != nil {
 		logger.WithFields(logrus.Fields{
@@ -148,7 +139,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 		}()
 	}
 
-	go StartRemoteListener(conn, sp, logger)
+	go StartRemoteListener(conn, sp)
 
 	if err = setupPty(fileDescriptor, session, logger); err != nil {
 		logger.WithFields(logrus.Fields{

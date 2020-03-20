@@ -49,6 +49,7 @@ func NewLocalStateProvider(logger *logrus.Logger) LocalStateProvider {
 // StateProvider defines the contract for retrieving and persisting a user's
 // progress
 type StateProvider interface {
+	GetLogger() *logrus.Logger
 	GetProgress(scenario string) (*ScenarioProgress, error)
 	SaveProgress(p ScenarioProgress) error
 }
@@ -60,6 +61,11 @@ func fileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+// GetLogger returns the state provider's logger
+func (lsp LocalStateProvider) GetLogger() *logrus.Logger {
+	return lsp.Logger
 }
 
 func (lsp LocalStateProvider) writeProgress(p *Progress) error {

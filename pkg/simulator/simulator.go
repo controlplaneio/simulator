@@ -3,7 +3,11 @@ package simulator
 import (
 	"github.com/kubernetes-simulator/simulator/pkg/progress"
 	"github.com/kubernetes-simulator/simulator/pkg/ssh"
+	"github.com/kubernetes-simulator/simulator/pkg/util"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+
+	"os"
 )
 
 // Simulator represents a session with simulator and holds all the configuration
@@ -38,6 +42,8 @@ type Simulator struct {
 	SSHStateProvider ssh.StateProvider
 	// ProgressStateProvider manages retrieving and persisting progress state
 	ProgressStateProvider progress.StateProvider
+	// sshLogger is the file logger for the SSH related components
+	SSHLogger *logrus.Logger
 }
 
 // Option is a type used to configure a `Simulator` instance
@@ -55,8 +61,21 @@ func NewSimulator(options ...Option) *Simulator {
 		simulator.SSHStateProvider = ssh.LocalStateProvider{}
 	}
 
+	if simulator.SSHLogger == nil {
+		logpath := util.MustExpandTilde("~/.kubesim/ssh.log")
+		file, err := os.OpenFile(logpath, os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+		if err != nil {
+			panic(errors.Wrapf(err, "Error opening %v for SSH logging", logpath))
+		}
+
+		simulator.SSHLogger = logrus.New()
+		simulator.SSHLogger.SetOutput(file)
+
+	}
+
 	if simulator.ProgressStateProvider == nil {
-		simulator.ProgressStateProvider = progress.NewLocalStateProvider(simulator.Logger)
+		simulator.ProgressStateProvider = progress.NewLocalStateProvider(
+			simulator.SSHLogger)
 	}
 
 	return &simulator
@@ -67,6 +86,14 @@ func NewSimulator(options ...Option) *Simulator {
 func WithLogger(logger *logrus.Logger) Option {
 	return func(s *Simulator) {
 		s.Logger = logger
+	}
+}
+
+// WithSSHLogger returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithSSHLogger(logger *logrus.Logger) Option {
+	return func(s *Simulator) {
+		s.SSHLogger = logger
 	}
 }
 
@@ -142,7 +169,7 @@ func WithExtraCIDRs(extraCIDRs string) Option {
 	}
 }
 
-// WithStateProvider returns a configurer for creating a `Simulator` instance with
+// WithSSHStateProvider returns a configurer for creating a `Simulator` instance with
 // `NewSimulator`
 func WithSSHStateProvider(stateProvider ssh.StateProvider) Option {
 	return func(s *Simulator) {
