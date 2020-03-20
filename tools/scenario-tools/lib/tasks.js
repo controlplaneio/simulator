@@ -59,16 +59,20 @@ function processResponse (answer, progress, tasks, log = logger) {
     return false
   }
 
+  const task = progress.tasks.find(t => t.id === currentTask)
+  if (task.score !== null || task.scoringSkipped === true) {
+    log.warn('You have already been scored or skipped scoring for this task')
+    return progress
+  }
+
   if (answer === 'yes') {
     const score = calculateScore(progress, tasks)
     log.info(`Your score for task ${currentTask} was ${score}`)
-    const task = progress.tasks.find(t => t.id === currentTask)
     logger.debug('Setting score for currentTask', { currentTask, task, score })
     task.score = score
     task.scoringSkipped = false
   } else if (answer === 'no') {
     log.info(`You chose not to be scored on task ${currentTask}`)
-    const task = progress.tasks.find(t => t.id === currentTask)
     logger.debug('Setting scoreSkipped for currentTask', { currentTask, task })
     task.score = null
     task.scoringSkipped = true
