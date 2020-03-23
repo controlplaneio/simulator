@@ -33,8 +33,5 @@ getCurrentTask().then(task => {
   }, reason => {
     logger.error(reason.message)
     process.exit(1)
-  }, reason => {
-    logger.error(reason.message)
-    process.exit(1)
   })
 })
