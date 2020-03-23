@@ -36,12 +36,6 @@ func newCmdRoot() *cobra.Command {
 
 	// NOTE the panics here are needed - if these calls fail we cannot recover
 	// and the cause is most likely programmer error
-	rootCmd.PersistentFlags().StringP("state-bucket", "b", "",
-		"The name of the s3 bucket to use for remote-state.  Must be globally unique")
-	if err := viper.BindPFlag("state-bucket", rootCmd.PersistentFlags().Lookup("state-bucket")); err != nil {
-		panic(err)
-	}
-
 	rootCmd.PersistentFlags().StringP("difficulty", "d", "",
 		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
 	if err := viper.BindPFlag("difficulty", rootCmd.PersistentFlags().Lookup("difficulty")); err != nil {

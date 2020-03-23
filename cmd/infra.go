@@ -164,6 +164,12 @@ func newInfraCommand() *cobra.Command {
 		SilenceErrors: false,
 	}
 
+	cmd.PersistentFlags().StringP("state-bucket", "b", "",
+		"The name of the s3 bucket to use for remote-state.  Must be globally unique")
+	if err := viper.BindPFlag("state-bucket", cmd.PersistentFlags().Lookup("state-bucket")); err != nil {
+		panic(err)
+	}
+
 	logger := newLogger(viper.GetString("loglevel"))
 
 	cmd.AddCommand(newCreateCommand(logger))
