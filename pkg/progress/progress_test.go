@@ -119,7 +119,7 @@ func Test_SaveProgress_with_no_existing_Progress(t *testing.T) {
 	actual, err := lsp.GetProgress(sp.Name)
 	assert.Nil(t, err, "Expected no error getting progress")
 	if diff := deep.Equal(sp, *actual); diff != nil {
-		t.Error(diff)
+		t.Error("Returned progress did not match saved progress", diff)
 	}
 
 }
@@ -138,6 +138,6 @@ func Test_SaveProgress_with_existing_Progress(t *testing.T) {
 	actual, err := lsp.GetProgress(sp.Name)
 	assert.Nil(t, err, "Expected no error getting progress")
 	if diff := deep.Equal(sp, *actual); diff != nil {
-		t.Error(diff)
+		t.Error("Returned progress did not match saved progress", diff)
 	}
 }
