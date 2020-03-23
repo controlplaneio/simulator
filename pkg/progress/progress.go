@@ -57,6 +57,11 @@ type StateProvider interface {
 // fileExists checks that a filename exists and is not a directory
 func fileExists(filename string) bool {
 	info, err := os.Stat(filename)
+	if err != nil {
+		// stat syscall failed, this is bad
+		panic(err)
+
+	}
 	if os.IsNotExist(err) {
 		return false
 	}
