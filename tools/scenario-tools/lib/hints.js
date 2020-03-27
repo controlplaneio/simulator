@@ -24,57 +24,65 @@ function showHint (task, index, taskspath = TASKS_FILE_PATH, log = logger) {
   log.info(`This hint incurred a penalty of ${hint.penalty} to your score`)
 }
 
-function showHints (task, taskspath = TASKS_FILE_PATH,
+async function showHints (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
-  const progress = getProgress(progresspath)
-  const { tasks } = loadYamlFile(taskspath)
+  const { name, tasks } = loadYamlFile(taskspath)
+  const progress = await getProgress(name, progresspath)
 
   if (!tasks[task]) {
     return logger.warn('Cannot find task')
   }
 
-  if (progress[task] === undefined) {
+  const taskProgress = progress.tasks.find(t => t.id === task)
+  if (taskProgress === undefined || taskProgress.lastHintIndex === null) {
     return logger.info(`You have not seen any hints for ${task}`)
   }
 
-  const lastSeenHintIndex = progress[task].lastHintIndex
+  const lastHintIndex = taskProgress.lastHintIndex
   const hintcount = tasks[task].hints.length
 
-  for (let i = 0; i <= lastSeenHintIndex && i < hintcount; i++) {
+  for (let i = 0; i <= lastHintIndex && i < hintcount; i++) {
     logger.info(tasks[task].hints[i].text)
   }
 
-  if (lastSeenHintIndex >= hintcount - 1) {
+  if (lastHintIndex >= hintcount - 1) {
     return logger.info('You have seen all the hints for this task')
   }
 }
 
-function nextHint (task, taskspath = TASKS_FILE_PATH,
+async function nextHint (task, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   if (!task) {
     return logger.error('No task provided to nextHint')
   }
+  const { name, tasks } = loadYamlFile(taskspath)
 
-  const progress = getProgress(progresspath)
+  const progress = await getProgress(name, progresspath)
   let hintIndex
 
-  if (progress[task] === undefined) {
-    progress[task] = {}
+  let taskProgress = progress.tasks.find(t => t.id === task)
+
+  if (taskProgress === undefined) {
+    taskProgress = {
+      id: task,
+      lastHintIndex: null,
+      score: null,
+      scoringSkipped: false
+    }
+    progress.tasks.push(taskProgress)
   }
 
-  if (progress[task].lastHintIndex === undefined) {
-    hintIndex = progress[task].lastHintIndex = 0
+  if (taskProgress.lastHintIndex === null) {
+    hintIndex = taskProgress.lastHintIndex = 0
   } else {
-    hintIndex = progress[task].lastHintIndex = progress[task].lastHintIndex + 1
+    hintIndex = taskProgress.lastHintIndex = taskProgress.lastHintIndex + 1
   }
-
-  const { tasks } = loadYamlFile(taskspath)
 
   if (hintIndex >= tasks[task].hints.length) {
     return logger.info('You have seen all the hints for this task')
   }
 
-  saveProgress(progress, progresspath)
+  await saveProgress(progress, progresspath)
 
   showHint(task, hintIndex, taskspath, log)
 }

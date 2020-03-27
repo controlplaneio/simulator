@@ -5,14 +5,13 @@ objective: Fix a pull policy and then add a secret to the pod.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: I should probably check the deployment.
-      - penalty: 10
-        text:
-          Is the a flag I can update that will force the container to pull from
-          the offical repository?
-      - penalty: 10
-        text: I should set the PullPolicy flag to Always.
+    - penalty: 10
+      text: I should probably check the deployment.
+    - penalty: 10
+      text: Is the a flag I can update that will force the container to pull from
+        the offical repository?
+    - penalty: 10
+      text: I should set the PullPolicy flag to Always.
     sortOrder: 1
     startingPoint:
       kubectlAccess: true
@@ -20,14 +19,14 @@ tasks:
     summary: We set pull policy of the pod to always.""
   "2":
     hints:
-      - penalty: 10
-        text: A kubernetes secret is the best choice here.
-      - penalty: 10
-        text: I can mount the secret data as a file into the pod.
+    - penalty: 10
+      text: A kubernetes secret is the best choice here.
+    - penalty: 10
+      text: I can mount the secret data as a file into the pod.
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary:
-      We replaced the file baked into the container image with a kubernetes
+    summary: We replaced the file baked into the container image with a kubernetes
       secret mounted in to the container at runtime.
+name: secret-high-ground

@@ -1,60 +1,53 @@
 category: RBAC
 difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
-objective:
-  Figure out additional permissions given to system:authenticated group and
+objective: Figure out additional permissions given to system:authenticated group and
   remove them.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: Can I run or install kubectl in here?
-      - penalty: 10
-        text:
-          Hmm, I can't see secrets directly. I wonder what the deployment of the
-          application pods looks like?
-      - penalty: 10
-        text: The secret is in an environment variable in the application pods.
+    - penalty: 10
+      text: Can I run or install kubectl in here?
+    - penalty: 10
+      text: Hmm, I can't see secrets directly. I wonder what the deployment of the
+        application pods looks like?
+    - penalty: 10
+      text: The secret is in an environment variable in the application pods.
     sortOrder: 1
     startingPoint:
       mode: pod
       podName: frontend
       podNamespace: rbac-sangar
-    summary:
-      We installed kubectl into the pod and used the pods elevated permissions
+    summary: We installed kubectl into the pod and used the pods elevated permissions
       to get a sensitive environment variable from another pod.
   "2":
     hints:
-      - penalty: 10
-        text:
-          Is there a RoleBinding in this namespace or a ClusterRoleBinding bound
-          to the namespace default ServiceAccount?
-      - penalty: 10
-        text: Looks like there is not a direct binding to the ServiceAccount.
-      - penalty: 10
-        text:
-          Using the pod's token we are in the system:authenticated group. Is something
-          bound to that?
-      - penalty: 10
-        text:
-          Looks like the authenticated-view ClusterRoleBinding is giving the group
-          more permissions! It should probably be deleted for now.
+    - penalty: 10
+      text: Is there a RoleBinding in this namespace or a ClusterRoleBinding bound
+        to the namespace default ServiceAccount?
+    - penalty: 10
+      text: Looks like there is not a direct binding to the ServiceAccount.
+    - penalty: 10
+      text: Using the pod's token we are in the system:authenticated group. Is something
+        bound to that?
+    - penalty: 10
+      text: Looks like the authenticated-view ClusterRoleBinding is giving the group
+        more permissions! It should probably be deleted for now.
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary:
-      We found that there wasn't a rolebinding applied to the service account.
+    summary: We found that there wasn't a rolebinding applied to the service account.
       Instead we saw that the default service account inherits the 'system:authenticated'
       group and there were elevated permissions applied to that group.
   "3":
     hints:
-      - penalty: 10
-        text: The pod should not mount the default service token.
-      - penalty: 10
-        text: The application pods already do this. Maybe I could look there for inspiration.
-      - penalty: 10
-        text: I need to set automountServiceAccountToken to be false
+    - penalty: 10
+      text: The pod should not mount the default service token.
+    - penalty: 10
+      text: The application pods already do this. Maybe I could look there for inspiration.
+    - penalty: 10
+      text: I need to set automountServiceAccountToken to be false
     sortOrder: 3
     startingPoint:
       kubectlAccess: true
@@ -62,10 +55,11 @@ tasks:
     summary: We unmounted the default service account token from the pod.
   "4":
     hints:
-      - penalty: 10
-        text: I need to replace the environment variable with a secret.
+    - penalty: 10
+      text: I need to replace the environment variable with a secret.
     sortOrder: 4
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
     summary: We replaced the compromised environment variable with a kubernetes secret.
+name: rbac-sangar

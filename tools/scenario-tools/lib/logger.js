@@ -34,8 +34,14 @@ function createLogger (options) {
   formats.push(winston.format.align())
   formats.push(formatLogMessage({ colorize: options.colorize }))
 
+  let level = 'info'
+  if (global.DEBUG) {
+    console.log('Creating debug logger')
+    level = 'debug'
+  }
+
   const transport = new winston.transports.Console({
-    level: options.level || 'info',
+    level: options.level || level,
     format: winston.format.combine(...formats)
   })
 

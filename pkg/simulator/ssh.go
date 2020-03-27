@@ -52,10 +52,10 @@ func (s *Simulator) Attack() error {
 		"BastionIP": bastion,
 	}).Info("Connecting to bastion")
 
-	kp, err := s.StateProvider.GetSSHKeyPair()
+	kp, err := s.SSHStateProvider.GetSSHKeyPair()
 	if err != nil {
 		return errors.Wrap(err, "Error getting SSH keypair")
 	}
 
-	return ssh.SSH(bastion, *kp)
+	return ssh.SSH(bastion, *kp, s.ProgressStateProvider)
 }

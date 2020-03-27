@@ -54,7 +54,7 @@ func (s *Simulator) Launch() error {
 	}
 
 	s.Logger.Info("Updating SSH config")
-	err = s.StateProvider.SaveSSHConfig(*cfg)
+	err = s.SSHStateProvider.SaveSSHConfig(*cfg)
 	if err != nil {
 		return errors.Wrap(err, "Error writing SSH config")
 	}

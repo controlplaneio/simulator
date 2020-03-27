@@ -44,7 +44,7 @@ func newSSHConfigCommand(logger *logrus.Logger) *cobra.Command {
 				logger.Info(cfg)
 			}
 
-			err = simulator.StateProvider.SaveSSHConfig(*cfg)
+			err = simulator.SSHStateProvider.SaveSSHConfig(*cfg)
 			if err != nil {
 				return errors.Wrapf(err, "Error writing SSH config")
 			}

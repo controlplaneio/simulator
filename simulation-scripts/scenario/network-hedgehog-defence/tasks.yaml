@@ -5,24 +5,21 @@ objective: Compromised database from outside namespace.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: Is it possible to hit the database service from the setup pod?
-      - penalty: 10
-        text: The DNS resolution across namespaces is <service>.<namespace>.
-      - penalty: 10
-        text:
-          Many databases are SQL based, could it be one of the popular ones? You
-          may need to install a query tool on the setup pod.
-      - penalty: 10
-        text:
-          Do Postgres databases have passwords by default? I wonder what the default
-          username for the SQL database is.
-      - penalty: 10
-        text: Hmm, how do I list tables and view the keys in tables again?
-      - penalty: 10
-        text:
-          To query db from setupd pod ```psql -h database.network-hedgehog-defence
-          -U postgres```
+    - penalty: 10
+      text: Is it possible to hit the database service from the setup pod?
+    - penalty: 10
+      text: The DNS resolution across namespaces is <service>.<namespace>.
+    - penalty: 10
+      text: Many databases are SQL based, could it be one of the popular ones? You
+        may need to install a query tool on the setup pod.
+    - penalty: 10
+      text: Do Postgres databases have passwords by default? I wonder what the default
+        username for the SQL database is.
+    - penalty: 10
+      text: Hmm, how do I list tables and view the keys in tables again?
+    - penalty: 10
+      text: To query db from setupd pod ```psql -h database.network-hedgehog-defence
+        -U postgres```
     sortOrder: 1
     startingPoint:
       mode: pod
@@ -31,14 +28,13 @@ tasks:
     summary: Using psql we managed to get some secret data from a pod in another namespace.
   "2":
     hints:
-      - penalty: 10
-        text:
-          Put a network policy in place such that only namespace internal resources
-          can talk to the database.
+    - penalty: 10
+      text: Put a network policy in place such that only namespace internal resources
+        can talk to the database.
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary:
-      We created a network policy that only allowed the database to receive
+    summary: We created a network policy that only allowed the database to receive
       traffic from inside its namespace.
+name: network-hedgehog-defence

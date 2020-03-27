@@ -5,17 +5,18 @@ objective: Enable PodSecurityPolicy in the API server.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text: Hmm, the RBAC looks good. What other factors could influence the permissions?
-      - penalty: 10
-        text: Where does kubeadm keep the master config?
-      - penalty: 10
-        text: Looks like the PodSecurityPolicy is missing from the admission controllers. Add it and scale the pods up and down to see it fail to reschedule.
+    - penalty: 10
+      text: Hmm, the RBAC looks good. What other factors could influence the permissions?
+    - penalty: 10
+      text: Where does kubeadm keep the master config?
+    - penalty: 10
+      text: Looks like the PodSecurityPolicy is missing from the admission controllers.
+        Add it and scale the pods up and down to see it fail to reschedule.
     sortOrder: 1
     startingPoint:
       asRoot: true
       mode: node
       nodeId: master-0
-    summary:
-      We re-enabled the pod security policy admission controller in the master
+    summary: We re-enabled the pod security policy admission controller in the master
       api config.
+name: policy-force-dispersal

@@ -1,1 +1,5 @@
-{"current_task":"Task 1"}
+{
+  "Name": "test-scenario",
+  "currentTask":1,
+  "tasks": [ ]
+}

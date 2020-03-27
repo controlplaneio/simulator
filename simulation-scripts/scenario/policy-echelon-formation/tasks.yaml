@@ -5,34 +5,31 @@ objective: Use privileged container to get host secrets.
 tasks:
   "1":
     hints:
-      - penalty: 10
-        text:
-          I wonder if I can see the host processes in this container since it is
-          a process monitor?
-      - penalty: 10
-        text: Hmm, if I can see the proccesses I wonder what /proc looks like?
-      - penalty: 10
-        text:
-          I'm looking for a postgres process so I should find its pid and check
-          /proc for that pid.
-      - penalty: 10
-        text: Let's see if /proc/<pid>/environ has one of the values we need.
-      - penalty: 10
-        text: What's in /proc/<pid>/root?
-      - penalty: 10
-        text: The final secrets I need are in /proc/<pid>/root/secrets.
+    - penalty: 10
+      text: I wonder if I can see the host processes in this container since it is
+        a process monitor?
+    - penalty: 10
+      text: Hmm, if I can see the proccesses I wonder what /proc looks like?
+    - penalty: 10
+      text: I'm looking for a postgres process so I should find its pid and check
+        /proc for that pid.
+    - penalty: 10
+      text: Let's see if /proc/<pid>/environ has one of the values we need.
+    - penalty: 10
+      text: What's in /proc/<pid>/root?
+    - penalty: 10
+      text: The final secrets I need are in /proc/<pid>/root/secrets.
     sortOrder: 1
     startingPoint:
       mode: pod
       podName: process-monitor
       podNamespace: policy-echelon-formation
-    summary:
-      Using the elevated permissions on the pod, we managed to manipulate the
+    summary: Using the elevated permissions on the pod, we managed to manipulate the
       node /proc to retrieve secrets from another pod.
   "2":
     hints:
-      - penalty: 10
-        text: Looks like I need to  stop adding ALL capabilities to the pod.
+    - penalty: 10
+      text: Looks like I need to  stop adding ALL capabilities to the pod.
     sortOrder: 2
     startingPoint:
       kubectlAccess: true
@@ -40,20 +37,19 @@ tasks:
     summary: We removed the 'ALL' capabilities from the pod
   "3":
     hints:
-      - penalty: 10
-        text: I think a PodSecurityPolicy might be useful here.
-      - penalty: 10
-        text:
-          Remember to set a default policy before enabling the PSP in both the kube-system
-          and policy-vertical-envelopment namespaces
-      - penalty: 10
-        text: I'll need to enable the PSP controller in the api-server.
-      - penalty: 10
-        text: My PSP for Jenkins should prevent adding ALL capabilities to pods.
+    - penalty: 10
+      text: I think a PodSecurityPolicy might be useful here.
+    - penalty: 10
+      text: Remember to set a default policy before enabling the PSP in both the kube-system
+        and policy-vertical-envelopment namespaces
+    - penalty: 10
+      text: I'll need to enable the PSP controller in the api-server.
+    - penalty: 10
+      text: My PSP for Jenkins should prevent adding ALL capabilities to pods.
     sortOrder: 3
     startingPoint:
       kubectlAccess: true
       mode: internal-instance
-    summary:
-      We used a pod security policy to limit what linux capabilities pods in
+    summary: We used a pod security policy to limit what linux capabilities pods in
       our cluster can have.
+name: policy-echelon-formation
