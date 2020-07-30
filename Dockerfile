@@ -17,13 +17,14 @@ RUN apt-get update                                                              
     git                                                                               \
     nodejs                                                                            \
     shellcheck                                                                        \
-    unzip
+    unzip  
+    
 
 # Download and save golang latest for use in other layers and install
 ARG GO_INSTALL_VERSION=1.13.7
 # hadolint ignore=DL3003,DL3010
 RUN mkdir /downloads                                                  \
-    && cd /downloads                                                  \
+   && cd /downloads                                                  \
     && curl -sLO https://dl.google.com/go/go${GO_INSTALL_VERSION}.linux-amd64.tar.gz \
     && tar -C /usr/local -xzf go${GO_INSTALL_VERSION}.linux-amd64.tar.gz
 
@@ -32,9 +33,14 @@ ENV PATH $PATH:/usr/local/go/bin
 # Install terraform
 ENV GOPATH /go
 ENV PATH $PATH:/go/bin
+# hadolint ignore=DL3003,DL3010
 RUN mkdir -p /go/ && \
-    chdir /go     && \
-    go get -d -v github.com/hashicorp/terraform && \
+    cd /go     && \
+    go get -d -v github.com/hashicorp/terraform
+# hadolint ignore=DL3003,DL3010
+RUN cd /go/src/github.com/hashicorp/terraform && \
+    git checkout v0.12.22 && \
+    cd /go && \
     go install ./src/github.com/hashicorp/terraform/tools/terraform-bundle
 COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
 RUN terraform-bundle package terraform-bundle.hcl && \
@@ -95,8 +101,7 @@ USER ${lint_user}
 
 # Lint Dockerfiles
 RUN hadolint Dockerfile                         \
-    &&  hadolint attack/Dockerfile              \
-# Lint shell scripts
+    && hadolint attack/Dockerfile               \
     && shellcheck scripts/*                     \
     && shellcheck attack/scripts/*              \
     && shellcheck simulation-scripts/perturb.sh \
