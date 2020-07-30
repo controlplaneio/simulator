@@ -35,6 +35,9 @@ ENV PATH $PATH:/go/bin
 RUN mkdir -p /go/ && \
     chdir /go     && \
     go get -d -v github.com/hashicorp/terraform && \
+    chdir /go/src/github.com/hashicorp/terraform && \
+    git checkout v0.12.29 && \
+    chdir /go && \
     go install ./src/github.com/hashicorp/terraform/tools/terraform-bundle
 COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
 RUN terraform-bundle package terraform-bundle.hcl && \
@@ -93,18 +96,17 @@ COPY --chown=1000 launch-files/bashrc /app/launch-files/bashrc
 
 USER ${lint_user}
 
-# Lint Dockerfiles
-RUN hadolint Dockerfile                         \
-    &&  hadolint attack/Dockerfile              \
-# Lint shell scripts
-    && shellcheck scripts/*                     \
-    && shellcheck attack/scripts/*              \
-    && shellcheck simulation-scripts/perturb.sh \
-    && shellcheck kubesim                       \
-    && shellcheck Bastion/bashrc                \
-    && shellcheck InternalHost/bashrc           \
-    && shellcheck Kubernetes/bashrc             \
-    && shellcheck launch-files/bashrc
+# Lint Dockerfiles & shell scripts
+RUN hadolint Dockerfile &&                       \
+    hadolint attack/Dockerfile &&                \
+    shellcheck scripts/* &&                      \
+    shellcheck attack/scripts/* &&               \
+    shellcheck simulation-scripts/perturb.sh &&  \
+    shellcheck kubesim &&                        \
+    shellcheck Bastion/bashrc &&                 \
+    shellcheck InternalHost/bashrc &&            \
+    shellcheck Kubernetes/bashrc &&              \
+    shellcheck launch-files/bashrc
 
 WORKDIR /app/scenario-tools
 
