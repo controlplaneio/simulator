@@ -32,9 +32,9 @@ ENV PATH $PATH:/usr/local/go/bin
 # Install terraform
 ENV GOPATH /go
 ENV PATH $PATH:/go/bin
- 
-RUN export GO111MODULE=on && \
-    mkdir -p /go/ && \
+
+ENV GO111MODULE on 
+RUN mkdir -p /go/ && \
     go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.12.29
 
 COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
