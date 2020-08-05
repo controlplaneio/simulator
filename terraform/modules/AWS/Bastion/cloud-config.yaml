@@ -9,21 +9,22 @@ packages: ["docker.io", "figlet"]
 hostname: "bastion"
 
 runcmd:
+  - "systemctl enable docker"
   - "systemctl daemon-reload"
   - "systemctl restart docker"
   - "docker pull ${attack_container_repo}:${attack_container_tag}"
 
 write_files:
   - path: /etc/bash.bashrc
-    permissions: '0755'
+    permissions: "0755"
     content: !!binary |
       ${bastion_bashrc}
   - path: /home/ubuntu/.inputrc
-    permissions: '0755'
+    permissions: "0755"
     content: !!binary |
       ${bastion_inputrc}
   - path: /home/ubuntu/.bash_aliases
-    permissions: '0755'
+    permissions: "0755"
     content: !!binary |
       ${bastion_aliases}
   - path: /home/ubuntu/.bash_login

@@ -55,6 +55,7 @@ runcmd:
   - 'tar -C /usr/bin -xzf /run/download/crictl.tgz'
   - 'chmod 754 /usr/bin/crictl'
   - 'chown root:root /usr/bin/crictl'
+  - 'systemctl enable docker'
   - 'systemctl daemon-reload'
   - 'systemctl restart docker'
   - 'systemctl restart kubelet'
