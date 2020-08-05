@@ -4,30 +4,30 @@ package_update: true
 package_upgrade: true
 disable_root: false
 
-packages: ['figlet']
+packages: ["figlet"]
 hostname: "${hostname}"
 
 write_files:
   - path: /etc/bash.bashrc
-    permissions: '0755'
+    permissions: "0755"
     content: !!binary |
       ${node_bashrc}
   - path: /root/.inputrc
-    permissions: '0755'
+    permissions: "0755"
     content: !!binary |
       ${node_inputrc}
   - path: /root/.bash_aliases
-    permissions: '0755'
+    permissions: "0755"
     content: !!binary |
       ${node_aliases}
   - path: /etc/default/motd-news
     owner: root:root
-    permissions: '0644'
+    permissions: "0644"
     content: |
       ENABLED=0
   - path: /etc/pam.d/sshd
     owner: root:root
-    permissions: '0644'
+    permissions: "0644"
     content: |
       # Defaults with comments removed and motd disabled
       @include common-auth
@@ -45,20 +45,21 @@ write_files:
       @include common-password
 
 runcmd:
-  - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
+  - "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
-  - 'mkdir /run/download'
-  - 'apt update'
-  - 'apt install -y kubelet kubeadm kubectl docker.io awscli'
-  - 'wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz'
-  - 'tar -C /usr/bin -xzf /run/download/crictl.tgz'
-  - 'rm -rf /run/download'
-  - 'chmod 754 /usr/bin/crictl'
-  - 'chown root:root /usr/bin/crictl'
-  - 'systemctl daemon-reload'
-  - 'systemctl restart docker'
-  - 'systemctl restart kubelet'
-  - 'while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp  && sh /tmp/join.txt'
+  - "mkdir /run/download"
+  - "apt update"
+  - "apt install -y kubelet kubeadm kubectl docker.io awscli"
+  - "wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz"
+  - "tar -C /usr/bin -xzf /run/download/crictl.tgz"
+  - "rm -rf /run/download"
+  - "chmod 754 /usr/bin/crictl"
+  - "chown root:root /usr/bin/crictl"
+  - "systemctl enable docker"
+  - "systemctl daemon-reload"
+  - "systemctl restart docker"
+  - "systemctl restart kubelet"
+  - "while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp  && sh /tmp/join.txt"
 
 output:
-  all: '| tee -a /var/log/cloud-init-output.log'
+  all: "| tee -a /var/log/cloud-init-output.log"
