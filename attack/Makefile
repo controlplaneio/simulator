@@ -44,6 +44,7 @@ ifndef RELEASE_TAG
 	$(error RELEASE_TAG is undefined)
 endif
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator-attack:$(RELEASE_TAG)
-	docker push "${CONTAINER_NAME_LATEST}"
 	docker push $(DOCKER_HUB_ORG)/simulator-attack:$(RELEASE_TAG)
+	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator-attack:latest
+	docker push $(DOCKER_HUB_ORG)/simulator-attack:latest
 
