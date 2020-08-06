@@ -169,6 +169,8 @@ release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker
 	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
+	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:latest
+	docker push $(DOCKER_HUB_ORG)/simulator:latest
 	cd attack && RELEASE_TAG=$(RELEASE_TAG) make release
 
 
