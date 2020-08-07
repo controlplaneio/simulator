@@ -13,14 +13,15 @@ resource "aws_instance" "simulator_bastion" {
     },
   )
   provisioner "file" {
-    source      = "../../../../simulation-scripts/scenario/authorize-keys.sh"
-    destination = "/tmp/authorize-keys.sh"
+    source      = "${path.module}/../../scripts/run-goss.sh"
+    destination = "/root/run-goss.sh"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "/tmp/authorize-keys.sh ${var.access_github_usernames}",
-    ]
-  }
+
+  # provisioner "remote-exec" {
+  #   inline = [
+  #     "/tmp/authorize-keys.sh ${var.access_github_usernames}",
+  #   ]
+  # }
 }
 
