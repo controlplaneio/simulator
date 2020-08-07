@@ -10,6 +10,7 @@
 
 shared_credentials_file = "defaults to ~/.aws"
 access_key = "your ssh public key"
+access_github_usernames = "github usernames to add to authorized keys for ssh"
 vpc_cidr = "defaults to 172.31.0.0/16"
 access_cidr = "ip address/cidr range of your PC/network"
 public_subnet_cidr  = "defaults to 172.31.1.0/24"

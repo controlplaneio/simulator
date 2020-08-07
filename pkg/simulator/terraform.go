@@ -78,6 +78,9 @@ func (s *Simulator) InitIfNeeded() error {
 		}
 		accessCIDR = *ip + "/32"
 	}
+
+	var accessUsername string = ""
+
 	s.Logger.Debug("Reading public key")
 
 	keypair, err := s.SSHStateProvider.GetSSHKeyPair()
@@ -86,14 +89,16 @@ func (s *Simulator) InitIfNeeded() error {
 	}
 
 	s.Logger.WithFields(logrus.Fields{
-		"TfDir":      s.TfDir,
-		"TfVarsDir":  s.TfVarsDir,
-		"PublicKey":  string(keypair.PublicKey),
-		"AccessCIDR": accessCIDR,
-		"BucketName": s.BucketName,
-		"ExtraCIDRs": s.ExtraCIDRs,
+		"TfDir":           s.TfDir,
+		"TfVarsDir":       s.TfVarsDir,
+		"PublicKey":       string(keypair.PublicKey),
+		"AccessCIDR":      accessCIDR,
+		"AccessUsername":  accessUsername,
+		"BucketName":      s.BucketName,
+		"ExtraCIDRs":      s.ExtraCIDRs,
+		"GithubUsernames": s.GithubUsernames,
 	}).Debug("Writing Terraform tfvars file")
-	err = EnsureLatestTfVarsFile(s.TfVarsDir, string(keypair.PublicKey), accessCIDR, s.BucketName, s.AttackTag, s.AttackRepo, s.ExtraCIDRs)
+	err = EnsureLatestTfVarsFile(s.TfVarsDir, string(keypair.PublicKey), accessCIDR, accessUsername, s.BucketName, s.AttackTag, s.AttackRepo, s.ExtraCIDRs, s.GithubUsernames)
 	if err != nil {
 		return errors.Wrap(err, "Error writing tfvars")
 	}

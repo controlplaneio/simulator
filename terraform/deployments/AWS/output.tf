@@ -18,6 +18,10 @@ output "access_cidr" {
   value       = "${var.access_cidr}"
   description = "Remote access IP"
 }
+output "access_github_usernames" {
+  value       = "${var.access_github_usernames}"
+  description = "github usernames to be added to ssh authorized keys"
+}
 output "ami_id" {
   value       = "${module.Ami.AmiId}"
   description = "AMI used for all instances"

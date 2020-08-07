@@ -12,5 +12,15 @@ resource "aws_instance" "simulator_bastion" {
       "Name" = "Simulator Bastion"
     },
   )
+  provisioner "file" {
+    source      = "../../../../simulation-scripts/scenario/authorize-keys.sh"
+    destination = "/tmp/authorize-keys.sh"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "/tmp/authorize-keys.sh ${var.access_github_usernames}",
+    ]
+  }
 }
 

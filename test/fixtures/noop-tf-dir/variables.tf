@@ -5,3 +5,7 @@ variable "access_key" {
 variable "access_cidr" {
   description = "cidr range of client connection"
 }
+
+variable "access_github_usernames" {
+  description = "github usernames to add to authorized keys"
+}

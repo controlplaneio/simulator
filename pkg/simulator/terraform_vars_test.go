@@ -14,10 +14,11 @@ import (
 
 func Test_TfVars_String(t *testing.T) {
 	t.Parallel()
-	tfv := simulator.NewTfVars("ssh-rsa", "10.0.0.1/16", "test-bucket",
-		"latest", "controlplane/simulator-attack", "10.0.0.1/16")
+	tfv := simulator.NewTfVars("ssh-rsa", "10.0.0.1/16", "", "test-bucket",
+		"latest", "controlplane/simulator-attack", "10.0.0.1/16", "")
 	expected := `access_key = "ssh-rsa"
 access_cidr = ["10.0.0.1/16", "10.0.0.1/16"]
+access_github_usernames = [""]
 attack_container_tag = "latest"
 attack_container_repo = "controlplane/simulator-attack"
 state_bucket_name = "test-bucket"
@@ -35,11 +36,12 @@ func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
 	err = ioutil.WriteFile(bastionVarsFile, []byte("any=content"), 0644)
 	require.NoError(t, err)
 
-	err = simulator.EnsureLatestTfVarsFile(workDir, "ssh-rsa", "10.0.0.1/16",
-		"test-bucket", "latest", "controlplane/simulator-attack", "10.0.0.1/16, 10.0.0.1/32")
+	err = simulator.EnsureLatestTfVarsFile(workDir, "ssh-rsa", "10.0.0.1/16", "",
+		"test-bucket", "latest", "controlplane/simulator-attack", "10.0.0.1/16, 10.0.0.1/32", "")
 	require.NoError(t, err)
 	expected := `access_key = "ssh-rsa"
 access_cidr = ["10.0.0.1/16", "10.0.0.1/16", "10.0.0.1/32"]
+access_github_usernames = [""]
 attack_container_tag = "latest"
 attack_container_repo = "controlplane/simulator-attack"
 state_bucket_name = "test-bucket"
