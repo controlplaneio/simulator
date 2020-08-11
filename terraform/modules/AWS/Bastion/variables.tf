@@ -14,6 +14,7 @@ variable "access_key_name" {
 
 variable "access_github_usernames" {
   description = "ssh access for these users"
+  type        = list(string)
 }
 
 variable "security_group" {

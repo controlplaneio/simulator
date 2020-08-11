@@ -12,6 +12,7 @@ variable "access_cidr" {
 
 variable "access_github_usernames" {
   description = "github usernames to add to ssh authorized keys"
+  type        = list(string)
 }
 
 // Variables below are to have defined defaults
