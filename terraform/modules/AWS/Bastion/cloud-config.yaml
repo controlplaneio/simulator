@@ -12,7 +12,6 @@ runcmd:
   - "systemctl daemon-reload"
   - "systemctl restart docker"
   - "docker pull ${attack_container_repo}:${attack_container_tag}"
-  - "echo ${github_usernames} > /root/usernames"
   - "/root/authorized_keys.sh ${github_usernames}"
 
 write_files:
