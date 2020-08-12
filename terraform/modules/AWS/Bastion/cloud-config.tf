@@ -1,5 +1,5 @@
 locals {
-  access_github_usernames = "${join(" ",var.access_github_usernames)}"
+  access_github_usernames = "${join(" ", var.access_github_usernames)}"
 }
 
 data "template_file" "cloud_config" {
