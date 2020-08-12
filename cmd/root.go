@@ -84,7 +84,7 @@ func newCmdRoot() *cobra.Command {
 	}
 
 	rootCmd.PersistentFlags().StringP("github-usernames", "u", "",
-		"Github Usernames that will be allowed to access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
+		"Github usernames that will be allowed access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
 	if err := viper.BindPFlag("github-usernames", rootCmd.PersistentFlags().Lookup("github-usernames")); err != nil {
 		panic(err)
 	}
