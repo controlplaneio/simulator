@@ -4,7 +4,7 @@ authorized_keys_path="/home/ubuntu/.ssh/authorized_keys"
 
 set -x
 (
-  for USER in ${@:-}; do
+  for USER in "${@:-}"; do
     curl --fail --max-time 10 "https://github.com/${USER}.keys" || {
       sleep 2
       curl --fail --max-time 10 "https://github.com/${USER}.keys"
