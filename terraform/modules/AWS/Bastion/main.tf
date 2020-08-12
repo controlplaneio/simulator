@@ -1,7 +1,3 @@
-// locals {
-//   access_github_usernames = "${join(" ",var.access_github_usernames)}"
-// }
-
 resource "aws_instance" "simulator_bastion" {
   ami                         = var.ami_id
   key_name                    = var.access_key_name
@@ -17,29 +13,5 @@ resource "aws_instance" "simulator_bastion" {
       "Name" = "Simulator Bastion"
     },
   )
-
-  connection {
-    host = aws_instance.simulator_bastion.public_ip
-    type = "ssh"
-    user = "root"
-
-    // disable ssh-agent support
-    agent       = "false"
-    private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
-
-    // Increase the timeout so the server has time to reboot
-    timeout = "10m"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/../../../../simulation-scripts/scenario/authorized_keys.sh"
-    destination = "/root/authorized_keys.sh"
-  }
-
-  // provisioner "remote-exec" {
-  //   inline = [
-  //     "/tmp/authorize-keys.sh ${local.access_github_usernames}",
-  //   ]
-  // }
 
 }
