@@ -6,7 +6,7 @@ else
   SIMULATOR_AWS_CREDS_PATH="$(dirname "${AWS_SHARED_CREDENTIALS_FILE}")"
 fi
 
-CONTAINER_NAME='controlplane/simulator:latest'
+CONTAINER_NAME="controlplane/simulator:latest"
 KUBE_SIM_TMP="${HOME}/.kubesim/"
 SIMULATOR_CONFIG_FILE="${KUBE_SIM_TMP}simulator.yaml"
 BASTION_TF_VARS="${KUBE_SIM_TMP}settings/bastion.tfvars"
