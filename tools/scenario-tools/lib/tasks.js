@@ -90,6 +90,11 @@ async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
   const { name, tasks } = loadYamlFile(taskspath)
 
+  if (tasks === undefined) {
+    logger.error('A scenario cannot be found! Has one been provisioned with `simulator scenario launch ...`?')
+    process.exit(1)
+  }
+
   if (newTask !== undefined && !tasks[newTask]) {
     log.warn('Cannot find task')
     return false
