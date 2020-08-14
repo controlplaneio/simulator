@@ -364,7 +364,7 @@ test('processTask errors when tasks.yaml is empty', async t => {
 
 test('processTask errors when tasks.yaml does not contain YAML', async t => {
   const progress = fixture('progress.json')
-  const tasks = fixture('tasks-empty.yaml')
+  const tasks = fixture('tasks-no-task.yaml')
   const logger = createSpyingLogger()
   try {
     await processTask(1, tasks, progress, logger)
