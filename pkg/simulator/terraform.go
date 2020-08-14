@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/kubernetes-simulator/simulator/pkg/childminder"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
@@ -125,13 +126,17 @@ func (s *Simulator) Create() error {
 	}
 
 	s.Logger.Info("Running terraform plan")
-	_, err = s.Terraform("plan")
+	out, err := s.Terraform("plan")
 	if err != nil {
 		return err
 	}
 
-	s.Logger.Info("Running terraform apply")
-	_, err = s.Terraform("apply")
+	outValue := *out
+	if !strings.Contains(outValue, "No changes. Infrastructure is up-to-date.") {
+		s.Logger.Info("Running terraform apply")
+		_, err = s.Terraform("apply")
+	}
+
 	return err
 }
 
