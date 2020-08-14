@@ -348,3 +348,29 @@ test('startTask updates current_task and scores if answer is yes', async t => {
     ]
   }, 'should have only updated current task')
 })
+
+test('processTask errors when tasks.yaml is empty', async t => {
+  const progress = fixture('progress.json')
+  const tasks = fixture('tasks-empty.yaml')
+  const logger = createSpyingLogger()
+  try {
+    await processTask(1, tasks, progress, logger)
+  } catch (e) {
+    t.is(e.message, 'A scenario cannot be found! Has one been provisioned with `simulator scenario launch ...` ?')
+    return t.pass()
+  }
+  t.fail('processTask did not throw')
+})
+
+test('processTask errors when tasks.yaml does not contain YAML', async t => {
+  const progress = fixture('progress.json')
+  const tasks = fixture('tasks-no-task.yaml')
+  const logger = createSpyingLogger()
+  try {
+    await processTask(1, tasks, progress, logger)
+  } catch (e) {
+    t.is(e.message, 'A scenario cannot be found! Has one been provisioned with `simulator scenario launch ...` ?')
+    return t.pass()
+  }
+  t.fail('processTask did not throw')
+})

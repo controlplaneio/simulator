@@ -22,7 +22,7 @@ const logger = createLogger({})
 logger.debug('Getting current task')
 getCurrentTask().then(task => {
   logger.debug('Current task', { task })
-  if (task === undefined) {
+  if (task === null) {
     logger.error(
       'You have not started a task.  Please run `start_task` to select your task')
     process.exit(1)
