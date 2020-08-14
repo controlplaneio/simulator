@@ -88,11 +88,20 @@ function processResponse (answer, progress, tasks, log = logger) {
 // argument was supplied we assume this was invoked as `end_task`
 async function processTask (newTask, taskspath = TASKS_FILE_PATH,
   progresspath = PROGRESS_FILE_PATH, log = logger) {
-  const { name, tasks } = loadYamlFile(taskspath)
+  const doc = loadYamlFile(taskspath)
 
+  // Tasks YAML file was empty
+  if (doc === undefined) {
+    throw new Error(
+      'A scenario cannot be found! Has one been provisioned with `simulator scenario launch ...` ?')
+  }
+
+  const { name, tasks } = doc
+
+  // Tasks YAML file was not JSON
   if (tasks === undefined) {
-    logger.error('A scenario cannot be found! Has one been provisioned with `simulator scenario launch ...`?')
-    process.exit(1)
+    throw new Error(
+      'A scenario cannot be found! Has one been provisioned with `simulator scenario launch ...` ?')
   }
 
   if (newTask !== undefined && !tasks[newTask]) {
