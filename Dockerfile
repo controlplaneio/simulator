@@ -252,7 +252,8 @@ COPY --chown=1000 ${config_file} /home/launch/.kubesim/
 COPY --chown=1000 launch-files/bashrc /home/launch/.bashrc
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
-    SIMULATOR_TF_DIR=/app/terraform/deployments/AWS
+    SIMULATOR_TF_DIR=/app/terraform/deployments/AWS \
+    DISABLE_CHECKPOINT=true
 
 USER ${launch_user}
 
