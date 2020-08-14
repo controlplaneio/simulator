@@ -7,22 +7,22 @@
 /simulation-scripts/scenario @s-irvine @pi-unnerup @abdullahgarcia
 
 # Terraform
-/terraform @s-irvine @raoulmillas @jondkent
+/terraform @s-irvine @raoulmillais @jondkent
 
 # Tools
-/tools @raoulmillas @abdullahgarcia
+/tools @raoulmillais @abdullahgarcia
 
 # Attack Container
-/attack @raoulmillas @jondkent
+/attack @raoulmillais @jondkent
 
 # Simulator Binaries
-/cmd @raoulmillas @jondkent @abdullahgarcia
-/pkg @raoulmillas @jondkent @abdullahgarcia
+/cmd @raoulmillais @jondkent @abdullahgarcia
+/pkg @raoulmillais @jondkent @abdullahgarcia
 
 # kubesim
-/kubesim @s-irvine @raoulmillas
+/kubesim @s-irvine @raoulmillais
 
 # Build Files
-/Dockerfile @s-irvine @raoulmillas @pi-unnerup @jondkent
-/Jenkinsfile @raoulmillas @s-irvine @pi-unnerup
-/Makefile @s-irvine @raoulmillas @pi-unnerup @jondkent
+/Dockerfile @s-irvine @raoulmillais @pi-unnerup @jondkent
+/Jenkinsfile @raoulmillais @s-irvine @pi-unnerup
+/Makefile @s-irvine @raoulmillais @pi-unnerup @jondkent
