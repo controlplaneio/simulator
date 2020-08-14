@@ -10,6 +10,11 @@ variable "access_cidr" {
   type        = list(string)
 }
 
+variable "access_github_usernames" {
+  description = "github usernames to add to ssh authorized keys"
+  type        = list(string)
+}
+
 // Variables below are to have defined defaults
 
 variable "shared_credentials_file" {

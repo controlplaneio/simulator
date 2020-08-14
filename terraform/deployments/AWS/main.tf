@@ -30,6 +30,7 @@ module "Bastion" {
   ami_id                   = "${module.Ami.AmiId}"
   instance_type            = "${var.instance_type}"
   access_key_name          = "${module.SshKey.KeyPairName}"
+  access_github_usernames  = "${var.access_github_usernames}"
   security_group           = "${module.SecurityGroups.BastionSecurityGroupID}"
   subnet_id                = "${module.Networking.PublicSubnetId}"
   master_ip_addresses      = "${join(",", "${module.Kubernetes.K8sMasterPrivateIp}")}"

@@ -12,6 +12,11 @@ variable "access_key_name" {
   default     = "simulator_ssh_access_key"
 }
 
+variable "access_github_usernames" {
+  description = "ssh access for these users"
+  type        = list(string)
+}
+
 variable "security_group" {
   description = "configure security group"
 }

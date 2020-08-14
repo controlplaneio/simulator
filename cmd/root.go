@@ -83,6 +83,12 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
+	rootCmd.PersistentFlags().StringP("github-usernames", "u", "",
+		"Github usernames that will be allowed access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
+	if err := viper.BindPFlag("github-usernames", rootCmd.PersistentFlags().Lookup("github-usernames")); err != nil {
+		panic(err)
+	}
+
 	// TODO: (rem) this is also used to locate the perturb.sh script which may be
 	// subsumed by this app
 	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",

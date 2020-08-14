@@ -9,23 +9,25 @@ import (
 // TfVars struct representing the input variables for terraform to create the
 // infrastructure
 type TfVars struct {
-	PublicKey  string
-	AccessCIDR string
-	BucketName string
-	AttackTag  string
-	AttackRepo string
-	ExtraCIDRs string
+	PublicKey       string
+	AccessCIDR      string
+	BucketName      string
+	AttackTag       string
+	AttackRepo      string
+	ExtraCIDRs      string
+	GithubUsernames string
 }
 
 // NewTfVars creates a TfVars struct with all the defaults
-func NewTfVars(publicKey, accessCIDR, bucketName, attackTag, attackRepo, extraCIDRs string) TfVars {
+func NewTfVars(publicKey, accessCIDR, bucketName, attackTag, attackRepo, extraCIDRs, githubUsernames string) TfVars {
 	return TfVars{
-		PublicKey:  publicKey,
-		AccessCIDR: accessCIDR,
-		BucketName: bucketName,
-		AttackTag:  attackTag,
-		AttackRepo: attackRepo,
-		ExtraCIDRs: extraCIDRs,
+		PublicKey:       publicKey,
+		AccessCIDR:      accessCIDR,
+		BucketName:      bucketName,
+		AttackTag:       attackTag,
+		AttackRepo:      attackRepo,
+		ExtraCIDRs:      extraCIDRs,
+		GithubUsernames: githubUsernames,
 	}
 }
 
@@ -39,17 +41,27 @@ func (tfv *TfVars) String() string {
 		tfv.AccessCIDR = tfv.AccessCIDR + "\", \"" + templatedCIDRs
 	}
 
+	if tfv.GithubUsernames != "" {
+		splitUsernames := strings.Split(tfv.GithubUsernames, ",")
+		for i := range splitUsernames {
+			splitUsernames[i] = strings.TrimSpace(splitUsernames[i])
+		}
+		templatedUsernames := strings.Join(splitUsernames, "\", \"")
+		tfv.GithubUsernames = templatedUsernames
+	}
+
 	return "access_key = \"" + tfv.PublicKey + "\"\n" +
 		"access_cidr = [\"" + tfv.AccessCIDR + "\"]\n" +
+		"access_github_usernames = [\"" + tfv.GithubUsernames + "\"]\n" +
 		"attack_container_tag = \"" + tfv.AttackTag + "\"\n" +
 		"attack_container_repo = \"" + tfv.AttackRepo + "\"\n" +
 		"state_bucket_name = \"" + tfv.BucketName + "\"\n"
 }
 
 // EnsureLatestTfVarsFile always writes an tfvars file
-func EnsureLatestTfVarsFile(tfVarsDir, publicKey, accessCIDR, bucket, attackTag, attackRepo, extraCIDRs string) error {
+func EnsureLatestTfVarsFile(tfVarsDir, publicKey, accessCIDR, bucket, attackTag, attackRepo, extraCIDRs, githubUsernames string) error {
 	filename := tfVarsDir + "/settings/bastion.tfvars"
-	tfv := NewTfVars(publicKey, accessCIDR, bucket, attackTag, attackRepo, extraCIDRs)
+	tfv := NewTfVars(publicKey, accessCIDR, bucket, attackTag, attackRepo, extraCIDRs, githubUsernames)
 
 	return util.OverwriteFile(filename, tfv.String())
 }

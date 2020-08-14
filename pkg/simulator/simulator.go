@@ -38,6 +38,8 @@ type Simulator struct {
 	// Extra CIDRs to be added to the bastion security group to allow SSH from arbitrary
 	// locations
 	ExtraCIDRs string
+	// List of github usernames to add to authorized keys for SSH access
+	GithubUsernames string
 	// SSHStateProvider manages retrieving and persisting SSH state
 	SSHStateProvider ssh.StateProvider
 	// ProgressStateProvider manages retrieving and persisting progress state
@@ -166,6 +168,14 @@ func WithoutIPDetection(disableIPDetection bool) Option {
 func WithExtraCIDRs(extraCIDRs string) Option {
 	return func(s *Simulator) {
 		s.ExtraCIDRs = extraCIDRs
+	}
+}
+
+// WithGithubUsernames returns a configurer for creating a `Simulator` instance with
+// `NewSimulator`
+func WithGithubUsernames(githubUsernames string) Option {
+	return func(s *Simulator) {
+		s.GithubUsernames = githubUsernames
 	}
 }
 
