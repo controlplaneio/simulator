@@ -11,7 +11,6 @@ import (
 type TfVars struct {
 	PublicKey       string
 	AccessCIDR      string
-	AccessUsername  string
 	BucketName      string
 	AttackTag       string
 	AttackRepo      string
@@ -20,11 +19,10 @@ type TfVars struct {
 }
 
 // NewTfVars creates a TfVars struct with all the defaults
-func NewTfVars(publicKey, accessCIDR, accessUsername, bucketName, attackTag, attackRepo, extraCIDRs, githubUsernames string) TfVars {
+func NewTfVars(publicKey, accessCIDR, bucketName, attackTag, attackRepo, extraCIDRs, githubUsernames string) TfVars {
 	return TfVars{
 		PublicKey:       publicKey,
 		AccessCIDR:      accessCIDR,
-		AccessUsername:  accessUsername,
 		BucketName:      bucketName,
 		AttackTag:       attackTag,
 		AttackRepo:      attackRepo,
@@ -49,21 +47,21 @@ func (tfv *TfVars) String() string {
 			splitUsernames[i] = strings.TrimSpace(splitUsernames[i])
 		}
 		templatedUsernames := strings.Join(splitUsernames, "\", \"")
-		tfv.AccessUsername = tfv.AccessUsername + "\", \"" + templatedUsernames
+		tfv.GithubUsernames = templatedUsernames
 	}
 
 	return "access_key = \"" + tfv.PublicKey + "\"\n" +
 		"access_cidr = [\"" + tfv.AccessCIDR + "\"]\n" +
-		"access_github_usernames = [\"" + tfv.AccessUsername + "\"]\n" +
+		"access_github_usernames = [\"" + tfv.GithubUsernames + "\"]\n" +
 		"attack_container_tag = \"" + tfv.AttackTag + "\"\n" +
 		"attack_container_repo = \"" + tfv.AttackRepo + "\"\n" +
 		"state_bucket_name = \"" + tfv.BucketName + "\"\n"
 }
 
 // EnsureLatestTfVarsFile always writes an tfvars file
-func EnsureLatestTfVarsFile(tfVarsDir, publicKey, accessCIDR, accessUsername, bucket, attackTag, attackRepo, extraCIDRs, githubUsernames string) error {
+func EnsureLatestTfVarsFile(tfVarsDir, publicKey, accessCIDR, bucket, attackTag, attackRepo, extraCIDRs, githubUsernames string) error {
 	filename := tfVarsDir + "/settings/bastion.tfvars"
-	tfv := NewTfVars(publicKey, accessCIDR, accessUsername, bucket, attackTag, attackRepo, extraCIDRs, githubUsernames)
+	tfv := NewTfVars(publicKey, accessCIDR, bucket, attackTag, attackRepo, extraCIDRs, githubUsernames)
 
 	return util.OverwriteFile(filename, tfv.String())
 }
