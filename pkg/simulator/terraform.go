@@ -125,12 +125,12 @@ func (s *Simulator) Create() error {
 	if err != nil {
 		return err
 	}
-
 	outValue := *out
 	if !strings.Contains(outValue, "No changes. Infrastructure is up-to-date.") {
 		s.Logger.Info("Running terraform apply")
 		_, err = s.Terraform("apply")
 	}
+	return err
 }
 
 // Status calls terraform output to get the state of the infrastruture and
