@@ -35,6 +35,10 @@ func (s *Simulator) PrepareTfArgs(cmd string) []string {
 		arguments = append(arguments, "-auto-approve")
 	}
 
+	if cmd == "apply" || cmd == "plan" {
+		arguments = append(arguments, "-compact-warnings")
+	}
+
 	return arguments
 }
 

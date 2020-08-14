@@ -22,8 +22,8 @@ var tfCommandArgumentsTests = []struct {
 }{
 	{[]string{"output"}, []string{"output", "-json"}},
 	{[]string{"init"}, []string{"init", "-input=false", testVarFileArg, "-backend-config=bucket=test-bucket"}},
-	{[]string{"plan"}, []string{"plan", "-input=false", testVarFileArg}},
-	{[]string{"apply"}, []string{"apply", "-input=false", testVarFileArg, "-auto-approve"}},
+	{[]string{"plan"}, []string{"plan", "-input=false", testVarFileArg, "-compact-warnings"}},
+	{[]string{"apply"}, []string{"apply", "-input=false", testVarFileArg, "-auto-approve", "-compact-warnings"}},
 	{[]string{"destroy"}, []string{"destroy", "-input=false", testVarFileArg, "-auto-approve"}},
 }
 
