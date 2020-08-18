@@ -150,9 +150,17 @@ cleanup() {
 
 container_statuses() {
   local status
-  status=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)" | jq -r '.items[].status.containerStatuses[].ready' | sort -u | tr '\n' ' ')
-  if [[ $status == "true " ]]; then
-    return 0
+  local all_json
+  all_json=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)")
+  # Verify that kube is returning valid json
+  # i.e. the master, ssh and api server are all up and working
+  if echo "$all_json" | jq '.items[].status.containerStatuses[].ready' >/dev/null 2>&1; then
+    status=$(echo "$all_json"| jq -r '.items[].status.containerStatuses[].ready' | sort -u | tr '\n' ' ')
+    if [[ $status == "true " ]]; then
+      return 0
+    else
+      return 1
+    fi
   else
     return 1
   fi
@@ -171,7 +179,7 @@ get_pods() {
   while ! container_statuses && [[ count -le timeout ]]; do
     sleep $increment
     count=$((count + increment))
-    if ! ((count % 9)); then
+    if ! ((count % 3)); then
       info "Still waiting for pods to be initalised"
     fi
   done
