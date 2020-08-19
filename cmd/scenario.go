@@ -177,5 +177,17 @@ func newScenarioCommand() *cobra.Command {
 	cmd.AddCommand(newScenarioLaunchCommand(logger))
 	cmd.AddCommand(newScenarioDescribeCommand(logger))
 
+	cmd.PersistentFlags().StringP("difficulty", "d", "",
+		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
+	if err := viper.BindPFlag("difficulty", cmd.PersistentFlags().Lookup("difficulty")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("category", "g", "",
+		"Sorts the list of scenarios by only showing scenarios of specified category")
+	if err := viper.BindPFlag("category", cmd.PersistentFlags().Lookup("category")); err != nil {
+		panic(err)
+	}
+
 	return cmd
 }

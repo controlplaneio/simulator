@@ -172,5 +172,17 @@ func newInfraCommand() *cobra.Command {
 	cmd.AddCommand(newStatusCommand(logger))
 	cmd.AddCommand(newDestroyCommand(logger))
 
+	cmd.PersistentFlags().StringP("tf-vars-dir", "v", "/home/launch/.kubesim",
+		"Path to a directory containing the terraform variables file")
+	if err := viper.BindPFlag("tf-vars-dir", cmd.PersistentFlags().Lookup("tf-vars-dir")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("github-usernames", "u", "",
+		"Github usernames that will be allowed access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
+	if err := viper.BindPFlag("github-usernames", cmd.PersistentFlags().Lookup("github-usernames")); err != nil {
+		panic(err)
+	}
+
 	return cmd
 }

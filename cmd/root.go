@@ -42,18 +42,6 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
-	rootCmd.PersistentFlags().StringP("difficulty", "d", "",
-		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
-	if err := viper.BindPFlag("difficulty", rootCmd.PersistentFlags().Lookup("difficulty")); err != nil {
-		panic(err)
-	}
-
-	rootCmd.PersistentFlags().StringP("category", "g", "",
-		"Sorts the list of scenarios by only showing scenarios of specified category")
-	if err := viper.BindPFlag("category", rootCmd.PersistentFlags().Lookup("category")); err != nil {
-		panic(err)
-	}
-
 	rootCmd.PersistentFlags().StringP("loglevel", "l", "info", "Level of detail in output logging")
 	if err := viper.BindPFlag("loglevel", rootCmd.PersistentFlags().Lookup("loglevel")); err != nil {
 		panic(err)
@@ -83,23 +71,11 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
-	rootCmd.PersistentFlags().StringP("github-usernames", "u", "",
-		"Github usernames that will be allowed access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
-	if err := viper.BindPFlag("github-usernames", rootCmd.PersistentFlags().Lookup("github-usernames")); err != nil {
-		panic(err)
-	}
-
 	// TODO: (rem) this is also used to locate the perturb.sh script which may be
 	// subsumed by this app
 	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
 		"Path to a directory containing a scenario manifest")
 	if err := viper.BindPFlag("scenarios-dir", rootCmd.PersistentFlags().Lookup("scenarios-dir")); err != nil {
-		panic(err)
-	}
-
-	rootCmd.PersistentFlags().StringP("tf-vars-dir", "v", "/home/launch/.kubesim",
-		"Path to a directory containing the terraform variables file")
-	if err := viper.BindPFlag("tf-vars-dir", rootCmd.PersistentFlags().Lookup("tf-vars-dir")); err != nil {
 		panic(err)
 	}
 
