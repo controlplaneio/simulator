@@ -15,19 +15,13 @@ func newSSHConfigCommand(logger *logrus.Logger) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 
 			bucketName := viper.GetString("state-bucket")
-			scenariosDir := viper.GetString("scenarios-dir")
-			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
-			disableIPDetection := viper.GetBool("disable-ip-detection")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
 				sim.WithTfDir(tfDir),
-				sim.WithScenariosDir(scenariosDir),
-				sim.WithAttackTag(attackTag),
 				sim.WithBucketName(bucketName),
-				sim.WithoutIPDetection(disableIPDetection),
 				sim.WithTfVarsDir(tfVarsDir))
 
 			cfg, err := simulator.SSHConfig()
@@ -91,6 +85,18 @@ func newSSHCommand() *cobra.Command {
 		Short:         "Interact with the cluster",
 		SilenceUsage:  true,
 		SilenceErrors: false,
+	}
+
+	cmd.PersistentFlags().StringP("tf-vars-dir", "v", "/home/launch/.kubesim",
+		"Path to a directory containing the terraform variables file")
+	if err := viper.BindPFlag("tf-vars-dir", rootCmd.PersistentFlags().Lookup("tf-vars-dir")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
+		"Path to a directory containing the infrastructure scripts")
+	if err := viper.BindPFlag("tf-dir", rootCmd.PersistentFlags().Lookup("tf-dir")); err != nil {
+		panic(err)
 	}
 
 	logger := newLogger(viper.GetString("loglevel"))

@@ -3,13 +3,14 @@ package cmd
 import (
 	"bufio"
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"os"
-	"strings"
 )
 
 func saveBucketConfig(logger *logrus.Logger, bucket string) {
@@ -40,7 +41,7 @@ func newInitCommand() *cobra.Command {
 				fmt.Print("Please choose a globally unique name for an S3 bucket to store the terraform state: ")
 				bucket, err := reader.ReadString('\n')
 				if err != nil {
-					return errors.Wrap(err, "Error reading bucket nbame from stdin")
+					return errors.Wrap(err, "Error reading bucket name from stdin")
 				}
 
 				bucket = strings.TrimSpace(bucket)

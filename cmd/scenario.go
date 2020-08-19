@@ -125,22 +125,12 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			bucketName := viper.GetString("state-bucket")
 			scenariosDir := viper.GetString("scenarios-dir")
-			attackTag := viper.GetString("attack-container-tag")
-			tfDir := viper.GetString("tf-dir")
-			disableIPDetection := viper.GetBool("disable-ip-detection")
-			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
-				sim.WithTfDir(tfDir),
 				sim.WithScenariosDir(scenariosDir),
-				sim.WithAttackTag(attackTag),
-				sim.WithScenarioID(args[0]),
-				sim.WithBucketName(bucketName),
-				sim.WithoutIPDetection(disableIPDetection),
-				sim.WithTfVarsDir(tfVarsDir))
+				sim.WithScenarioID(args[0]))
 
 			if err := simulator.Launch(); err != nil {
 				if strings.HasPrefix(err.Error(), "Scenario not found") {
@@ -169,6 +159,24 @@ func newScenarioCommand() *cobra.Command {
 		Short:         "Interact with scenarios",
 		SilenceUsage:  true,
 		SilenceErrors: false,
+	}
+
+	cmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
+		"Path to a directory containing a scenario manifest")
+	if err := viper.BindPFlag("scenarios-dir", rootCmd.PersistentFlags().Lookup("scenarios-dir")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("difficulty", "d", "",
+		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
+	if err := viper.BindPFlag("difficulty", rootCmd.PersistentFlags().Lookup("difficulty")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("category", "g", "",
+		"Sorts the list of scenarios by only showing scenarios of specified category")
+	if err := viper.BindPFlag("category", rootCmd.PersistentFlags().Lookup("category")); err != nil {
+		panic(err)
 	}
 
 	logger := newLogger(viper.GetString("loglevel"))

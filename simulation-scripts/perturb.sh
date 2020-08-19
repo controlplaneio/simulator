@@ -189,6 +189,8 @@ get_pods() {
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >|"${TMP_FILE}"node-2
 
+  info "pods initialised"
+
 }
 
 fix_ioctl() {
@@ -255,6 +257,7 @@ is_host_accessible() {
 
 copy_challenge_and_tasks() {
   local SCENARIO_DIR="${1}"
+  info "pods initialised 2"
 
   pushd "${SCENARIO_DIR}" >/dev/null
   tmpchallenge=$(mktemp)
@@ -265,12 +268,13 @@ copy_challenge_and_tasks() {
   if grep '##IP\|##NAME\|##HIP' challenge.txt >/dev/null; then
     template_challenge
   fi
-
+  info "pods initialised 3"
   if grep 'mode\:\ pod' tasks.yaml >/dev/null; then
     template_tasks
   else
     cp tasks.yaml "${tmptasks}"
   fi
+  info "pods initialised 4"
 
   info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
   scp \
@@ -310,6 +314,7 @@ template_challenge() {
       sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
+  info "pods initialised 5"
   if grep '##NAME' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
@@ -317,6 +322,7 @@ template_challenge() {
       sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
+  info "pods initialised 6"
   if grep '##HIP' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
@@ -324,6 +330,7 @@ template_challenge() {
       sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
+  info "pods initialised 7"
 }
 
 template_tasks() {
@@ -332,26 +339,36 @@ template_tasks() {
   local POD_NAME
   local POD_RESULT
   tasks_json=$(yq r -j tasks.yaml)
+  info "pods initialised 8"
   cp tasks.yaml "${tmptasks}"
   POD_NAME=$(echo "${tasks_json}" | jq -r '.tasks[].startingPoint.podName | select (.!=null)')
+  info "pods initialised 9"
   for pod_name in $POD_NAME; do
+    info "pods initialised 10"   
     POD_NS=$(echo "${tasks_json}" | jq -r --arg POD_NAME "${pod_name}" '.tasks[].startingPoint | select(.podName | select (.!=null) | contains($POD_NAME)) | .podNamespace')
+    info "pods initialised 11"
     POD_HOST=$(echo "${tasks_json}" | jq -r --arg POD_NAME "${pod_name}" '.tasks[].startingPoint | select(.podName | select (.!=null) | contains($POD_NAME)) | .podHost')
+    info "pods initialised 12"
     if [[ ${POD_HOST} != "null" ]]; then
       if [[ ${POD_HOST} =~ "master" ]]; then
+        info "pods initialised 13"
         POD_HOST_IP="$(get_master)"
       elif [[ ${POD_HOST} =~ "node" ]]; then
+        info "pods initialised 14"
         POD_HOST_IP="$(get_node $(("$(echo "${POD_HOST}" | tail -c 2)" + 1)))"
       else
         warning "Unknown podHost in startingpoint"
         exit 1
       fi
+      info "pods initialised 15"
       POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_HOST_IP "${POD_HOST_IP}" --arg POD_NS "${POD_NS}" '.items[] | select(.status.hostIP | contains($POD_HOST_IP)) | .metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
     else
+      info "pods initialised 16"
       POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
     fi
     sed -i "s/podName\:\ ${pod_name}/podName\:\ ${POD_RESULT}/g" "${tmptasks}"
   done
+  info "pods initialised 17"
 }
 
 find_scenario() {
