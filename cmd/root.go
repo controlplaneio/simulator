@@ -47,44 +47,6 @@ func newCmdRoot() *cobra.Command {
 		panic(err)
 	}
 
-	rootCmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
-		"Path to a directory containing the infrastructure scripts")
-	if err := viper.BindPFlag("tf-dir", rootCmd.PersistentFlags().Lookup("tf-dir")); err != nil {
-		panic(err)
-	}
-
-	rootCmd.PersistentFlags().StringP("attack-container-tag", "a", "latest",
-		"The attack container tag to pull on the bastion")
-	if err := viper.BindPFlag("attack-container-tag", rootCmd.PersistentFlags().Lookup("attack-container-tag")); err != nil {
-		panic(err)
-	}
-
-	rootCmd.PersistentFlags().StringP("attack-container-repo", "r", "controlplane/simulator-attack",
-		"The attack container repo to pull from on the bastion")
-	if err := viper.BindPFlag("attack-container-repo", rootCmd.PersistentFlags().Lookup("attack-container-repo")); err != nil {
-		panic(err)
-	}
-
-	rootCmd.PersistentFlags().StringP("extra-cidrs", "e", "",
-		"Extra CIDRs that will be allowed to access to the bastion host. MUST be a valid CIDR and a list MUST be comma delimited")
-	if err := viper.BindPFlag("extra-cidrs", rootCmd.PersistentFlags().Lookup("extra-cidrs")); err != nil {
-		panic(err)
-	}
-
-	// TODO: (rem) this is also used to locate the perturb.sh script which may be
-	// subsumed by this app
-	rootCmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
-		"Path to a directory containing a scenario manifest")
-	if err := viper.BindPFlag("scenarios-dir", rootCmd.PersistentFlags().Lookup("scenarios-dir")); err != nil {
-		panic(err)
-	}
-
-	rootCmd.PersistentFlags().BoolP("disable-ip-detection", "i", false,
-		"Disable public IP check. If you disable, make sure you know what you are doing.")
-	if err := viper.BindPFlag("disable-ip-detection", rootCmd.PersistentFlags().Lookup("disable-ip-detection")); err != nil {
-		panic(err)
-	}
-
 	return rootCmd
 }
 

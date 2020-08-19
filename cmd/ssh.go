@@ -104,5 +104,11 @@ func newSSHCommand() *cobra.Command {
 		panic(err)
 	}
 
+	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
+		"Path to a directory containing the infrastructure scripts")
+	if err := viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir")); err != nil {
+		panic(err)
+	}
+
 	return cmd
 }
