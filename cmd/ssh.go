@@ -98,5 +98,17 @@ func newSSHCommand() *cobra.Command {
 	cmd.AddCommand(newSSHConfigCommand(logger))
 	cmd.AddCommand(newSSHAttackCommand(logger))
 
+	cmd.PersistentFlags().StringP("tf-vars-dir", "v", "/home/launch/.kubesim",
+		"Path to a directory containing the terraform variables file")
+	if err := viper.BindPFlag("tf-vars-dir", cmd.PersistentFlags().Lookup("tf-vars-dir")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
+		"Path to a directory containing the infrastructure scripts")
+	if err := viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir")); err != nil {
+		panic(err)
+	}
+
 	return cmd
 }
