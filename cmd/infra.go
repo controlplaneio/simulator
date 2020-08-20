@@ -84,7 +84,7 @@ func newStatusCommand(logger *logrus.Logger) *cobra.Command {
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
-			disableIPDetection := viper.GetBool("disable-ip-detection")
+			disableIPDetection := true
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),
@@ -134,7 +134,7 @@ func newDestroyCommand(logger *logrus.Logger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 			attackTag := viper.GetString("attack-container-tag")
-			disableIPDetection := viper.GetBool("disable-ip-detection")
+			disableIPDetection := true
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),

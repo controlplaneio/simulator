@@ -129,7 +129,7 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 			scenariosDir := viper.GetString("scenarios-dir")
 			attackTag := viper.GetString("attack-container-tag")
 			tfDir := viper.GetString("tf-dir")
-			disableIPDetection := viper.GetBool("disable-ip-detection")
+			disableIPDetection := true
 			tfVarsDir := viper.GetString("tf-vars-dir")
 
 			simulator := sim.NewSimulator(
