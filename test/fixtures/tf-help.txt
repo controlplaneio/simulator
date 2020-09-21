@@ -16,6 +16,8 @@ Common commands:
     graph              Create a visual graph of Terraform resources
     import             Import existing infrastructure into Terraform
     init               Initialize a Terraform working directory
+    login              Obtain and save credentials for a remote host
+    logout             Remove locally-stored credentials for a remote host
     output             Read an output from a state file
     plan               Generate and show an execution plan
     providers          Prints a tree of the providers used in the configuration
@@ -29,6 +31,7 @@ Common commands:
 
 All other commands:
     0.12upgrade        Rewrites pre-0.12 module source code for v0.12
+    0.13upgrade        Rewrites pre-0.13 module source code for v0.13
     debug              Debug output management (experimental)
     force-unlock       Manually unlock the terraform state
     push               Obsolete command for Terraform Enterprise legacy (v1)
