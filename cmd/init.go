@@ -68,7 +68,7 @@ func newInitCommand() *cobra.Command {
 			logger.WithFields(logrus.Fields{
 				"BucketName": bucket,
 			}).Warn("Simulator is already configured to use an S3 bucket")
-			logger.Warn("Please remove the state-bucket from simulator.yaml to create another")
+			logger.Warn("Please remove the state-bucket from simulator.yaml then exit and re-enter the container to create another")
 			return nil
 		},
 	}
