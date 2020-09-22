@@ -2,6 +2,7 @@ package simulator
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/kubernetes-simulator/simulator/pkg/childminder"
@@ -105,10 +106,12 @@ func (s *Simulator) InitIfNeeded() error {
 		return errors.Wrap(err, "Error writing tfvars")
 	}
 
-	s.Logger.Info("Running terraform init")
-	_, err = s.Terraform("init")
-	if err != nil {
-		return errors.Wrap(err, "Error initialising terraform")
+	if _, err := os.Stat("/app/terraform/deployments/AWS/.terraform"); os.IsNotExist(err) {
+		s.Logger.Info("Running terraform init")
+		_, err = s.Terraform("init")
+		if err != nil {
+			return errors.Wrap(err, "Error initialising terraform")
+		}
 	}
 
 	return nil
