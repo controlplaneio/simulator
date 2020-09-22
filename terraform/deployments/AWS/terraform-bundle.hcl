@@ -1,12 +1,20 @@
 terraform {
-  version = "0.12.20"
+  version = "0.13.3"
 }
 
 providers {
-  aws = ["~> 2.0"]
-  null = ["~> 2.1"]
-  random = ["~> 2.1"]
-  template = ["~> 2.1"]
+  aws = {
+    versions = ["~> 3.6"]
+  }
+  null = {
+    versions = ["~> 2.1"]
+  }
+  random = {
+    versions = ["~> 2.1"]
+  }
+  template = {
+    versions = ["~> 2.1"]
+  }
 }
 
 # vim: ft=tf

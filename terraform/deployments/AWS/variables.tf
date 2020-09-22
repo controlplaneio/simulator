@@ -82,7 +82,6 @@ variable "state_bucket_name" {
   default     = "not-defined"
 }
 
-
 variable "default_tags" {
   description = "Default tags for all resources"
   type        = map(string)
@@ -90,3 +89,4 @@ variable "default_tags" {
     Product = "simulator"
   }
 }
+
