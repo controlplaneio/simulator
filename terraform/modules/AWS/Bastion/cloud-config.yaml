@@ -46,11 +46,11 @@ write_files:
   - path: /home/ubuntu/challenge.txt
     permissions: "0666"
     content: |
-      No scenario instructions found. Have you launched a task with `simulator scenario launch ...`?
+      No scenario instructions found. Have you launched a scenario with 'simulator scenario launch ...'?
   - path: /home/ubuntu/tasks.yaml
     permissions: "0666"
     content: |
-      No scenario tasks found. Have you launched a task with `simulator scenario launch ...`?
+      No scenario tasks found. Have you launched a scenario with 'simulator scenario launch ...'?
   - path: /etc/default/motd-news
     owner: root:root
     permissions: "0644"

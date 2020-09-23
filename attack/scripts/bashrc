@@ -239,10 +239,38 @@ welcome() {
   info ' '
   info "There are ${BOLD}${#MASTER_NODES[@]}${NORMAL} ${COLOUR_BLUE}master and ${BOLD}${#WORKER_NODES[@]}${NORMAL} ${COLOUR_BLUE}nodes in the cluster."
   info ' '
+  info 'You can view the details of currently provisioned scenario and tasks with:'
+  info "  \$ scenario"
+  info ' '
+  info "If this is your first scenario or you would like a refresher, you can view the helpers and commands for interacting with the scenario and tasks with:"
+  info "  \$ list-commands"
+  info ' '
+  info "To see this message again:"
+  info "  \$ welcome"
+}
+readonly -f welcome
+export -f welcome
+
+scenario() {
   if [[ -f /challenge.txt ]]; then
     envsubst </challenge.txt
+    info ' '
+    info "If this is your first scenario or you would like a refresher, you can view the helpers and commands for interacting with the scenario and tasks with:"
+    info "  \$ list-commands"
+    info ' '
+    info "To see the welcome message again:"
+    info "  \$ welcome"
+    info ' '
+    info "To see this message again:"
+    info "  \$ scenario"
+  else
+    warning "No scenario instructions found. Have you launched a scenario with 'simulator scenario launch ...'?"
   fi
-  info ' '
+}
+readonly -f scenario
+export -f scenario
+
+list-commands() {
   info 'There is a rudimentary beta scoring mechanism. You will be scored based'
   info 'on how many hints you have seen but it currently does not validate that'
   info 'you correctly completed the task. This is in the works :)'
@@ -277,10 +305,16 @@ welcome() {
   info "  \$ ssh_node 1"
   info "  \$ ssh_internal"
   info ' '
-  info "To see this message again:"
+  info 'You can view the details of currently provisioned scenario and tasks with:'
+  info "  \$ scenario"
+  info ' '
+  info "To see the welcome again:"
   info "  \$ welcome"
+  info ' '
+  info "To see this message again:"
+  info "  \$ list-commands"
 }
-readonly -f welcome
-export -f welcome
+readonly -f list-commands
+export -f list-commands
 
 main
