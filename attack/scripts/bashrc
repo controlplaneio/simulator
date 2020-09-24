@@ -243,7 +243,7 @@ welcome() {
   info "  \$ scenario"
   info ' '
   info "If this is your first scenario or you would like a refresher, you can view the helpers and commands for interacting with the scenario and tasks with:"
-  info "  \$ list-commands"
+  info "  \$ list_commands"
   info ' '
   info "To see this message again:"
   info "  \$ welcome"
@@ -256,7 +256,7 @@ scenario() {
     envsubst </challenge.txt
     info ' '
     info "If this is your first scenario or you would like a refresher, you can view the helpers and commands for interacting with the scenario and tasks with:"
-    info "  \$ list-commands"
+    info "  \$ list_commands"
     info ' '
     info "To see the welcome message again:"
     info "  \$ welcome"
@@ -312,7 +312,7 @@ list_commands() {
   info "  \$ welcome"
   info ' '
   info "To see this message again:"
-  info "  \$ list-commands"
+  info "  \$ list_commands"
 }
 readonly -f list_commands
 export -f list_commands
