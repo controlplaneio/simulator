@@ -86,6 +86,21 @@ find_current_task() {
 }
 readonly -f find_current_task
 
+check_if_task_set() {
+  local task
+  task=$(jq -r '.current_task' /progress.json)
+  if [[ ${task} = "null" ]]; then
+    echo "You have not started a task yet. One can be set with 'start_task ...'. Would you like to continue anyway without starting a task? Enter '1' or '2'"
+    select yesno in "Yes" "No"; do
+        case $yesno in
+            Yes ) return 0;;
+            No ) return 1;;
+        esac
+    done
+  fi
+}
+readonly -f check_if_task_set
+
 starting_point() {
   local task_no
   local task_json
@@ -94,6 +109,10 @@ starting_point() {
   local KUBECTL_ACCESS
   local NODE_TYPE
   local NODE_NUMBER
+
+  if ! check_if_task_set; then
+    return 1
+  fi
 
   task_no=$(find_current_task)
   task_json=$(yq r -j /tasks.yaml)
@@ -174,6 +193,10 @@ export -f starting_point
 ssh_master() {
   local INDEX="${1:-}"
 
+  if ! check_if_task_set; then
+    return 1
+  fi
+
   # shellcheck disable=SC2086
   IFS=', ' read -r -a MASTER_NODES <<<"${MASTER_IP_ADDRESSES}"
   export MASTER_NODES
@@ -200,6 +223,10 @@ export -f ssh_master
 ssh_node() {
   local INDEX="${1:-}"
 
+  if ! check_if_task_set; then
+    return 1
+  fi
+
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
   export WORKER_NODES
 
@@ -207,7 +234,7 @@ ssh_node() {
     if [[ "${#WORKER_NODES[@]}" == 1 ]]; then
       INDEX=0
     else
-      warning "Please supply a number"
+      warning "Please supply a node number"
       return 1
     fi
   fi
@@ -223,6 +250,10 @@ readonly -f ssh_node
 export -f ssh_node
 
 ssh_internal() {
+  if ! check_if_task_set; then
+    return 1
+  fi
+
   ssh root@"${INTERNAL_HOST_IP}"
 }
 readonly -f ssh_internal
