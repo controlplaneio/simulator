@@ -270,7 +270,7 @@ scenario() {
 readonly -f scenario
 export -f scenario
 
-list-commands() {
+list_commands() {
   info 'There is a rudimentary beta scoring mechanism. You will be scored based'
   info 'on how many hints you have seen but it currently does not validate that'
   info 'you correctly completed the task. This is in the works :)'
@@ -314,7 +314,7 @@ list-commands() {
   info "To see this message again:"
   info "  \$ list-commands"
 }
-readonly -f list-commands
-export -f list-commands
+readonly -f list_commands
+export -f list_commands
 
 main
