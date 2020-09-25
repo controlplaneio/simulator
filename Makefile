@@ -166,7 +166,7 @@ docs: ## Generate documentation
 release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker-build build ## Docker container and binary release automation for simulator
 	git tag --sign -m $(RELEASE_TAG) $(RELEASE_TAG)
 	git push origin $(RELEASE_TAG)
-	hub release create -m $(RELEASE_TAG) -a dist/simulator $(RELEASE_TAG)
+	hub release create -m $(RELEASE_TAG) -a dist/simulator -a kubesim $(RELEASE_TAG)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:latest
