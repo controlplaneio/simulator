@@ -66,6 +66,13 @@ previous-tag:
 release-tag:
 	$(eval RELEASE_TAG := $(shell read -p "Tag to release: " tag; echo $$tag))
 
+.PHONY: release-msg
+release-msg:
+	$(eval TMP_FILE := $(shell mktemp /tmp/sim-release-msg.XXXXX))
+	@echo "$(RELEASE_TAG)" > $(TMP_FILE)
+	@echo "" >> $(TMP_FILE)
+	@echo "$$(git log --merges --format=%b $$(git describe --tags --abbrev=0)..HEAD)" >> $(TMP_FILE)
+
 .PHONY: gpg-preflight
 gpg-preflight:
 	@echo Your gpg key for git is $$(git config user.signingkey)
@@ -163,10 +170,11 @@ docs: ## Generate documentation
 	./scripts/tf-auto-doc ./terraform
 
 .PHONY: release
-release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker-build build ## Docker container and binary release automation for simulator
+release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker-build build release-msg ## Docker container and binary release automation for simulator
 	git tag --sign -m $(RELEASE_TAG) $(RELEASE_TAG)
 	git push origin $(RELEASE_TAG)
-	hub release create -m $(RELEASE_TAG) -a dist/simulator -a kubesim $(RELEASE_TAG)
+	hub release create -F $(TMP_FILE) -a dist/simulator -a kubesim $(RELEASE_TAG)
+	rm -rf $(TMP_FILE)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
 	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:latest
