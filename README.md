@@ -214,7 +214,7 @@ Refer to the [Tasks YAML file Format documentation](./docs/tasks-yaml-format.md)
 
 <pre>
 # cURL the script from GitHub
-curl -o kubesim https://raw.githubusercontent.com/kubernetes-simulator/simulator/master/kubesim
+curl -Lo kubesim https://github.com/kubernetes-simulator/simulator/releases/latest/download/kubesim
 # Make it executeable
 chmod a+x kubesim
 # Place the script on your path
