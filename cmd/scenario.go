@@ -62,6 +62,18 @@ func newScenarioListCommand(logger *logrus.Logger) *cobra.Command {
 		},
 	}
 
+	cmd.PersistentFlags().StringP("category", "g", "",
+		"Sorts the list of scenarios by only showing scenarios of specified category")
+	if err := viper.BindPFlag("category", cmd.PersistentFlags().Lookup("category")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("difficulty", "d", "",
+		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
+	if err := viper.BindPFlag("difficulty", cmd.PersistentFlags().Lookup("difficulty")); err != nil {
+		panic(err)
+	}
+
 	return cmd
 }
 
@@ -180,18 +192,6 @@ func newScenarioCommand() *cobra.Command {
 	cmd.PersistentFlags().StringP("scenarios-dir", "s", "./simulation-scripts",
 		"Path to a directory containing a scenario manifest")
 	if err := viper.BindPFlag("scenarios-dir", cmd.PersistentFlags().Lookup("scenarios-dir")); err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().StringP("difficulty", "d", "",
-		"Sorts the list of scenarios by only showing scenarios of specified difficulty")
-	if err := viper.BindPFlag("difficulty", cmd.PersistentFlags().Lookup("difficulty")); err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().StringP("category", "g", "",
-		"Sorts the list of scenarios by only showing scenarios of specified category")
-	if err := viper.BindPFlag("category", cmd.PersistentFlags().Lookup("category")); err != nil {
 		panic(err)
 	}
 

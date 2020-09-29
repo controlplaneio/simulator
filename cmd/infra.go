@@ -66,6 +66,36 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 		},
 	}
 
+	cmd.PersistentFlags().StringP("attack-container-repo", "r", "controlplane/simulator-attack",
+		"The attack container repo to pull from on the bastion")
+	if err := viper.BindPFlag("attack-container-repo", cmd.PersistentFlags().Lookup("attack-container-repo")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("attack-container-tag", "a", "latest",
+		"The attack container tag to pull on the bastion")
+	if err := viper.BindPFlag("attack-container-tag", cmd.PersistentFlags().Lookup("attack-container-tag")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().BoolP("disable-ip-detection", "i", false,
+		"Disable public IP check. If you disable, make sure you know what you are doing.")
+	if err := viper.BindPFlag("disable-ip-detection", cmd.PersistentFlags().Lookup("disable-ip-detection")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("extra-cidrs", "e", "",
+		"Extra CIDRs that will be allowed to access to the bastion host. MUST be a valid CIDR and a list MUST be comma delimited")
+	if err := viper.BindPFlag("extra-cidrs", cmd.PersistentFlags().Lookup("extra-cidrs")); err != nil {
+		panic(err)
+	}
+
+	cmd.PersistentFlags().StringP("github-usernames", "u", "",
+		"Github usernames that will be allowed access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
+	if err := viper.BindPFlag("github-usernames", cmd.PersistentFlags().Lookup("github-usernames")); err != nil {
+		panic(err)
+	}
+
 	return cmd
 }
 
@@ -178,39 +208,9 @@ func newInfraCommand() *cobra.Command {
 		panic(err)
 	}
 
-	cmd.PersistentFlags().StringP("github-usernames", "u", "",
-		"Github usernames that will be allowed access to the bastion host. MUST be a valid username and a list MUST be comma delimited")
-	if err := viper.BindPFlag("github-usernames", cmd.PersistentFlags().Lookup("github-usernames")); err != nil {
-		panic(err)
-	}
-
 	cmd.PersistentFlags().StringP("tf-dir", "t", "./terraform/deployments/AWS",
 		"Path to a directory containing the infrastructure scripts")
 	if err := viper.BindPFlag("tf-dir", cmd.PersistentFlags().Lookup("tf-dir")); err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().StringP("attack-container-tag", "a", "latest",
-		"The attack container tag to pull on the bastion")
-	if err := viper.BindPFlag("attack-container-tag", cmd.PersistentFlags().Lookup("attack-container-tag")); err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().StringP("attack-container-repo", "r", "controlplane/simulator-attack",
-		"The attack container repo to pull from on the bastion")
-	if err := viper.BindPFlag("attack-container-repo", cmd.PersistentFlags().Lookup("attack-container-repo")); err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().StringP("extra-cidrs", "e", "",
-		"Extra CIDRs that will be allowed to access to the bastion host. MUST be a valid CIDR and a list MUST be comma delimited")
-	if err := viper.BindPFlag("extra-cidrs", cmd.PersistentFlags().Lookup("extra-cidrs")); err != nil {
-		panic(err)
-	}
-
-	cmd.PersistentFlags().BoolP("disable-ip-detection", "i", false,
-		"Disable public IP check. If you disable, make sure you know what you are doing.")
-	if err := viper.BindPFlag("disable-ip-detection", cmd.PersistentFlags().Lookup("disable-ip-detection")); err != nil {
 		panic(err)
 	}
 
