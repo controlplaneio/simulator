@@ -33,7 +33,7 @@ ENV PATH $PATH:/usr/local/go/bin
 ENV GOPATH /go
 ENV PATH $PATH:/go/bin
 
-ENV GO111MODULE on 
+ENV GO111MODULE on
 RUN mkdir -p /go/ && \
     go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.3
 
@@ -239,6 +239,8 @@ WORKDIR /app
 # Add terraform and perturb/scenario scripts to the image and goss.yaml to verify the container
 ARG config_file="./launch-files/simulator.yaml"
 COPY --chown=1000 ./terraform/ ./terraform/
+RUN terraform init --get-plugins=true --backend=false terraform/deployments/*
+
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
 COPY --chown=1000                     \
   ./launch-files/goss.yaml            \
