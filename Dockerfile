@@ -33,7 +33,7 @@ ENV PATH $PATH:/usr/local/go/bin
 ENV GOPATH /go
 ENV PATH $PATH:/go/bin
 
-ENV GO111MODULE on 
+ENV GO111MODULE on
 RUN mkdir -p /go/ && \
     go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.3
 

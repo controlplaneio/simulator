@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/glendc/go-external-ip"
+	"github.com/jc21/go-external-ip"
 	"github.com/pkg/errors"
 )
 
@@ -9,6 +9,11 @@ import (
 // string containing the IP address or any error
 func DetectPublicIP() (*string, error) {
 	consensus := externalip.DefaultConsensus(nil, nil)
+	err := consensus.UseIPProtocol(4)
+	if err != nil {
+		return nil, errors.Wrap(err, "Error detecting public IP address")
+	}
+
 	ip, err := consensus.ExternalIP()
 	if err != nil {
 		return nil, errors.Wrap(err, "Error detecting public IP address")
