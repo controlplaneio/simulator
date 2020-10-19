@@ -239,6 +239,8 @@ WORKDIR /app
 # Add terraform and perturb/scenario scripts to the image and goss.yaml to verify the container
 ARG config_file="./launch-files/simulator.yaml"
 COPY --chown=1000 ./terraform/ ./terraform/
+RUN terraform init --get-plugins=true --backend=false terraform/deployments/*
+
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
 COPY --chown=1000                     \
   ./launch-files/goss.yaml            \
@@ -250,6 +252,10 @@ COPY --chown=1000 ./launch-files/inputrc /home/launch/.inputrc
 COPY --chown=1000 ${config_file} /home/launch/.kubesim/
 
 COPY --chown=1000 launch-files/bashrc /home/launch/.bashrc
+
+RUN curl --compressed --connect-timeout 5 -LO \
+  "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" \
+  && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS \

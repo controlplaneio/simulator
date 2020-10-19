@@ -1,6 +1,8 @@
 #!/bin/bash
 
-if [[ -z ${AWS_SHARED_CREDENTIALS_FILE} ]]; then
+set -Eeuxo pipefail
+
+if [[ -z ${AWS_SHARED_CREDENTIALS_FILE:-} ]]; then
   SIMULATOR_AWS_CREDS_PATH="${HOME}/.aws/"
 else
   SIMULATOR_AWS_CREDS_PATH="$(dirname "${AWS_SHARED_CREDENTIALS_FILE}")"
@@ -29,4 +31,4 @@ docker run \
   -e "AWS_DEFAULT_REGION" \
   -e "AWS_PROFILE" \
   -e "AWS_DEFAULT_PROFILE" \
-  --rm --init -it ${CONTAINER_NAME}
+  --rm --init -it ${CONTAINER_NAME} "${@:-}"

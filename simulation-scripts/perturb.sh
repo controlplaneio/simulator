@@ -25,7 +25,7 @@
 ##
 
 # exit on error or pipe failure
-set -eo pipefail
+set -Eeo pipefail
 # error on unset variable
 # shellcheck disable=SC2016
 if test "$BASH" = "" || "$BASH" -uc 'a=();true "${a[@]}"' 2>/dev/null; then
@@ -442,9 +442,9 @@ run_kubectl_yaml() {
       done)
 
       info "Testing kube yamls are valid"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null || true
       info "Applying kube yamls to the cluster"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null || true
     )
   done
 }
