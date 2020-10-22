@@ -43,7 +43,7 @@ tasks:
 
 * Each task is identified by its name which **must** be a number enclosed in quotes.
 * The `sortOrder` is used to sort the tasks for more advanced functions. For now each task name matches with its `sortOrder`
-* The `hints` stanza contains two fields for the hints themselves and the penalty for viewing a hint:
+* The `hints` stanza contains two fields; for the hints themselves and the penalty for viewing a hint:
   * Text is a string value displayed to the user when the use `next_hint`
   * Penalty is the value subtracted from the users score when they use `next_hint`
 
@@ -92,7 +92,7 @@ The pod starting point can also use two optional fields:
 * `containerName` to choose a specific container in a pod to start in. This is required for multi-container pods.
 * `podHost` to choose a pod on a specific host. Options are one of `master-0`, `node-0` or `node-1`. It is recommended to use this option with a `DaemonSet` as it can be guaranteed that a pod exists on your chosen host.
 
-A starting point using these options is below:
+A starting point using these options below:
 
 ```YAML
 startingPoint:
