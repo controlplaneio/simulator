@@ -8,7 +8,7 @@ There are five top level fields in the spec:
 category: sample
 difficulty: Easy
 objective: Sample yaml
-kind: cp.simulator/scenario:<semver-version>
+kind: cp.simulator/scenario:<server-version>
 tasks: 
   ...
 ```
@@ -43,7 +43,7 @@ tasks:
 
 * Each task is identified by its name which **must** be a number enclosed in quotes.
 * The `sortOrder` is used to sort the tasks for more advanced functions. For now each task name matches with its `sortOrder`
-* The `hints` stanza contains two fields for the hints themselves and the penalty for viewing a hint:
+* The `hints` stanza contains two fields; for the hints themselves and the penalty for viewing a hint:
   * Text is a string value displayed to the user when the use `next_hint`
   * Penalty is the value subtracted from the users score when they use `next_hint`
 
@@ -94,7 +94,25 @@ The pod starting point can also use two optional fields:
 
 A starting point using these options is below:
 
-```YAML
+```YAMLScenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.
+There are concerns that a compromised build agent could lead to the disclosure of sensitive information from other pods.
+
+Starting Point: Jenkins container in the container-ambush namespace.
+Scenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.
+There are concerns that a compromised build agent could lead to the disclosure of sensitive information from other pods.
+
+Starting Point: Jenkins container in the container-ambush namespace.
+
+Difficulty: Easy
+
+Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the pods in this namespace.
+Task 2: Change the deployment so sensitive information isn't so easily accessible and is consumed in the secure way.
+NOTE: The proxy has been configured to consume a configuration file at '/var/proxy/config'
+Difficulty: Easy
+
+Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the pods in this namespace.
+Task 2: Change the deployment so sensitive information isn't so easily accessible and is consumed in the secure way.
+NOTE: The proxy has been configured to consume a configuration file at '/var/proxy/config'
 startingPoint:
   mode: pod
   podName: compromised-pod

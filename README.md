@@ -208,6 +208,10 @@ Refer to the [Launch scenario flow documentation](./docs/launch.md)
 
 Refer to the [Tasks YAML file Format documentation](./docs/tasks-yaml-format.md)
 
+### Create a new scenario
+
+Refer to the [Create Scenario documentation](./docs/create-scenario.md)
+
 ### The kubesim script
 
 <code>kubesim</code> is a small script written in BASH for getting users up and running with simulator as fast as possible. It pulls the latest version of the simulator container and sets up some options for running the image. It can be installed with the following steps:
