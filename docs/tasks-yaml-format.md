@@ -8,7 +8,7 @@ There are five top level fields in the spec:
 category: sample
 difficulty: Easy
 objective: Sample yaml
-kind: cp.simulator/scenario:<server-version>
+kind: cp.simulator/scenario:<semver-version>
 tasks: 
   ...
 ```
@@ -92,27 +92,9 @@ The pod starting point can also use two optional fields:
 * `containerName` to choose a specific container in a pod to start in. This is required for multi-container pods.
 * `podHost` to choose a pod on a specific host. Options are one of `master-0`, `node-0` or `node-1`. It is recommended to use this option with a `DaemonSet` as it can be guaranteed that a pod exists on your chosen host.
 
-A starting point using these options is below:
+A starting point using these options below:
 
-```YAMLScenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.
-There are concerns that a compromised build agent could lead to the disclosure of sensitive information from other pods.
-
-Starting Point: Jenkins container in the container-ambush namespace.
-Scenario: During a security audit you have noticed an unpatched vulnerability in a CI build agent in your build farm.
-There are concerns that a compromised build agent could lead to the disclosure of sensitive information from other pods.
-
-Starting Point: Jenkins container in the container-ambush namespace.
-
-Difficulty: Easy
-
-Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the pods in this namespace.
-Task 2: Change the deployment so sensitive information isn't so easily accessible and is consumed in the secure way.
-NOTE: The proxy has been configured to consume a configuration file at '/var/proxy/config'
-Difficulty: Easy
-
-Task 1: Demonstrate whether it is possible to retrieve sensitive data from any of the pods in this namespace.
-Task 2: Change the deployment so sensitive information isn't so easily accessible and is consumed in the secure way.
-NOTE: The proxy has been configured to consume a configuration file at '/var/proxy/config'
+```YAML
 startingPoint:
   mode: pod
   podName: compromised-pod

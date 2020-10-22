@@ -58,4 +58,4 @@ Additionally the `simulator/simulation-scripts/scenario/` directory can include 
 - _nodes-every.sh_: runs on master and worker nodes 1 and 2
 - _master.sh_: runs on master
 
-Any other names will cause an error. See an example `[master.sh](http://master.sh)` script [here](https://github.com/kubernetes-simulator/simulator/blob/master/simulation-scripts/scenario/etcd-inverted-wedge/master.sh).
+Any other names will cause an error. See this example [master.sh](https://github.com/kubernetes-simulator/simulator/blob/master/simulation-scripts/scenario/etcd-inverted-wedge/master.sh).
