@@ -74,8 +74,9 @@ readonly -f info
 #
 
 find_current_task() {
-  local current_task
-  current_task=$(jq -r '.current_task' /progress.json)
+  local current_task scenario_id
+  scenario_id=$(yq -j r /tasks.yaml | jq -r '.name')
+  current_task=$(curl -s 127.0.0.1:51234?scenario=${scenario_id} | jq -r '.currentTask')
   if [[ ${current_task} != "null" ]]; then
     echo "${current_task}"
     return
@@ -87,8 +88,9 @@ find_current_task() {
 readonly -f find_current_task
 
 check_if_task_set() {
-  local task
-  task=$(jq -r '.current_task' /progress.json)
+  local task scenario_id
+  scenario_id=$(yq -j r /tasks.yaml | jq -r '.name')
+  task=$(curl -s 127.0.0.1:51234?scenario=${scenario_id} | jq -r '.currentTask')
   if [[ ${task} = "null" ]]; then
     echo "You have not started a task yet. One can be set with 'start_task ...'. Would you like to continue anyway without starting a task? Enter '1' or '2'"
     select yesno in "Yes" "No"; do
