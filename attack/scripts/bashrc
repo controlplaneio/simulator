@@ -6,6 +6,8 @@ COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 BOLD=$(tput bold)
 NORMAL=$(tput sgr0)
 
+PROGRESS_SERVER='127.0.0.1:51234'
+
 main() {
   enable_programmable_completion
   set_prompt_command
@@ -73,22 +75,44 @@ readonly -f info
 # Starting point.
 #
 
+check_tasks_yaml_exists() {
+  if ! yq -j r /tasks.yaml | jq -r '.name' &>/dev/null ; then
+    warning "No scenario appears to have been launched. Please launch one with 'simulator scenario launch ...'."
+    return 1
+  fi
+}
+readonly -f check_tasks_yaml_exists
+
 find_current_task() {
-  local current_task
-  current_task=$(jq -r '.current_task' /progress.json)
+  local current_task scenario_id
+
+  if ! check_tasks_yaml_exists; then
+    return 1
+  fi
+
+  scenario_id=$(yq -j r /tasks.yaml | jq -r '.name')
+  current_task=$(curl -s "${PROGRESS_SERVER}"?scenario="${scenario_id}" | jq -r '.currentTask')
+
   if [[ ${current_task} != "null" ]]; then
     echo "${current_task}"
     return
   else
-    warning "No task found! Please launch a scenario with 'simulator scenario launch ...' or start a scenario task with 'start_task ...'."
+    warning "No task found! Please start a scenario task with 'start_task ...'."
     return 1
   fi
 }
 readonly -f find_current_task
 
 check_if_task_set() {
-  local task
-  task=$(jq -r '.current_task' /progress.json)
+  local task scenario_id
+
+  if ! check_tasks_yaml_exists; then
+    return 1
+  fi
+
+  scenario_id=$(yq -j r /tasks.yaml | jq -r '.name')
+  task=$(curl -s "${PROGRESS_SERVER}"?scenario="${scenario_id}" | jq -r '.currentTask')
+
   if [[ ${task} = "null" ]]; then
     echo "You have not started a task yet. One can be set with 'start_task ...'. Would you like to continue anyway without starting a task? Enter '1' or '2'"
     select yesno in "Yes" "No"; do
@@ -164,10 +188,10 @@ starting_point() {
 
     if [[ ${CONTAINER_NAME} != "null" ]]; then
       # shellcheck disable=SC2029
-      ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} -c ${CONTAINER_NAME} ${POD_NAME} bash"
+      ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} -c ${CONTAINER_NAME} ${POD_NAME} -- bash"
     else
       # shellcheck disable=SC2029
-      ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} bash"
+      ssh -tt "$INTERNAL_HOST_IP" "kubectl exec -it -n ${POD_NS} ${POD_NAME} -- bash"
     fi
 
   #Determine if mode is attack.
