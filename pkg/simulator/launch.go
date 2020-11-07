@@ -62,7 +62,7 @@ func (s *Simulator) Launch() error {
 	bastion := tfo.BastionPublicIP.Value
 	s.Logger.WithFields(logrus.Fields{
 		"BastionIP": bastion,
-	}).Info("Keyscanning bastion and updating known hosts")
+	}).Info("Key-scanning bastion and updating known hosts")
 	err = ssh.EnsureKnownHosts(bastion)
 	if err != nil {
 		return errors.Wrapf(err, "Error updating known hosts for bastion: %s",

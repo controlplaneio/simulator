@@ -112,6 +112,12 @@ func (s *Simulator) InitIfNeeded() error {
 		if err != nil {
 			return errors.Wrap(err, "Error initialising terraform")
 		}
+	} else if !os.IsNotExist(err) {
+		s.Logger.Info("Running terraform init on existing .terraform/ directory")
+		_, err = s.Terraform("init")
+		if err != nil {
+			return errors.Wrap(err, "Error re-initialising terraform")
+		}
 	}
 
 	return nil
