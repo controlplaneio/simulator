@@ -50,6 +50,7 @@ func newCreateCommand(logger *logrus.Logger) *cobra.Command {
 				logger.WithFields(logrus.Fields{
 					"Error": err,
 				}).Error("Error creating infrastructure")
+				return err
 			}
 
 			cfg, err := simulator.SSHConfig()

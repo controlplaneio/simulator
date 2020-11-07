@@ -142,7 +142,7 @@ func (s *Simulator) Create() error {
 	return err
 }
 
-// Status calls terraform output to get the state of the infrastruture and
+// Status calls terraform output to get the state of the infrastructure and
 // parses the output for programmatic use
 func (s *Simulator) Status() (*TerraformOutput, error) {
 	//err := s.InitIfNeeded()

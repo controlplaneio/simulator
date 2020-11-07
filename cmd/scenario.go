@@ -166,6 +166,7 @@ func newScenarioLaunchCommand(logger *logrus.Logger) *cobra.Command {
 				logger.WithFields(logrus.Fields{
 					"Error": err,
 				}).Error("Error launching scenario")
+				return err
 			}
 
 			return nil

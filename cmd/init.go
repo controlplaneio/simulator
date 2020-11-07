@@ -49,6 +49,7 @@ func newInitCommand() *cobra.Command {
 				logger.WithFields(logrus.Fields{
 					"BucketName": bucket,
 				}).Info("Creating s3 bucket for terraform remote state")
+
 				if err = simulator.CreateRemoteStateBucket(logger, bucket); err != nil {
 					if strings.HasPrefix(errors.Cause(err).Error(), "BucketAlreadyOwnedByYou") {
 						logger.WithFields(logrus.Fields{

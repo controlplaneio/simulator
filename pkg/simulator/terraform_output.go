@@ -118,6 +118,9 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 // IsUsable checks whether the TerraformOutput has all the necessary
 // information to be converted for use with perturb
 func (tfo *TerraformOutput) IsUsable() bool {
+	if tfo == nil {
+		return false
+	}
 	return tfo.BastionPublicIP.Value != "" && len(tfo.MasterNodesPrivateIP.Value) == 1 && len(tfo.ClusterNodesPrivateIP.Value) == 2
 }
 
