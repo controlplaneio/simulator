@@ -21,12 +21,17 @@ async function getProgress (name, p = PROGRESS_FILE_PATH) {
     response = await get(PROGRESS_SERVER_URL + '?scenario=' + name)
     return response.data
   } catch (e) {
-    if (e.response === undefined) {
-      // Unknown error
-      throw e
+    let error = e
+    if (process.env.KUBESIM) {
+      error = { response: { status: http.NOT_FOUND } }
     }
 
-    if (e.response.status === http.NOT_FOUND) {
+    if (error.response === undefined) {
+      // Unknown error
+      throw error
+    }
+
+    if (error.response.status === http.NOT_FOUND) {
       const progress = {
         name: name,
         currentTask: null,
@@ -34,7 +39,9 @@ async function getProgress (name, p = PROGRESS_FILE_PATH) {
       }
 
       try {
-        await saveProgress(progress)
+        if (!process.env.KUBESIM) {
+          await saveProgress(progress)
+        }
         return progress
       } catch (e) {
         logger.error('Error POSTing initial progress', { response: e.response })
@@ -42,7 +49,7 @@ async function getProgress (name, p = PROGRESS_FILE_PATH) {
       }
     }
 
-    if (e.response.status !== http.OK) {
+    if (error.response.status !== http.OK) {
       logger.error('Unexpected HTTP status getting progress', { response })
     }
   }
@@ -51,7 +58,9 @@ async function getProgress (name, p = PROGRESS_FILE_PATH) {
 async function saveProgress (progress, p = PROGRESS_FILE_PATH) {
   let response
   try {
-    response = await post(PROGRESS_SERVER_URL, progress)
+    if (!process.env.KUBESIM) {
+      response = await post(PROGRESS_SERVER_URL, progress)
+    }
     return
   } catch (e) {
     if (e.response === undefined) {

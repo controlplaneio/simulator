@@ -52,11 +52,9 @@ decode_ssh_key() {
   if [[ -n "${BASE64_SSH_KEY:-}" ]]; then
     echo "${BASE64_SSH_KEY:-}" | base64 -d >~/.ssh/id_rsa
     chmod 600 ~/.ssh/id_rsa
-    info "Deployed ssh key to $(whoami)'s .ssh/ directory"
 
-    eval "$(ssh-agent)"
-    ssh-add ~/.ssh/id_rsa
-    info "Added key to ssh-agent"
+    eval "$(ssh-agent)" >/dev/null
+    ssh-add -q ~/.ssh/id_rsa
   fi
 }
 

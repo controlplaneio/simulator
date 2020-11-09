@@ -62,6 +62,17 @@ IS_FORCE=0
 TMP_DIR="/home/launch/.kubesim"
 FOUND_SCENARIO=""
 
+test_ssh_or_swap_keyfile() {
+  if ! is_host_accessible 1000; then
+    warning "Trying master key (cannot connect to ${MASTER_HOST})"
+    if [[ "${BASE64_ROOT_SSH_KEY:-}" == "" ]]; then
+      error "BASE64_ROOT_SSH_KEY unset or empty"
+    fi
+    rm -f "${TMP_DIR}"/cp_simulator_rsa
+    base64 -d <<<"${BASE64_ROOT_SSH_KEY:-}" >"${TMP_DIR}"/cp_simulator_rsa
+  fi
+}
+
 main() {
 
   [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
@@ -70,6 +81,8 @@ main() {
   validate_arguments "$@"
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
+
+  test_ssh_or_swap_keyfile
 
   if ! is_host_accessible 1000; then
     error "Cannot connect to ${MASTER_HOST}"
@@ -92,6 +105,8 @@ main() {
   fix_ioctl 1
   fix_ioctl 2
 
+  set_kubesim_etc_env "${BASTION_HOST}"
+
   find_scenario
 
   if [[ -n ${FOUND_SCENARIO} ]]; then
@@ -112,6 +127,11 @@ main() {
   success "End of perturb"
 }
 
+set_kubesim_etc_env() {
+  local HOST="${1:-}"
+  echo "echo 'KUBESIM=1' >> /etc/environment" | run_ssh "${HOST}"
+}
+
 is_special_scenario() {
   if [[ "${SCENARIO:-}" == "" ]]; then
     error "SCENARIO is empty in is_special_scenario"
@@ -126,6 +146,8 @@ run_scenario() {
 
   run_kubectl_yaml "${SCENARIO_DIR}"
 
+  provision_ssh_key_to_bastion
+
   run_scripts "${SCENARIO_DIR}"
 
   run_cleanup "${SCENARIO_DIR}"
@@ -135,6 +157,23 @@ run_scenario() {
   copy_challenge_and_tasks "${SCENARIO_DIR}"
 
   cleanup
+}
+
+provision_ssh_key_to_bastion() {
+  local KEY_NAME="cp_simulator_rsa"
+  local SSH_PRIVATE_KEY="/home/launch/.kubesim/${KEY_NAME}"
+  local REMOTE_DIRECTORY="/home/ubuntu/.ssh/"
+  info "Copying SSH key from ${SSH_PRIVATE_KEY} to bastion at ${BASTION_HOST}"
+
+  scp \
+    -F "${SSH_CONFIG_FILE}" \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "LogLevel=ERROR" \
+    "${SSH_PRIVATE_KEY}" "root@${BASTION_HOST}:${REMOTE_DIRECTORY}"
+
+  echo "chmod 600 ${REMOTE_DIRECTORY}${KEY_NAME} && chown -R ubuntu:ubuntu ${REMOTE_DIRECTORY}" |
+    run_ssh "${BASTION_HOST}"
 }
 
 cleanup() {
@@ -148,22 +187,30 @@ cleanup() {
   shopt -s nullglob
 }
 
+get_ready_containers_from_json() {
+  local all_json="${1:-}"
+  jq '.items[].status.containerStatuses[].ready' <<<"${all_json}"
+}
+
 container_statuses() {
   local status
   local all_json
   all_json=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)")
-  # Verify that kube is returning valid json
-  # i.e. the master, ssh and api server are all up and working
-  if echo "$all_json" | jq '.items[].status.containerStatuses[].ready' >/dev/null 2>&1; then
-    status=$(echo "$all_json"| jq -r '.items[].status.containerStatuses[].ready' | sort -u | tr '\n' ' ')
+  # Verify that every container is in a ready state across all namespaces
+
+  if get_ready_containers_from_json "${all_json}" >/dev/null 2>&1; then
+    status=$(get_ready_containers_from_json "${all_json}" | sort -u | tr '\n' ' ')
     if [[ $status == "true " ]]; then
       return 0
-    else
-      return 1
     fi
-  else
-    return 1
   fi
+
+  info "Not all containers are ready"
+  jq '.items[].status.containerStatuses[] |
+    select(.ready == false) |
+    {image: .image, containerID: .containerID, name: .name, restartCount: .restartCount, ready: .ready}' <<<"${all_json}"
+
+  return 1
 }
 
 get_pods() {
@@ -205,7 +252,7 @@ fix_ioctl() {
       -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
-      -o "ConnectTimeout 3" \
+      -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "root@${BASTION_HOST}" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   elif [[ ${1} -eq "0" ]]; then
@@ -213,7 +260,7 @@ fix_ioctl() {
       -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
-      -o "ConnectTimeout 3" \
+      -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "root@$(get_master)" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   else
@@ -221,7 +268,7 @@ fix_ioctl() {
       -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
-      -o "ConnectTimeout 3" \
+      -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "root@$(get_node "${1}")" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   fi
@@ -236,7 +283,7 @@ is_host_accessible() {
       -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
-      -o "ConnectTimeout 3" \
+      -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "root@${BASTION_HOST}" \
       true
@@ -245,7 +292,7 @@ is_host_accessible() {
       -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
-      -o "ConnectTimeout 3" \
+      -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "$(get_connection_string)" \
       true
@@ -254,7 +301,7 @@ is_host_accessible() {
       -F "${SSH_CONFIG_FILE}" \
       -o "StrictHostKeyChecking=no" \
       -o "UserKnownHostsFile=/dev/null" \
-      -o "ConnectTimeout 3" \
+      -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "root@$(get_node "${1}")" \
       true
@@ -441,9 +488,9 @@ run_kubectl_yaml() {
         echo '---'
       done)
 
-      info "Testing kube yamls are valid"
+      info "Testing Kubernetes YAML files in dry run"
       echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null || true
-      info "Applying kube yamls to the cluster"
+      info "Applying Kubernetes YAML files to the cluster"
       echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null || true
     )
   done
@@ -456,6 +503,7 @@ run_scripts() {
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
     info "Running script files. This may take 1-2 mins"
+
     local TYPE
     TYPE="$(basename "${FILE}")"
     case "${TYPE}" in
@@ -730,11 +778,9 @@ not_empty_or_usage() {
   is_empty "${1-}" && usage "Non-empty value required" || return 0
 }
 
-###########################################
 #
 # main section
 #
-###########################################
 
 TERM="xterm-color"
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
