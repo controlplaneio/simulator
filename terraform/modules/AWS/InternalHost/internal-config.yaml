@@ -12,6 +12,10 @@ write_files:
     permissions: '0755'
     content: !!binary |
       ${host_bashrc}
+  - path: /root/authorized_keys.sh
+    permissions: '0755'
+    content: !!binary |
+      ${authorized_keys_script}
   - path: /root/.inputrc
     permissions: '0755'
     content: !!binary |
@@ -45,6 +49,7 @@ write_files:
       @include common-password
 
 runcmd:
+  - "/root/authorized_keys.sh ${github_usernames}"
   - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
   - 'apt update'

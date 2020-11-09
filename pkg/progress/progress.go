@@ -88,7 +88,7 @@ func (lsp LocalStateProvider) writeProgress(p *Progress) error {
 		lsp.Logger.WithFields(logrus.Fields{
 			"Error":    err,
 			"Progress": p,
-		}).Fatal("Error marshaling progres to JSON")
+		}).Fatal("Error marshaling progress to JSON")
 		panic(err)
 	}
 

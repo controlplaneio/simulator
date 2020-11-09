@@ -1,19 +1,27 @@
 #cloud-config
 
+# https://peteris.rocks/blog/quiet-and-unattended-installation-with-apt-get/
+#apt_get_command: [
+#    'apt',
+#    '--option=Dpkg::Options::=--force-confold',
+#    '--option=Dpkg::options::=--force-unsafe-io',
+#    '-qq'
+#]
+
 package_update: true
 package_upgrade: true
 disable_root: 0
 
-packages: ["docker.io", "figlet"]
+packages: [ "docker.io", "figlet" ]
 
 hostname: "bastion"
 
 runcmd:
+  - "/root/authorized_keys.sh ${github_usernames}"
   - "systemctl enable docker"
   - "systemctl daemon-reload"
   - "systemctl restart docker"
   - "docker pull ${attack_container_repo}:${attack_container_tag}"
-  - "/root/authorized_keys.sh ${github_usernames}"
 
 write_files:
   - path: /etc/bash.bashrc

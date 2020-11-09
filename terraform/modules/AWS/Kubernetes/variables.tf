@@ -54,3 +54,9 @@ variable "default_tags" {
   type        = map(string)
 }
 
+variable "access_github_usernames" {
+  description = "ssh access for these users"
+  type        = list(string)
+}
+
+

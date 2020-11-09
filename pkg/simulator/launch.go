@@ -13,6 +13,7 @@ import (
 // the infrastructure has been created.  Returns an error if the infrastructure
 // is not ready or something goes wrong
 func (s *Simulator) Launch() error {
+
 	s.Logger.WithFields(logrus.Fields{
 		"ScenariosDir": s.ScenariosDir,
 	}).Debug("Loading scenario manifest")
