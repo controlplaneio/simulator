@@ -13,3 +13,6 @@ max_line_length = 120
 [Makefile]
 charset = utf-8
 indent_style = tab
+
+[bashrc]
+indent_size = 2

@@ -4,5 +4,3 @@ You are concerned that someone has gained access to the pod and is accessing the
 Verify your suspicion by breaking into the pod and extract CREDIT_CARD_NUMBER.
 
 Starting Point: Cluster network access
-
-Difficulty: KubeCon

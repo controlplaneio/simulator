@@ -19,9 +19,13 @@ main() {
   unset -f main enable_programmable_completion set_prompt_command source_aliases
   # the rest of the commands are used in the environment
 
-  scenario
-  start_task 1
-  starting_point
+  if [[ "${KUBESIM:-}" != "" ]]; then
+    scenario
+    start_task 1
+
+    export -f check_if_task_set find_current_task check_tasks_yaml_exists
+    exec bash -c "starting_point"
+  fi
 }
 
 source_aliases() {
@@ -302,7 +306,7 @@ welcome() {
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
   info ' '
   if [[ "${KUBESIM:-}" != "" ]]; then
-      info "Welcome to Kubesim from ControlPlane | https://kubesim.io"
+      info "Welcome to Kubesim | with ❤️ from ControlPlane | https://kubesim.io"
       info ' '
       info "Scenario: $(awk '/^name:/{ print $2; }' /tasks.yaml)"
   else
@@ -326,7 +330,8 @@ export -f welcome
 scenario() {
   if [[ -f /challenge.txt ]]; then
     envsubst </challenge.txt
-    if [[ "${KUBESIM:-}" != "" ]]; then
+    echo
+    if [[ "${KUBESIM:-}" == "" ]]; then
         info ' '
         info "If this is your first scenario or you would like a refresher, you can view the helpers and commands for interacting with the scenario and tasks with:"
         info "  \$ list_commands"

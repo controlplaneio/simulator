@@ -40,14 +40,32 @@ write_files:
     permissions: "0755"
     content: !!binary |
       ${bastion_aliases}
-  - path: /home/ubuntu/.bash_login
+  - path: /home/ubuntu/.bash_login_script
     permissions: "0755"
     content: |
+      #!/bin/bash
+      set -Eeuo pipefail
+
       export MASTER_IP_ADDRESSES=${master_ip_addresses}
       export NODE_IP_ADDRESSES=${node_ip_addresses}
       export INTERNAL_HOST_IP=${internal_host_private_ip}
-      sudo -E docker run -h attack -v /home/ubuntu/progress.json:/progress.json -v /home/ubuntu/tasks.yaml:/tasks.yaml -v /home/ubuntu/challenge.txt:/challenge.txt --net=host -e BASE64_SSH_KEY -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -e INTERNAL_HOST_IP -it ${attack_container_repo}:${attack_container_tag}
-      logout
+      if [[ "$${BASE64_SSH_KEY:-}" == "" ]]; then
+        export BASE64_SSH_KEY=$(base64 -w0 ~/.ssh/cp_simulator_rsa)
+      fi
+
+      exec sudo -E docker run -h attack \
+        -v /home/ubuntu/progress.json:/progress.json \
+        -v /home/ubuntu/tasks.yaml:/tasks.yaml \
+        -v /home/ubuntu/challenge.txt:/challenge.txt \
+        --net=host \
+        -e MASTER_IP_ADDRESSES -e NODE_IP_ADDRESSES -e INTERNAL_HOST_IP \
+        -e BASE64_SSH_KEY -e KUBESIM \
+        -it ${attack_container_repo}:${attack_container_tag}
+
+  - path: /home/ubuntu/.bash_login
+    permissions: "0755"
+    content: |
+      exec ~/.bash_login_script
   - path: /home/ubuntu/progress.json
     permissions: "0666"
     content: "{}"

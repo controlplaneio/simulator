@@ -1,8 +1,6 @@
-Scenario: An anonymous user appears to have managed to 'exec' into some of the containers running on nodes $NODE_IP_ADDRESSES 
+Scenario: An anonymous user appears to have managed to 'exec' into some of the containers running on nodes $NODE_IP_ADDRESSES
 Some secrets have been extracted from them.
 It has been confirmed that the Kubernetes API server will authenticate and authorise every valid API request.
 Investigate how, by replaying the intrusion from inside the cluster and extract a workload username and password.
 
 Starting Point: starting-pod pod in the anon-user-compromise namespace
-
-Difficulty: KubeCon
