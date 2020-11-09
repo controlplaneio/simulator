@@ -1,8 +1,0 @@
-Scenario: SRE has deployed a postgres DaemonSet and a new pod for monitoring the processes in your cluster.
-Following a routine audit of an application, it is believed that the deployment setup 
-allows a breached pod container to escallate compromise to other containers on the host.
-Establish this by uncovering the DATABASE_PASSWORD and AWS keys.
-
-Starting Point: process-audit pod in the escallate-uncover-secret namespace.
-
-Difficulty: KubeCon

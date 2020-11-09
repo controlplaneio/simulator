@@ -19,9 +19,9 @@ scenarios:
     difficulty: KubeCon
     description: "Your RBAC is secure but somehow attackers are exec'ing into your containers!"
     category: KubeCon
-  - name: Escallate Uncover Secret
-    path: ./scenario/escallate-uncover-secret
-    id: escallate-uncover-secret
+  - name: Escalate Uncover Secret
+    path: ./scenario/escalate-uncover-secret
+    id: escalate-uncover-secret
     difficulty: KubeCon
     description: "A new monitoring tool has been deployed. Evaluate its configuration."
     category: KubeCon
