@@ -306,7 +306,7 @@ welcome() {
   IFS=', ' read -r -a WORKER_NODES <<<"${NODE_IP_ADDRESSES}"
   info ' '
   if [[ "${KUBESIM:-}" != "" ]]; then
-      info "Welcome to Kubesim from ControlPlane | https://kubesim.io"
+      info "Welcome to Kubesim | with ❤️ from ControlPlane | https://kubesim.io"
       info ' '
       info "Scenario: $(awk '/^name:/{ print $2; }' /tasks.yaml)"
   else
@@ -330,6 +330,7 @@ export -f welcome
 scenario() {
   if [[ -f /challenge.txt ]]; then
     envsubst </challenge.txt
+    echo
     if [[ "${KUBESIM:-}" == "" ]]; then
         info ' '
         info "If this is your first scenario or you would like a refresher, you can view the helpers and commands for interacting with the scenario and tasks with:"

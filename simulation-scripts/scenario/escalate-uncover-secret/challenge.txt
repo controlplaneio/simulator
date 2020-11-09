@@ -4,5 +4,3 @@ allows a breached pod container to escalate compromise to other containers on th
 Establish this by uncovering the DATABASE_PASSWORD and AWS keys.
 
 Starting Point: process-audit pod in the escalate-uncover-secret namespace.
-
-Difficulty: KubeCon
