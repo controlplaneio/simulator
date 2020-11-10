@@ -1,6 +1,7 @@
-Scenario: An anonymous user appears to have managed to 'exec' into some of the containers running on nodes $NODE_IP_ADDRESSES
-Some secrets have been extracted from them.
-It has been confirmed that the Kubernetes API server will authenticate and authorise every valid API request.
-Investigate how, by replaying the intrusion from inside the cluster and extract a workload username and password.
+An anonymous user has gained access to a pod and managed to escallate sideways to some of the containers running on nodes $NODE_IP_ADDRESSES. 
+The result was extracted secrets from your cluster.
+As part of an ongoing post-morten, it has been confirmed that the Kubernetes API server will authenticate and authorise every valid API request.
+The initial breach has been rectified, however it is still not clear how the anonymous user managed to escalate sideways after the initial breach.
+Try to replay the intrusion from inside the cluster and extract a workload password.
 
-Starting Point: starting-pod pod in the anon-user-compromise namespace
+You will start in the breached starting-pod pod in the anon-user-compromise namespace.

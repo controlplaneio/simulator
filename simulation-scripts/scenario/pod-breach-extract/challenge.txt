@@ -1,6 +1,6 @@
-Scenario: You are running a single application cluster with a NodePort service on $MASTER_IP_ADDRESSES
+You are running a single application cluster with a NodePort service on $MASTER_IP_ADDRESSES
 A security audit reveals that a pod has suddenly started making unexpected calls to your API server.
 You are concerned that someone has gained access to the pod and is accessing the API through there.
-Verify your suspicion by breaking into the pod and extract CREDIT_CARD_NUMBER.
+Verify your suspicion by breaking into the pod and extract the value of USER_CREDS_PASSWORD.
 
-Starting Point: Cluster network access
+You will start on a virtual machine external to the cluster.

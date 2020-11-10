@@ -10,7 +10,7 @@ metadata:
   namespace: cluster-creds-leak
 type: Opaque
 data:
-  credentials: c2VxdWVuY2VvY2N1cGF0aW9uc291cmNl
+  credentials: ZmxhZ19jdGZ7NjM0NzRiZmY2YjIxOGIyZH0K
 ---
 apiVersion: apps/v1
 kind: Deployment

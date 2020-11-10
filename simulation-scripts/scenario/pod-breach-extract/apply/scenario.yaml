@@ -79,4 +79,4 @@ metadata:
   namespace: pod-breach-extract
 type: Opaque
 data:
-  CREDIT_CARD_NUMBER: MTExMTIyMjIzMzMzNDQ0NAo=
+  USER_CREDS_PASSWORD: ZmxhZ19jdGZ7NzM3NDEyNGY1YzRkYzRjZX0K

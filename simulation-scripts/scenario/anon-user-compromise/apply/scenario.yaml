@@ -29,11 +29,6 @@ spec:
         - containerPort: 80
           name: external
         env:
-        - name: SECRET_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: workload-secret
-              key: username
         - name: SECRET_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -71,5 +66,4 @@ metadata:
   namespace: anon-user-compromise
 type: Opaque
 data:
-  username: ZWxpdGV1c2Vy
-  password: c3F1YXNoaG91c2Vrbml0
+  password: ZmxhZ19jdGZ7YjQyMWI4ZWFhYzE3YjhjZH0K

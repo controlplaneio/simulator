@@ -16,16 +16,16 @@ metadata:
   namespace: escalate-uncover-secret
 type: Opaque
 data:
-  password: cXdlcnR5dWlvcEt1YmVDb24hCg==
+  password: ZmxhZ19jdGZ7NGVjYjgxZDU4MzVjYjc1YX0K
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: keys
+  name: key
   namespace: escalate-uncover-secret
 type: Opaque
 data:
-  keys.txt: QVdTX0FDQ0VTU19LRVlfSUQ9S0VZS3ViZUNvbjIwMjAKQVdTX1NFQ1JFVF9BQ0NFU1NfS0VZPVNFQ1JFVEtFWUt1YmVDb24yMDIwIQo=
+  key.txt: ZmxhZ19jdGZ7OTFiZWQxMjEzZWU2NDlkOH0K
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -73,7 +73,7 @@ spec:
         - containerPort: 5432
           name: database
         volumeMounts:
-        - name: keys
+        - name: key
           mountPath: "/secrets"
           readOnly: true
         env:
@@ -83,6 +83,6 @@ spec:
               name: db-pass
               key: password
       volumes:
-      - name: keys
+      - name: key
         secret:
-          secretName: keys
+          secretName: key

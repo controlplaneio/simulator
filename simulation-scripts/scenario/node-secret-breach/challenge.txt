@@ -1,6 +1,6 @@
-Scenario: You have inherited a CI server from the previous SRE team.
-The server does not do any Docker builds and does not have the Docker socket mounted from the host,
+You have inherited a CI server from the previous SRE team.
+The server does not do any Docker builds and so does not have the Docker socket mounted from the host,
 but it is still a suspected candidate for a node breach that happened a month ago.
-Verify that the CI server is the reason for the breach by extracting the secret on the Node.
+Verify that the CI server is the reason for the breach by extracting the "node-secret" value from a Node.
 
-Starting Point: The ci pod in the node-secret-breach namespace.
+You will start in the ci pod in the node-secret-breach namespace.
