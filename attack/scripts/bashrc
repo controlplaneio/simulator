@@ -155,17 +155,19 @@ starting_point() {
 
   task_no=$(find_current_task)
   task_json=$(yq r -j /tasks.yaml)
-  #test that the task number has been found correctly
+
+  # test that the task number has been found correctly
   regex='^[0-9]+$'
   if ! [[ ${task_no} =~ ${regex} ]]; then
     warning "Task number not found correctly"
     return 1
   fi
-  # Identify the starting point mode
-  MODE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.mode')"
 
-  #Determine if mode is internal-instance.
-  if [[ "$MODE" == "internal-instance" ]]; then
+  # Identify the starting point mode
+  MODE=$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.mode')
+
+  # Determine if mode is internal-instance.
+  if [[ "${MODE}" == "internal-instance" ]]; then
     KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.kubectlAccess')"
 
     if [[ "$KUBECTL_ACCESS" == "false" ]]; then
@@ -176,8 +178,8 @@ starting_point() {
 
     ssh_internal
 
-  #Determine if mode is node.
-  elif [[ "$MODE" == "node" ]]; then
+  # Determine if mode is node.
+  elif [[ "${MODE}" == "node" ]]; then
     NODE_TYPE="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.nodeId')"
 
     if [[ "$NODE_TYPE" =~ "master" ]]; then
