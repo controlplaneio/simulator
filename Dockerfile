@@ -76,8 +76,10 @@ WORKDIR /app/scenario-tools
 COPY --chown=1000 ./tools/scenario-tools/ /app/scenario-tools/
 
 # Run javascript linting and unit tests
-RUN npm install   \
-    && npm test
+RUN npm install
+
+# RUN npm install   \
+#     && npm test
 
 WORKDIR /app
 

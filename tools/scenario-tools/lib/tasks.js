@@ -182,9 +182,9 @@ async function startTask (newTask, tasks, progress, log, prompter) {
   }
 }
 
-function logTask(newTask, log) {
+function logTask (newTask, log) {
   if (!process.env.KUBESIM) {
-    log.info(`You are now on task ${newTask}`)
+    // log.info(`You are now on task ${newTask}`)
   }
 }
 async function getCurrentTask (progresspath = PROGRESS_FILE_PATH,
