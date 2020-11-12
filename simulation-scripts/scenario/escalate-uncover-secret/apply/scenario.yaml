@@ -77,11 +77,15 @@ spec:
           mountPath: "/secrets"
           readOnly: true
         env:
-        - name: DATABASE_PASSWORD
+        - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: db-pass
               key: password
+        - name: POSTGRES_USER
+          value: kubecon
+        - name: POSTGRES_DB
+          value: controlplane
       volumes:
       - name: key
         secret:
