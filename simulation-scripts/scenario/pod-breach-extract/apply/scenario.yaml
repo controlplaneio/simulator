@@ -75,7 +75,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: credit_card_details
+  name: usercreds
   namespace: pod-breach-extract
 type: Opaque
 data:
