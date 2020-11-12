@@ -160,14 +160,14 @@ async function startTask (newTask, tasks, progress, log, prompter) {
 
   // User hasnt started a task yet
   if (currentTask === null) {
-    logTask(newTask)
+    logTask(newTask, log)
     return updateProgressWithNewTask(progress, newTask)
   }
 
   // user has started a task and previously either asked not to be scored or
   // was already scored
   if (progress.tasks.find(t => t.id === currentTask).score !== null) {
-    logTask(newTask)
+    logTask(newTask, log)
     return updateProgressWithNewTask(progress, newTask)
   }
 
@@ -177,7 +177,7 @@ async function startTask (newTask, tasks, progress, log, prompter) {
   if (newProgress === false) return false
 
   if (newTask !== null) {
-    logTask(newTask)
+    logTask(newTask, log)
     return updateProgressWithNewTask(newProgress, newTask)
   }
 }
@@ -187,6 +187,7 @@ function logTask (newTask, log) {
     log.info(`You are now on task ${newTask}`)
   }
 }
+
 async function getCurrentTask (progresspath = PROGRESS_FILE_PATH,
   taskspath = TASKS_FILE_PATH) {
   const { name } = loadYamlFile(taskspath)
