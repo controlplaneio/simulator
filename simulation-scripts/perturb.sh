@@ -13,7 +13,9 @@
 ##   -m, --master [string]      A Kubernetes API master host or IP (multi-master not supported)
 ##   -n, --nodes [string]       Kubernetes node hosts or IPs, comma-separated
 ##   -b, --bastion [string]     Publicly accessible bastion server
+##   -i, --internal [string]    Internal jump host
 ##   --test                     Only run tests, do not deploy
+##   --ssh-key-path             Path to write new SSH keys
 ##
 ##   --force                    Ignore consistency and overwrite checks
 ##   --skip-check               Skips remote host connectivity check
@@ -45,6 +47,7 @@ IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
 IS_SKIP_CHECK=0
 SSH_CONFIG_FILE="$HOME/.kubesim/cp_simulator_config"
+SSH_GENERATED_KEY_PATH=""
 
 # resolved directory and self
 DIR=$(cd "$(dirname "$0")" && pwd)
@@ -62,7 +65,19 @@ IS_FORCE=0
 TMP_DIR="/home/launch/.kubesim"
 FOUND_SCENARIO=""
 
+# to use private debug keys, b64 encode into BASE64_ROOT_SSH_KEY
 test_ssh_or_swap_keyfile() {
+  # add internal host to ssh config
+  cat <<EOF >>~/.kubesim/cp_simulator_config
+Host internal ${INTERNAL_HOST}
+  Hostname ${INTERNAL_HOST}
+  User root
+  RequestTTY force
+  IdentityFile ~/.kubesim/cp_simulator_rsa
+  UserKnownHostsFile ~/.kubesim/cp_simulator_known_hosts
+  ProxyJump bastion
+EOF
+
   if ! is_host_accessible 1000; then
     warning "Trying master key (cannot connect to ${MASTER_HOST})"
     if [[ "${BASE64_ROOT_SSH_KEY:-}" == "" ]]; then
@@ -124,8 +139,74 @@ main() {
 
   success "${SCENARIO_DIR} applied to ${MASTER_HOST} (master) and ${NODE_HOSTS} (nodes)"
 
+  info "Generating new SSH keypairs"
+
+  provision_user_ssh_key_to_bastion
+
   success "End of perturb"
 }
+
+ssh-keygen-headless() {
+  local FILE_PATH="${1:-}"
+  if [[ "${FILE_PATH:-}" == "" ]]; then
+    FILE_PATH="/tmp/sshkey-$(cut -d- -f1 </proc/sys/kernel/random/uuid)"
+  fi
+
+  rm -f "${FILE_PATH}"
+  ssh-keygen -b 2048 -t rsa -f "${FILE_PATH}" -q -N ""
+}
+
+provision_user_ssh_key_to_bastion() {
+  if [[ "${INTERNAL_HOST:-}" == "" ]]; then
+    warning "INTERNAL_HOST not set, needed for secure SSH key provisioning"
+    return
+  fi
+
+  local PERMISSIBLE_USER_SSH_HOSTS=("${INTERNAL_HOST}" "${BASTION_HOST}")
+  local SSH_PRIVATE_KEY SSH_PUBLIC_KEY
+
+  ssh-keygen-headless "${SSH_GENERATED_KEY_PATH}"
+  SSH_PRIVATE_KEY="${SSH_GENERATED_KEY_PATH}"
+  SSH_PUBLIC_KEY="${SSH_PRIVATE_KEY}.pub"
+
+  info "Writing new SSH keypairs to ${PERMISSIBLE_USER_SSH_HOSTS[*]}"
+  for THIS_HOST in "${PERMISSIBLE_USER_SSH_HOSTS[@]}"; do
+    echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /home/ubuntu/.ssh/authorized_keys" | run_ssh "${THIS_HOST}"
+  done
+
+  info "Adding SSH public key for root@internal_host"
+  echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /root/.ssh/authorized_keys" | run_ssh "${INTERNAL_HOST}"
+
+  info "Overwriting or creating Bastion keys in cp_simulator_rsa"
+  echo "cd /home/ubuntu/.ssh/ && echo '$(cat "${SSH_PRIVATE_KEY}")' > cp_simulator_rsa \
+    && chmod 0600 cp_simulator_rsa && chown ubuntu:ubuntu cp_simulator_rsa" | run_ssh "${BASTION_HOST}"
+}
+
+#provision_ssh_key_to_permitted_hosts_only() {
+#
+##   TODO(ajm) get task type and configure all permissible hosts' ~/.ssh/authorized_keys with this new key
+#
+#    task_no=$(find_current_task)
+#    task_json=$(yq r -j /tasks.yaml)
+#
+#    # test that the task number has been found correctly
+#    regex='^[0-9]+$'
+#    if ! [[ ${task_no} =~ ${regex} ]]; then
+#      warning "Task number not found correctly"
+#      return 1
+#    fi
+#
+#    # Identify the starting point mode
+#    MODE=$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.mode')
+#
+#    # Determine if mode is internal-instance.
+##    if [[ "${MODE}" == "internal-instance" ]]; then
+##      KUBECTL_ACCESS="$(echo "${task_json}" | jq -r --arg TASK_NO "${task_no}" '.tasks | .[$TASK_NO] | .startingPoint.kubectlAccess')"
+##
+##      if [[ "$KUBECTL_ACCESS" == "false" ]]; then
+##        ssh "$INTERNAL_HOST" '[[ $(compgen -d ~/.kube) ]] && mv ~/.kube /var/local/'
+#
+#}
 
 set_kubesim_etc_env() {
   local HOST="${1:-}"
@@ -146,8 +227,6 @@ run_scenario() {
 
   run_kubectl_yaml "${SCENARIO_DIR}"
 
-  provision_ssh_key_to_bastion
-
   run_scripts "${SCENARIO_DIR}"
 
   run_cleanup "${SCENARIO_DIR}"
@@ -156,24 +235,13 @@ run_scenario() {
 
   copy_challenge_and_tasks "${SCENARIO_DIR}"
 
+  clean_bastion
+
   cleanup
 }
 
-provision_ssh_key_to_bastion() {
-  local KEY_NAME="cp_simulator_rsa"
-  local SSH_PRIVATE_KEY="/home/launch/.kubesim/${KEY_NAME}"
-  local REMOTE_DIRECTORY="/home/ubuntu/.ssh/"
-  info "Copying SSH key from ${SSH_PRIVATE_KEY} to bastion at ${BASTION_HOST}"
-
-  scp \
-    -F "${SSH_CONFIG_FILE}" \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "LogLevel=ERROR" \
-    "${SSH_PRIVATE_KEY}" "root@${BASTION_HOST}:${REMOTE_DIRECTORY}"
-
-  echo "chmod 600 ${REMOTE_DIRECTORY}${KEY_NAME} && chown -R ubuntu:ubuntu ${REMOTE_DIRECTORY}" |
-    run_ssh "${BASTION_HOST}"
+clean_bastion() {
+  echo "TODO: remove /root/.ssh"
 }
 
 cleanup() {
@@ -271,6 +339,13 @@ fix_ioctl() {
       -o "ConnectTimeout 5" \
       -o "LogLevel=QUIET" \
       "root@$(get_node "${1}")" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
+    ssh \
+      -F "${SSH_CONFIG_FILE}" \
+      -o "StrictHostKeyChecking=no" \
+      -o "UserKnownHostsFile=/dev/null" \
+      -o "ConnectTimeout 5" \
+      -o "LogLevel=QUIET" \
+      "root@$(get_internal)" "sed -i 's/mesg\ n\ ||\ true/tty\ \-s\ \&\&\ mesg n\ ||\ true/g' ~/.profile"
   fi
 }
 
@@ -635,6 +710,10 @@ get_master() {
   echo "${MASTER_HOST}"
 }
 
+get_internal() {
+  echo "${INTERNAL_HOST}"
+}
+
 get_node() {
   local INDEX="${1:-1}"
   local CAT_SORT="cat"
@@ -686,6 +765,17 @@ parse_arguments() {
       not_empty_or_usage "${1:-}"
       BASTION_HOST="${1}"
       ;;
+    -i | --internal)
+      shift
+      not_empty_or_usage "${1:-}"
+      INTERNAL_HOST="${1}"
+      ;;
+    --ssh-key-path)
+      shift
+      not_empty_or_usage "${1:-}"
+      SSH_GENERATED_KEY_PATH="${1}"
+      ;;
+
     --)
       shift
       break
@@ -744,8 +834,8 @@ validate_arguments() {
 
 usage() {
   [ "$*" ] && echo "${THIS_SCRIPT}: ${COLOUR_RED}$*${COLOUR_RESET}" && echo
-  #sed -n '/^##/,/^$/s/^## \{0,1\}//p' "${THIS_SCRIPT}" | sed "s/%SCRIPT_NAME%/$(basename "${THIS_SCRIPT}")/g"
-  sed -n '/^##/p' "${THIS_SCRIPT}"
+  sed -n '/^##/,/^$/s/^## \{0,1\}//p' "${THIS_SCRIPT}" | sed "s/%SCRIPT_NAME%/$(basename "${THIS_SCRIPT}")/g"
+  #  sed -n '/^##/p' "${THIS_SCRIPT}"
   exit 2
 } 2>/dev/null
 

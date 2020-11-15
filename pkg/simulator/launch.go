@@ -77,7 +77,7 @@ func (s *Simulator) Launch() error {
 	_, err = Perturb(&po, s.Logger)
 	if err != nil {
 		if strings.Contains(err.Error(), "exit status 103") {
-			s.Logger.Error("Scenario clash error from perturb.sh")
+			s.Logger.Error("Scenario already existing on this cluster")
 		}
 
 		return errors.Wrapf(err, "Error running perturb with %#v", po)

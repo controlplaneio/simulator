@@ -29,6 +29,7 @@ type StringSliceOutput struct {
 // the terraform script
 type TerraformOutput struct {
 	BastionPublicIP       StringOutput      `json:"bastion_public_ip"`
+	InternalHostPrivateIP StringOutput      `json:"internal_host_private_ip"`
 	ClusterNodesPrivateIP StringSliceOutput `json:"cluster_nodes_private_ip"`
 	MasterNodesPrivateIP  StringSliceOutput `json:"master_nodes_private_ip"`
 }
@@ -121,7 +122,11 @@ func (tfo *TerraformOutput) IsUsable() bool {
 	if tfo == nil {
 		return false
 	}
-	return tfo.BastionPublicIP.Value != "" && len(tfo.MasterNodesPrivateIP.Value) == 1 && len(tfo.ClusterNodesPrivateIP.Value) == 2
+
+	return tfo.BastionPublicIP.Value != "" &&
+		tfo.InternalHostPrivateIP.Value != "" &&
+		len(tfo.MasterNodesPrivateIP.Value) == 1 &&
+		len(tfo.ClusterNodesPrivateIP.Value) == 2
 }
 
 // ParseTerraformOutput takes a string containing the stdout from `terraform

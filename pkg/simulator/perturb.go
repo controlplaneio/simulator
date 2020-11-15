@@ -1,7 +1,9 @@
 package simulator
 
 import (
+	"io/ioutil"
 	"net"
+	"os"
 	"strings"
 
 	"github.com/kubernetes-simulator/simulator/pkg/childminder"
@@ -11,10 +13,12 @@ import (
 
 // PerturbOptions represents the parameters required by the perturb.sh script
 type PerturbOptions struct {
-	Bastion      net.IP
-	Master       net.IP
-	Slaves       []net.IP
-	ScenarioName string
+	Bastion               net.IP
+	Internal              net.IP
+	Master                net.IP
+	Slaves                []net.IP
+	ScenarioName          string
+	UserSshPrivateKeyPath string
 }
 
 // MakePerturbOptions takes a TerraformOutput and a path to a scenario and
@@ -35,17 +39,39 @@ func MakePerturbOptions(tfo TerraformOutput, path string) PerturbOptions {
 	startOfScenarioName := strings.LastIndex(path, "/") + 1
 
 	po.Bastion = net.ParseIP(tfo.BastionPublicIP.Value)
+	po.Internal = net.ParseIP(tfo.InternalHostPrivateIP.Value)
 	po.ScenarioName = path[startOfScenarioName:]
 
+	po.UserSshPrivateKeyPath = po.getTempFile()
+
 	return po
+}
+
+func (po PerturbOptions) getTempFile() string {
+	if tmpSshFile := os.Getenv("TMP_SSH_FILE"); tmpSshFile != "" {
+		return tmpSshFile
+	}
+
+	// todo error handling all the way up from here
+	file, _ := ioutil.TempFile("/tmp", "simulator-user-")
+
+	return file.Name()
 }
 
 // ToArguments converts a PerturbOptions struct into a slice of strings
 // containing the command line options to pass to perturb
 func (po *PerturbOptions) ToArguments() []string {
 	arguments := []string{"--master", po.Master.String()}
+
 	arguments = append(arguments, "--bastion")
 	arguments = append(arguments, po.Bastion.String())
+
+	arguments = append(arguments, "--internal")
+	arguments = append(arguments, po.Internal.String())
+
+	arguments = append(arguments, "--ssh-key-path")
+	arguments = append(arguments, po.UserSshPrivateKeyPath)
+
 	arguments = append(arguments, "--nodes")
 	slaves := ""
 	for index, slave := range po.Slaves {

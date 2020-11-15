@@ -32,6 +32,8 @@ func Test_IsUsable(t *testing.T) {
 	assert.False(t, tfo.IsUsable(), "Empty TerraformOutput was usable")
 	tfo.BastionPublicIP.Value = "127.0.0.1"
 	assert.False(t, tfo.IsUsable(), "TerraformOutput with only bastion was usable")
+	tfo.InternalHostPrivateIP.Value = "127.0.0.1"
+	assert.False(t, tfo.IsUsable(), "TerraformOutput with only internal host was usable")
 	tfo.MasterNodesPrivateIP.Value = []string{"127.0.0.1"}
 	assert.False(t, tfo.IsUsable(), "TerraformOutput with only master IP was usable")
 	tfo.ClusterNodesPrivateIP.Value = []string{"127.0.0.1"}
