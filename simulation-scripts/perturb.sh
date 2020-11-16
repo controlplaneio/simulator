@@ -565,8 +565,15 @@ run_kubectl_yaml() {
 
       info "Testing Kubernetes YAML files in dry run"
       echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null || true
-      info "Applying Kubernetes YAML files to the cluster"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null || true
+
+      info "kubectl ${ACTION} YAML files to the cluster"
+      if ! echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null; then
+        info "kubectl ${ACTION} attempt 1: failed"
+        if ! echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null; then
+          info "kubectl ${ACTION} attempt 2: failed"
+          error "Error running SSH command: echo \"${FILES_STRING}\" kubectl \"${ACTION}\" -f -"
+        fi
+      fi
     )
   done
 }
@@ -577,7 +584,7 @@ run_scripts() {
   shopt -s extglob
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
-    info "Running script files. This may take 1-2 mins"
+    info "Running script files. This may take 1-2 minutes"
 
     local TYPE
     TYPE="$(basename "${FILE}")"
@@ -615,11 +622,11 @@ run_scripts() {
   done
 
   shopt -u extglob
-
+  info "Completed script files"
 }
 
 run_cleanup() {
-  info 'Cleanup started'
+  info 'Perturb scenario cleanup started'
 
   local SCENARIO_DIR="${1}"
 

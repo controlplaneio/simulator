@@ -1,6 +1,6 @@
 SRE has deployed a postgres DaemonSet and a new pod for monitoring the processes in your cluster.
 Following a routine audit of an application, it is believed that the deployment setup
-allows a breached process-audit pod container to escalate compromise to other containers on the host.
-Establish this by uncovering both the postgres DATABASE_PASSWORD and secret key.
+allows a compromised process-audit pod container to escalate its attack to other containers on the host.
+Verify this by uncovering both the Postgres DATABASE_PASSWORD and secret key.
 
 You will start in the process-audit pod in the escalate-uncover-secret namespace.
