@@ -45,20 +45,12 @@ write_files:
       @include common-password
 
 runcmd:
-  - "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -"
-  - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
-  - "mkdir /run/download"
-  - "apt update"
-  - "apt install -y kubelet kubeadm kubectl docker.io awscli"
-  - "wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz"
-  - "tar -C /usr/bin -xzf /run/download/crictl.tgz"
-  - "rm -rf /run/download"
-  - "chmod 754 /usr/bin/crictl"
-  - "chown root:root /usr/bin/crictl"
+  - "sleep 10"
   - "systemctl enable docker"
   - "systemctl daemon-reload"
   - "systemctl restart docker"
   - "systemctl restart kubelet"
+  - "sleep 10"
   - "while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp  && sh /tmp/join.txt"
 
 output:

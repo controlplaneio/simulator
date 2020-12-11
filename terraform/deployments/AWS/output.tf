@@ -29,7 +29,7 @@ output "access_github_usernames" {
 }
 
 output "ami_id" {
-  value       = module.Ami.AmiId
+  value       = var.ami_id
   description = "AMI used for all instances"
 }
 

@@ -9,9 +9,11 @@ packages: ["docker.io", "figlet"]
 hostname: "bastion"
 
 runcmd:
+  - "sleep 10"
   - "systemctl enable docker"
   - "systemctl daemon-reload"
   - "systemctl restart docker"
+  - "sleep 10"
   - "docker pull ${attack_container_repo}:${attack_container_tag}"
   - "/root/authorized_keys.sh ${github_usernames}"
 
@@ -114,6 +116,5 @@ write_files:
       AcceptEnv BASE64_SSH_KEY LANG LC_*
       Subsystem sftp /usr/lib/openssh/sftp-server
       UsePAM yes
-
 output:
   all: "| tee -a /var/log/cloud-init-output.log"

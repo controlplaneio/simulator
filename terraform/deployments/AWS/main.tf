@@ -31,7 +31,7 @@ module "SshKey" {
 // Setup Bastion host
 module "Bastion" {
   source                   = "../../modules/AWS/Bastion"
-  ami_id                   = module.Ami.AmiId
+  ami_id                   = var.ami_id
   instance_type            = var.instance_type
   access_key_name          = module.SshKey.KeyPairName
   access_github_usernames  = var.access_github_usernames
@@ -49,7 +49,7 @@ module "Bastion" {
 module "Kubernetes" {
   source                      = "../../modules/AWS/Kubernetes"
   number_of_master_instances  = var.number_of_master_instances
-  ami_id                      = module.Ami.AmiId
+  ami_id                      = var.ami_id
   master_instance_type        = var.master_instance_type
   number_of_cluster_instances = var.number_of_cluster_instances
   cluster_nodes_instance_type = var.cluster_nodes_instance_type
@@ -65,7 +65,7 @@ module "Kubernetes" {
 // Setup host within Kubernetes subnet
 module "InternalHost" {
   source                  = "../../modules/AWS/InternalHost"
-  ami_id                  = module.Ami.AmiId
+  ami_id                  = var.ami_id
   instance_type           = var.instance_type
   access_key_name         = module.SshKey.KeyPairName
   control_plane_sg_id     = module.SecurityGroups.ControlPlaneSecurityGroupID

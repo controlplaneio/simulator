@@ -47,6 +47,11 @@ variable "instance_type" {
   default     = "t2.micro"
 }
 
+variable "ami_id" {
+  description = "ssh public key"
+  default = "ami-0dd08a0b83e7eccf6"
+}
+
 variable "master_instance_type" {
   description = "instance type for master node(s) "
   default     = "t2.medium"
