@@ -46,12 +46,10 @@ write_files:
 
 
 runcmd:
-  - "sleep 10"
   - 'systemctl enable docker'
   - 'systemctl daemon-reload'
   - 'systemctl restart docker'
   - 'systemctl restart kubelet'
-  - "sleep 10"
   - 'mkdir /run/download'
   - 'wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml -O /run/download/rbac-kdd.yaml'
   - 'wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml -O /run/download/calico.yaml'

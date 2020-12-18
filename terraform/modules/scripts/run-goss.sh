@@ -20,7 +20,8 @@ readonly GOSS_VERSION=v0.3.7
 main() {
   install_goss
   wait_for_cloud_init
-  goss validate -f documentation
+  goss validate --retry-timeout 60s --sleep 1s -f documentation
+#  goss validate -f documentation
 }
 readonly -f main
 

@@ -49,7 +49,7 @@ variable "instance_type" {
 
 variable "ami_id" {
   description = "ssh public key"
-  default = "ami-0dd08a0b83e7eccf6"
+  default = "ami-0b713f6c3161bfc91"
 }
 
 variable "master_instance_type" {

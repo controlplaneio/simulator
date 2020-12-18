@@ -7,7 +7,7 @@ variable "ami_id" {
   description = "ami to use"
 
   // Ensure we can SSH as root for the goss tests and also for preturb.sh
-  default = "ami-09d38086eb2b23925"
+  default = "ami-031307b628131b890"
 }
 
 variable "bastion_public_ip" {

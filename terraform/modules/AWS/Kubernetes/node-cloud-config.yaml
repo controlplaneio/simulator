@@ -45,12 +45,10 @@ write_files:
       @include common-password
 
 runcmd:
-  - "sleep 10"
   - "systemctl enable docker"
   - "systemctl daemon-reload"
   - "systemctl restart docker"
   - "systemctl restart kubelet"
-  - "sleep 10"
   - "while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp  && sh /tmp/join.txt"
 
 output:
