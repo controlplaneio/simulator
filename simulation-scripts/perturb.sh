@@ -708,8 +708,7 @@ run_file_on_host() {
   (
     set -x
     cat_script_to_run "${FILE}"
-  ) | run_ssh "${HOST}" >>"${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 &&
-    unset BASH_XTRACEFD
+  ) | run_ssh "${HOST}" >>"${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && unset BASH_XTRACEFD
   exec {FD}>&-
 }
 

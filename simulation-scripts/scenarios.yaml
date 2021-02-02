@@ -2,38 +2,77 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
   - name: CI Server Vulnerability
-    path: ./scenario/ci-server-vulnerability
+    path: ./scenario/spandex-ci-server-vulnerability
     id: ci-server-vulnerability
     difficulty: KubeCon
     description: "Your CI build agent is compromised; where can you get from here?"
     category: KubeCon
   - name: Cluster Creds Leak
-    path: ./scenario/cluster-creds-leak
+    path: ./scenario/spandex-cluster-creds-leak
     id: cluster-creds-leak
     difficulty: KubeCon
     description: "Secrets are leaking from your cluster; can you discover how?"
     category: KubeCon
   - name: Anon User Compromise
-    path: ./scenario/anon-user-compromise
+    path: ./scenario/spandex-anon-user-compromise
     id: anon-user-compromise
     difficulty: KubeCon
     description: "Your RBAC is secure but somehow attackers are exec'ing into your containers!"
     category: KubeCon
   - name: Escalate Uncover Secret
-    path: ./scenario/escalate-uncover-secret
+    path: ./scenario/spandex-escalate-uncover-secret
     id: escalate-uncover-secret
     difficulty: KubeCon
     description: "A new monitoring tool has been deployed. Evaluate its configuration."
     category: KubeCon
   - name: Node Secret Breach
-    path: ./scenario/node-secret-breach
+    path: ./scenario/spandex-node-secret-breach
     id: node-secret-breach
     difficulty: KubeCon
     description: "You are suspicious this Jenkins pod was a vector for a node compromise; can you replay the attack?"
     category: KubeCon
   - name: Pod Breach Extract
-    path: ./scenario/pod-breach-extract
+    path: ./scenario/spandex-pod-breach-extract
     id: pod-breach-extract
+    difficulty: KubeCon
+    description: "A pod is making odd calls to the API server; what's going on?"
+    category: KubeCon
+
+
+
+  - name: CI Server Vulnerability
+    path: ./scenario/spandex-ci-server-vulnerability
+    id: spandex-ci-server-vulnerability
+    difficulty: KubeCon
+    description: "Your CI build agent is compromised; where can you get from here?"
+    category: KubeCon
+  - name: Cluster Creds Leak
+    path: ./scenario/spandex-cluster-creds-leak
+    id: spandex-cluster-creds-leak
+    difficulty: KubeCon
+    description: "Secrets are leaking from your cluster; can you discover how?"
+    category: KubeCon
+  - name: Anon User Compromise
+    path: ./scenario/spandex-anon-user-compromise
+    id: spandex-anon-user-compromise
+    difficulty: KubeCon
+    description: "Your RBAC is secure but somehow attackers are exec'ing into your containers!"
+    category: KubeCon
+  - name: Escalate Uncover Secret
+    path: ./scenario/spandex-escalate-uncover-secret
+    id: spandex-escalate-uncover-secret
+    difficulty: KubeCon
+    description: "A new monitoring tool has been deployed. Evaluate its configuration."
+    category: KubeCon
+  - name: Node Secret Breach
+    path: ./scenario/spandex-node-secret-breach
+    id: spandex-node-secret-breach
+    difficulty: KubeCon
+    description: "You are suspicious this Jenkins pod was a vector for a node compromise; can you replay the attack?"
+    category: KubeCon
+  - name: Pod Breach Extract
+    path: ./scenario/spandex-pod-breach-extract
+    id: spandex-pod-breach-extract
     difficulty: KubeCon
     description: "A pod is making odd calls to the API server; what's going on?"
     category: KubeCon

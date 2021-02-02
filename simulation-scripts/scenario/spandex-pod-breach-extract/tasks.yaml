@@ -1,0 +1,14 @@
+category: RBAC
+difficulty: Hard
+kind: cp.simulator/scenario:1.0.0
+objective: SSH into vulnerable workload, wget secrets using permissive SA.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      kubectlAccess: false
+      mode: internal-instance
+    summary: We brute forced access to an SSH pod in the cluster with an active node
+      port and weak password. We then used the pods elevated permissions to get secrets.
+name: pod-breach-extract

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: node-secret-breach
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ci
+  namespace: node-secret-breach
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ci
+  namespace: node-secret-breach
+spec:
+  selector:
+    matchLabels:
+      app: ci
+  template:
+    metadata:
+      labels:
+        app: ci
+    spec:
+      serviceAccountName: ci
+      containers:
+      - name: ci
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        securityContext:
+          privileged: true

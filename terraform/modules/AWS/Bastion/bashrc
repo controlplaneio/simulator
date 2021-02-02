@@ -51,6 +51,10 @@ if [[ $- == *i* ]]; then
   }
 
   motd() {
+    if [[ "${KUBESIM:-}" != "" ]]; then
+      return
+    fi
+
     # shellcheck disable=SC2046
     echo "$(tput setaf 3)
                                                         |>>>

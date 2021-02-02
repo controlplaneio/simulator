@@ -1,0 +1,3 @@
+We’ve expunged the last traces of the General’s attack on Aqua — data is restored, and systems are fully operational. However we’re not content that the attacker is completely defeated, and forensics have discovered a rogue cluster that was used as the source of the attacks at $MASTER_IP_ADDRESSES that is still trying to attack Aqua’s Kubernetes systems. As the General has shown himself willing to add logic bombs and destructive tripwires to his attacks before, we can’t be sure what is on this cluster or what it does.
+
+You will start on a VM external to the cluster. Use all your cunning and guile to hack back, steal the General’s flag in USER_CREDS_PASSWORD, and defuse his team forever!

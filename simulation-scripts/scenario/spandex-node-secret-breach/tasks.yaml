@@ -1,0 +1,15 @@
+category: Policy
+difficulty: Medium
+kind: cp.simulator/scenario:1.0.0
+objective: Use privileged container to get host secrets.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: ci
+      podNamespace: node-secret-breach
+    summary: Using the fact that we were in a privileged container, we mounted the
+      host disk to find a secret.
+name: node-secret-breach

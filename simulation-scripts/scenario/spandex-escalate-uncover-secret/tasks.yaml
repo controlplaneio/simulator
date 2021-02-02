@@ -1,0 +1,15 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Use privileged container to get host secrets.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: process-audit
+      podNamespace: escalate-uncover-secret
+    summary: Using the elevated permissions on the pod, we managed to manipulate the
+      node /proc to retrieve secrets from another pod.
+name: escalate-uncover-secret
