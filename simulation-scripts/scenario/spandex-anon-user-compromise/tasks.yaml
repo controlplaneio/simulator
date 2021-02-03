@@ -9,8 +9,8 @@ tasks:
     startingPoint:
       mode: pod
       podName: starting-pod
-      podNamespace: anon-user-compromise
+      podNamespace: phase-1-crisis
     summary: We were able to query the Kubelet API directly and get some sensitive
       data about the pods. We then took this further and used our access to run arbitrary
       commands inside the pod.
-name: anon-user-compromise
+name: phase-1-crisis
