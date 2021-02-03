@@ -1,15 +1,14 @@
 category: KubeCon
 difficulty: KubeCon
 kind: cp.simulator/scenario:1.0.0
-objective: Discover uncertified etcd, reach it with only network access and master
-  node IP. Fix the leakage.
+objective: Fix the leakage.
 tasks:
   "1":
     hints:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: ubuntu-pod
-      podNamespace: cluster-creds-leak
-    summary: Etcd allowed us to connect to it without using certificates.
-name: cluster-creds-leak
+      podName: project-x
+      podNamespace: top-secret
+    summary: You will start in the project-x pod in the top-secret namespace. There may be some clues on the master at $MASTER_IP_ADDRESSES.
+name: top-secret
