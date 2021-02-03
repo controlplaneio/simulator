@@ -1,37 +1,37 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: escalate-uncover-secret
+  name: phase-3-datarace
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: process-audit
-  namespace: escalate-uncover-secret
+  namespace: phase-3-datarace
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: db-pass
-  namespace: escalate-uncover-secret
+  namespace: phase-3-datarace
 type: Opaque
 data:
-  password: ZmxhZ19jdGZ7NGVjYjgxZDU4MzVjYjc1YX0K
+  password: ZmxhZ19jdGZ7Njk2MzM4MThiNzg2MTljY30K
 ---
 apiVersion: v1
 kind: Secret
 metadata:
   name: key
-  namespace: escalate-uncover-secret
+  namespace: phase-3-datarace
 type: Opaque
 data:
-  key.txt: ZmxhZ19jdGZ7OTFiZWQxMjEzZWU2NDlkOH0K
+  key.txt: ZmxhZ19jdGZ7NDllODExYmE4NmY1MDYxOX0K
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: process-audit
-  namespace: escalate-uncover-secret
+  namespace: phase-3-datarace
 spec:
   selector:
     matchLabels:
@@ -56,7 +56,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: db
-  namespace: escalate-uncover-secret
+  namespace: phase-3-datarace
 spec:
   selector:
     matchLabels:

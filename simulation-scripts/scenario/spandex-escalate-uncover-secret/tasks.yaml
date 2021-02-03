@@ -9,7 +9,6 @@ tasks:
     startingPoint:
       mode: pod
       podName: process-audit
-      podNamespace: escalate-uncover-secret
-    summary: Using the elevated permissions on the pod, we managed to manipulate the
-      node /proc to retrieve secrets from another pod.
-name: escalate-uncover-secret
+      podNamespace: phase-3-datarace
+    summary: First uncover the new database password to restore data access, and then find the flag.
+name: phase-3-datarace

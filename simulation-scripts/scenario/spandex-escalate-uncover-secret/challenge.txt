@@ -1,3 +1,3 @@
 From the coffee machine, it looks like the General has got his eyes on Aqua’s data. With internal network access, he was able to pivot into an audit pod running on the database cluster, and from there he has launched an attack on the Postgres DaemonSet and changed the password. The database has a concealed logic bomb that will immediately wipe all of Aqua’s data if the wrong password is entered.
 
-You start in the process-audit pod in the escalate-uncover-secret namespace. First uncover the new database password to restore data access, and then find the flag.
+You start in the process-audit pod in the phase-3-datarace namespace. First uncover the new database password to restore data access, and then find the flag.
