@@ -1,7 +1,7 @@
 category: KubeCon
 difficulty: KubeCon
 kind: cp.simulator/scenario:1.0.0
-objective: Node compromise to get unauth kubelet API access.
+objective: Extract passwords.
 tasks:
   "1":
     hints:
@@ -10,7 +10,5 @@ tasks:
       mode: pod
       podName: starting-pod
       podNamespace: phase-1-crisis
-    summary: We were able to query the Kubelet API directly and get some sensitive
-      data about the pods. We then took this further and used our access to run arbitrary
-      commands inside the pod.
+    summary: You start in the pod known to be the point of compromise. Re-trace the attack path and extract the other workload’s password.
 name: phase-1-crisis

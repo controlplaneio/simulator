@@ -1,7 +1,7 @@
 category: KubeCon
 difficulty: KubeCon
 kind: cp.simulator/scenario:1.0.0
-objective: Use privileged container to get host secrets.
+objective: Get database password and secrets.
 tasks:
   "1":
     hints:

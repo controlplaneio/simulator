@@ -11,4 +11,4 @@ tasks:
       podName: project-x
       podNamespace: top-secret
     summary: You will start in the project-x pod in the top-secret namespace. There may be some clues on the master at $MASTER_IP_ADDRESSES.
-name: top-secret
+name: phase-5-production

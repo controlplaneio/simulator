@@ -1,7 +1,7 @@
 category: Policy
 difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
-objective: Use privileged container to get host secrets.
+objective: Get host secrets.
 tasks:
   "1":
     hints:
@@ -10,6 +10,5 @@ tasks:
       mode: pod
       podName: caffeine
       podNamespace: phase-2-caffeine
-    summary: Using the fact that we were in a privileged container, we mounted the
-      host disk to find a secret.
+    summary: You start in the caffeine pod, find the flag dropped on the host coffee machine.
 name: phase-2-caffeine

@@ -10,4 +10,4 @@ tasks:
       kubectlAccess: false
       mode: internal-instance
     summary: You will start on a VM external to the cluster. Use all your cunning and guile to hack back, steal the General’s flag, and nullify the threat!
-name: 3301b-supervillians-lair
+name: phase-6-hackback
