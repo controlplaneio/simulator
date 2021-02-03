@@ -1,27 +1,27 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: pod-breach-extract
+  name: 3301b-supervillians-lair
 
 ---
 
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: pod-breach-extract
-  namespace: pod-breach-extract
+  name: 3301b-supervillians-lair
+  namespace: 3301b-supervillians-lair
 
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: pod-breach-extract
-  namespace: pod-breach-extract
+  name: 3301b-supervillians-lair
+  namespace: 3301b-supervillians-lair
 subjects:
 - apiGroup: ""
   kind: ServiceAccount
-  name: pod-breach-extract
+  name: 3301b-supervillians-lair
 roleRef:
   apiGroup: ""
   kind: ClusterRole
@@ -33,7 +33,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: jumpbox
-  namespace: pod-breach-extract
+  namespace: 3301b-supervillians-lair
 spec:
   selector:
     name: jumpbox
@@ -51,7 +51,7 @@ metadata:
   labels:
     name: jumpbox
   name: jumpbox
-  namespace: pod-breach-extract
+  namespace: 3301b-supervillians-lair
 spec:
   replicas: 1
   selector:
@@ -62,7 +62,7 @@ spec:
       labels:
         name: jumpbox
     spec:
-      serviceAccountName: pod-breach-extract
+      serviceAccountName: 3301b-supervillians-lair
       containers:
       - image: controlplane/insecure-ssh
         imagePullPolicy: IfNotPresent
@@ -76,7 +76,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: usercreds
-  namespace: pod-breach-extract
+  namespace: 3301b-supervillians-lair
 type: Opaque
 data:
-  USER_CREDS_PASSWORD: ZmxhZ19jdGZ7NzM3NDEyNGY1YzRkYzRjZX0K
+  USER_CREDS_PASSWORD: ZmxhZ19jdGZ7MmZhYzUzYTNiYWU3YWNhMX0K
