@@ -1,31 +1,31 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: node-secret-breach
+  name: phase-2-caffeine
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: ci
-  namespace: node-secret-breach
+  name: caffeine
+  namespace: phase-2-caffeine
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ci
-  namespace: node-secret-breach
+  name: caffeine
+  namespace: phase-2-caffeine
 spec:
   selector:
     matchLabels:
-      app: ci
+      app: caffeine
   template:
     metadata:
       labels:
-        app: ci
+        app: caffeine
     spec:
-      serviceAccountName: ci
+      serviceAccountName: caffeine
       containers:
-      - name: ci
+      - name: caffeine
         image: ubuntu
         command: ["sleep"]
         args: ["infinity"]
