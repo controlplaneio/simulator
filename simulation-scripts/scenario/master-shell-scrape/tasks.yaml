@@ -16,7 +16,7 @@ tasks:
       mode: pod
       podName: ubuntu
       podNamespace: master-shell-scrape
-    summary: We were able to make privileged api calls to the api server with authenticating.
+    summary: We were able to make privileged api calls to the api server without authenticating.
   "2":
     hints:
     - penalty: 10
