@@ -1,0 +1,69 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: anon-user-compromise
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: anon-user-compromise
+  labels:
+    name: workload-pod
+  name: workload-pod
+spec:
+  selector:
+    matchLabels:
+      name: workload-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: workload-pod
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        ports:
+        - containerPort: 80
+          name: external
+        env:
+        - name: SECRET_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: workload-secret
+              key: password
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starting-pod
+  namespace: anon-user-compromise
+spec:
+  selector:
+    matchLabels:
+      name: starting-pod
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: starting-pod
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        ports:
+        - containerPort: 80
+          name: external
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: workload-secret
+  namespace: anon-user-compromise
+type: Opaque
+data:
+  password: ZmxhZ19jdGZ7YjQyMWI4ZWFhYzE3YjhjZH0K

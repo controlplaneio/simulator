@@ -1,0 +1,14 @@
+category: Policy
+difficulty: Medium
+kind: cp.simulator/scenario:1.0.0
+objective: Get host secrets.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: caffeine
+      podNamespace: phase-2-caffeine
+    summary: You start in the caffeine pod, find the flag dropped on the host coffee machine.
+name: phase-2-caffeine

@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: phase-3-datarace
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: process-audit
+  namespace: phase-3-datarace
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-pass
+  namespace: phase-3-datarace
+type: Opaque
+data:
+  password: ZmxhZ19jdGZ7Njk2MzM4MThiNzg2MTljY30K
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: key
+  namespace: phase-3-datarace
+type: Opaque
+data:
+  key.txt: ZmxhZ19jdGZ7NDllODExYmE4NmY1MDYxOX0K
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: process-audit
+  namespace: phase-3-datarace
+spec:
+  selector:
+    matchLabels:
+      app: process-audit
+  template:
+    metadata:
+      labels:
+        app: process-audit
+    spec:
+      serviceAccountName: process-audit
+      hostPID: true
+      containers:
+      - name: audit
+        image: ubuntu
+        command: ["sleep"]
+        args: ["infinity"]
+        securityContext:
+          capabilities:
+            add: ["ALL"]
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: db
+  namespace: phase-3-datarace
+spec:
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        ports:
+        - containerPort: 5432
+          name: database
+        volumeMounts:
+        - name: key
+          mountPath: "/secrets"
+          readOnly: true
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-pass
+              key: password
+        - name: POSTGRES_USER
+          value: kubecon
+        - name: POSTGRES_DB
+          value: controlplane
+      volumes:
+      - name: key
+        secret:
+          secretName: key
