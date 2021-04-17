@@ -81,7 +81,7 @@ gpg-preflight:
 # --- DOCKER
 run: validate-reqs docker-build docker-run ## Run the simulator - the build stage of the container runs all the cli tests
 
-docker-run: ## Run the simulator container
+docker-run: validate-reqs ## Run the simulator container
 	@docker run                                                             \
 		-h launch                                                       \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \

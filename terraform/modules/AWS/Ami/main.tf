@@ -2,6 +2,32 @@
 // Restrict search to x86_64, ssd and hvm virt type
 
 data "aws_ami" "find_ami" {
+
+  owners = [
+  "self"]
+  most_recent = true
+
+  filter {
+    name = "image-id"
+    values = [
+    "ami-01eb1daec3f918bc9"]
+  }
+
+  filter {
+    name = "architecture"
+    values = [
+    "x86_64"]
+  }
+
+  filter {
+    name = "virtualization-type"
+    values = [
+    "hvm"]
+  }
+}
+
+data "aws_ami" "find_ami_ubuntu_upstream" {
+
   owners      = ["099720109477"] // this is Canonical's id
   most_recent = true
 
@@ -16,8 +42,9 @@ data "aws_ami" "find_ami" {
   }
 
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name = "virtualization-type"
+    values = [
+    "hvm"]
   }
 }
 
