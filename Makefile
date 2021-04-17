@@ -184,6 +184,10 @@ release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker
 	docker push $(DOCKER_HUB_ORG)/simulator:latest
 	cd attack && RELEASE_TAG=$(RELEASE_TAG) make release
 
+# --- PACKER BUILD
+.PHONY: packer
+packer: ## parse jobs and descriptions from this Makefile
+	@set -x; cd packer/k8s-base/images/ && packer build image.pkr.hcl
 
 # --- MAKEFILE HELP
 .PHONY: help

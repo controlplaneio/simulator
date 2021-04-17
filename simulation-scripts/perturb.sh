@@ -307,6 +307,8 @@ get_pods() {
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_FILE="${TMP_DIR}/docker-"
 
+  # poll for healthy nodes before gathering data
+
   _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_master)' '${QUERY_DOCKER}'" >/dev/null
   _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_master)' '${QUERY_KUBECTL}'" >/dev/null
 
