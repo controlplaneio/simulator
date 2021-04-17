@@ -1,4 +1,4 @@
-A colleague is concerned that secrets may have leaked from their cluster after an ubuntu pod has previously been breached.
+A colleague is concerned that secrets may have leaked from their cluster after an Ubuntu pod has previously been breached.
 However, they cannot find anything indicative of a leak in the kubelet logs or the API server audit logs.
 The cluster is running with a master IP of: $MASTER_IP_ADDRESSES
 Find the source of the leak by proving you can access the secret credentials from inside the ubuntu-pod.
