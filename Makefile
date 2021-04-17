@@ -20,6 +20,7 @@ SIMULATOR_CONFIG_FILE := $(KUBE_SIM_TMP)/simulator.yaml
 HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
 SIMULATOR_TFVAR_DIR := $(KUBE_SIM_TMP)/settings
+COMMAND :=
 
 export GOSUMDB=off
 
@@ -78,7 +79,9 @@ gpg-preflight:
 	@echo Your gpg key for git is $$(git config user.signingkey)
 
 # --- DOCKER
-run: validate-reqs docker-build ## Run the simulator - the build stage of the container runs all the cli tests
+run: validate-reqs docker-build docker-run ## Run the simulator - the build stage of the container runs all the cli tests
+
+docker-run: ## Run the simulator container
 	@docker run                                                             \
 		-h launch                                                       \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
@@ -86,7 +89,7 @@ run: validate-reqs docker-build ## Run the simulator - the build stage of the co
 		-v "$(shell pwd)/terraform":/app/terraform                      \
 		-v "$(shell pwd)/simulation-scripts":/app/simulation-scripts:ro \
 		--env-file launch-environment                                   \
-		--rm --init -it $(CONTAINER_NAME_LATEST)
+		--rm --init -it $(CONTAINER_NAME_LATEST) $(COMMAND)
 
 .PHONY: docker-build-nocache
 docker-build-nocache: ## Builds the launch container without the Docker cache
