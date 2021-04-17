@@ -307,11 +307,17 @@ get_pods() {
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_FILE="${TMP_DIR}/docker-"
 
+  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_master)' '${QUERY_DOCKER}'" >/dev/null
+  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_master)' '${QUERY_KUBECTL}'" >/dev/null
+
+  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_node 1)' '${QUERY_DOCKER}'" >/dev/null
+  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_node 2)' '${QUERY_DOCKER}'" >/dev/null
+  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_node 2)' '${QUERY_DOCKER}'" >/dev/null
+
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >|"${TMP_FILE}"master
   echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >|"${TMP_FILE}"all-pods
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >|"${TMP_FILE}"node-2
-
 }
 
 fix_ioctl() {

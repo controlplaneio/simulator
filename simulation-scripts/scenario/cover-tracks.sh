@@ -16,7 +16,7 @@ rm -f \
 # kubectl delete --raw /api/v1/namespaces/default/ee454724358c72 --help ??
 
 # clean syslogs
-find /var/log/journal /run/log/ -name "*.journal" -delete
+find /var/log/journal /run/log/ -name "*.journal" -delete 2>/dev/null
 
 
 # clean apt cache
