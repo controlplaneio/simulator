@@ -46,8 +46,6 @@ fi
 IS_DRY_RUN=0
 IS_AUTOPOPULATE=0
 IS_SKIP_CHECK=0
-SSH_CONFIG_FILE="$HOME/.kubesim/cp_simulator_config"
-SSH_GENERATED_KEY_PATH=""
 
 # resolved directory and self
 DIR=$(cd "$(dirname "$0")" && pwd)
@@ -62,13 +60,15 @@ MASTER_HOST=""
 NODE_HOSTS=""
 BASTION_HOST=""
 IS_FORCE=0
-TMP_DIR="/home/launch/.kubesim"
+TMP_DIR="${KUBE_SIM_TMP:-/home/launch}/.kubesim"
+SSH_CONFIG_FILE="${KUBE_SIM_TMP:-$HOME/.kubesim}/cp_simulator_config"
+SSH_GENERATED_KEY_PATH=""
 FOUND_SCENARIO=""
 
 # to use private debug keys, b64 encode into BASE64_ROOT_SSH_KEY
 test_ssh_or_swap_keyfile() {
   # add internal host to ssh config
-  cat <<EOF >>~/.kubesim/cp_simulator_config
+  cat <<EOF >>"${SSH_CONFIG_FILE}"
 Host internal ${INTERNAL_HOST}
   Hostname ${INTERNAL_HOST}
   User root
@@ -94,6 +94,8 @@ main() {
 
   parse_arguments "$@"
   validate_arguments "$@"
+
+  mkdir -p "${TMP_DIR}"
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
@@ -182,9 +184,11 @@ provision_user_ssh_key_to_bastion() {
     && chmod 0600 cp_simulator_rsa && chown ubuntu:ubuntu cp_simulator_rsa" | run_ssh "${BASTION_HOST}"
 }
 
-#provision_ssh_key_to_permitted_hosts_only() {
+# TODO(ajm) get task type and configure all permissible hosts' ~/.ssh/authorized_keys with this new key
+
+# provision_ssh_key_to_permitted_hosts_only() {
 #
-##   TODO(ajm) get task type and configure all permissible hosts' ~/.ssh/authorized_keys with this new key
+#
 #
 #    task_no=$(find_current_task)
 #    task_json=$(yq r -j /tasks.yaml)
@@ -246,10 +250,10 @@ clean_bastion() {
 
 cleanup() {
   shopt -u nullglob
-  if [[ -n $(compgen -G ${TMP_DIR}/perturb-script-file-*) ]]; then
+  if [[ -n $(compgen -G "${TMP_DIR}"/perturb-script-file-*) ]]; then
     rm "${TMP_DIR}"/perturb-script-file-*
   fi
-  if [[ -n $(compgen -G ${TMP_DIR}/docker-*) ]]; then
+  if [[ -n $(compgen -G "${TMP_DIR}"/docker-*) ]]; then
     rm "${TMP_DIR}"/docker-*
   fi
   shopt -s nullglob
@@ -260,7 +264,7 @@ get_ready_containers_from_json() {
   jq '.items[].status.containerStatuses[].ready' <<<"${all_json}"
 }
 
-container_statuses() {
+wait_for_ready_pods() {
   local status
   local all_json
   all_json=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)")
@@ -282,39 +286,20 @@ container_statuses() {
 }
 
 get_pods() {
-  local timeout
-  local count
-  local increment
-
-  info "Waiting for all pods to be initalised..."
-  timeout="300"
-  increment="3"
-  count="0"
-
-  while ! container_statuses && [[ count -le timeout ]]; do
-    sleep $increment
-    count=$((count + increment))
-    if ! ((count % 3)); then
-      info "Still waiting for pods to be initalised"
-    fi
-  done
-
-  if [[ count -gt timeout ]]; then
-    error "Timed out waiting for pods to be ready"
-  fi
-
   local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_FILE="${TMP_DIR}/docker-"
+  export _TRY_LIMIT_SLEEP=10
+  export _TRY_QUIET="true"
+
+  info "Waiting for all pods to be initalised..."
+  try-limit 30 wait_for_ready_pods
 
   # poll for healthy nodes before gathering data
-
-  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_master)' '${QUERY_DOCKER}'" >/dev/null
-  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_master)' '${QUERY_KUBECTL}'" >/dev/null
-
-  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_node 1)' '${QUERY_DOCKER}'" >/dev/null
-  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_node 2)' '${QUERY_DOCKER}'" >/dev/null
-  _TRY_LIMIT_SLEEP=5 try-limit 30 "run_ssh '$(get_node 2)' '${QUERY_DOCKER}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_master)' '${QUERY_DOCKER}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_master)' '${QUERY_KUBECTL}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_node 1)' '${QUERY_DOCKER}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_node 2)' '${QUERY_DOCKER}'" >/dev/null
 
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >|"${TMP_FILE}"master
   echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >|"${TMP_FILE}"all-pods
@@ -439,6 +424,7 @@ copy_challenge_and_tasks() {
   popd >/dev/null
 }
 
+# TODO: running locally, change ~/.kubesim/ to "${TMP_DIR}"
 template_challenge() {
 
   if grep '##IP' challenge.txt >/dev/null; then
@@ -555,7 +541,9 @@ run_kubectl_yaml() {
   local FILES_STRING
 
   _TRY_LIMIT_SLEEP=5 \
-    try-limit 30 "run_ssh '${HOST}' kubectl cluster-info"
+    _TRY_QUIET=true \
+    try-limit 40 \
+    "run_ssh '${HOST}' kubectl cluster-info"
 
   # shellcheck disable=SC2044
   for ACTION in $(find "${SCENARIO_DIR%/}" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;); do
@@ -792,7 +780,9 @@ parse_arguments() {
       not_empty_or_usage "${1:-}"
       SSH_GENERATED_KEY_PATH="${1}"
       ;;
-
+    --debug)
+      set -x
+      ;;
     --)
       shift
       break
@@ -849,56 +839,145 @@ validate_arguments() {
 
 # helper functions
 
-try () {
+try() {
     try-limit 0 "${@}"
 }
 try-slow-backoff () {
-    _TRY_LIMIT_SLEEP=1;
-    _TRY_LIMIT_BACKOFF=15;
-    try-limit 0 "${@}"
+    _TRY_LIMIT_SLEEP=1 \
+    _TRY_LIMIT_BACKOFF=1.5 \
+      try-limit 0 "${@}"
 }
-try-limit () {
-    local LIMIT=$1;
-    local COUNT=1;
-    local RETURN_CODE;
-    shift;
-    local COMMAND="${*:-}";
-    if [[ "${COMMAND}" == "" ]]; then
-        echo "At least two arguments required (limit, command)" 1>&2;
-        return 1;
-    fi;
-    function _try-limit-output ()
-    {
-        printf "\n$(date) (${COUNT}): %s - " "${COMMAND}" 1>&2
-    };
-    echo "Limit: ${LIMIT}. Trying command: ${COMMAND}";
-    COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null);
-    COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null);
-    _try-limit-output;
-    # shellcheck disable=SC1091
-    until echo "${COMMAND}" | source /dev/stdin; do
-        RETURN_CODE=$?;
-        echo "Return code: ${RETURN_CODE}";
-        if [[ "${LIMIT}" -gt 0 && "${COUNT}" -ge "${LIMIT}" ]]; then
-            printf "\n%sFailed \`%s\` after %s iterations%s\n" "${COLOUR_RED}" "${COMMAND}" "${COUNT}" "${COLOUR_RESET}" 1>&2;
-            return 1;
-        fi;
-        COUNT=$((COUNT + 1));
-        _try-limit-output;
-        if [[ "${_TRY_LIMIT_BACKOFF:-}" != "" ]]; then
-            sleep $(((COUNT * _TRY_LIMIT_BACKOFF) / 10));
-        else
-            sleep ${_TRY_LIMIT_SLEEP:-0.3};
-        fi;
-    done;
-    RETURN_CODE=$?;
-    if [[ "${COUNT}" == 1 ]]; then
-        echo;
-    fi;
-    echo "${COLOUR_RED}Completed \`${COMMAND}\` after ${COUNT} iterations${COLOUR_RESET}" 1>&2;
-    unset _TRY_LIMIT_SLEEP _TRY_LIMIT_BACKOFF;
-    return ${RETURN_CODE}
-}
+
+# polling and exponential backoff, e.g.
+# _TRY_LIMIT_BACKOFF=1.2 try-limit 10 curl waiting.for.this.io
+try-limit() (
+  local USER_LIMIT="${1:-}"
+  local _TRY_LIMIT_SLEEP="${_TRY_LIMIT_SLEEP:-0.3}"
+  local _TRY_QUIET="${_TRY_QUIET:-}"
+  local _TRY_LIMIT_BACKOFF="${_TRY_LIMIT_BACKOFF:-}"
+  local _TRY_LIMIT_SECONDS="${_TRY_LIMIT_SECONDS:-}"
+  local START_TIME="${SECONDS}"
+  local END_TIME
+
+  local LIMIT=$((USER_LIMIT - 1))
+  if [[ "${LIMIT}" -lt 0 ]]; then
+    LIMIT=0
+  fi
+
+  local COUNT=0
+  local RETURN_CODE RETURN_OUTPUT MAX_DURATION ALL_DURATIONS
+  shift
+  local OLD_IFS="${IFS}"
+  IFS=' '
+  local COMMAND="${*:-}"
+  IFS="${OLD_IFS}"
+
+  if [[ "${COMMAND}" == "" ]]; then
+    echo "At least two arguments required (limit, command)" 1>&2
+    return 1
+  fi
+
+  _try-limit-output() {
+    if [[ "${_TRY_QUIET:-}" == "" ]]; then
+      printf "\n# $(date) ($((1 + COUNT))): %s\n" "${COMMAND}" 1>&2;
+    fi
+  }
+  _try-run-command() {
+    if [[ "${_TRY_QUIET:-}" == "" ]]; then
+      # shellcheck disable=SC1091
+      echo "${COMMAND}" | source /dev/stdin
+    else
+      # shellcheck disable=SC1091
+      RETURN_OUTPUT=$(echo "${COMMAND}" | source /dev/stdin 2>&1)
+    fi
+  }
+  calc() {
+    if command -v awk &>/dev/null; then
+      awk "BEGIN{print $*}";
+    elif command -v bc &>/dev/null; then
+      echo "$*" | bc
+    else
+      # TODO multiple integers by 100, calculate, divide by 100?
+      echo $(( $* ))
+    fi
+  }
+
+  END_TIME=$(calc "${START_TIME} + ${_TRY_LIMIT_SECONDS:-0}")
+  END_TIME="${END_TIME/.*/}"
+
+  if [[ "${_TRY_LIMIT_SECONDS}" != "" ]]; then
+    MAX_DURATION="${_TRY_LIMIT_SECONDS}s"
+  else
+    local TEMP_COUNT=0
+    for TEMP_COUNT in $(seq 1 ${LIMIT}); do
+      if [[ "${_TRY_LIMIT_BACKOFF}" != "" ]]; then
+        ALL_DURATIONS+=("$(calc "${_TRY_LIMIT_SLEEP} * (${_TRY_LIMIT_BACKOFF} ^ (${TEMP_COUNT}))")")
+      else
+        ALL_DURATIONS+=("$(calc "${_TRY_LIMIT_SLEEP}")")
+      fi
+    done
+
+    MAX_DURATION=$(calc "$(IFS=+; echo "${ALL_DURATIONS[*]}")")
+    MAX_DURATION="${MAX_DURATION/\.*/}"
+    if [[ "${MAX_DURATION}" != "" ]] ;then
+      MAX_DURATION+="s"
+    else
+      MAX_DURATION="∞"
+    fi
+  fi
+  unset ALL_DURATIONS
+
+  printf "# Limit: %s. Sleep: %ss. Backoff rate: %s. Max duration: %s\n" \
+   "${USER_LIMIT}" "${_TRY_LIMIT_SLEEP}" "${_TRY_LIMIT_BACKOFF:-none}" "${MAX_DURATION:-}" >&2
+  echo "# Trying command: ${COMMAND}" >&2
+
+  _try-limit-output
+
+  local SLEEP_DURATION TIME_EXPIRED
+
+  until _try-run-command; do
+    RETURN_CODE=$?
+    TIME_EXPIRED=$(if [[ "${_TRY_LIMIT_SECONDS:-}" != "" && "${SECONDS}" -ge "${END_TIME}" ]]; then echo 1; fi)
+    SLEEP_DURATION="${_TRY_LIMIT_SLEEP}"
+    if [[ "${_TRY_LIMIT_BACKOFF:-}" != "" ]]; then
+      SLEEP_DURATION=$(calc "${_TRY_LIMIT_SLEEP} * (${_TRY_LIMIT_BACKOFF} ^ ${COUNT})")
+    fi
+
+    if [[ "${_TRY_QUIET:-}" == "" ]]; then echo "# Return code: ${RETURN_CODE}. Sleeping ${SLEEP_DURATION}"; fi
+
+    if [[ "${USER_LIMIT}" -gt 0 && "${COUNT}" -ge "${LIMIT}" ]] || [[ "${TIME_EXPIRED:-}" != "" ]]; then
+
+      echo
+      if [[ "${TIME_EXPIRED:-}" != "" ]]; then
+        echo "# Max duration of ${_TRY_LIMIT_SECONDS}s expired" >&2
+      fi
+      if [[ "${_TRY_QUIET:-}" != "" ]]; then
+        echo "# Return code: ${RETURN_CODE}. Finished.";
+      fi
+      echo "# Output:" >&2
+      echo "${RETURN_OUTPUT:-}"
+      printf "%s# Failed \`%s\` after %s iterations%s\n" "${COLOUR_RED}" "${COMMAND}" "$((1 + COUNT))" "${COLOUR_RESET}" 1>&2
+      return 1
+    fi
+    sleep "${SLEEP_DURATION}"
+
+    COUNT=$((COUNT + 1))
+    _try-limit-output
+  done
+
+  RETURN_CODE=$?
+  if [[ "${COUNT}" == 1 ]]; then
+    echo
+  fi
+
+  echo "# Return code: ${RETURN_CODE}. Finished.";
+  echo "# Output:" >&2
+  echo "${RETURN_OUTPUT:-}"
+  echo "${COLOUR_GREEN}Completed \`${COMMAND}\` after $((1 + COUNT)) iterations${COLOUR_RESET}" 1>&2
+  unset _TRY_LIMIT_SLEEP _TRY_LIMIT_BACKOFF
+  unset -f _try-limit-output _try-run-command
+  return "${RETURN_CODE}"
+)
 
 usage() {
   [ "$*" ] && echo "${THIS_SCRIPT}: ${COLOUR_RED}$*${COLOUR_RESET}" && echo
@@ -942,6 +1021,7 @@ not_empty_or_usage() {
 
 TERM="xterm-color"
 COLOUR_RED=$(tput setaf 1 :-"" 2>/dev/null)
+COLOUR_GREEN=$(tput setaf 2 :-"" 2>/dev/null)
 COLOUR_RESET=$(tput sgr0 :-"" 2>/dev/null)
 
 main "$@"
