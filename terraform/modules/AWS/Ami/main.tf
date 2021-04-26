@@ -8,21 +8,18 @@ data "aws_ami" "find_ami" {
   most_recent = true
 
   filter {
-    name = "image-id"
-    values = [
-    "ami-01eb1daec3f918bc9"]
+    name   = "image-id"
+    values = ["ami-01eb1daec3f918bc9"] // simulator golden image
   }
 
   filter {
-    name = "architecture"
-    values = [
-    "x86_64"]
+    name   = "architecture"
+    values = ["x86_64"]
   }
 
   filter {
-    name = "virtualization-type"
-    values = [
-    "hvm"]
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
 
@@ -42,9 +39,8 @@ data "aws_ami" "find_ami_ubuntu_upstream" {
   }
 
   filter {
-    name = "virtualization-type"
-    values = [
-    "hvm"]
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 }
 

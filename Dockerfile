@@ -44,7 +44,7 @@ RUN terraform-bundle package terraform-bundle.hcl && \
 
 # Default configuration for dep
 ARG JQ_VERSION=1.6
-ARG YQ_VERSION=2.7.2
+ARG YQ_VERSION=2.4.1
 ARG GOSS_VERSION=v0.3.7
 ARG HADOLINT_VERSION=v1.16.3
 ARG lint_user=lint
@@ -52,24 +52,27 @@ ARG lint_user=lint
 # Install JQ
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
       -o /usr/local/bin/jq                                                                \
-    && chmod +x /usr/local/bin/jq
+    && chmod +x /usr/local/bin/jq \
+    && jq --version
 
 ## Install YQ
-RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+RUN curl --fail -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
       -o /usr/local/bin/yq                                                           \
-    && chmod +x /usr/local/bin/yq
+    && chmod +x /usr/local/bin/yq \
+    && yq --version
 
 ## Install Goss
 RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
          -o /usr/local/bin/goss                                                                    \
-    && chmod +rx /usr/local/bin/goss
+    && chmod +rx /usr/local/bin/goss && goss --version
 
 # Install Hadolint and setup non-root lint user
 RUN curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
         -o /usr/local/bin/hadolint                                                                            \
     && chmod +x /usr/local/bin/hadolint \
     && useradd -ms /bin/bash ${lint_user} \
-    && mkdir /app
+    && mkdir /app \
+    && hadolint --version
 
 WORKDIR /app/scenario-tools
 

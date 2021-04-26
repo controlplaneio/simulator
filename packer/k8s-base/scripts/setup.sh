@@ -10,12 +10,20 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confd
 sudo apt-get update
 sudo apt-get -y -qq install curl wget git vim apt-transport-https ca-certificates
 
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+VERSION='1.20.*'
 cat <<EOF | sudo bash
+add-apt-repository --yes ppa:rmescandon/yq
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list
+
 mkdir /run/download
 apt update
-apt install -y kubelet kubeadm kubectl docker.io awscli
+apt install -y \
+  kubelet=${VERSION} kubeadm=${VERSION} kubectl=${VERSION} \
+  docker.io \
+  awscli \
+  jq \
+  yq=3*
 
 kubeadm config images pull &
 
