@@ -54,7 +54,7 @@ runcmd:
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
   - "mkdir /run/download"
   - "apt update"
-  - "apt install -y kubelet kubeadm kubectl docker.io awscli"
+  - 'VERSION="1.20.*"; apt install -y kubelet=$${VERSION} kubeadm=$${VERSION} kubectl=$${VERSION} docker.io awscli'
   - "wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz"
   - "tar -C /usr/bin -xzf /run/download/crictl.tgz"
   - "rm -rf /run/download"
@@ -64,7 +64,9 @@ runcmd:
   - "systemctl daemon-reload"
   - "systemctl restart docker"
   - "systemctl restart kubelet"
-  - "while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp  && sh /tmp/join.txt"
+  - "while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp"
+  - "if ! sh /tmp/join.txt; then sleep 30; if ! sh /tmp/join.txt; then sleep 90; sh /tmp/join.txt; fi; fi"
+  - "rm -f /tmp/join.txt"
 
 output:
   all: "| tee -a /var/log/cloud-init-output.log"

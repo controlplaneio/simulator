@@ -1,8 +1,10 @@
 #!/bin/bash
 
-add-apt-repository ppa:rmescandon/yq
+set -Euxo pipefail
+
+add-apt-repository --yes ppa:rmescandon/yq
 apt update
-apt install yq -y
+apt install 'yq=3*' -y
 
 yq w -i /var/lib/kubelet/config.yaml authentication.anonymous.enabled true
 yq w -i /var/lib/kubelet/config.yaml authorization.mode AlwaysAllow
