@@ -2,10 +2,10 @@
 | ⡇⡠ ⡀⢀ ⣇⡀ ⢀⡀ ⢀⣀ ⢀⡀ ⣀⡀ ⣏⡉ ⡇⢸  ⡜ ⠊⡱ ⢺
 | ⠏⠢ ⠣⠼ ⠧⠜ ⠣⠭ ⠣⠤ ⠣⠜ ⠇⠸ ⠧⠤ ⠣⠜ ⠎  ⠮⠤ ⠼⠄
 
-An anonymous user has gained access to a pod and managed to escallate sideways to some of the containers running on nodes $NODE_IP_ADDRESSES.
-The result was extracted secrets from your cluster.
-As part of an ongoing post-morten, it has been confirmed that the Kubernetes API server will authenticate and authorise every valid API request.
-The initial breach has been rectified, however it is still not clear how the anonymous user managed to escalate sideways after the initial breach.
-Try to replay the intrusion from inside the cluster and extract a workload password.
+We keep our private code within our networks, and use our own internal container registries.
 
-You will start in the breached starting-pod pod in the anon-user-compromise namespace.
+The pirates have taken our registry down, but they've left a secret in one of the pods that can be used to hack their infrastructure back!
+
+Find the secret key to unlock the plug in the bottom of the Captain's prized ship, the Hodl.
+
+You will start in the hashjack pod.
