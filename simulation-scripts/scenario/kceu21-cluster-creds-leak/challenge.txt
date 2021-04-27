@@ -2,6 +2,10 @@
 | ⡇⡠ ⡀⢀ ⣇⡀ ⢀⡀ ⢀⣀ ⢀⡀ ⣀⡀ ⣏⡉ ⡇⢸  ⡜ ⠊⡱ ⢺
 | ⠏⠢ ⠣⠼ ⠧⠜ ⠣⠭ ⠣⠤ ⠣⠜ ⠇⠸ ⠧⠤ ⠣⠜ ⠎  ⠮⠤ ⠼⠄
 
-Not content with attacking the databases and git repositories, the Captain’s attack is escalating to Container Ventures Extraordinaire’s production infrastructure. The IDS has notified us that it’s blocked an attack from within a pod, but the API server audit logs show no other sign of a breach. How have the attackers exfiltrated secrets from this cluster?
+Hmm, this doesn't look good. We've got some unexpected workloads running on our internet-facing clusters.
 
-You will start in the project-x pod in the top-secret namespace. There may be some clues on the master at $MASTER_IP_ADDRESSES.
+We thought everything was locked-down, can you investigate these pods and try to find out where they came from?
+
+The flag is in a digital bouy at the end of the trail.
+
+You will start in the hashjack pod in the crypto-roller namespace.
