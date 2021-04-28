@@ -38,3 +38,23 @@ pod_hashjack() {
 #
 ## Start the cron job to compute π to 2000 places and print it out every 5 minutes.
 #kubectl run pi --schedule="0/5 * * * ?" --image=perl --restart=OnFailure -- perl -Mbignum=bpi -wle 'print bpi(2000)'
+
+# ===
+
+## dangerous RBAC
+
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: ClusterRole
+#metadata:
+#  name: dangerous-cluster-role
+#rules:
+#  - apiGroups:
+#      - '*'
+#    resources:
+#      - '*'
+#    verbs:
+#      - '*'
+#  - nonResourceURLs:
+#      - '*'
+#    verbs:
+#      - '*'

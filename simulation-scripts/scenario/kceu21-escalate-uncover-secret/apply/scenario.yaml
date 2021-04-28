@@ -41,8 +41,9 @@ spec:
       labels:
         app: process-audit
     spec:
-      serviceAccountName: process-audit
+      # this allows the horizontal traversal of filesystems and so mount points
       shareProcessNamespace: true
+      serviceAccountName: process-audit
       containers:
         - name: audit
           image: ubuntu
@@ -64,7 +65,7 @@ spec:
       volumes:
         - name: logs
           hostPath:
-            # todo(ajm) should work with relative symlink, gke prevented in test
+            # todo(ajm) should work with relative symlink, gke prevented during dev, re-test on prod
             # path: /var/log
             path: /
             type: Directory
