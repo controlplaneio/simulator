@@ -1,33 +1,431 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: top-secret
+  name: crypto-roller
+spec: {}
 ---
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: creds
-#  namespace: top-secret
-#type: Opaque
-#data:
-#  credentials: ZmxhZ19jdGZ7ODlkOGRkYzgxNmE1ZmVkZH0K
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  name: project-x
-#  namespace: top-secret
-#spec:
-#  selector:
-#    matchLabels:
-#      app: project-x
-#  replicas: 1
-#  template:
-#    metadata:
-#      labels:
-#        app: project-x
-#    spec:
-#      containers:
-#      - name: project-x
-#        image: ubuntu:18.04
-#        args: [bash, -c, 'sleep infinity']
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: crypto-monitor
+spec: {}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"hashjack-role","namespace":"crypto-roller"},"rules":[{"apiGroups":[""],"resources":["pods","pods/log","secrets"],"verbs":["get","watch","list"]},{"apiGroups":[""],"resources":["pods","secrets"],"verbs":["delete"]},{"apiGroups":[""],"resources":["pods/exec"],"verbs":["create"]},{"apiGroups":["apps"],"resources":["deployments"],"verbs":["delete","deletecollection"]}]}
+  name: hashjack-role
+  namespace: crypto-roller
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+      - secrets
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - secrets
+    verbs:
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods/exec
+    verbs:
+      - create
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - delete
+      - deletecollection
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hashjack
+  namespace: crypto-roller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: hashjack
+  namespace: crypto-roller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: hashjack-role
+subjects:
+  - kind: ServiceAccount
+    name: hashjack
+    namespace: crypto-roller
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dangerous-cluster-role
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - nonResourceURLs:
+      - '*'
+    verbs:
+      - '*'
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: monitor
+  namespace: crypto-monitor
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: monitor
+  namespace: crypto-monitor
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dangerous-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: monitor
+    namespace: crypto-monitor
+---
+# MINERS
+# MINERS
+# MINERS
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+    role: pseudocash
+  name: pseudocash
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: pseudocash
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    role: pseudocash
+  name: pseudocash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: pseudocash
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: pseudocash
+    spec:
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-pseudocash\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: pseudocash
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+    role: sigzstash
+  name: sigzstash
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: sigzstash
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    role: sigzstash
+  name: sigzstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: sigzstash
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: sigzstash
+    spec:
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-sigzstash\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: sigzstash
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+    role: doshcoin
+  name: doshcoin
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: doshcoin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    role: doshcoin
+  name: doshcoin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: doshcoin
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: doshcoin
+    spec:
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-doshcoin\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: doshcoin
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+    role: moolahro
+  name: moolahro
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: moolahro
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+    role: moolahro
+  name: moolahro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: moolahro
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: moolahro
+    spec:
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-moolahro\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: moolahro
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hashjack
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    run: hashjack
+---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: hashjack
+  name: hashjack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: hashjack
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: hashjack
+    spec:
+      containers:
+        - command:
+            - /bin/sh
+            - -xc
+            - while true; do sleep 10; done
+          image: bitnami/kubectl:latest
+          name: hashjack
+          ports:
+            - containerPort: 80
+          resources: {}
+      serviceAccountName: hashjack
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: monitor
+  name: monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: monitor
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: monitor
+    spec:
+      containers:
+        - command:
+            - /bin/sh
+            - -xc
+            - |-
+              while true; do       kubectl get deployments -n crypto-roller;       if kubectl get deployment -n crypto-roller pseudocash sigzstash doshcoin moolahro; then         if kubectl get secret flag -n crypto-roller; then kubectl delete secret flag -n crypto-roller; fi;       else         kubectl create secret -n crypto-roller generic flag  monitor
+              --from-literal='flag_ctf=flag_ctf{d43dc977ca951c52}';       fi;       sleep 10;     done
+          image: bitnami/kubectl:latest
+          name: monitor
+          resources: {}
+      serviceAccountName: monitor
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: crypto-roller
+  name: hashjack
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    run: hashjack
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: crypto-roller
+  labels:
+    run: hashjack
+  name: hashjack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: hashjack
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: hashjack
+    spec:
+      containers:
+        - command:
+            - /bin/sh
+            - -xc
+            - while true; do sleep 10; done
+          image: bitnami/kubectl:latest
+          name: hashjack
+          ports:
+            - containerPort: 80
+          resources: {}
+      serviceAccountName: hashjack
+---
