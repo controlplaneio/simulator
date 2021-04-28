@@ -23,3 +23,18 @@ pod_hashjack() {
 #     -- /bin/sh -xc "while sleep \$(echo 'Hλ$ħ𝔍Ⱥ¢k // control-plane.io' | base64 | tr -dc 0-9); do :; done"
 }
 
+
+# ===
+
+# tricks and tips
+
+#kubectl apply -f resource/net-pol/web-deny-all.yaml -f resource/net-pol/test-services-allow.yaml;
+
+## Start the nginx container using a different command and custom arguments.
+#kubectl run nginx --image=nginx --command -- <cmd> <arg1> ... <argN>
+#
+## Start the perl container to compute π to 2000 places and print it out.
+#kubectl run pi --image=perl --restart=OnFailure -- perl -Mbignum=bpi -wle 'print bpi(2000)'
+#
+## Start the cron job to compute π to 2000 places and print it out every 5 minutes.
+#kubectl run pi --schedule="0/5 * * * ?" --image=perl --restart=OnFailure -- perl -Mbignum=bpi -wle 'print bpi(2000)'

@@ -2,8 +2,10 @@
 | ⡇⡠ ⡀⢀ ⣇⡀ ⢀⡀ ⢀⣀ ⢀⡀ ⣀⡀ ⣏⡉ ⡇⢸  ⡜ ⠊⡱ ⢺
 | ⠏⠢ ⠣⠼ ⠧⠜ ⠣⠭ ⠣⠤ ⠣⠜ ⠇⠸ ⠧⠤ ⠣⠜ ⠎  ⠮⠤ ⠼⠄
 
-We've cleared Captain Hashjack and his crew from the databases! We've almost got them!
+The supply chain is compromised! Captain Hashjack and his motley crew have managed to get their code merged into an application library that your developers use.
 
-There are still unknown containers on the network, we think it's the last implant in the Pirate's command and control network.
+That library runs in a pod, and the attackers used their attack to enter the systems, dig around, and try to find secrets on the host.
 
-Investigate the unknown containers in process-audit from the phase-3-datarace namespace.
+How did they do it? To understand, follow their trail and find the flag somewhere on the host.
+
+Investigate the unknown containers from your starting point in the process-audit pod from the phase-3-datarace namespace.

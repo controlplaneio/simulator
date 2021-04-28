@@ -2,6 +2,8 @@
 | ⡇⡠ ⡀⢀ ⣇⡀ ⢀⡀ ⢀⣀ ⢀⡀ ⣀⡀ ⣏⡉ ⡇⢸  ⡜ ⠊⡱ ⢺
 | ⠏⠢ ⠣⠼ ⠧⠜ ⠣⠭ ⠣⠤ ⠣⠜ ⠇⠸ ⠧⠤ ⠣⠜ ⠎  ⠮⠤ ⠼⠄
 
-Container Ventures Extraordinaire knows that coffee is an important part of any engineering organisation, and all signs point to a malware infestation dropped via Hyper Text Coffee Pot Control Protocol (HTCPCP, RFC 2324). The new Kubernetes-powered coffee machines weren’t such a good idea after all.
+We've cleared Captain Hashjack and the motley crew from most of the systems! We've almost got them!
 
-You start in the caffeine pod, find the flag dropped on the host coffee machine.
+There is unknown traffic on the network, we think it's the last signal in the pirates' command and control network.
+
+Investigate the unknown network signal to find where the Captain's hiding the flag.
