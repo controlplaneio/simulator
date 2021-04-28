@@ -4,8 +4,6 @@
 
 set -Eeuxo pipefail
 
-source "../../include/util.sh"
-
 NS_PRIMARY="squawk"
 NS_SECONDARY="none"
 
@@ -113,3 +111,5 @@ kubectl run --generator=deployment/apps.v1 \
   -- /bin/sh -xc "while true; do sleep 10; done"
 
 # ===
+
+touch /tmp/.done

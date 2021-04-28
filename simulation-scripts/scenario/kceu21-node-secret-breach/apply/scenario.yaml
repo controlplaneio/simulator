@@ -1,72 +1,164 @@
-#
-#
-#
-#apiVersion: v1
-#kind: Namespace
-#metadata:
-#  name: phase-1
-#---
-#apiVersion: v1
-#kind: Secret
-#metadata:
-#  name: secret-access-key
-#  namespace: phase-1
-#type: Opaque
-#data:
-#  SECRET_ACCESS_KEY: ZmxhZ19jdGZ7MmEzOTczNzc5MzAwNjcyOX0K
-#---
-#apiVersion: apps/v1
-#kind: Deployment
-#metadata:
-#  labels:
-#    name: build-tools
-#  name: build-tools
-#  namespace: phase-1
-#spec:
-#  replicas: 1
-#  selector:
-#    matchLabels:
-#      name: build-tools
-#  template:
-#    metadata:
-#      labels:
-#        name: build-tools
-#    spec:
-#      containers:
-#        - image: controlplane/jenkins-simulator:root
-#          imagePullPolicy: IfNotPresent
-#          name: build-tools
-#          ports:
-#            - containerPort: 80
-#          volumeMounts:
-#            - name: dockersock
-#              mountPath: "/var/run/docker.sock"
-#              readOnly: true
-#      volumes:
-#        - name: dockersock
-#          hostPath:
-#            path: /var/run/docker.sock
-#---
-#apiVersion: apps/v1
-#kind: DaemonSet
-#metadata:
-#  name: nginx
-#  namespace: phase-1
-#spec:
-#  selector:
-#    matchLabels:
-#      app: nginx
-#  template:
-#    metadata:
-#      labels:
-#        app: nginx
-#    spec:
-#      containers:
-#        - name: nginx
-#          image: nginx
-#          env:
-#            - name: SECRET_ACCESS_KEY
-#              valueFrom:
-#                secretKeyRef:
-#                  name: secret-access-key
-#                  key: SECRET_ACCESS_KEY
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: squawk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: hashjack-role
+  namespace: squawk
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - watch
+      - list
+---
+# -- SA and RBAC
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hashjack
+  namespace: squawk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: hashjack
+  namespace: squawk
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: hashjack-role
+subjects:
+  - kind: ServiceAccount
+    name: hashjack
+    namespace: squawk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dangerous-cluster-role
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - nonResourceURLs:
+      - '*'
+    verbs:
+      - '*'
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: indomitable-sasquawksh
+  namespace: squawk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: indomitable-sasquawksh
+  namespace: squawk
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dangerous-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: indomitable-sasquawksh
+    namespace: squawk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: squawk
+  namespace: squawk
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    run: squawk
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: squawk
+  labels:
+    run: squawk
+  name: squawk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: squawk
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: squawk
+    spec:
+      containers:
+        - args:
+            - /bin/sh
+            - -ec
+            - TOKEN=`cat /var/run/secrets/kubernetes.io/serviceaccount/token`; while true;
+              do { printf 'HTTP/1.1 200 OK\r\n\n%s\n' $TOKEN; } | nc -l -p 80; done
+          image: busybox
+          name: squawk
+          ports:
+            - containerPort: 80
+          resources: {}
+      serviceAccountName: indomitable-sasquawksh
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: squawk
+  name: hashjack
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    run: hashjack
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: squawk
+  labels:
+    run: hashjack
+  name: hashjack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: hashjack
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        run: hashjack
+    spec:
+      containers:
+        - command:
+            - /bin/sh
+            - -xc
+            - while true; do sleep 10; done
+          image: bitnami/kubectl:latest
+          name: hashjack
+          ports:
+            - containerPort: 80
+          resources: {}
+      serviceAccountName: hashjack
+---
