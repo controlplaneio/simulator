@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: process-audit
       podNamespace: phase-3-datarace
-    summary: First uncover the new database password to restore data access, and then find the flag.
+    summary: ...
 name: phase-3-datarace

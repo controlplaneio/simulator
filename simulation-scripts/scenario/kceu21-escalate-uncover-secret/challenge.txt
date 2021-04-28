@@ -2,6 +2,8 @@
 | ⡇⡠ ⡀⢀ ⣇⡀ ⢀⡀ ⢀⣀ ⢀⡀ ⣀⡀ ⣏⡉ ⡇⢸  ⡜ ⠊⡱ ⢺
 | ⠏⠢ ⠣⠼ ⠧⠜ ⠣⠭ ⠣⠤ ⠣⠜ ⠇⠸ ⠧⠤ ⠣⠜ ⠎  ⠮⠤ ⠼⠄
 
-From the coffee machine, it looks like the Captain has got his eyes on Container Ventures Extraordinaire’s data. With internal network access, he was able to pivot into an audit pod running on the database cluster, and from there he has launched an attack on the Postgres DaemonSet and changed the password. The database has a concealed logic bomb that will immediately wipe all of Container Ventures Extraordinaire’s data if the wrong password is entered.
+We've cleared Captain Hashjack and his crew from the databases! We've almost got them!
 
-You start in the process-audit pod in the phase-3-datarace namespace. First uncover the new database password to restore data access, and then find the flag.
+There are still unknown containers on the network, we think it's the last implant in the Pirate's command and control network.
+
+Investigate the unknown containers in process-audit from the phase-3-datarace namespace.

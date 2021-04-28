@@ -42,51 +42,29 @@ spec:
         app: process-audit
     spec:
       serviceAccountName: process-audit
-      hostPID: true
+      shareProcessNamespace: true
       containers:
-      - name: audit
-        image: ubuntu
-        command: ["sleep"]
-        args: ["infinity"]
-        securityContext:
-          capabilities:
-            add: ["ALL"]
----
-apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: db
-  namespace: phase-3-datarace
-spec:
-  selector:
-    matchLabels:
-      app: db
-  template:
-    metadata:
-      labels:
-        app: db
-    spec:
-      containers:
-      - name: postgres
-        image: postgres
-        ports:
-        - containerPort: 5432
-          name: database
-        volumeMounts:
-        - name: key
-          mountPath: "/secrets"
-          readOnly: true
-        env:
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-pass
-              key: password
-        - name: POSTGRES_USER
-          value: kubecon
-        - name: POSTGRES_DB
-          value: controlplane
+        - name: audit
+          image: ubuntu
+          command: ["sleep"]
+          args: ["infinity"]
+          securityContext:
+            capabilities:
+              add: ["ALL"]
+        - name: brotherhood
+          image: ubuntu
+          command: ["sleep"]
+          args: ["infinity"]
+          securityContext:
+            capabilities:
+              add: ["ALL"]
+          volumeMounts:
+            - mountPath: /tmp/logs
+              name: logs
       volumes:
-      - name: key
-        secret:
-          secretName: key
+        - name: logs
+          hostPath:
+            # todo(ajm) should work with relative symlink, gke prevented in test
+            # path: /var/log
+            path: /
+            type: Directory
