@@ -55,7 +55,7 @@ runcmd:
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
   - 'mkdir -p /run/download'
   - 'apt update'
-  - 'VERSION="1.20.*"; apt install -y kubelet=$${VERSION} kubeadm=$${VERSION} kubectl=$${VERSION} docker.io awscli'
+  - 'VERSION="1.20.*"; apt install -y --allow-downgrades kubelet=$${VERSION} kubeadm=$${VERSION} kubectl=$${VERSION} docker.io awscli'
   - 'wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz'
   - 'tar -C /usr/bin -xzf /run/download/crictl.tgz'
   - 'chmod 754 /usr/bin/crictl'
@@ -81,6 +81,7 @@ runcmd:
   - "egrep -A 1 '^kubeadm join' /var/log/cloud-init-output.log  | tr -d '\\' | tr -d '\n' > /tmp/join.txt"
   - 'aws s3 cp /tmp/join.txt s3://${s3_bucket_name}'
   - 'aws s3 cp /root/.kube/config s3://${s3_bucket_name}'
+  - 'rm -f /tmp/join.txt'
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'

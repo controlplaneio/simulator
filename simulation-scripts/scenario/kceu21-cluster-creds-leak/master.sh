@@ -158,7 +158,7 @@ USER_ROLE="hashjack-role"
 #  scale deployment "${DEPLOYMENT}" --replicas=1
 
 
-#touch /tmp/master-done
+touch /tmp/master-done
 
 #kubectl apply -f resource/net-pol/web-deny-all.yaml -f resource/net-pol/test-services-allow.yaml;
 

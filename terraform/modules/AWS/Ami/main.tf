@@ -9,7 +9,8 @@ data "aws_ami" "find_ami" {
 
   filter {
     name   = "image-id"
-    values = ["ami-01eb1daec3f918bc9"] // simulator golden image
+    values = ["ami-01eb1daec3f918bc9"] // retired 28/04/21
+    //   values = ["ami-09acd1ec987b33725"] // attempted new 28/04/21 simulator golden image
   }
 
   filter {

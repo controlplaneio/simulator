@@ -88,6 +88,13 @@ EOF
   fi
 }
 
+known_host_keyscan_fix() {
+  local KNOWN_HOSTS_FILE
+  KNOWN_HOSTS_FILE=$(awk '/UserKnownHostsFile/{print $2}' "${SSH_CONFIG_FILE}" \
+    | sed "s,~,${HOME},g" | head -n 1)
+  ssh-keyscan -H "${BASTION_HOST}" >> "${KNOWN_HOSTS_FILE}"
+}
+
 main() {
 
   [[ $# = 0 && "${EXPECTED_NUM_ARGUMENTS}" -gt 0 ]] && usage
@@ -99,6 +106,7 @@ main() {
 
   local SCENARIO_DIR="scenario/${SCENARIO}/"
 
+  known_host_keyscan_fix
   test_ssh_or_swap_keyfile
 
   if ! is_host_accessible 1000; then
@@ -305,6 +313,17 @@ get_pods() {
   echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >|"${TMP_FILE}"all-pods
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >|"${TMP_FILE}"node-2
+
+  if is_local_debug; then
+    echo "${TMP_FILE}"all-pods
+    ls -lasp "${TMP_FILE}"all-pods
+    head "${TMP_FILE}"all-pods
+#    exit 99
+  fi
+}
+
+is_local_debug() {
+  [[ "$(hostname)" == "Marks-MacBook-Pro" ]]
 }
 
 fix_ioctl() {
@@ -346,6 +365,7 @@ is_host_accessible() {
   if [[ "${IS_SKIP_CHECK:-}" == 1 ]]; then
     return 0
   fi
+
   if [[ ${1} -eq "1000" ]]; then
     ssh \
       -F "${SSH_CONFIG_FILE}" \
@@ -424,33 +444,43 @@ copy_challenge_and_tasks() {
   popd >/dev/null
 }
 
-# TODO: running locally, change ~/.kubesim/ to "${TMP_DIR}"
+# TODO(ajm): running locally, change ~/.kubesim/ to "${TMP_DIR}" ?? USE HOSTNAME FEATURE TOGGLES
 template_challenge() {
+
+  local OUTPUT_DIR=~/.kubesim
+  if is_local_debug; then
+    OUTPUT_DIR="${TMP_DIR}"
+  fi
 
   if grep '##IP' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ~/.kubesim/docker-all-pods | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ${OUTPUT_DIR}/docker-all-pods | tr '\n' ' ')
       sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##NAME' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ~/.kubesim/docker-all-pods | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ${OUTPUT_DIR}/docker-all-pods | tr '\n' ' ')
       sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##HIP' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ~/.kubesim/docker-all-pods | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ${OUTPUT_DIR}/docker-all-pods | tr '\n' ' ')
       sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
 }
 
 template_tasks() {
+  local OUTPUT_DIR=~/.kubesim
+  if is_local_debug; then
+    OUTPUT_DIR="${TMP_DIR}"
+  fi
+
   local tasks_json
   local pod_name
   local POD_NAME
@@ -470,9 +500,9 @@ template_tasks() {
         warning "Unknown podHost in startingpoint"
         exit 1
       fi
-      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_HOST_IP "${POD_HOST_IP}" --arg POD_NS "${POD_NS}" '.items[] | select(.status.hostIP | contains($POD_HOST_IP)) | .metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
+      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_HOST_IP "${POD_HOST_IP}" --arg POD_NS "${POD_NS}" '.items[] | select(.status.hostIP | contains($POD_HOST_IP)) | .metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ${OUTPUT_DIR}/docker-all-pods | head -n 1)
     else
-      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ~/.kubesim/docker-all-pods | head -n 1)
+      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ${OUTPUT_DIR}/docker-all-pods | head -n 1)
     fi
     sed -i "s/podName\:\ ${pod_name}/podName\:\ ${POD_RESULT}/g" "${tmptasks}"
   done

@@ -17,7 +17,7 @@ packages: [ "docker.io", "figlet" ]
 hostname: "bastion"
 
 runcmd:
-  - "/root/authorized_keys.sh ${github_usernames}"
+  - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"
   - "systemctl enable docker"
   - "systemctl daemon-reload"
   - "systemctl restart docker"

@@ -53,7 +53,7 @@ runcmd:
   - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
   - 'apt update'
-  - 'apt install -y kubectl awscli'
+  - 'VERSION="1.20.*"; apt install -y --allow-downgrades kubectl=$${VERSION} awscli'
   - 'mkdir -pv /root/.kube/'
   - 'while true; do aws s3 ls s3://${s3_bucket_name}/config > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/config /root/.kube/ && aws s3 rm s3://${s3_bucket_name}/config'
 

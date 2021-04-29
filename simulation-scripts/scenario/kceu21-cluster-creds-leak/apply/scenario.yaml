@@ -2,20 +2,15 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: crypto-roller
-spec: {}
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
   name: crypto-monitor
-spec: {}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  annotations:
-    kubectl.kubernetes.io/last-applied-configuration: |
-      {"apiVersion":"rbac.authorization.k8s.io/v1","kind":"Role","metadata":{"annotations":{},"name":"hashjack-role","namespace":"crypto-roller"},"rules":[{"apiGroups":[""],"resources":["pods","pods/log","secrets"],"verbs":["get","watch","list"]},{"apiGroups":[""],"resources":["pods","secrets"],"verbs":["delete"]},{"apiGroups":[""],"resources":["pods/exec"],"verbs":["create"]},{"apiGroups":["apps"],"resources":["deployments"],"verbs":["delete","deletecollection"]}]}
   name: hashjack-role
   namespace: crypto-roller
 rules:
@@ -112,6 +107,7 @@ subjects:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: pseudocash
@@ -128,6 +124,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: pseudocash
@@ -163,6 +160,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: sigzstash
@@ -179,6 +177,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: sigzstash
@@ -214,6 +213,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: doshcoin
@@ -230,6 +230,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: doshcoin
@@ -265,6 +266,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: moolahro
@@ -281,6 +283,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: crypto-roller
   labels:
     app: web
     role: moolahro
@@ -316,6 +319,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: crypto-roller
   name: hashjack
 spec:
   ports:
@@ -325,10 +329,10 @@ spec:
   selector:
     run: hashjack
 ---
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: crypto-roller
   labels:
     run: hashjack
   name: hashjack
@@ -337,7 +341,6 @@ spec:
   selector:
     matchLabels:
       run: hashjack
-  strategy: {}
   template:
     metadata:
       labels:
@@ -352,13 +355,13 @@ spec:
           name: hashjack
           ports:
             - containerPort: 80
-          resources: {}
       serviceAccountName: hashjack
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: crypto-monitor
   labels:
     run: monitor
   name: monitor
@@ -378,54 +381,20 @@ spec:
             - /bin/sh
             - -xc
             - |-
-              while true; do       kubectl get deployments -n crypto-roller;       if kubectl get deployment -n crypto-roller pseudocash sigzstash doshcoin moolahro; then         if kubectl get secret flag -n crypto-roller; then kubectl delete secret flag -n crypto-roller; fi;       else         kubectl create secret -n crypto-roller generic flag  monitor
-              --from-literal='flag_ctf=flag_ctf{d43dc977ca951c52}';       fi;       sleep 10;     done
+              while true; do
+                kubectl get deployments -n crypto-roller;
+                if kubectl get deployment -n crypto-roller pseudocash sigzstash doshcoin moolahro; then
+                  if kubectl get secret flag -n crypto-roller; then
+                    kubectl delete secret flag -n crypto-roller;
+                  fi;
+                else
+                  kubectl create secret -n crypto-roller generic flag \
+                    --from-literal='flag_ctf=flag_ctf{d43dc977ca951c52}';
+                fi;
+                sleep 10;
+              done
           image: bitnami/kubectl:latest
           name: monitor
           resources: {}
       serviceAccountName: monitor
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  namespace: crypto-roller
-  name: hashjack
-spec:
-  ports:
-    - port: 80
-      protocol: TCP
-      targetPort: 80
-  selector:
-    run: hashjack
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: crypto-roller
-  labels:
-    run: hashjack
-  name: hashjack
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      run: hashjack
-  strategy: {}
-  template:
-    metadata:
-      labels:
-        run: hashjack
-    spec:
-      containers:
-        - command:
-            - /bin/sh
-            - -xc
-            - while true; do sleep 10; done
-          image: bitnami/kubectl:latest
-          name: hashjack
-          ports:
-            - containerPort: 80
-          resources: {}
-      serviceAccountName: hashjack
----

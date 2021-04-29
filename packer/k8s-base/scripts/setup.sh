@@ -18,7 +18,7 @@ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources
 
 mkdir /run/download
 apt update
-apt install -y \
+apt install -y --allow-downgrades \
   kubelet=${VERSION} kubeadm=${VERSION} kubectl=${VERSION} \
   docker.io \
   awscli \
