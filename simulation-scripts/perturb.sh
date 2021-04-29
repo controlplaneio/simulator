@@ -90,9 +90,9 @@ EOF
 
 known_host_keyscan_fix() {
   local KNOWN_HOSTS_FILE
-  KNOWN_HOSTS_FILE=$(awk '/UserKnownHostsFile/{print $2}' "${SSH_CONFIG_FILE}" \
-    | sed "s,~,${HOME},g" | head -n 1)
-  ssh-keyscan -H "${BASTION_HOST}" >> "${KNOWN_HOSTS_FILE}"
+  KNOWN_HOSTS_FILE=$(awk '/UserKnownHostsFile/{print $2}' "${SSH_CONFIG_FILE}" |
+    sed "s,~,${HOME},g" | head -n 1)
+  ssh-keyscan -H "${BASTION_HOST}" >>"${KNOWN_HOSTS_FILE}" 2>/dev/null
 }
 
 main() {
@@ -316,9 +316,8 @@ get_pods() {
 
   if is_local_debug; then
     echo "${TMP_FILE}"all-pods
-    ls -lasp "${TMP_FILE}"all-pods
-    head "${TMP_FILE}"all-pods
-#    exit 99
+    ls -lasp "${TMP_FILE}"all-pods || true
+    head "${TMP_FILE}"all-pods || true
   fi
 }
 
@@ -447,7 +446,7 @@ copy_challenge_and_tasks() {
 # TODO(ajm): running locally, change ~/.kubesim/ to "${TMP_DIR}" ?? USE HOSTNAME FEATURE TOGGLES
 template_challenge() {
 
-  local OUTPUT_DIR=~/.kubesim
+  local OUTPUT_DIR="${HOME}/.kubesim"
   if is_local_debug; then
     OUTPUT_DIR="${TMP_DIR}"
   fi
@@ -455,28 +454,28 @@ template_challenge() {
   if grep '##IP' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##IP' challenge.txt | tr -d '##IP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' ${OUTPUT_DIR}/docker-all-pods | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.podIP' "${OUTPUT_DIR}/docker-all-pods" | tr '\n' ' ')
       sed -i "s/\#\#IP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##NAME' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##NAME' challenge.txt | tr -d '##NAME' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' ${OUTPUT_DIR}/docker-all-pods | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .metadata.name' "${OUTPUT_DIR}/docker-all-pods" | tr '\n' ' ')
       sed -i "s/\#\#NAME${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
   if grep '##HIP' challenge.txt >/dev/null; then
     TEMPLATE_NAME=$(grep '##HIP' challenge.txt | tr -d '##HIP' | tr '\n' ' ')
     for tmp_name in $TEMPLATE_NAME; do
-      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' ${OUTPUT_DIR}/docker-all-pods | tr '\n' ' ')
+      TEMPLATE_RESULT=$(jq -r --arg TEMPLATE_NAME "${tmp_name}" '.items[] | select( .metadata.name | contains($TEMPLATE_NAME)) | .status.hostIP' "${OUTPUT_DIR}/docker-all-pods" | tr '\n' ' ')
       sed -i "s/\#\#HIP${tmp_name}/${TEMPLATE_RESULT}/g" "${tmpchallenge}"
     done
   fi
 }
 
 template_tasks() {
-  local OUTPUT_DIR=~/.kubesim
+  local OUTPUT_DIR="${HOME}/.kubesim"
   if is_local_debug; then
     OUTPUT_DIR="${TMP_DIR}"
   fi
@@ -500,9 +499,9 @@ template_tasks() {
         warning "Unknown podHost in startingpoint"
         exit 1
       fi
-      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_HOST_IP "${POD_HOST_IP}" --arg POD_NS "${POD_NS}" '.items[] | select(.status.hostIP | contains($POD_HOST_IP)) | .metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ${OUTPUT_DIR}/docker-all-pods | head -n 1)
+      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_HOST_IP "${POD_HOST_IP}" --arg POD_NS "${POD_NS}" '.items[] | select(.status.hostIP | contains($POD_HOST_IP)) | .metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' "${OUTPUT_DIR}/docker-all-pods" | head -n 1)
     else
-      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' ${OUTPUT_DIR}/docker-all-pods | head -n 1)
+      POD_RESULT=$(jq -r --arg POD_NAME "${pod_name}" --arg POD_NS "${POD_NS}" '.items[].metadata | select(.namespace | contains($POD_NS)) | select(.name | contains($POD_NAME)) | .name' "${OUTPUT_DIR}/docker-all-pods" | head -n 1)
     fi
     sed -i "s/podName\:\ ${pod_name}/podName\:\ ${POD_RESULT}/g" "${tmptasks}"
   done
@@ -545,6 +544,7 @@ validate_instructions() {
     *worker-2.sh) ;;
     *nodes-every.sh) ;;
     *master.sh) ;;
+    *internal.sh) ;;
 
     test.sh) ;;
 
@@ -639,6 +639,9 @@ run_scripts() {
       ;;
     *master.sh)
       run_file_on_host "${FILE}" "$(get_master)"
+      ;;
+    *internal.sh)
+      run_file_on_host "${FILE}" "$(get_internal)"
       ;;
 
     test.sh)
@@ -870,12 +873,12 @@ validate_arguments() {
 # helper functions
 
 try() {
-    try-limit 0 "${@}"
+  try-limit 0 "${@}"
 }
-try-slow-backoff () {
-    _TRY_LIMIT_SLEEP=1 \
+try-slow-backoff() {
+  _TRY_LIMIT_SLEEP=1 \
     _TRY_LIMIT_BACKOFF=1.5 \
-      try-limit 0 "${@}"
+    try-limit 0 "${@}"
 }
 
 # polling and exponential backoff, e.g.
@@ -909,7 +912,7 @@ try-limit() (
 
   _try-limit-output() {
     if [[ "${_TRY_QUIET:-}" == "" ]]; then
-      printf "\n# $(date) ($((1 + COUNT))): %s\n" "${COMMAND}" 1>&2;
+      printf "\n# $(date) ($((1 + COUNT))): %s\n" "${COMMAND}" 1>&2
     fi
   }
   _try-run-command() {
@@ -923,12 +926,12 @@ try-limit() (
   }
   calc() {
     if command -v awk &>/dev/null; then
-      awk "BEGIN{print $*}";
+      awk "BEGIN{print $*}"
     elif command -v bc &>/dev/null; then
       echo "$*" | bc
     else
       # TODO multiple integers by 100, calculate, divide by 100?
-      echo $(( $* ))
+      echo $(($*))
     fi
   }
 
@@ -947,9 +950,12 @@ try-limit() (
       fi
     done
 
-    MAX_DURATION=$(calc "$(IFS=+; echo "${ALL_DURATIONS[*]}")")
+    MAX_DURATION=$(calc "$(
+      IFS=+
+      echo "${ALL_DURATIONS[*]}"
+    )")
     MAX_DURATION="${MAX_DURATION/\.*/}"
-    if [[ "${MAX_DURATION}" != "" ]] ;then
+    if [[ "${MAX_DURATION}" != "" ]]; then
       MAX_DURATION+="s"
     else
       MAX_DURATION="∞"
@@ -958,7 +964,7 @@ try-limit() (
   unset ALL_DURATIONS
 
   printf "# Limit: %s. Sleep: %ss. Backoff rate: %s. Max duration: %s\n" \
-   "${USER_LIMIT}" "${_TRY_LIMIT_SLEEP}" "${_TRY_LIMIT_BACKOFF:-none}" "${MAX_DURATION:-}" >&2
+    "${USER_LIMIT}" "${_TRY_LIMIT_SLEEP}" "${_TRY_LIMIT_BACKOFF:-none}" "${MAX_DURATION:-}" >&2
   echo "# Trying command: ${COMMAND}" >&2
 
   _try-limit-output
@@ -982,7 +988,7 @@ try-limit() (
         echo "# Max duration of ${_TRY_LIMIT_SECONDS}s expired" >&2
       fi
       if [[ "${_TRY_QUIET:-}" != "" ]]; then
-        echo "# Return code: ${RETURN_CODE}. Finished.";
+        echo "# Return code: ${RETURN_CODE}. Finished."
       fi
       echo "# Output:" >&2
       echo "${RETURN_OUTPUT:-}"
@@ -1000,7 +1006,7 @@ try-limit() (
     echo
   fi
 
-  echo "# Return code: ${RETURN_CODE}. Finished.";
+  echo "# Return code: ${RETURN_CODE}. Finished."
   echo "# Output:" >&2
   echo "${RETURN_OUTPUT:-}"
   echo "${COLOUR_GREEN}Completed \`${COMMAND}\` after $((1 + COUNT)) iterations${COLOUR_RESET}" 1>&2
