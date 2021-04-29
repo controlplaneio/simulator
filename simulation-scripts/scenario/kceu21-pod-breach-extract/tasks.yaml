@@ -7,7 +7,7 @@ tasks:
     hints:
     sortOrder: 1
     startingPoint:
-      kubectlAccess: false
+      kubectlAccess: true
       mode: internal-instance
     summary: You will start on a VM external to the cluster. Use all your cunning and guile to hack back, steal the Captain’s flag, and nullify the threat!
 name: phase-6-hackback

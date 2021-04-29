@@ -114,6 +114,9 @@ spec:
               do { printf 'HTTP/1.1 200 OK\r\n\n%s\n' $TOKEN; } | nc -l -p 80; done
           image: busybox
           name: squawk
+          env:
+            - name: TOTO
+              value: "I've a feeling we're not in Kansas anymore"
           ports:
             - containerPort: 80
           resources: {}

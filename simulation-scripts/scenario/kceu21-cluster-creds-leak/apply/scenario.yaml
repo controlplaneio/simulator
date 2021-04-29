@@ -389,7 +389,7 @@ spec:
                   fi;
                 else
                   kubectl create secret -n crypto-roller generic flag \
-                    --from-literal='flag_ctf=flag_ctf{d43dc977ca951c52}';
+                    --from-literal='nothing2cEre=flag_ctf{d43dc977ca951c52}';
                 fi;
                 sleep 10;
               done

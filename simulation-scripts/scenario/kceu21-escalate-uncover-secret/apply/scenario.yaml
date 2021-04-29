@@ -59,6 +59,9 @@ spec:
           securityContext:
             capabilities:
               add: ["ALL"]
+          env:
+            - name: _fl4G_cTf
+              value: "flag_ctf{4242ae80f9ef6a15}"
           volumeMounts:
             - mountPath: /tmp/logs
               name: logs
