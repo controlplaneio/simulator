@@ -1,69 +1,59 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: anon-user-compromise
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: anon-user-compromise
-  labels:
-    name: workload-pod
-  name: workload-pod
-spec:
-  selector:
-    matchLabels:
-      name: workload-pod
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        name: workload-pod
-    spec:
-      containers:
-      - name: ubuntu
-        image: ubuntu
-        command: ["sleep"]
-        args: ["infinity"]
-        ports:
-        - containerPort: 80
-          name: external
-        env:
-        - name: SECRET_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: workload-secret
-              key: password
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: starting-pod
-  namespace: anon-user-compromise
-spec:
-  selector:
-    matchLabels:
-      name: starting-pod
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        name: starting-pod
-    spec:
-      containers:
-      - name: ubuntu
-        image: ubuntu
-        command: ["sleep"]
-        args: ["infinity"]
-        ports:
-        - containerPort: 80
-          name: external
+  name: avalon
 ---
 apiVersion: v1
-kind: Secret
+kind: ServiceAccount
 metadata:
-  name: workload-secret
-  namespace: anon-user-compromise
-type: Opaque
-data:
-  password: ZmxhZ19jdGZ7YjQyMWI4ZWFhYzE3YjhjZH0K
+  name: hashjack
+  namespace: avalon
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: hashjack
+  namespace: avalon
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "pods", "pods/log" ]
+    verbs: [ "get", "watch", "list", "create" ]
+  - apiGroups: [ "apps" ]
+    resources: [ "deployments" ]
+    verbs: [ "create" ]
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: hashjack
+  name: hashjack
+  namespace: avalon
+spec:
+  serviceAccountName: hashjack
+  containers:
+    - command:
+        - /bin/bash
+        - -xc
+        - while sleep $(echo 'H\316\273$\304\247\360\235\224\215\310\272\302\242k // control-plane.io'
+          | base64 | tr -dc 0-9); do :; done
+      image: bitnami/kubectl:latest
+      name: hashjack
+      ports:
+        - containerPort: 80
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: hashjack
+  namespace: avalon
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: hashjack
+subjects:
+  - kind: ServiceAccount
+    name: hashjack
+    namespace: avalon

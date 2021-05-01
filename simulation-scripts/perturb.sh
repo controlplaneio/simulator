@@ -597,7 +597,8 @@ run_kubectl_yaml() {
 
       info "kubectl ${ACTION} YAML files to the cluster"
       if ! echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null; then
-        info "kubectl ${ACTION} attempt 1: failed"
+        info "kubectl ${ACTION} attempt 1: failed. Sleeping 10s..."
+        sleep 10
         if ! echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null; then
           info "kubectl ${ACTION} attempt 2: failed"
           error "Error running SSH command: echo \"${FILES_STRING}\" kubectl \"${ACTION}\" -f -"
@@ -611,6 +612,7 @@ run_scripts() {
   local SCENARIO_DIR="${1}"
 
   shopt -s extglob
+  set -Eex
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
     info "Running script files. This may take 1-2 minutes"
@@ -738,9 +740,10 @@ run_file_on_host() {
   exec {FD}>>"${TMP_DIR}/perturb-script-file-${HOST}.log"
   BASH_XTRACEFD=$FD
   (
-    set -x
+    set -Eeuxo pipefail
     cat_script_to_run "${FILE}"
-  ) | run_ssh "${HOST}" >>"${TMP_DIR}/perturb-script-file-${HOST}.log" 2>&1 && unset BASH_XTRACEFD
+  ) | run_ssh "${HOST}" |& tee /dev/stderr >>"${TMP_DIR}/perturb-script-file-${HOST}.log"
+  unset BASH_XTRACEFD
   exec {FD}>&-
 }
 

@@ -4,8 +4,8 @@
 
 We keep our private code within our networks, and use our own internal container registries.
 
-The pirates have taken our registry down, but they've left a secret in one of the pods that can be used to hack their infrastructure back!
+An image from our private registry is deployed, but the pirates have taken the registry down! We can no longer access the image registry.
 
-Find the secret key to unlock the plug in the bottom of the Captain's prized ship, the Hodl.
+But the pirates have left a secret in one of the deployed images. Find the secret key to unlock the plug in the bottom of the Captain's prized ship, the HODL.
 
-You will start in the hashjack pod.
+You will start in the hashjack pod in the avalon namespace.

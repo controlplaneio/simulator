@@ -370,7 +370,6 @@ spec:
   selector:
     matchLabels:
       run: monitor
-  strategy: {}
   template:
     metadata:
       labels:
@@ -397,4 +396,3 @@ spec:
           name: monitor
           resources: {}
       serviceAccountName: monitor
-

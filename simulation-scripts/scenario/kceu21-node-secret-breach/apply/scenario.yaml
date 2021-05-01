@@ -158,10 +158,10 @@ spec:
             - /bin/sh
             - -xc
             - while true; do sleep 10; done
-          image: bitnami/kubectl:latest
+#          image: bitnami/kubectl:latest
+          image: debian:buster
           name: hashjack
           ports:
             - containerPort: 80
-          resources: {}
       serviceAccountName: hashjack
 ---
