@@ -28,4 +28,5 @@ cleanup() {
   rm -rf "${DIR}"
 }
 
-main &> /tmp/logs
+#main | tee /tmp/logs
+main

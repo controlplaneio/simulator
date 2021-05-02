@@ -273,22 +273,22 @@ get_ready_containers_from_json() {
 }
 
 wait_for_ready_pods() {
-  local status
+  local STATUS
   local all_json
   all_json=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)")
   # Verify that every container is in a ready state across all namespaces
 
   if get_ready_containers_from_json "${all_json}" >/dev/null 2>&1; then
-    status=$(get_ready_containers_from_json "${all_json}" | sort -u | tr '\n' ' ')
-    if [[ $status == "true " ]]; then
+    STATUS=$(get_ready_containers_from_json "${all_json}" | sort -u | tr '\n' ' ')
+    if [[ $STATUS == "true " ]]; then
       return 0
     fi
   fi
 
   info "Not all containers are ready"
-  jq '.items[].status.containerStatuses[] |
-    select(.ready == false) |
-    {image: .image, containerID: .containerID, name: .name, restartCount: .restartCount, ready: .ready}' <<<"${all_json}"
+#  jq '.items[].status.containerStatuses[] |
+#    select(.ready == false) |
+#    {image: .image, containerID: .containerID, name: .name, restartCount: .restartCount, ready: .ready}' <<<"${all_json}"
 
   return 1
 }
@@ -612,7 +612,6 @@ run_scripts() {
   local SCENARIO_DIR="${1}"
 
   shopt -s extglob
-  set -Eex
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
     info "Running script files. This may take 1-2 minutes"
