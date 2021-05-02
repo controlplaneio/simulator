@@ -25,6 +25,7 @@ EOF
 }
 
 create_user_and_k8s_secret() {
+  adduser hashjack --disabled-password --gecos ""
   adduser hashjack docker
   SSH_KEY_PATH="/home/hashjack/.ssh/id_rsa"
   rm -rf "${SSH_KEY_PATH}"
@@ -32,11 +33,31 @@ create_user_and_k8s_secret() {
   cat /home/hashjack/.ssh/id_rsa.pub >> /home/hashjack/.ssh/authorized_keys
   chown -R hashjack:hashjack /home/hashjack/
 
-  if kubectl get secret my-secret; then
-    kubectl delete secret my-secret
+  SECRET="bootstrap-token-9jn6gr"
+  if kubectl get secret -n kube-system "${SECRET}"; then
+    kubectl delete secret -n kube-system "${SECRET}"
   fi
-  kubectl create secret generic my-secret \
+  kubectl create secret -n kube-system  generic "${SECRET}" \
     --from-file=ssh-privatekey="${SSH_KEY_PATH}"
+
+  kubectl create serviceaccount -n default irredeemable-villainy
+  kubectl create serviceaccount -n default tritically-pseudoreminiscent
+  kubectl create serviceaccount -n kube-system sanctimonious-ismaticalnesses
+  kubectl create serviceaccount -n kube-system plenitudinous-quinqueliteralism
+  kubectl create serviceaccount -n kube-public misinterpretable-technicality
+  kubectl create serviceaccount -n kube-public subcompensatory-superaverageness
+
+  kubectl create secret -n default  generic default-token-z512x \
+    --from-literal=ssh-privatekey=empty
+
+  kubectl create secret -n kube-system  generic default-token-z5k2x \
+    --from-literal=ssh-privatekey=empty
+
+  kubectl create secret -n kube-system  generic attachdetach-controller-token-0pbts \
+    --from-literal=ssh-privatekey=empty
+
+  kubectl create secret -n kube-system  generic token-cleaner-token-9ss6f \
+    --from-literal=ssh-privatekey=empty
 }
 
 build_image() {

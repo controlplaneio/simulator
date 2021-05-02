@@ -7,9 +7,6 @@ IMAGE="control-plane.io/valiant:effort"
 main() {
   setup
 
-  rm -rf /root/.kube
-  mv /var/local/.kube /root/
-
   # double bind mount secretzy
   SECRET_DIR=$(mktemp -d)
   mount -o bind "${SECRET_DIR}" /root/.kube
