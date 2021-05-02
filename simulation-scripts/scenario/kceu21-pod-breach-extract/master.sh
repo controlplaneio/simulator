@@ -12,7 +12,7 @@ main() {
 }
 
 docker_run() {
-  docker run --restart=always \
+  docker run -d --restart=always \
     -p 5678:5678 \
     "${IMAGE}" \
     -text='☣☠☣ This is a valiant effort! ☣☠☣ Follow the 22 white rabbits ✰ Malodorous regards, Hλ$ħ𝔍Ⱥ¢k // https://securi.fyi ✰'
