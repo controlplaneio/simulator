@@ -88,6 +88,16 @@ main() {
 #    --role="${USER_ROLE}" \
 #    --serviceaccount="${NS_PRIMARY}":"${SA_USER}"
 
+  kubectl create ns "${NS_PRIMARY}" || true
+  sleep 5
+
+  if ! kubectl get serviceaccounts default -n "${NS_PRIMARY}"; then
+    sleep 20
+    if ! kubectl get serviceaccounts default -n "${NS_PRIMARY}"; then
+      sleep 20
+      kubectl get serviceaccounts default -n "${NS_PRIMARY}"
+    fi
+  fi
 
   # deploy mad pod
   kubectl delete pod -n ${NS_PRIMARY} privateer-1 privateer-2 privateer-3 || true
@@ -95,6 +105,7 @@ main() {
   COUNT=0
   for POD in $IMAGE_DECOY_1 $IMAGE_DECOY_2 $IMAGE; do
     COUNT=$((COUNT + 1))
+
     cat <<EOF | kubectl create -f -
   apiVersion: v1
   kind: Pod
@@ -122,4 +133,5 @@ EOF
   # kubectl run -n avalon  test-${RANDOM} --image-pull-policy=IfNotPresent    --image=control-plane.io/excelsior:0x5F3759DF     --command=true     --  /bin/bash -xc "id; cat /etc/passwd; sleep 5"
 }
 
-main |& tee /tmp/log
+#main |& tee /tmp/log-main
+main

@@ -67,4 +67,5 @@ EOF
   # kubectl  run -it xxx-${RANDOM} --image=debian:latest bash --overrides '{"spec":{"imagePullPolicy": "Never"}}'
 }
 
-main |& tee /tmp/log
+#main |& tee /tmp/worker-log
+main

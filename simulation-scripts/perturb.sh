@@ -268,8 +268,8 @@ cleanup() {
 }
 
 get_ready_containers_from_json() {
-  local all_json="${1:-}"
-  jq '.items[].status.containerStatuses[].ready' <<<"${all_json}"
+  local ALL_JSON="${1:-}"
+  echo "${ALL_JSON}" | jq '.items[].status.containerStatuses[].ready'
 }
 
 wait_for_ready_pods() {
@@ -1011,8 +1011,9 @@ try-limit() (
 
   echo "# Return code: ${RETURN_CODE}. Finished."
   echo "# Output:" >&2
-  echo "${RETURN_OUTPUT:-}"
-  echo "${COLOUR_GREEN}Completed \`${COMMAND}\` after $((1 + COUNT)) iterations${COLOUR_RESET}" 1>&2
+  echo "${RETURN_OUTPUT:-}" || true
+  echo "${COLOUR_GREEN}Completed \`${COMMAND}\` after $((1 + COUNT)) iterations${COLOUR_RESET}" 1>&2 || true
+
   unset _TRY_LIMIT_SLEEP _TRY_LIMIT_BACKOFF
   unset -f _try-limit-output _try-run-command
   return "${RETURN_CODE}"
