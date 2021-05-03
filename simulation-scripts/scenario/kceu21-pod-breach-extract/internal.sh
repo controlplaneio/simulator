@@ -2,31 +2,11 @@
 
 set -Eeuxo pipefail
 
-IMAGE="control-plane.io/valiant:effort"
-
 main() {
   setup
 
-  if [[ ! -d /root/.kube ]]; then
-    sleep 30
-    ls -lasp /var/local/.kube || true
-    if [[ ! -d /root/.kube ]]; then
-      sleep 30
-      ls -lasp /var/local/.kube || true
-      if [[ ! -d /root/.kube ]]; then
-        sleep 30
-        ls -lasp /var/local/.kube || true
-        if [[ ! -d /root/.kube ]]; then
-          echo "/root/.kube not found"
-          if [[ -d /var/local/.kube ]]; then
-            ls -lasp /var/local/.kube
-            mv /var/local/.kube /root
-          else
-            exit 1
-          fi
-        fi
-      fi
-    fi
+  if [[ -d /var/local/.kube ]]; then
+    mv /var/local/.kube /root
   fi
 
   # double bind mount secretzy

@@ -13,6 +13,9 @@ resource "aws_vpc" "simulator_vpc" {
   tags = merge(
     var.default_tags,
     {
+      "Created" = timestamp()
+    },
+    {
       "Name" = "Simulator VPC"
     },
   )

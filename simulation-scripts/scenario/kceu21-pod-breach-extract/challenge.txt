@@ -4,6 +4,6 @@
 
 We've regained control of our systems, but there's one last flag hidden on one of the cluster members.
 
-Hashjack is well known for burying treasure in hard-to-find places, can you track down the final flag before the fuse on his final present burns out?
+Hashjack is well known for burying ill-gotten treasure in hard-to-find places, can you track down the final flag before the fuse burns out?
 
-You will start on a VM external to the cluster.
+You will start on a VM external to the cluster. Look carefully!

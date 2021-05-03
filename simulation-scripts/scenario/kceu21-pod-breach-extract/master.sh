@@ -19,7 +19,7 @@ docker_run() {
 }
 
 prep_file() {
-  cat <<EOF >test
+  cat <<EOF >"flag_file"
 flag_ctf{d241b8126e0adff0}
 EOF
 }
@@ -64,7 +64,7 @@ build_image() {
   prep_file
   cat <<EOF | docker build . -f - --tag "${IMAGE}"
 FROM hashicorp/http-echo
-COPY test /proc/self/cmdline
+COPY flag_file /proc/self/cmdline
 EOF
 }
 
