@@ -1,7 +1,7 @@
 #!/bin/bash
 set -Eeuxo pipefail
 
-sudo /tmp/authorized_keys.sh sublimino denhamparry 06kellyjac ipedrazas rowan-baker wakeward
+sudo /tmp/authorized_keys.sh sublimino denhamparry 06kellyjac alanmynah rowan-baker wakeward
 rm /tmp/authorized_keys.sh
 
 # Install necessary dependencies
