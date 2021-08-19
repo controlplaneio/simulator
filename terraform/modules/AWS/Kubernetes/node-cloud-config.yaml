@@ -54,7 +54,7 @@ runcmd:
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
   - "mkdir /run/download"
   - "apt update"
-  - 'VERSION="1.20.*"; apt install -y kubelet=$${VERSION} kubeadm=$${VERSION} kubectl=$${VERSION} docker.io awscli'
+  - 'VERSION="1.20.*"; apt install -y --allow-downgrades kubelet=$${VERSION} kubeadm=$${VERSION} kubectl=$${VERSION} docker.io awscli'
   - "wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz"
   - "tar -C /usr/bin -xzf /run/download/crictl.tgz"
   - "rm -rf /run/download"
