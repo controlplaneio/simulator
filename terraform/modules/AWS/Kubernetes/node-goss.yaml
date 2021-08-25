@@ -1,3 +1,10 @@
+command:
+  kubectl CLIENT minor version is 20:
+    exec: kubectl version -o json | jq -r ".clientVersion.minor"
+    stdout: ["20"]
+
+# TODO: add test for `kubelet --version` too/instead
+
 package:
   awscli:
     installed: true

@@ -254,6 +254,26 @@ run_scenario() {
 
 clean_bastion() {
   echo "TODO: remove /root/.ssh"
+
+  # TODO: complete with healthcheck goss endpoint that runs
+
+  # this goss.yaml ALMOST works, but doesn't output the date
+  #
+  # goss serve --format json_oneline
+  # curl localhost:8080/healthz | jq .
+  #
+  # command:
+  #  last --time-format=iso | awk '{print $4}' | tac | head -n3 | tail -n1:
+  #    exit-status: 0
+  #    stdout:
+  #    - /.*/
+  #    stderr: []
+  #    timeout: 10000
+
+  # this removes all evidence of previous logins to the bastion from the `last` command
+#  cat <<'EOF' | run_ssh "$(get_bastion)" || true
+#printf "" | tee /var/log/wtmp
+#EOF
 }
 
 cleanup() {
@@ -748,6 +768,10 @@ run_file_on_host() {
 
 get_master() {
   echo "${MASTER_HOST}"
+}
+
+get_bastion() {
+  echo "${BASTION_HOST}"
 }
 
 get_internal() {
