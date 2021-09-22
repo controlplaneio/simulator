@@ -7,12 +7,6 @@ data "aws_ami" "find_ami" {
   most_recent = true
   name_regex = "^kubernetes-simulator-20.*"
 
-  //filter {
-  //  name   = "image-id"
-  //  values = ["ami-01eb1daec3f918bc9"] // retired 28/04/21
-    //   values = ["ami-09acd1ec987b33725"] // attempted new 28/04/21 simulator golden image
-  //}
-
   filter {
     name   = "architecture"
     values = ["x86_64"]
@@ -44,4 +38,3 @@ data "aws_ami" "find_ami_ubuntu_upstream" {
     values = ["hvm"]
   }
 }
-
