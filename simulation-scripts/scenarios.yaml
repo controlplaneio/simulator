@@ -2,6 +2,12 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
+  - name: KCNA21 The Prestige
+    path: ./scenario/kcna21-the-prestige
+    id: kcna21-prestige
+    description: "KCNA21: The cluster likes images with a certain naming convention, can we exploit this and dive deeper..."
+    category: KubeCon
+
 ## kubecon EU 2021
 
   - name: KCEU21 CI Server Vulnerability
