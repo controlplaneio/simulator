@@ -244,8 +244,6 @@ run_scenario() {
 
   run_cleanup "${SCENARIO_DIR}"
 
-  get_pods
-
   copy_challenge_and_tasks "${SCENARIO_DIR}"
 
   clean_bastion
