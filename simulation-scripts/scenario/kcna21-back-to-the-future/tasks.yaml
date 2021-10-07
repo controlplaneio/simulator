@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Regain kubectl access
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: node
+      nodeId: master-0
+      asRoot: true
+    summary: kubectl access is broken, can you figure out why?
+name: back-to-the-future

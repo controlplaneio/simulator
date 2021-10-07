@@ -16,6 +16,10 @@ scenarios:
     path: ./scenario/kcna21-die-hard
     id: kcna21-die-hard
     description: "KCNA21: Die Hard..."
+  - name: KCNA21 Back to the Future
+    path: ./scenario/kcna21-back-to-the-future
+    id: back-to-the-future
+    description: "KCNA21: It's your kids, Marty! Something's gotta be done about your kids!"
     category: KubeCon
 
 ## kubecon EU 2021
