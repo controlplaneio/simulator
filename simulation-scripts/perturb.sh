@@ -244,6 +244,11 @@ run_scenario() {
 
   run_cleanup "${SCENARIO_DIR}"
 
+  # TODO: allow scenarios to signal they break kubeapi, to avoid this command
+  if [[ "${SCENARIO}" != "kcna21-back-to-the-future" ]]; then
+    get_pods
+  fi
+
   copy_challenge_and_tasks "${SCENARIO_DIR}"
 
   clean_bastion
