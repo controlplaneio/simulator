@@ -64,6 +64,7 @@ TMP_DIR="${KUBE_SIM_TMP:-/home/launch}/.kubesim"
 SSH_CONFIG_FILE="${KUBE_SIM_TMP:-$HOME/.kubesim}/cp_simulator_config"
 SSH_GENERATED_KEY_PATH=""
 FOUND_SCENARIO=""
+POD_SELECTOR="-l job-name!=mount"
 
 # to use private debug keys, b64 encode into BASE64_ROOT_SSH_KEY
 test_ssh_or_swap_keyfile() {
@@ -277,14 +278,16 @@ clean_bastion() {
 }
 
 cleanup() {
-  shopt -u nullglob
-  if [[ -n $(compgen -G "${TMP_DIR}"/perturb-script-file-*) ]]; then
-    rm "${TMP_DIR}"/perturb-script-file-*
-  fi
-  if [[ -n $(compgen -G "${TMP_DIR}"/docker-*) ]]; then
-    rm "${TMP_DIR}"/docker-*
-  fi
-  shopt -s nullglob
+  if [[ ! -f "${SCENARIO_DIR}/no-cleanup-local.do" ]]; then
+      shopt -u nullglob
+      if [[ -n $(compgen -G "${TMP_DIR}"/perturb-script-file-*) ]]; then
+        rm "${TMP_DIR}"/perturb-script-file-*
+      fi
+      if [[ -n $(compgen -G "${TMP_DIR}"/docker-*) ]]; then
+        rm "${TMP_DIR}"/docker-*
+      fi
+      shopt -s nullglob
+    fi
 }
 
 get_ready_containers_from_json() {
@@ -295,7 +298,7 @@ get_ready_containers_from_json() {
 wait_for_ready_pods() {
   local STATUS
   local all_json
-  all_json=$(echo "kubectl get pods --all-namespaces -o json" | run_ssh "$(get_master)")
+  all_json=$(echo "kubectl get pods --all-namespaces -o json $POD_SELECTOR" | run_ssh "$(get_master)")
   # Verify that every container is in a ready state across all namespaces
 
   if get_ready_containers_from_json "${all_json}" >/dev/null 2>&1; then
@@ -315,7 +318,7 @@ wait_for_ready_pods() {
 
 get_pods() {
   local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
-  local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
+  local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json $POD_SELECTOR"
   local TMP_FILE="${TMP_DIR}/docker-"
   export _TRY_LIMIT_SLEEP=10
   export _TRY_QUIET="true"
@@ -573,6 +576,7 @@ validate_instructions() {
     *reboot-master.do) ;;
 
     no-cleanup.do) ;;
+    no-cleanup-local.do) ;;
     challenge.txt) ;;
     *)
       error "${TYPE}: type not recognised"
@@ -634,10 +638,10 @@ run_scripts() {
   shopt -s extglob
 
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
-    info "Running script files. This may take 1-2 minutes"
-
     local TYPE
     TYPE="$(basename "${FILE}")"
+    info "Running script file "${TYPE}". This may take 1-2 minutes"
+
     case "${TYPE}" in
 
     *worker-any.sh)
