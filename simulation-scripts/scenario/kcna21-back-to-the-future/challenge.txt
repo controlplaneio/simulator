@@ -1,3 +1,7 @@
 Cluster administration is currently broken, kubectl commands are failing.
 
-Also everything seems a bit... old school. Does anyone have a flux capacitor handy?
+Also one of the workloads was seen behaving oddly.
+
+Everything seems a bit... old school. Does anyone have a flux capacitor handy?
+
+Restore kubectl access and fix the unusual behaviour in the tenet workload.
