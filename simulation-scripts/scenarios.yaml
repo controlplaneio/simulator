@@ -7,6 +7,10 @@ scenarios:
     id: kcna21-prestige
     description: "KCNA21: The cluster likes images with a certain naming convention, can we exploit this and dive deeper..."
     category: KubeCon
+  - name: KCNA21 The Quiet Place
+    path: ./scenario/kcna21-the-quiet-place
+    id: kcna21-quiet-place
+    description: "KCNA21: Can you be stealthy enought to traverse the cluster and steal the loot without being caught?"
 
   - name: KCNA21 Die Hard
     path: ./scenario/kcna21-die-hard

@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Avoid Detection
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: start
+      podNamespace: the-quiet-place
+    summary: Can you be stealthy enought to traverse the cluster and steal the loot without being caught?
+name: the-quiet-place

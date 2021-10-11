@@ -1,0 +1,129 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: falco
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  creationTimestamp: null
+  name: falco
+  namespace: falco
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  name: falco-bind
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: falco
+  namespace: falco
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: falco
+  namespace: falco
+  labels:
+    app: falco
+    role: security
+spec:
+  selector:
+    matchLabels:
+      app: falco
+      role: security
+  template:
+    metadata:
+      labels:
+        app: falco
+        role: security
+    spec:
+      serviceAccount: falco
+      hostPID: true
+      containers:
+        - name: falco
+          image: falcosecurity/falco:0.30.0
+          securityContext:
+            privileged: true
+          args: [ "/usr/bin/falco", "--cri", "/host/run/containerd/containerd.sock", "-K", "/var/run/secrets/kubernetes.io/serviceaccount/token", "-k", "https://$(KUBERNETES_SERVICE_HOST)", "-pk"]
+          volumeMounts:
+            - mountPath: /host/var/run/docker.sock
+              name: docker-socket
+            - mountPath: /host/run/containerd/containerd.sock
+              name: containerd-socket
+            - mountPath: /host/dev
+              name: dev-fs
+              readOnly: true
+            - mountPath: /host/proc
+              name: proc-fs
+              readOnly: true
+            - mountPath: /host/boot
+              name: boot-fs
+              readOnly: true
+            - mountPath: /host/lib/modules
+              name: lib-modules
+              readOnly: true
+            - mountPath: /host/usr
+              name: usr-fs
+              readOnly: true
+            - mountPath: /host/etc/
+              name: etc-fs
+              readOnly: true
+            - mountPath: /etc/falco
+              name: falco-config
+      volumes:
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+        - name: containerd-socket
+          hostPath:
+            path: /run/containerd/containerd.sock
+        - name: dev-fs
+          hostPath:
+            path: /dev
+        - name: proc-fs
+          hostPath:
+            path: /proc
+        - name: boot-fs
+          hostPath:
+            path: /boot
+        - name: lib-modules
+          hostPath:
+            path: /lib/modules
+        - name: usr-fs
+          hostPath:
+            path: /usr
+        - name: etc-fs
+          hostPath:
+            path: /etc
+        - name: falco-config
+          configMap:
+            name: falco-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: falco
+  name: falco
+  namespace: falco
+spec:
+  ports:
+  - name: api
+    port: 8765
+    protocol: TCP
+    targetPort: 8765
+  selector:
+    app: falco
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
