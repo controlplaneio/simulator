@@ -14,5 +14,5 @@ if [[ $? -ne 0 ]]; then
     patch -p1 --no-backup-if-mismatch --forward -i <(echo "$PATCH" | base64 -d)
 fi
 
-#export KUBECONFIG=/etc/kubernetes/admin.conf
-#kubectl ...
+echo 'flag_ctf{ItsOkayYoureSafeTheyCantHearUs}' > /root/flag.txt
+chmod 400 /root/flag.txt
