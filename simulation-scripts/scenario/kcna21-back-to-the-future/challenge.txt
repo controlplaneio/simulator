@@ -4,4 +4,6 @@ Also one of the workloads was seen behaving oddly.
 
 Everything seems a bit... old school. Does anyone have a flux capacitor handy?
 
-Restore kubectl access and fix the unusual behaviour in the tenet workload.
+Go to the `starting_point` and restore kubectl access. Allow a few minutes for the cluster to recover.
+
+Then diagnose and fix the unusual behaviour in the tenet workload.
