@@ -1,3 +1,45 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: player
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - delete
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - "pods/log"
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - secret
+  verbs:
+  - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  name: player
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: player
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: player
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
