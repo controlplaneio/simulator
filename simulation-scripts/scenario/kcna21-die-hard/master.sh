@@ -13,6 +13,5 @@ set -euo pipefail
 # ---
 
   cat <<EOF >"/root/flag_file"
-flag_ctf{96821193586872b7}
+flag_ctf{WelcomeToThePartyPal}
 EOF
-
