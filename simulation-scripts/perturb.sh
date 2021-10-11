@@ -640,7 +640,7 @@ run_scripts() {
   for FILE in "${SCENARIO_DIR%/}/"*.sh; do
     local TYPE
     TYPE="$(basename "${FILE}")"
-    info "Running script file "${TYPE}". This may take 1-2 minutes"
+    info "Running script file ${TYPE}. This may take 1-2 minutes"
 
     case "${TYPE}" in
 

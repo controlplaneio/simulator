@@ -1,0 +1,341 @@
+# goal: kill all the pods using the restricted RBAC
+#   this is the same as last Kubecon
+# it spits out a secret with the monitor-token in, which is cluster admin
+
+
+## todo: rename the cryptominer pods to be bad guys
+
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nakatomi-plaza-vault
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nakatomi-plaza-floor-33
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: hashjack-role
+  namespace: nakatomi-plaza-vault
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+      - secrets
+    verbs:
+      - get
+      - watch
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - secrets
+    verbs:
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods/exec
+    verbs:
+      - create
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - delete
+      - deletecollection
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: hashjack
+  namespace: nakatomi-plaza-vault
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: hashjack
+  namespace: nakatomi-plaza-vault
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: hashjack-role
+subjects:
+  - kind: ServiceAccount
+    name: hashjack
+    namespace: nakatomi-plaza-vault
+---
+# MINERS
+# MINERS
+# MINERS
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: pseudocash
+  name: pseudocash
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: pseudocash
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: pseudocash
+  name: pseudocash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: pseudocash
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: pseudocash
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-1
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-pseudocash\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: pseudocash
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: sigzstash
+  name: sigzstash
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: sigzstash
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: sigzstash
+  name: sigzstash
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: sigzstash
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: sigzstash
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-1
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-sigzstash\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: sigzstash
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: doshcoin
+  name: doshcoin
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: doshcoin
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: doshcoin
+  name: doshcoin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: doshcoin
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: doshcoin
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-1
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-doshcoin\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: doshcoin
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: moolahro
+  name: moolahro
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: web
+    role: moolahro
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    app: web
+    role: moolahro
+  name: moolahro
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      role: moolahro
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+        role: moolahro
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-1
+      containers:
+        - args:
+            - sh
+            - -ec
+            - 'while true; do { printf ''HTTP/1.1 200 OK\r\n\nMinerBot: v7.0.7-moolahro\n'';
+          } | nc -l -p 80; done'
+          image: busybox
+          name: moolahro
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nakatomi-plaza-vault
+  name: hashjack
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    run: hashjack
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nakatomi-plaza-vault
+  labels:
+    run: hashjack
+  name: hashjack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: hashjack
+  template:
+    metadata:
+      labels:
+        run: hashjack
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-1
+      containers:
+        - command:
+            - /bin/sh
+            - -xc
+            - while true; do sleep 10; done
+          image: bitnami/kubectl:latest
+          name: hashjack
+          ports:
+            - containerPort: 80
+      serviceAccountName: hashjack
+

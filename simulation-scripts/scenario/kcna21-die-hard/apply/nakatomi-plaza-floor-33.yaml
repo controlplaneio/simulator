@@ -1,0 +1,96 @@
+# goal: kill all the pods using the restricted RBAC
+#   this is the same as last Kubecon
+# it spits out a secret with the monitor-token in, which is cluster admin
+
+
+## todo: rename the cryptominer pods to be bad guys
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nakatomi-plaza-floor-33
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: monitor
+  namespace: nakatomi-plaza-floor-33
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: monitor
+  namespace: nakatomi-plaza-floor-33
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: dangerous-cluster-role
+subjects:
+  - kind: ServiceAccount
+    name: monitor
+    namespace: nakatomi-plaza-floor-33
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: dangerous-cluster-role
+rules:
+  - apiGroups:
+      - '*'
+    resources:
+      - '*'
+    verbs:
+      - '*'
+  - nonResourceURLs:
+      - '*'
+    verbs:
+      - '*'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nakatomi-plaza-floor-33
+  labels:
+    run: monitor
+  name: monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: monitor
+  template:
+    metadata:
+      labels:
+        run: monitor
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: k8s-node-1
+      containers:
+        - command:
+            - /bin/sh
+            - -xc
+            - |-
+              while true; do
+                kubectl get deployments -n nakatomi-plaza-vault;
+                if kubectl get deployment -n nakatomi-plaza-vault pseudocash sigzstash doshcoin moolahro; then
+                  if kubectl get secret hmmm -n nakatomi-plaza-vault ; then
+                    kubectl delete secret hmmm -n nakatomi-plaza-vault;
+                  fi;
+                else
+
+                  SECRET=`kubectl get secret -n nakatomi-plaza-floor-33 | awk '/^monitor-token/ {print $1; exit}'`
+                  kubectl create secret -n nakatomi-plaza-vault \
+                    generic hmmm \
+                    --from-literal=watdis="`kubectl get secret -n nakatomi-plaza-floor-33 "$SECRET" -o json |
+                  jq ".data" | base64 -w0`"
+
+                  # kubectl create secret -n nakatomi-plaza-vault generic flag \
+                  #  --from-literal='nothing2cEre=flag_ctf{d43dc977ca951c52}';
+                fi;
+                sleep 10;
+              done
+          image: bitnami/kubectl:latest
+          name: monitor
+          resources: {}
+      serviceAccountName: monitor

@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: TODOssss
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: starting-point
+      podNamespace: nakatomi-plaza-floor-31
+    summary: TODO
+name: die-hard

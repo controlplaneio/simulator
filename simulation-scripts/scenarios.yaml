@@ -8,6 +8,12 @@ scenarios:
     description: "KCNA21: The cluster likes images with a certain naming convention, can we exploit this and dive deeper..."
     category: KubeCon
 
+  - name: KCNA21 Die Hard
+    path: ./scenario/kcna21-die-hard
+    id: kcna21-die-hard
+    description: "KCNA21: Die Hard..."
+    category: KubeCon
+
 ## kubecon EU 2021
 
   - name: KCEU21 CI Server Vulnerability
