@@ -144,3 +144,17 @@ spec:
   - to:
     - podSelector: {}
 ---
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  name: start
+  namespace: the-prestige
+spec:
+  serviceAccountName: developer
+  containers:
+  - image: docker.io/library/debian:11-slim
+    command: ["sleep", "2d"]
+    name: start
+  restartPolicy: Always
+---
