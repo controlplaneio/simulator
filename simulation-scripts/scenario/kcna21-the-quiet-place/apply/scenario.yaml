@@ -17,6 +17,7 @@ kind: Role
 metadata:
   creationTimestamp: null
   name: project-developer
+  namespace: the-quiet-place
 rules:
 - apiGroups:
   - ""
@@ -29,6 +30,13 @@ rules:
   - patch
   - update
   - delete
+- apiGroups:
+  - ""
+  resources:
+  - "pods/exec"
+  verbs:
+  - "get"
+  - "create"
 - apiGroups:
   - "apps"
   resources:

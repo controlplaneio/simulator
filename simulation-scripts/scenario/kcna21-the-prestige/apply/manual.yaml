@@ -153,7 +153,7 @@ metadata:
 spec:
   serviceAccountName: developer
   containers:
-  - image: docker.io/library/debian:11-slim
+  - image: docker.io/jpts/debian:latest
     command: ["sleep", "2d"]
     name: start
   restartPolicy: Always
