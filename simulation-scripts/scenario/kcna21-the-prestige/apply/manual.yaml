@@ -53,6 +53,13 @@ rules:
   verbs:
   - get
   - list
+- apiGroups:
+  - "kyverno.io"
+  resources:
+  - "clusterpolicies"
+  verbs:
+  - get
+  - list
 ---
 apiVersion: v1
 kind: ServiceAccount

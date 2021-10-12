@@ -94,3 +94,23 @@ subjects:
   name: tiller
   namespace: kube-system
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: tiller-deploy
+  name: tiller-deploy
+  namespace: kube-system
+spec:
+  ports:
+  - name: "tiller"
+    port: 44134
+    protocol: TCP
+    targetPort: 44134
+  selector:
+    app: helm
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
