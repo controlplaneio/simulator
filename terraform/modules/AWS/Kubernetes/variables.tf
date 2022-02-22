@@ -54,3 +54,8 @@ variable "default_tags" {
   type        = map(string)
 }
 
+variable "kubernetes_version" {
+  description = "version of kubernetes to deploy"
+  type        = string
+  default     = "1.22.7"
+}

@@ -7,6 +7,6 @@ data "template_file" "node_cloud_config" {
     node_bashrc    = filebase64("${path.module}/bashrc")
     node_inputrc   = filebase64("${path.module}/inputrc")
     node_aliases   = filebase64("${path.module}/bash_aliases")
+    version        = var.kubernetes_version
   }
 }
-

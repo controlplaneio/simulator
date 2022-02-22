@@ -46,29 +46,27 @@ write_files:
 
 
 runcmd:
+  - 'echo "br_netfilter" >> /etc/modules-load.d/k8s.conf && modprobe br_netfilter'
+  - 'echo "net.bridge.bridge-nf-call-iptables = 1" >> /etc/sysctl.d/k8s.conf'
+  - 'echo "net.bridge.bridge-nf-call-ip6tables = 1" >> /etc/sysctl.d/k8s.conf'
+  - 'echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.d/k8s.conf'
+  - 'sysctl --load=/etc/sysctl.d/k8s.conf'
   - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
   - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
-  - 'mkdir /run/download'
   - 'apt update'
-  - 'apt install -y kubelet kubeadm kubectl docker.io awscli'
-  - 'wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz'
-  - 'tar -C /usr/bin -xzf /run/download/crictl.tgz'
-  - 'chmod 754 /usr/bin/crictl'
-  - 'chown root:root /usr/bin/crictl'
-  - 'systemctl enable docker'
-  - 'systemctl daemon-reload'
-  - 'systemctl restart docker'
-  - 'systemctl restart kubelet'
-  - 'wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml -O /run/download/rbac-kdd.yaml'
-  - 'wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml -O /run/download/calico.yaml'
-  - 'kubeadm init --pod-network-cidr=192.168.0.0/16'
+  - 'apt install -y containerd kubelet=${version}-00 kubeadm=${version}-00 kubectl=${version}-00 awscli'
+  - 'systemctl enable --now containerd'
+  - 'systemctl enable --now kubelet'
+  - 'kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version=v${version}'
   - 'mkdir /root/.kube'
   - 'cp /etc/kubernetes/admin.conf /root/.kube/config'
-  - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /run/download/rbac-kdd.yaml'
-  - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /run/download/calico.yaml'
-  - "egrep -A 1 'kubeadm join' /var/log/cloud-init-output.log  |tr -d '\\' | tr -d '\n' > /tmp/join.txt"
+  - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://projectcalico.docs.tigera.io/manifests/calico.yaml' # needs to be versioned
+  - "grep -A 1 'kubeadm join' /var/log/cloud-init-output.log | tr -d '\\\n\r\t' > /tmp/join.txt"
   - 'aws s3 cp /tmp/join.txt s3://${s3_bucket_name}'
   - 'aws s3 cp /root/.kube/config s3://${s3_bucket_name}'
+  - 'curl -L https://github.com/containerd/nerdctl/releases/download/v0.17.0/nerdctl-0.17.0-linux-amd64.tar.gz -o /tmp/nerdctl.tar.gz'
+  - 'tar -xf /tmp/nerdctl.tar.gz nerdctl -O > /tmp/nerdctl'
+  - 'install /tmp/nerdctl /usr/local/bin/'
 
 output:
   all: '| tee -a /var/log/cloud-init-output.log'
