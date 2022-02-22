@@ -36,4 +36,3 @@ variable "iam_instance_profile_id" {
 variable "s3_bucket_name" {
   description = "Name  of s3 bucket"
 }
-
