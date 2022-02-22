@@ -26,7 +26,7 @@ fi
 
 echo -n "Checking Docker is running.."
 
-if [[ $(docker version) ]]; then
+if [[ $(sudo docker version) ]]; then
 	echo "running"
 else
 	echo "not running"
