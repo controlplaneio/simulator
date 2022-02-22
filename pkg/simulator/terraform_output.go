@@ -31,6 +31,7 @@ type TerraformOutput struct {
 	BastionPublicIP       StringOutput      `json:"bastion_public_ip"`
 	ClusterNodesPrivateIP StringSliceOutput `json:"cluster_nodes_private_ip"`
 	MasterNodesPrivateIP  StringSliceOutput `json:"master_nodes_private_ip"`
+	InternalNodePrivateIP StringOutput      `json:"internal_host_private_ip"`
 }
 
 var bastionConfigTmplSrc = `Host bastion {{.Hostname}}
@@ -109,6 +110,18 @@ func (tfo *TerraformOutput) ToSSHConfig() (*string, error) {
 		if err != nil {
 			return nil, errors.Wrapf(err, "Error populating ssh node config template with %+v", c)
 		}
+	}
+
+	c := SSHConfig{
+		Alias:              "internal",
+		Hostname:           tfo.InternalNodePrivateIP.Value,
+		KeyFilePath:        ssh.PrivateKeyPath,
+		KnownHostsFilePath: ssh.KnownHostsPath,
+		BastionIP:          tfo.BastionPublicIP.Value,
+	}
+	err = k8sConfigTmpl.Execute(&buf, c)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error populating ssh internal config template with %+v", c)
 	}
 
 	var output = buf.String()
