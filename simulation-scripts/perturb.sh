@@ -188,10 +188,11 @@ get_pods() {
     error "Timed out waiting for pods to be ready"
   fi
 
-  local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
+  local QUERY_DOCKER="nerdctl -n k8s.io inspect \$(nerdctl -n k8s.io ps -q)"
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json"
   local TMP_FILE="${TMP_DIR}/docker-"
 
+  info "Querying pod information"
   echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >|"${TMP_FILE}"master
   echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >|"${TMP_FILE}"all-pods
   echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
