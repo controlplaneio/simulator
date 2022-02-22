@@ -20,7 +20,9 @@ main() {
   echo "Starting at $(date)"
   install_goss
   wait_for_cloud_init
-  goss validate -f documentation
+  goss validate -f documentation \
+    --sleep 10s \
+    --retry-timeout 120s
 }
 readonly -f main
 

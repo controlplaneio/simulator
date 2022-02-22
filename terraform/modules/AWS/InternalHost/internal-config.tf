@@ -5,7 +5,7 @@ locals {
 data "template_file" "internal_config" {
   template = file("${path.module}/internal-config.yaml")
   vars = {
-    s3_bucket_name = var.s3_bucket_name
+    s3_bucket_name         = var.s3_bucket_name
     github_usernames       = local.access_github_usernames
     host_bashrc            = filebase64("${path.module}/bashrc")
     host_inputrc           = filebase64("${path.module}/inputrc")
