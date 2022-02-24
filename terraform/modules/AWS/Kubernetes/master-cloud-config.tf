@@ -7,6 +7,6 @@ data "template_file" "master_cloud_config" {
     master_bashrc  = filebase64("${path.module}/bashrc")
     master_inputrc = filebase64("${path.module}/inputrc")
     master_aliases = filebase64("${path.module}/bash_aliases")
+    version        = var.kubernetes_version
   }
 }
-

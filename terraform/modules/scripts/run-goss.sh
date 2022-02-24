@@ -31,8 +31,14 @@ install_goss() {
 readonly -f install_goss
 
 wait_for_cloud_init() {
-  while ! grep -q "finish: modules-final: SUCCESS: running modules for final" /var/log/cloud-init.log; do
-    echo "Waiting 5s for cloud-init to finish"
+  while :; do
+    if grep -q "finish: modules-final: SUCCESS: running modules for final" /var/log/cloud-init.log; then
+        echo "Waiting 5s for cloud-init to finish"
+        break
+    elif grep -q "finish: modules-final: FAIL" /var/log/cloud-init.log; then
+        echo "cloud init failed"
+        exit 1
+    fi
     sleep 5
   done
 }

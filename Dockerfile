@@ -33,7 +33,7 @@ ENV PATH $PATH:/usr/local/go/bin
 ENV GOPATH /go
 ENV PATH $PATH:/go/bin
 
-ENV GO111MODULE on 
+ENV GO111MODULE on
 RUN mkdir -p /go/ && \
     go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.3
 
@@ -44,7 +44,7 @@ RUN terraform-bundle package terraform-bundle.hcl && \
 
 # Default configuration for dep
 ARG JQ_VERSION=1.6
-ARG YQ_VERSION=2.7.2
+ARG YQ_VERSION=3.4.1
 ARG GOSS_VERSION=v0.3.7
 ARG HADOLINT_VERSION=v1.16.3
 ARG lint_user=lint
@@ -55,7 +55,7 @@ RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/j
     && chmod +x /usr/local/bin/jq
 
 ## Install YQ
-RUN curl -sL https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 \
+RUN curl -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
       -o /usr/local/bin/yq                                                           \
     && chmod +x /usr/local/bin/yq
 
