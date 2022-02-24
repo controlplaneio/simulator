@@ -21,8 +21,6 @@ HOST := $(shell hostname)
 TOOLS_DIR := tools/scenario-tools
 SIMULATOR_TFVAR_DIR := $(KUBE_SIM_TMP)/settings
 
-DOCKER := sudo docker
-
 export GOSUMDB=off
 
 # --- Make

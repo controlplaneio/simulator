@@ -25,8 +25,13 @@ else
 fi
 
 echo -n "Checking Docker is running.."
+if getent group docker | grep -q "\b$USER\b"; then
+	sudoDocker=""
+else
+	sudoDocker="sudo"
+fi
 
-if [[ $(sudo docker version) ]]; then
+if [[ $($sudoDocker docker version) ]]; then
 	echo "running"
 else
 	echo "not running"

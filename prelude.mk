@@ -47,3 +47,8 @@ GO_LDFLAGS=-ldflags "-w -X $(PKG)/cmd.commit=$(GIT_SHA) -X $(PKG)/cmd.version=$(
 
 GO := go
 
+ifeq ($(shell getent group docker | grep "\b$(USER)\b"),)
+  DOCKER := sudo docker
+else
+  DOCKER := docker
+endif
