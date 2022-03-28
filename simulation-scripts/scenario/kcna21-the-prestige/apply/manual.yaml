@@ -160,6 +160,8 @@ metadata:
 spec:
   serviceAccountName: developer
   containers:
+  ## the build file for this image is included under _img/Dockerfile
+  ## TODO: host this under a central CP ECR/dockerhub repo
   - image: docker.io/jpts/debian:latest
     command: ["sleep", "2d"]
     name: start
