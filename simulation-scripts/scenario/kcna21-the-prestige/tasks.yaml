@@ -11,4 +11,4 @@ tasks:
       podName: start
       podNamespace: the-prestige
     summary: clone and pivot
-name: the-prestige
+name: kcna21-the-prestige

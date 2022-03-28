@@ -11,4 +11,4 @@ tasks:
       podName: start
       podNamespace: the-quiet-place
     summary: Can you be stealthy enought to traverse the cluster and steal the loot without being caught?
-name: the-quiet-place
+name: kcna21-the-quiet-place
