@@ -9,7 +9,7 @@
      - --authorization-mode=Node,RBAC
      - --client-ca-file=/etc/kubernetes/pki/ca.crt
      - --enable-admission-plugins=NodeRestriction
-@@ -92,9 +94,23 @@
+@@ -92,9 +94,24 @@
      - mountPath: /usr/share/ca-certificates
        name: usr-share-ca-certificates
        readOnly: true
@@ -20,6 +20,7 @@
 +      name: audit-webhook
 +      readOnly: true
    hostNetwork: true
++  dnsPolicy: ClusterFirstWithHostNet
    priorityClassName: system-node-critical
    volumes:
 +  - name: audit

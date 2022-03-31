@@ -67,7 +67,7 @@ log_level: info
 # priority more severe than this level will be loaded/run.  Can be one
 # of "emergency", "alert", "critical", "error", "warning", "notice",
 # "info", "debug".
-priority: debug
+priority: notice
 
 # Whether or not output to any of the output channels below is
 # buffered. Defaults to false

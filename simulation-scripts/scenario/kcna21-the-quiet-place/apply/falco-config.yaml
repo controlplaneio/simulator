@@ -18,7 +18,7 @@ data:
     log_stderr: true
     log_syslog: true
     log_level: info
-    priority: debug
+    priority: notice
     buffered_outputs: false
     syscall_event_drops:
       threshold: .1
