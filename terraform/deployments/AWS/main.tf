@@ -57,7 +57,7 @@ module "Kubernetes" {
   access_key_name             = module.SshKey.KeyPairName
   control_plane_sg_id         = module.SecurityGroups.ControlPlaneSecurityGroupID
   private_subnet_id           = module.Networking.PrivateSubnetId
-  iam_instance_profile_id     = module.S3Storage.IamInstanceProfileId
+  iam_instance_profile_id     = module.Iam.IamInstanceProfileId
   s3_bucket_name              = module.S3Storage.S3BucketName
   default_tags                = local.aws_tags
   access_github_usernames     = var.access_github_usernames
@@ -73,7 +73,7 @@ module "InternalHost" {
   private_subnet_id       = module.Networking.PrivateSubnetId
   default_tags            = local.aws_tags
   bastion_public_ip       = module.Bastion.BastionPublicIp
-  iam_instance_profile_id = module.S3Storage.IamInstanceProfileId
+  iam_instance_profile_id = module.Iam.IamInstanceProfileId
   s3_bucket_name          = module.S3Storage.S3BucketName
   access_github_usernames = var.access_github_usernames
 }
@@ -83,6 +83,12 @@ module "InternalHost" {
 module "S3Storage" {
   source       = "../../modules/AWS/S3Storage"
   default_tags = local.aws_tags
+}
+
+module "Iam" {
+  source          = "../../modules/AWS/Iam"
+  default_tags    = local.aws_tags
+  join_bucket_arn = module.S3Storage.JoinBucketArn
 }
 
 // Define security groups
