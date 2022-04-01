@@ -1,10 +1,14 @@
 #cloud-config
 
+# wait for an internet connection
+bootcmd:
+  - until ping -W 1 -c1 8.8.8.8 >/dev/null; do sleep 1; done
+
 package_update: true
 package_upgrade: true
 disable_root: false
 
-packages: [ 'figlet' ]
+packages: ["figlet"]
 hostname: "${hostname}"
 
 write_files:
