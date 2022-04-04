@@ -1,6 +1,7 @@
 command:
   kubectl CLIENT minor version is 20:
-    exec: kubectl version -o json | jq -r ".clientVersion.minor"
+    exec: kubectl version --client -o json | jq -r ".clientVersion.minor"
+    exit-status: 0
     stdout: ["20"]
 
 # TODO: add test for `kubelet --version` too/instead
@@ -33,8 +34,6 @@ service:
 group:
   docker:
     exists: true
-    gid: 115
 process:
   kubelet:
     running: true
-
