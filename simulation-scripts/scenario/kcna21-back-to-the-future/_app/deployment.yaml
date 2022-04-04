@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tenet
+  labels:
+    app: tenet
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tenet
+  template:
+    metadata:
+      labels:
+        app: tenet
+    spec:
+      containers:
+      - name: tenet
+        image: denhamparry/tenet:0.1
+        env:
+        - name: TENET
+          value: "1"
+        livenessProbe:
+          exec:
+            command:
+            - iGuessYouGuysArentReadyForThat
+            - /but/your/kids/are/gonna/love/it
+          initialDelaySeconds: 5
+          periodSeconds: 5
