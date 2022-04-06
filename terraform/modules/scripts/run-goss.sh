@@ -22,7 +22,7 @@ main() {
   wait_for_cloud_init
   goss validate -f documentation \
     --sleep 10s \
-    --retry-timeout 600s
+    --retry-timeout 240s
 }
 readonly -f main
 
