@@ -69,18 +69,12 @@ runcmd:
   - 'systemctl restart docker'
   - 'docker ps'
 
-  - 'wget https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml -O /run/download/rbac-kdd.yaml'
-  - 'wget https://docs.projectcalico.org/v3.9/manifests/calico.yaml -O /run/download/calico.yaml'
-
   - 'systemctl restart kubelet'
   - 'kubeadm init --pod-network-cidr=192.168.0.0/16'
   - 'mkdir /root/.kube'
   - 'cp /etc/kubernetes/admin.conf /root/.kube/config'
-  - 'kubectl version'
 
-# Warning: rbac.authorization.k8s.io/v1beta1 ClusterRole is deprecated in v1.17+, unavailable in v1.22+; use rbac.authorization.k8s.io/v1 ClusterRole
-  - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /run/download/rbac-kdd.yaml'
-  - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /run/download/calico.yaml'
+  - 'kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f https://docs.projectcalico.org/v3.21/manifests/calico.yaml'
 
   - "egrep -A 1 '^kubeadm join' /var/log/cloud-init-output.log  | tr -d '\\' | tr -d '\n' > /tmp/join.txt"
   - 'aws s3 cp /tmp/join.txt s3://${s3_bucket_name}'
