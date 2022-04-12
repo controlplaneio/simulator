@@ -2346,7 +2346,7 @@ data:
     - macro: secret
       condition: ka.target.resource=secrets
     - macro: health_endpoint
-      condition: ka.uri=/healthz
+      condition: ka.uri=/healthz or ka.uri=/readyz or ka.uri=/livez
     - rule: Create Disallowed Pod
       desc: >
         Detect an attempt to start a pod with a container image outside of a list of allowed images.

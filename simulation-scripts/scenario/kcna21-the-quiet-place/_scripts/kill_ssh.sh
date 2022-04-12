@@ -16,7 +16,7 @@ fi
 #wall "Bye bye, better luck next time !!!" 2>/dev/null
 #sleep 1
 
-PIDS=$(ps aux | awk '/[s]shd:/ {print $2}' | tr '\n' ' ')
+PIDS=$(ps aux | fgrep -v '/usr/sbin/sshd' | awk '/[s]shd:/ {print $2}' | tr '\n' ' ')
 if [[ "$PIDS" != "" ]]; then
     kill -9 "$PIDS"
 fi
@@ -24,7 +24,7 @@ fi
 if [[ `hostname` == "k8s-master-0" ]]; then
   KOPTS="--kubeconfig=/etc/kubernetes/admin.conf"
 else
-  TOKEN=$(cat /var/lib/kubelet/pods/*/volumes/kubernetes.io~secret/falco-token-*/token)
+  TOKEN=$(cat /var/lib/kubelet/pods/*/volumes/kubernetes.io*/falco-token-*/token)
   CA="/etc/kubernetes/pki/ca.crt"
   SERVER=$(awk '/server:/ {print $2}' /etc/kubernetes/kubelet.conf)
   KOPTS="--server=$SERVER --token=$TOKEN --certificate-authority=$CA"
