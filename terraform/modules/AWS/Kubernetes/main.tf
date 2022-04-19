@@ -36,7 +36,6 @@ resource "aws_instance" "simulator_node_instances" {
     data.template_file.node_cloud_config.*.rendered,
     count.index
   )
-  depends_on           = [aws_instance.simulator_master_instances]
   iam_instance_profile = var.iam_instance_profile_id
 
   root_block_device {
