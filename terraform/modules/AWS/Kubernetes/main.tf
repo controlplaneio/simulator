@@ -11,6 +11,11 @@ resource "aws_instance" "simulator_master_instances" {
     count.index,
   )
   iam_instance_profile = var.iam_instance_profile_id
+
+  root_block_device {
+    volume_size = 20
+  }
+
   tags = merge(
     var.default_tags,
     {
@@ -27,12 +32,17 @@ resource "aws_instance" "simulator_node_instances" {
   vpc_security_group_ids      = [var.control_plane_sg_id]
   associate_public_ip_address = false
   subnet_id                   = var.private_subnet_id
-  user_data                   = element(
+  user_data = element(
     data.template_file.node_cloud_config.*.rendered,
     count.index
   )
-  depends_on                  = [aws_instance.simulator_master_instances]
-  iam_instance_profile        = var.iam_instance_profile_id
+  depends_on           = [aws_instance.simulator_master_instances]
+  iam_instance_profile = var.iam_instance_profile_id
+
+  root_block_device {
+    volume_size = 20
+  }
+
   tags = merge(
     var.default_tags,
     {
