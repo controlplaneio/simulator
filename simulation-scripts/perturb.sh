@@ -612,7 +612,7 @@ run_kubectl_yaml() {
     (
       cd "${SCENARIO_DIR%/}/${ACTION}/"
       # shellcheck disable=SC2185
-      FILES=$(find -regex '.*.ya?ml')
+      FILES=$(find -regex '.*.ya?ml' | sort)
 
       FILES_STRING=$(for FILE in ${FILES}; do
         cat "${FILE}"
