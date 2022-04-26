@@ -7,13 +7,64 @@ set -Eeuo pipefail
 curl -sL 'https://raw.githubusercontent.com/falcosecurity/evolution/8dd473f609f9fb585ca62fbb8951098e279d8dd1/examples/k8s_audit_config/audit-policy.yaml' -o /etc/kubernetes/audit-policy.yaml
 
 # apply falco-webhook-kubeconfig
-WEBHOOK="YXBpVmVyc2lvbjogdjEKa2luZDogQ29uZmlnCmNsdXN0ZXJzOgotIG5hbWU6IGZhbGNvCiAgY2x1c3RlcjoKICAgIHNlcnZlcjogaHR0cDovL2ZhbGNvLmZhbGNvLnN2Yy5jbHVzdGVyLmxvY2FsOjg3NjUvazhzLWF1ZGl0CmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBmYWxjbwogICAgdXNlcjogIiIKICBuYW1lOiBkZWZhdWx0LWNvbnRleHQKY3VycmVudC1jb250ZXh0OiBkZWZhdWx0LWNvbnRleHQKcHJlZmVyZW5jZXM6IHt9CnVzZXJzOiBbXQo="
-echo "$WEBHOOK" | base64 -d >> /etc/kubernetes/audit-webhook-kubeconfig
+cat <<-"EOF" > /etc/kubernetes/audit-webhook-kubeconfig
+apiVersion: v1
+kind: Config
+clusters:
+- name: falco
+  cluster:
+    server: http://falco.falco.svc.cluster.local:8765/k8s-audit
+contexts:
+- context:
+    cluster: falco
+    user: ""
+  name: default-context
+current-context: default-context
+preferences: {}
+users: []
+EOF
 
 # add audit flags
-PATCH="LS0tIG1hbmlmZXN0cy9rdWJlLWFwaXNlcnZlci5vcmlnCTIwMjEtMTAtMTAgMTI6NDc6MzIuNDM1NjIxMDE0ICswMDAwCisrKyBtYW5pZmVzdHMva3ViZS1hcGlzZXJ2ZXIueWFtbAkyMDIxLTEwLTEwIDEzOjA4OjM2LjMyNTg2NTU1OSArMDAwMApAQCAtMTUsNiArMTUsOCBAQAogICAgIC0ga3ViZS1hcGlzZXJ2ZXIKICAgICAtIC0tYWR2ZXJ0aXNlLWFkZHJlc3M9MTcyLjMxLjIuMTAwCiAgICAgLSAtLWFsbG93LXByaXZpbGVnZWQ9dHJ1ZQorICAgIC0gLS1hdWRpdC1wb2xpY3ktZmlsZT0vZXRjL2t1YmVybmV0ZXMvYXVkaXQtcG9saWN5LnlhbWwKKyAgICAtIC0tYXVkaXQtd2ViaG9vay1jb25maWctZmlsZT0vZXRjL2t1YmVybmV0ZXMvYXVkaXQtd2ViaG9vay1rdWJlY29uZmlnCiAgICAgLSAtLWF1dGhvcml6YXRpb24tbW9kZT1Ob2RlLFJCQUMKICAgICAtIC0tY2xpZW50LWNhLWZpbGU9L2V0Yy9rdWJlcm5ldGVzL3BraS9jYS5jcnQKICAgICAtIC0tZW5hYmxlLWFkbWlzc2lvbi1wbHVnaW5zPU5vZGVSZXN0cmljdGlvbgpAQCAtOTIsOSArOTQsMjQgQEAKICAgICAtIG1vdW50UGF0aDogL3Vzci9zaGFyZS9jYS1jZXJ0aWZpY2F0ZXMKICAgICAgIG5hbWU6IHVzci1zaGFyZS1jYS1jZXJ0aWZpY2F0ZXMKICAgICAgIHJlYWRPbmx5OiB0cnVlCisgICAgLSBtb3VudFBhdGg6IC9ldGMva3ViZXJuZXRlcy9hdWRpdC1wb2xpY3kueWFtbAorICAgICAgbmFtZTogYXVkaXQKKyAgICAgIHJlYWRPbmx5OiB0cnVlCisgICAgLSBtb3VudFBhdGg6IC9ldGMva3ViZXJuZXRlcy9hdWRpdC13ZWJob29rLWt1YmVjb25maWcKKyAgICAgIG5hbWU6IGF1ZGl0LXdlYmhvb2sKKyAgICAgIHJlYWRPbmx5OiB0cnVlCiAgIGhvc3ROZXR3b3JrOiB0cnVlCisgIGRuc1BvbGljeTogQ2x1c3RlckZpcnN0V2l0aEhvc3ROZXQKICAgcHJpb3JpdHlDbGFzc05hbWU6IHN5c3RlbS1ub2RlLWNyaXRpY2FsCiAgIHZvbHVtZXM6CisgIC0gbmFtZTogYXVkaXQKKyAgICBob3N0UGF0aDoKKyAgICAgIHBhdGg6IC9ldGMva3ViZXJuZXRlcy9hdWRpdC1wb2xpY3kueWFtbAorICAgICAgdHlwZTogRmlsZQorICAtIG5hbWU6IGF1ZGl0LXdlYmhvb2sKKyAgICBob3N0UGF0aDoKKyAgICAgIHBhdGg6IC9ldGMva3ViZXJuZXRlcy9hdWRpdC13ZWJob29rLWt1YmVjb25maWcKKyAgICAgIHR5cGU6IEZpbGUKICAgLSBob3N0UGF0aDoKICAgICAgIHBhdGg6IC9ldGMvc3NsL2NlcnRzCiAgICAgICB0eXBlOiBEaXJlY3RvcnlPckNyZWF0ZQo="
 cd /etc/kubernetes/manifests
-if grep audit-webhook-kubeconfig kube-apiserver.yaml &>/dev/null; then
+cat <<-"EOF" > apiserver.patch
+--- manifests/kube-apiserver.orig	2021-10-10 12:47:32.435621014 +0000
++++ manifests/kube-apiserver.yaml	2021-10-10 13:08:36.325865559 +0000
+@@ -15,6 +15,8 @@
+     - kube-apiserver
+     - --advertise-address=172.31.2.100
+     - --allow-privileged=true
++    - --audit-policy-file=/etc/kubernetes/audit-policy.yaml
++    - --audit-webhook-config-file=/etc/kubernetes/audit-webhook-kubeconfig
+     - --authorization-mode=Node,RBAC
+     - --client-ca-file=/etc/kubernetes/pki/ca.crt
+     - --enable-admission-plugins=NodeRestriction
+@@ -92,9 +94,24 @@
+     - mountPath: /usr/share/ca-certificates
+       name: usr-share-ca-certificates
+       readOnly: true
++    - mountPath: /etc/kubernetes/audit-policy.yaml
++      name: audit
++      readOnly: true
++    - mountPath: /etc/kubernetes/audit-webhook-kubeconfig
++      name: audit-webhook
++      readOnly: true
+   hostNetwork: true
++  dnsPolicy: ClusterFirstWithHostNet
+   priorityClassName: system-node-critical
+   volumes:
++  - name: audit
++    hostPath:
++      path: /etc/kubernetes/audit-policy.yaml
++      type: File
++  - name: audit-webhook
++    hostPath:
++      path: /etc/kubernetes/audit-webhook-kubeconfig
++      type: File
+   - hostPath:
+       path: /etc/ssl/certs
+       type: DirectoryOrCreate
+EOF
+if ! grep audit-webhook-kubeconfig kube-apiserver.yaml &>/dev/null; then
     patch -p1 --no-backup-if-mismatch --forward -i apiserver.patch
 fi
 
