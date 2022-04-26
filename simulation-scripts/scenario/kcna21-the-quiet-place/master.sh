@@ -4,7 +4,7 @@
 
 set -Eeuo pipefail
 
-curl -sL 'https://raw.githubusercontent.com/falcosecurity/evolution/master/examples/k8s_audit_config/audit-policy.yaml' -o /etc/kubernetes/audit-policy.yaml
+curl -sL 'https://raw.githubusercontent.com/falcosecurity/evolution/8dd473f609f9fb585ca62fbb8951098e279d8dd1/examples/k8s_audit_config/audit-policy.yaml' -o /etc/kubernetes/audit-policy.yaml
 
 # apply falco-webhook-kubeconfig
 WEBHOOK="YXBpVmVyc2lvbjogdjEKa2luZDogQ29uZmlnCmNsdXN0ZXJzOgotIG5hbWU6IGZhbGNvCiAgY2x1c3RlcjoKICAgIHNlcnZlcjogaHR0cDovL2ZhbGNvLmZhbGNvLnN2Yy5jbHVzdGVyLmxvY2FsOjg3NjUvazhzLWF1ZGl0CmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBmYWxjbwogICAgdXNlcjogIiIKICBuYW1lOiBkZWZhdWx0LWNvbnRleHQKY3VycmVudC1jb250ZXh0OiBkZWZhdWx0LWNvbnRleHQKcHJlZmVyZW5jZXM6IHt9CnVzZXJzOiBbXQo="
