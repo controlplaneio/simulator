@@ -62,7 +62,7 @@ spec:
     spec:
       containers:
       - name: tenet
-        image: 035655476617.dkr.ecr.eu-west-1.amazonaws.com/tenet:0.1
+        image: docker.io/denhamparry/tenet:0.1
         env:
         - name: TENET
           valueFrom:
