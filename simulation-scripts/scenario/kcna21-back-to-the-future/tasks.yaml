@@ -8,7 +8,7 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: node
-      nodeId: master-0
+      nodeId: node-0
       asRoot: false
     summary: kubectl access is broken, can you figure out why?
 name: kcna21-back-to-the-future
