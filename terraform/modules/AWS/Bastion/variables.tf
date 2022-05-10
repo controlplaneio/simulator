@@ -4,7 +4,7 @@ variable "ami_id" {
 
 variable "instance_type" {
   description = "instance type for Baston host"
-  default     = "t2.micro"
+  default     = "t2.medium"
 }
 
 variable "access_key_name" {
