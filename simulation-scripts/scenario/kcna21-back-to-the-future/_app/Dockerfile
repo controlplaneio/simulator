@@ -13,7 +13,7 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /tenet
+RUN go build -o /tenet -ldflags='-w -s' ./main.go
 
 ##
 ## Deploy
