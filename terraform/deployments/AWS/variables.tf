@@ -44,7 +44,7 @@ variable "private_subnet_cidr" {
 
 variable "instance_type" {
   description = "instance type for Baston host"
-  default     = "t2.micro"
+  default     = "t2.medium"
 }
 
 variable "master_instance_type" {
