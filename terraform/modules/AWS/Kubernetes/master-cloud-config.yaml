@@ -3,12 +3,38 @@
 # wait for an internet connection
 bootcmd:
   - until ping -W 1 -c1 8.8.8.8 >/dev/null; do sleep 1; done
+  - curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
 package_update: true
-package_upgrade: true
+package_upgrade: false
 disable_root: false
 
-packages: ["figlet"]
+apt:
+  source:
+    kubernetes:
+      source: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+
+# default + --allow-downgrade
+system_info:
+  apt_get_command: [
+    "apt-get",
+    "--option=Dpkg::Options::=--force-confold",
+    "--option=Dpkg::Options::=--force-unsafe-io",
+    "--assume-yes",
+    "--quiet",
+    "--allow-downgrades",
+    "--option=Dpkg::Lock::Timeout=-1"
+  ]
+
+packages:
+  - figlet
+  - docker.io
+  - cri-tools
+  - awscli
+  - [kubelet, 1.20.*]
+  - [kubeadm, 1.20.*]
+  - [kubectl, 1.20.*]
+
 hostname: "${hostname}"
 
 write_files:
@@ -51,25 +77,19 @@ write_files:
       session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
       session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
       @include common-password
+  - path: /etc/docker/daemon.json
+    owner: root:root
+    permissions: "0644"
+    content: |
+      {"registry-mirrors":["https://mirror.gcr.io"]}
 
 
 runcmd:
   - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"
-  - 'curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -'
-  - 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources.list.d/kubernetes.list'
-  - 'mkdir -p /run/download'
-  - 'apt update'
-  - 'VERSION="1.20.*"; apt install -y --allow-downgrades kubelet=$${VERSION} kubeadm=$${VERSION} kubectl=$${VERSION} docker.io awscli'
-  - 'wget https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.11.1/crictl-v1.11.1-linux-amd64.tar.gz -O /run/download/crictl.tgz'
-  - 'tar -C /usr/bin -xzf /run/download/crictl.tgz'
-  - 'chmod 754 /usr/bin/crictl'
-  - 'chown root:root /usr/bin/crictl'
-  - 'systemctl enable docker'
-  - 'systemctl daemon-reload'
-  - 'systemctl restart docker'
-  - 'docker ps'
 
-  - 'systemctl restart kubelet'
+  - 'systemctl daemon-reload'
+  - 'systemctl enable --now docker'
+
   - 'kubeadm init --pod-network-cidr=192.168.0.0/16'
   - 'mkdir /root/.kube'
   - 'cp /etc/kubernetes/admin.conf /root/.kube/config'

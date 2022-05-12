@@ -1,26 +1,29 @@
 #cloud-config
 
-# https://peteris.rocks/blog/quiet-and-unattended-installation-with-apt-get/
-#apt_get_command: [
-#    'apt',
-#    '--option=Dpkg::Options::=--force-confold',
-#    '--option=Dpkg::options::=--force-unsafe-io',
-#    '-qq'
-#]
-
 package_update: true
-package_upgrade: true
+package_upgrade: false
 disable_root: 0
 
-packages: [ "docker.io", "figlet" ]
+system_info:
+  apt_get_command: [
+    "apt-get",
+    "--option=Dpkg::Options::=--force-confold",
+    "--option=Dpkg::Options::=--force-unsafe-io",
+    "--assume-yes",
+    "--quiet",
+    "--option=Dpkg::Lock::Timeout=-1"
+  ]
+
+packages:
+  - docker.io
+  - figlet
 
 hostname: "bastion"
 
 runcmd:
   - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"
-  - "systemctl enable docker"
   - "systemctl daemon-reload"
-  - "systemctl restart docker"
+  - "systemctl enable --now docker"
   - "docker pull ${attack_container_repo}:${attack_container_tag}"
 
 write_files:
@@ -140,6 +143,11 @@ write_files:
       AcceptEnv BASE64_SSH_KEY LANG LC_*
       Subsystem sftp /usr/lib/openssh/sftp-server
       UsePAM yes
+  - path: /etc/docker/daemon.json
+    owner: root:root
+    permissions: "0644"
+    content: |
+      {"registry-mirrors":["https://mirror.gcr.io"]}
 
 output:
   all: "| tee -a /var/log/cloud-init-output.log"

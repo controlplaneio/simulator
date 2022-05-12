@@ -1,3 +1,4 @@
+---
 port:
   tcp:22:
     listening: true
@@ -14,3 +15,8 @@ packages:
   kubectl:
     installed: true
 
+command:
+  cloud-init:
+    exec: cloud-init status
+    exit-status: 0
+    stdout: ['status: done']

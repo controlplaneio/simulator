@@ -1,13 +1,19 @@
+---
 command:
   kubectl CLIENT minor version is 20:
     exec: kubectl version -o json | jq -r '.clientVersion.minor'
     exit-status: 0
-    stdout: ["20"]
+    stdout: ['20']
 
   kubectl SERVER minor version is 20:
     exec: kubectl version -o json | jq -r '.serverVersion.minor | sub("\\+"; "")'
     exit-status: 0
-    stdout: ["20"]
+    stdout: ['20']
+
+  cloud-init:
+    exec: cloud-init status
+    exit-status: 0
+    stdout: ['status: done']
 
 package:
   awscli:
@@ -18,15 +24,16 @@ package:
     installed: true
   kubelet:
     installed: true
+
 port:
   tcp:10248:
     listening: true
     ip:
-    - 127.0.0.1
+      - 127.0.0.1
   tcp6:10250:
     listening: true
     ip:
-    - '::'
+      - '::'
 service:
   docker:
     enabled: true
@@ -37,6 +44,7 @@ service:
 group:
   docker:
     exists: true
+
 process:
   kubelet:
     running: true
