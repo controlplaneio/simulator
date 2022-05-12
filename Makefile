@@ -123,7 +123,7 @@ dep: go.mod ## Install dependencies for other targets
 
 .PHONY: static-analysis
 static-analysis: dep ## Runs static analysis tools over golang code for known problem
-	golangci-lint run
+	golangci-lint run --timeout=3m --verbose
 
 .PHONY: build
 build: static-analysis ## Run golang build for the CLI program

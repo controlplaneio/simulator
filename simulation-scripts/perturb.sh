@@ -443,7 +443,7 @@ run_kubectl_yaml() {
       done)
 
       info "Testing kube yamls are valid"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null
+      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run=client -f - &>/dev/null
       info "Applying kube yamls to the cluster"
       echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null
     )

@@ -1,9 +1,10 @@
 package scenario_test
 
 import (
+	"testing"
+
 	"github.com/kubernetes-simulator/simulator/pkg/scenario"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func Test_LoadManifest(t *testing.T) {

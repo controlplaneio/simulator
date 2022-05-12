@@ -1,15 +1,16 @@
 package ssh
 
 import (
+	"net/http"
+	"os"
+
 	"github.com/kubernetes-simulator/simulator/pkg/progress"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"golang.org/x/crypto/ssh/knownhosts"
-	"golang.org/x/crypto/ssh/terminal"
-	"net/http"
-	"os"
+	"golang.org/x/term"
 )
 
 // GetAuthMethods tries to contact ssh-agent to get the AuthMethods and falls
@@ -122,9 +123,9 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 	defer session.Close()
 
 	fileDescriptor := int(os.Stdin.Fd())
-	if terminal.IsTerminal(fileDescriptor) {
+	if term.IsTerminal(fileDescriptor) {
 		// See this for more information http://www.linusakesson.net/programming/tty/
-		originalState, err := terminal.MakeRaw(fileDescriptor)
+		originalState, err := term.MakeRaw(fileDescriptor)
 		if err != nil {
 			logger.WithFields(logrus.Fields{
 				"Error": err,
@@ -132,7 +133,7 @@ func StartInteractiveSSHShell(sshConfig *ssh.ClientConfig, network string, host 
 			return errors.Wrap(err, "Error setting stdin terminal to raw mode")
 		}
 		defer func() {
-			if err := terminal.Restore(fileDescriptor, originalState); err != nil {
+			if err := term.Restore(fileDescriptor, originalState); err != nil {
 				// Something really bad happened
 				panic(err)
 			}
@@ -180,7 +181,7 @@ func setupPty(stdinFd int, session *ssh.Session, logger *logrus.Logger) error {
 		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
 	}
 
-	termWidth, termHeight, err := terminal.GetSize(stdinFd)
+	termWidth, termHeight, err := term.GetSize(stdinFd)
 	if err != nil {
 		logger.WithFields(logrus.Fields{
 			"Error": err,

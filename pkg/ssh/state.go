@@ -2,11 +2,12 @@ package ssh
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/kubernetes-simulator/simulator/pkg/childminder"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/pkg/errors"
-	"os"
-	"strings"
 )
 
 // StateProvider provides methods for storing or retrieving state about a user and

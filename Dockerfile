@@ -1,7 +1,7 @@
 #---------------------------------------#
 # Dependencies, Linting & JS unit tests #
 #---------------------------------------#
-FROM debian:buster-slim AS dependencies
+FROM debian:bullseye-slim AS dependencies
 
 # We're using sh not bash at this point
 # hadolint ignore=DL4006
@@ -9,18 +9,15 @@ RUN apt-get update                                                              
     && DEBIAN_FRONTEND=noninteractive apt-get install  -y --no-install-recommends     \
     curl                                                                              \
     software-properties-common                                                        \
-    && curl -sL https://deb.nodesource.com/setup_13.x | bash -                        \
-    && apt-get update                                                                 \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends      \
     build-essential                                                                   \
     ca-certificates                                                                   \
     git                                                                               \
-    nodejs                                                                            \
+    nodejs npm                                                                        \
     shellcheck                                                                        \
     unzip
 
 # Download and save golang latest for use in other layers and install
-ARG GO_INSTALL_VERSION=1.13.7
+ARG GO_INSTALL_VERSION=1.18.2
 # hadolint ignore=DL3003,DL3010
 RUN mkdir /downloads                                                  \
     && cd /downloads                                                  \
@@ -45,9 +42,9 @@ RUN terraform-bundle package terraform-bundle.hcl && \
 # Default configuration for dep
 ARG JQ_VERSION=1.6
 ARG YQ_VERSION=3.4.1
-ARG GOSS_VERSION=v0.3.7
-ARG HADOLINT_VERSION=v1.16.3
-ARG lint_user=lint
+ARG GOSS_VERSION=v0.3.16
+ARG HADOLINT_VERSION=v2.10.0
+ARG lint_user=1000
 
 # Install JQ
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
@@ -111,7 +108,7 @@ WORKDIR /app/scenario-tools
 #-----------------------#
 # Golang Build and Test #
 #-----------------------#
-FROM debian:buster-slim AS build-and-test
+FROM debian:bullseye-slim AS build-and-test
 
 RUN apt-get update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -149,6 +146,10 @@ COPY ./go.* /go/src/github.com/kubernetes-simulator/simulator/
 RUN chown -R ${build_user}:${build_user} /go/src/github.com/kubernetes-simulator/simulator \
     && chown -R ${build_user}:${build_user} /home/${build_user}
 
+# We're using sh not bash at this point
+# hadolint ignore=DL4006
+RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.46.1
+
 # Run all build and test steps as build user
 USER ${build_user}
 
@@ -165,23 +166,12 @@ COPY --chown=1000 test/  /go/src/github.com/kubernetes-simulator/simulator/test
 
 WORKDIR /go/src/github.com/kubernetes-simulator/simulator/
 
-# TODO: (rem) why is this owned by root after the earlier chmod?
-USER root
-# We're using sh not bash at this point
-# hadolint ignore=DL4006
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/kubernetes-simulator/simulator/ \
-    && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
-
-USER ${build_user}
-
-# Golang build and test
-WORKDIR /go/src/github.com/kubernetes-simulator/simulator
 RUN make test-unit
 
 #------------------#
 # Launch Container #
 #------------------#
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 RUN apt-get update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \

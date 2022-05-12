@@ -30,11 +30,13 @@ var tfCommandArgumentsTests = []struct {
 func Test_PrepareTfArgs(t *testing.T) {
 	pwd, _ := os.Getwd()
 	logger.Out = ioutil.Discard
+
 	simulator := sim.NewSimulator(
 		sim.WithLogger(logger),
 		sim.WithBucketName("test-bucket"),
 		sim.WithoutIPDetection(false),
 		sim.WithTfVarsDir(pwd+"/"+fixture("noop-tf-dir")))
+	// sim.WithSSHStateProvider() TODO need to provide state provider to allow parallel execution without ssh key clash
 
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.prepArgs[0], func(t *testing.T) {
@@ -80,7 +82,6 @@ func Test_Create(t *testing.T) {
 }
 
 func Test_Destroy(t *testing.T) {
-
 	pwd, _ := os.Getwd()
 	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(
