@@ -5,7 +5,6 @@ resource "random_uuid" "s3_iam_role_uuid" {
 
 resource "aws_s3_bucket" "k8sjoin" {
   bucket        = "k8sjoin-${random_uuid.s3_iam_role_uuid.result}"
-  acl           = "private"
   force_destroy = true
 
   tags = merge(
@@ -14,6 +13,11 @@ resource "aws_s3_bucket" "k8sjoin" {
       "Name" = "Simulator Kubernetes S3 Bucket"
     },
   )
+}
+
+resource "aws_s3_bucket_acl" "k8sjoin-acl" {
+  bucket = aws_s3_bucket.k8sjoin.id
+  acl = "private"
 }
 
 // Create IAM role, policy and instance profile

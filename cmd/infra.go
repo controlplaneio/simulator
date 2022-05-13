@@ -164,7 +164,7 @@ func newDestroyCommand(logger *logrus.Logger) *cobra.Command {
 			tfDir := viper.GetString("tf-dir")
 			tfVarsDir := viper.GetString("tf-vars-dir")
 			attackTag := viper.GetString("attack-container-tag")
-			disableIPDetection := true
+			disableIPDetection := false
 
 			simulator := sim.NewSimulator(
 				sim.WithLogger(logger),

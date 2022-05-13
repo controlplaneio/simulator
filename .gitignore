@@ -116,6 +116,8 @@ conf/.config/keybase/
 # .tfvars files
 *.tfvars
 
+.terraform.lock.hcl
+
 NOTES.md
 test.debug
 /count.out

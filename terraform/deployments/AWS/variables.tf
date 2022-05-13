@@ -44,12 +44,12 @@ variable "private_subnet_cidr" {
 
 variable "instance_type" {
   description = "instance type for Baston host"
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 
 variable "master_instance_type" {
   description = "instance type for master node(s) "
-  default     = "t2.medium"
+  default     = "t3.medium"
 }
 
 variable "number_of_master_instances" {
@@ -59,7 +59,7 @@ variable "number_of_master_instances" {
 
 variable "cluster_nodes_instance_type" {
   description = "instance type for k8s nodes"
-  default     = "t2.medium"
+  default     = "t3.medium"
 }
 
 variable "number_of_cluster_instances" {

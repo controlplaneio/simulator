@@ -5,9 +5,6 @@ variable "number_of_master_instances" {
 
 variable "ami_id" {
   description = "ami to use"
-
-  // Ensure we can SSH as root for the goss tests and also for preturb.sh
-  default = "ami-09d38086eb2b23925"
 }
 
 variable "bastion_public_ip" {
@@ -26,7 +23,7 @@ variable "number_of_cluster_instances" {
 
 variable "cluster_nodes_instance_type" {
   description = "instance type for k8s nodes"
-  default     = "t1.micro"
+  default     = "t3.micro"
 }
 
 variable "access_key_name" {

@@ -30,24 +30,23 @@ RUN mkdir /downloads                                                  \
 ENV PATH $PATH:/usr/local/go/bin
 
 # Install terraform
-ENV GOPATH /go
-ENV PATH $PATH:/go/bin
+ARG TF_VERSION=1.1.9
+RUN curl -sL https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip \
+      -o terraform.zip                                                               \
+      && unzip terraform.zip \
+      && mv terraform /usr/local/bin/terraform \
+    && chmod +x /usr/local/bin/terraform
 
-ENV GO111MODULE on
-RUN mkdir -p /go/ && \
-    go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.3
-
-COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
-RUN terraform-bundle package terraform-bundle.hcl && \
-    mkdir -p terraform-bundle                     && \
-    unzip -d terraform-bundle terraform_*.zip
+COPY ./terraform/deployments/AWS/providers.tf .
+ENV TF_PLUGIN_CACHE_DIR=/opt/terraform-plugin-dir
+RUN mkdir /opt/terraform-plugin-dir && terraform init -backend=false
 
 # Default configuration for dep
 ARG JQ_VERSION=1.6
 ARG YQ_VERSION=3.4.1
 ARG GOSS_VERSION=v0.3.7
 ARG HADOLINT_VERSION=v1.16.3
-ARG lint_user=lint
+ARG lint_user=1000
 
 # Install JQ
 RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
@@ -124,9 +123,9 @@ RUN apt-get update                                                              
     unzip
 
 # Install golang version downloaded in dependency stage
-COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 # hadolint ignore=DL3010
 COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
+COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
 # We want to minimise layers to keep the build fast
 # hadolint ignore=DL3010
 RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
@@ -202,7 +201,6 @@ RUN apt-get update                                                              
  && rm -rf /var/lib/apt/lists/*
 
 # Install golang version downloaded in dependency stage
-COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 # hadolint ignore=DL3010
 COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
 RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
@@ -217,7 +215,7 @@ RUN echo '[ ! -z "$TERM" ] && source /usr/local/bin/launch-motd' >> /etc/bash.ba
 COPY --from=dependencies /usr/local/bin/jq /usr/local/bin/jq
 COPY --from=dependencies /usr/local/bin/yq /usr/local/bin/yq
 COPY --from=dependencies /usr/local/bin/goss /usr/local/bin/goss
-COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
+COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/terraform
 
 # Copy statically linked simulator binary
 COPY --from=build-and-test /go/src/github.com/kubernetes-simulator/simulator/dist/simulator /usr/local/bin/simulator
@@ -232,7 +230,7 @@ RUN useradd -ms /bin/bash ${launch_user} \
 
 # Copy acceptance and smoke tests
 COPY --chown=1000 --from=build-and-test /go/src/github.com/kubernetes-simulator/simulator/test/ /app/test/
-
+COPY --chown=1000 --from=dependencies /opt/terraform-plugin-dir /opt/terraform-plugin-dir
 
 WORKDIR /app
 
@@ -253,7 +251,8 @@ COPY --chown=1000 launch-files/bashrc /home/launch/.bashrc
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS \
-    DISABLE_CHECKPOINT=true
+    DISABLE_CHECKPOINT=true \
+    TF_PLUGIN_CACHE_DIR=/opt/terraform-plugin-dir
 
 USER ${launch_user}
 

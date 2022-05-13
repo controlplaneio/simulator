@@ -16,7 +16,7 @@ resource "null_resource" "master_test" {
     user = "root"
 
     // disable ssh-agent support
-    agent       = "false"
+    agent       = false
     private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
@@ -60,7 +60,7 @@ resource "null_resource" "node_test" {
     user = "root"
 
     // disable ssh-agent support
-    agent       = "false"
+    agent       = false
     private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
 
