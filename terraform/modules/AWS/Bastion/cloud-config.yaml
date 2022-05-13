@@ -4,6 +4,9 @@ package_update: true
 package_upgrade: false
 disable_root: 0
 
+# defaults with extended timeout
+# timeout will become active when cloud-init updates to
+# relying on apt built-in timeout functionality
 system_info:
   apt_get_command: [
     "apt-get",

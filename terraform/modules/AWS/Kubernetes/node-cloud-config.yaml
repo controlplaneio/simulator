@@ -14,7 +14,9 @@ apt:
     kubernetes:
       source: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
 
-# default + --allow-downgrade
+# defaults with --allow-downgrade and extended timeout
+# timeout will become active when cloud-init updates to
+# relying on apt built-in timeout functionality
 system_info:
   apt_get_command: [
     "apt-get",
@@ -26,6 +28,9 @@ system_info:
     "--option=Dpkg::Lock::Timeout=-1"
   ]
 
+# cri-tools included to ensure we always have crictl
+# currently a dependency of kubeadm, which will pull
+# in the correct version for us
 packages:
   - figlet
   - docker.io

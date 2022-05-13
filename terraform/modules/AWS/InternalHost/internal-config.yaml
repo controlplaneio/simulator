@@ -14,6 +14,9 @@ apt:
     kubernetes:
       source: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
 
+# defaults with --allow-downgrade and extended timeout
+# timeout will become active when cloud-init updates to
+# relying on apt built-in timeout functionality
 system_info:
   apt_get_command: [
     "apt-get",
