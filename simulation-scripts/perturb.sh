@@ -188,6 +188,12 @@ provision_user_ssh_key_to_bastion() {
   info "Adding SSH public key for root@internal_host"
   echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /root/.ssh/authorized_keys" | run_ssh "${INTERNAL_HOST}"
 
+  # TODO: quick hack to provision keys for BTTF, should parse tasks.yaml properly
+  if [[ "${SCENARIO}" == "kcna21-back-to-the-future" ]]; then
+    info "Adding SSH pubilic key for root@node-0"
+    echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /root/.ssh/authorized_keys" | run_ssh "$(get_node 1)"
+  fi
+
   info "Overwriting or creating Bastion keys in cp_simulator_rsa"
   echo "cd /home/ubuntu/.ssh/ && echo '$(cat "${SSH_PRIVATE_KEY}")' > cp_simulator_rsa \
     && chmod 0600 cp_simulator_rsa && chown ubuntu:ubuntu cp_simulator_rsa" | run_ssh "${BASTION_HOST}"
