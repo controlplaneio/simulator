@@ -1,4 +1,3 @@
----
 # Check we're listening on port 22 (bit silly since we can' run this without it)
 port:
   tcp:22:
@@ -29,10 +28,10 @@ service:
 # Check whether we have the latest simulator-attack pulled locally
 command:
   docker:
-    exec: docker image inspect ${attack_container_repo}:${attack_container_tag}
+    exec: 'docker image inspect ${attack_container_repo}:${attack_container_tag}'
     exit-status: 0
   hostname:
-    exec: hostname | grep bastion
+    exec: 'hostname | grep bastion'
     exit-status: 0
   cloud-init:
     exec: cloud-init status
