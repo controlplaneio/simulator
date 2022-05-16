@@ -47,7 +47,7 @@ func Test_DetectPublicIP(t *testing.T) {
 func Test_EnvOrDefault(t *testing.T) {
 	key := "SIMULATOR_TEST_" + string(time.Now().Unix())
 	defaulted := util.EnvOrDefault(key, "setting")
-	assert.Equal(t, defaulted, "setting", "Did not return default")
+	assert.Equal(t, "setting", defaulted, "Did not return default")
 
 	os.Setenv(key, "custom")
 	val := util.EnvOrDefault(key, "custom")

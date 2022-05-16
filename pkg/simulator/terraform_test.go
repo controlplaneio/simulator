@@ -1,12 +1,13 @@
 package simulator_test
 
 import (
+	"testing"
+
 	sim "github.com/kubernetes-simulator/simulator/pkg/simulator"
 	"github.com/kubernetes-simulator/simulator/pkg/ssh"
 	"github.com/kubernetes-simulator/simulator/pkg/util"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"testing"
 
 	"io/ioutil"
 	"os"
@@ -38,7 +39,7 @@ func Test_PrepareTfArgs(t *testing.T) {
 
 	for _, tt := range tfCommandArgumentsTests {
 		t.Run("Test arguments for "+tt.prepArgs[0], func(t *testing.T) {
-			assert.Equal(t, simulator.PrepareTfArgs(tt.prepArgs[0]), tt.arguments)
+			assert.Equal(t, tt.arguments, simulator.PrepareTfArgs(tt.prepArgs[0]))
 		})
 	}
 }
@@ -64,7 +65,6 @@ func Test_Status(t *testing.T) {
 }
 
 func Test_Create(t *testing.T) {
-
 	pwd, _ := os.Getwd()
 	logger.Out = ioutil.Discard
 	simulator := sim.NewSimulator(

@@ -1,11 +1,12 @@
 package simulator_test
 
 import (
-	"github.com/kubernetes-simulator/simulator/pkg/simulator"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/kubernetes-simulator/simulator/pkg/simulator"
+	"github.com/stretchr/testify/assert"
 )
 
 func fixture(name string) string {
@@ -92,7 +93,7 @@ Host node-1 127.0.0.3
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "Got nil output")
 
-	assert.Equal(t, *out, expected, "SSH config was not correct")
+	assert.Equal(t, expected, *out, "SSH config was not correct")
 }
 
 func Test_ParseTerraformOutput(t *testing.T) {
@@ -103,9 +104,9 @@ func Test_ParseTerraformOutput(t *testing.T) {
 
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, tfOutput, "Output was nil")
-	assert.Equal(t, tfOutput.BastionPublicIP.Value, "34.244.109.234", "Bastion IP was wrong")
-	assert.Equal(t, len(tfOutput.ClusterNodesPrivateIP.Value), 1, "Didn't get 1 node IP")
-	assert.Equal(t, tfOutput.ClusterNodesPrivateIP.Value[0], "172.31.2.19")
-	assert.Equal(t, len(tfOutput.MasterNodesPrivateIP.Value), 1, "Didn't get 1 master IP")
-	assert.Equal(t, tfOutput.MasterNodesPrivateIP.Value[0], "172.31.2.167")
+	assert.Equal(t, "34.244.109.234", tfOutput.BastionPublicIP.Value, "Bastion IP was wrong")
+	assert.Equal(t, 1, len(tfOutput.ClusterNodesPrivateIP.Value), "Didn't get 1 node IP")
+	assert.Equal(t, "172.31.2.19", tfOutput.ClusterNodesPrivateIP.Value[0])
+	assert.Equal(t, 1, len(tfOutput.MasterNodesPrivateIP.Value), "Didn't get 1 master IP")
+	assert.Equal(t, "172.31.2.167", tfOutput.MasterNodesPrivateIP.Value[0])
 }

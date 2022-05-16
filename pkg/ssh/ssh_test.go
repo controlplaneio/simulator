@@ -21,5 +21,5 @@ func Test_EnsureKey_and_GetAuthMethods(t *testing.T) {
 
 	assert.Nil(t, err)
 	assert.NotNil(t, auths)
-	assert.Equal(t, len(auths), 1)
+	assert.Equal(t, 1, len(auths))
 }

@@ -23,7 +23,7 @@ func Test_Run(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "out was nil")
 	output := *out
-	assert.Equal(t, output, expected)
+	assert.Equal(t, expected, output)
 }
 
 func Test_Run_invalid_working_dir(t *testing.T) {
@@ -46,5 +46,5 @@ func Test_Run_silently(t *testing.T) {
 	assert.Nil(t, err, "Got an error")
 	assert.NotNil(t, out, "out was nil")
 	output := *out
-	assert.Equal(t, output, expected)
+	assert.Equal(t, expected, output)
 }
