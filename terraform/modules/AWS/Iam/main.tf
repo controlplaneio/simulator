@@ -1,5 +1,8 @@
+resource "random_uuid" "iam_role_uuid" {
+}
+
 resource "aws_iam_role" "simulator_s3_access_role" {
-  name_prefix = "simulator-instance-role"
+  name = "simulator-s3-host-role-${random_uuid.iam_role_uuid.result}"
 
   assume_role_policy = <<EOF
 {
@@ -27,8 +30,8 @@ EOF
 }
 
 resource "aws_iam_role_policy" "simulator_s3_access_policy" {
-  name_prefix = "simulator-s3-host-policy"
-  role        = aws_iam_role.simulator_s3_access_role.id
+  name = "simulator-s3-host-policy-${random_uuid.iam_role_uuid.result}"
+  role = aws_iam_role.simulator_s3_access_role.id
 
   policy = <<EOF
 {
@@ -55,8 +58,8 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "simulator_instance_profile" {
-  name_prefix = "simulator-instance-profile"
-  role        = aws_iam_role.simulator_s3_access_role.name
+  name = "simulator-instance-profile-${random_uuid.iam_role_uuid.result}"
+  role = aws_iam_role.simulator_s3_access_role.name
 }
 
 # Add ECR pull rights to nodes
