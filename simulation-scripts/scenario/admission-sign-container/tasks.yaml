@@ -1,0 +1,7 @@
+category: noop
+difficulty: null
+kind: cp.simulator/scenario:1.0.0
+objective: Do nothing
+startingPoint: ""
+tasks: {}
+name: noop
