@@ -1,11 +1,14 @@
 // identify availability zones
-
 data "aws_availability_zones" "available" {
   state = "available"
 }
 
-// VPC and Subnet creation
+resource "random_shuffle" "az" {
+  input        = data.aws_availability_zones.available.names
+  result_count = 1
+}
 
+// VPC and Subnet creation
 resource "aws_vpc" "simulator_vpc" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
@@ -24,7 +27,7 @@ resource "aws_vpc" "simulator_vpc" {
 resource "aws_subnet" "simulator_public_subnet" {
   vpc_id            = aws_vpc.simulator_vpc.id
   cidr_block        = var.public_subnet_cidr
-  availability_zone = data.aws_availability_zones.available.names[0]
+  availability_zone = random_shuffle.az.result[0]
   tags = merge(
     var.default_tags,
     {
@@ -36,7 +39,7 @@ resource "aws_subnet" "simulator_public_subnet" {
 resource "aws_subnet" "simulator_private_subnet" {
   vpc_id            = aws_vpc.simulator_vpc.id
   cidr_block        = var.private_subnet_cidr
-  availability_zone = data.aws_availability_zones.available.names[1]
+  availability_zone = random_shuffle.az.result[0]
   tags = merge(
     var.default_tags,
     {
