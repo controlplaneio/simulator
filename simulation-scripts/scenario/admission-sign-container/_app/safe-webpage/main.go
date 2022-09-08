@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	http.Handle("/", http.FileServer(http.Dir("./static")))
+	http.Handle("/", http.FileServer(http.Dir("/var/www/static/")))
 	http.HandleFunc("/sign", signform)
 	http.HandleFunc("/development", devform)
 
@@ -34,6 +34,8 @@ func signform(w http.ResponseWriter, r *http.Request) {
 
 	if strings.Contains(signvars, "Error:") {
 		fmt.Fprintf(w, signvars)
+	} else if strings.Contains(signvars, "Enter password for private key:") {
+		fmt.Fprintf(w, "Environment Variable Issue")
 	} else {
 		fmt.Fprintf(w, "Container Image Signed: %s\n", imgname)
 		fmt.Fprintf(w, "Signed with: %s\n", key)
@@ -68,7 +70,7 @@ func search(root string) ([]string, error) {
 }
 
 func sign(image string, key string) string {
-	shim := exec.Command("cosign", "sign", "--key", "./safe-signing-keys/"+key, image)
+	shim := exec.Command("cosign", "sign", "--key", "/safe-sign-keys/"+key, image)
 	output, err := shim.CombinedOutput()
 	rtr := string(output)
 
