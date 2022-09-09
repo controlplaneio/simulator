@@ -7,6 +7,9 @@ FROM golang:1.18-bullseye AS build
 
 WORKDIR /safe-webpage
 
+# Install Cosign
+RUN go install github.com/sigstore/cosign/cmd/cosign@v1.11.1
+
 # Safe Website
 COPY /keys /var/www/keys
 COPY /static /var/www/static
@@ -17,9 +20,6 @@ COPY go.mod ./
 COPY *.go ./
 
 RUN go build -o /var/www/safe-secure -ldflags='-w -s' ./main.go
-
-# Install Cosign
-RUN go install github.com/sigstore/cosign/cmd/cosign@v1.11.1
 
 ##
 ## Deploy
