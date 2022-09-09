@@ -28,7 +28,7 @@ FROM gcr.io/distroless/base-debian10
 
 WORKDIR /
 
-COPY --from=build /var/www /var/www
+COPY --from=build --chown=nonroot:nonroot /var/www /var/www
 COPY --from=build --chown=nonroot:nonroot /safe-sign-keys /safe-sign-keys
 COPY --from=build /go/bin /usr/bin
 
