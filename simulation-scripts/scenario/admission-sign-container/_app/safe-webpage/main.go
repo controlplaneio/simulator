@@ -30,10 +30,11 @@ func signform(w http.ResponseWriter, r *http.Request) {
 		key = "default-signing.key"
 	}
 
-	signvars := sign(imgname, key)
+	signvars, err := sign(imgname, key)
 
-	if strings.Contains(signvars, "Error:") {
+	if err != nil {
 		fmt.Fprintf(w, signvars)
+		fmt.Fprintf(w, err.Error())
 	} else if strings.Contains(signvars, "Enter password for private key:") {
 		fmt.Fprintf(w, "Environment Variable Issue")
 	} else {
@@ -69,14 +70,14 @@ func search(root string) ([]string, error) {
 	return files, nil
 }
 
-func sign(image string, key string) string {
+func sign(image string, key string) (string, error) {
 	shim := exec.Command("cosign", "sign", "--key", "/safe-sign-keys/"+key, image)
 	output, err := shim.CombinedOutput()
 	rtr := string(output)
 
 	if err != nil {
-		return rtr
+		return rtr, err
 	}
 
-	return rtr
+	return rtr, nil
 }
