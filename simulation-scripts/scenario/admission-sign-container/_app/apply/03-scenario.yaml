@@ -1,0 +1,202 @@
+## Safe & Sign Resources
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sign
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: safe-sign
+  labels:
+    app: safe-sign
+  namespace: sign
+spec:
+  selector:
+    matchLabels:
+      app: safe-sign
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: safe-sign
+    spec:
+      containers:
+      - name: safe-sign
+        image: europe-west2-docker.pkg.dev/controlplane-dev-2/kgw-ctf-testing/safe-sign:latest
+        ports:
+        - name: http
+          containerPort: 8080
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: safe-sign
+  namespace: sign
+spec:
+  selector:
+    app: safe-sign
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8090
+---
+## Authorized Resources
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: authorized
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: default
+  namespace: authorized
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno-policy-admin
+  namespace: kyverno
+rules:
+- apiGroups:
+  - kyverno.io
+  resources:
+  - policies
+  - clusterpolicies
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: authorized-role
+  namespace: kyverno
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kyverno-policy-admin
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: authorized
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: auditor
+  namespace: authorized
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: authorized-role
+  namespace: authorized
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: auditor
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: authorized
+---
+## Attack Container Resources
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: factory
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: factory-engineer
+  namespace: factory
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: factory-access
+  namespace: authorized
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - create
+  - patch
+  - update
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: factory-sa-role
+  namespace: authorized
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: factory-access
+subjects:
+- kind: ServiceAccount
+  name: factory-engineer
+  namespace: factory
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: factory-engineer-list
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: factory-engineer-clusterrole
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: factory-engineer-list
+subjects:
+- kind: ServiceAccount
+  name: factory-engineer
+  namespace: factory

@@ -23,12 +23,9 @@
 ## Notes
 The main.go app requires the cosign binary.
 
-
 > cosign generate-key-pair requires a password. This can be skipped with an env var of COSIGN_PASSWORD. This is essential for having a non-interactive signing and verification.
 
-tll.sh
-```bash
-$ IMAGE_NAME=$(uuidgen)
-$ docker build -t ttl.sh/${IMAGE_NAME}:1h .
-$ docker push ttl.sh/${IMAGE_NAME}:1h
-```
+Originally the scenario was only going to allow use of ttl.sh for a registry but the way Kyverno policy is defined it is now defined for any registry.
+
+To view the kyverno clusterpolicy use: ```kubectl describe clusterpolicies signed-admission```
+
