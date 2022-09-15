@@ -36,8 +36,6 @@ ENV COSIGN_PASSWORD=""
 
 USER nonroot:nonroot
 
-#COPY --chown=nonroot:nonroot /safe-sign-keys /safe-sign-keys
-
 EXPOSE 8090
 
 CMD ["/var/www/safe-secure"]
