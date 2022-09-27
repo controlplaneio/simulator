@@ -4,25 +4,25 @@
 * @kubernetes-simulator/simulator
 
 # Scenarios
-/simulation-scripts/scenario @s-irvine @pi-unnerup @abdullahgarcia @jondkent @jpts @denhamparry
+/simulation-scripts/scenario @abdullahgarcia @jondkent @jpts @sublimino
 
 # Terraform
-/terraform @s-irvine @raoulmillais @jondkent @abdullahgarcia @jpts @denhamparry
+/terraform @jondkent @abdullahgarcia @jpts
 
 # Tools
-/tools @raoulmillais @abdullahgarcia @jondkent @jpts @denhamparry
+/tools @abdullahgarcia @jondkent @jpts
 
 # Attack Container
-/attack @raoulmillais @jondkent @abdullahgarcia @jpts @denhamparry
+/attack @jondkent @abdullahgarcia @jpts @sublimino
 
 # Simulator Binaries
-/cmd @raoulmillais @jondkent @abdullahgarcia @jpts @denhamparry
-/pkg @raoulmillais @jondkent @abdullahgarcia @jpts @denhamparry
+/cmd @jondkent @abdullahgarcia @jpts
+/pkg @jondkent @abdullahgarcia @jpts
 
 # kubesim
-/kubesim @s-irvine @raoulmillais @jondkent @abdullahgarcia @jpts @denhamparry
+/kubesim @jondkent @abdullahgarcia @jpts
 
 # Build Files
-/Dockerfile @s-irvine @raoulmillais @pi-unnerup @jondkent @abdullahgarcia @jpts @denhamparry
-/Jenkinsfile @raoulmillais @s-irvine @pi-unnerup @jondkent @abdullahgarcia @jpts @denhamparry
-/Makefile @s-irvine @raoulmillais @pi-unnerup @jondkent @abdullahgarcia @jpts @denhamparry
+/Dockerfile @jondkent @abdullahgarcia @jpts
+/Jenkinsfile @jondkent @abdullahgarcia @jpts
+/Makefile @jondkent @abdullahgarcia @jpts
