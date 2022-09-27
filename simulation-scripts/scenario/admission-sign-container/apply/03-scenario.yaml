@@ -200,3 +200,20 @@ subjects:
 - kind: ServiceAccount
   name: factory-engineer
   namespace: factory
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: factory-terminal
+  namespace: factory
+spec:
+  serviceAccountName: factory-engineer
+  containers:
+  # basic container image
+  - image: docker.io/jpts/debian:latest
+    command: ["sleep", "2d"]
+    name: factory-terminal
+    securityContext:
+      allowPrivilegeEscalation: false
+  restartPolicy: Always
+---
