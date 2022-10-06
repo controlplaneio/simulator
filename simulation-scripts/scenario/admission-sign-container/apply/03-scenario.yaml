@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: safe-sign
-        image: europe-west2-docker.pkg.dev/controlplane-dev-2/kgw-ctf-testing/safe-sign:latest
+        image: docker.io/wakeward/s-app:latest
         ports:
         - name: http
           containerPort: 8080
