@@ -36,9 +36,9 @@ packages:
   - containerd
   - cri-tools
   - awscli
-  - [kubelet, 1.20.*]
-  - [kubeadm, 1.20.*]
-  - [kubectl, 1.20.*]
+  - [kubelet, ${version}.*]
+  - [kubeadm, ${version}.*]
+  - [kubectl, ${version}.*]
 
 hostname: "${hostname}"
 

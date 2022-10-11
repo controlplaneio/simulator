@@ -31,7 +31,7 @@ system_info:
 packages:
   - figlet
   - awscli
-  - [kubectl, 1.20.*]
+  - [kubectl, ${version}.*]
 
 hostname: "internal"
 

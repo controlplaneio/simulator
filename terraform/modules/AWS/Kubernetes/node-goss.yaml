@@ -1,9 +1,9 @@
 ---
 command:
-  kubectl CLIENT minor version is 20:
+  kubectl CLIENT minor version is correct:
     exec: kubectl version --client -o json | jq -r ".clientVersion.minor"
     exit-status: 0
-    stdout: ['20']
+    stdout: [${version_minor}]
   cloud-init:
     exec: cloud-init status
     exit-status: 0

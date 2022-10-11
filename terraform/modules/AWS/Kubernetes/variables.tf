@@ -59,4 +59,7 @@ variable "access_github_usernames" {
   type        = list(string)
 }
 
-
+variable "kubernetes_version" {
+  description = "version of kubernetes to deploy"
+  type        = string
+}

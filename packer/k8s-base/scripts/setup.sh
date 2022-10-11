@@ -17,7 +17,7 @@ sudo systemctl mask apt-daily-upgrade.service
 sudo systemctl disable apt-daily.timer
 sudo systemctl mask apt-daily.service
 
-VERSION='1.20.*'
+VERSION='1.24.*'
 cat <<EOF | sudo bash
 set -Eeuxo pipefail
 

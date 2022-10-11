@@ -90,3 +90,8 @@ variable "default_tags" {
   }
 }
 
+variable "kubernetes_version" {
+  description = "version of kubernetes to deploy, in major.minor format, no patch"
+  type        = string
+  default     = "1.24"
+}

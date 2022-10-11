@@ -51,5 +51,6 @@ resource "aws_instance" "simulator_node_instances" {
 }
 
 locals {
-  access_github_usernames = "${join(" ", var.access_github_usernames)}"
+  access_github_usernames = join(" ", var.access_github_usernames)
+  version_minor           = split(".", var.kubernetes_version)[1]
 }
