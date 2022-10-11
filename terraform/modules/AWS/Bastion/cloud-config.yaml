@@ -123,6 +123,9 @@ write_files:
       # Hardening
       X11Forwarding no
       Subsystem sftp /bin/false
+  - path: /etc/ssh/sshd_config.d/rsa.conf
+    content: |
+      PubkeyAcceptedAlgorithms +ssh-rsa
   - path: /etc/docker/daemon.json
     owner: root:root
     permissions: "0644"

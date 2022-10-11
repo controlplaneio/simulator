@@ -75,9 +75,11 @@ write_files:
       session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
       session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
       @include common-password
+  - path: /etc/ssh/sshd_config.d/rsa.conf
     owner: root:root
     permissions: "0644"
     content: |
+      PubkeyAcceptedAlgorithms +ssh-rsa
   - path: /etc/containerd/certs.d/docker.io/hosts.toml
     owner: root:root
     permissions: "0644"

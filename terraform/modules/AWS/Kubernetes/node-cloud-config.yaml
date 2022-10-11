@@ -82,6 +82,10 @@ write_files:
       session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
       session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
       @include common-password
+  - path: /etc/ssh/sshd_config.d/rsa.conf
+    permissions: "0644"
+    content: |
+      PubkeyAcceptedAlgorithms +ssh-rsa
   - path: /etc/modules-load.d/k8s.conf
     permissions: "0644"
     content: "br_netfilter"
