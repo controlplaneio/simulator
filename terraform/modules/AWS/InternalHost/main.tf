@@ -7,6 +7,12 @@ resource "aws_instance" "simulator_internal_host" {
   subnet_id                   = var.private_subnet_id
   user_data                   = data.template_file.internal_config.rendered
   iam_instance_profile        = var.iam_instance_profile_id
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
+
   tags = merge(
     var.default_tags,
     {
