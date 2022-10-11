@@ -107,7 +107,12 @@ write_files:
       session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
       session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
       @include common-password
+  - path: /etc/ssh/sshd_config
+    permissions: "0640"
+    content: |
+      Include /etc/ssh/sshd_config.d/*.conf
   - path: /etc/ssh/sshd_config.d/bastion.conf
+    permissions: "0640"
     content: |
       ClientAliveInterval 30
       ClientAliveCountMax 240
@@ -124,6 +129,7 @@ write_files:
       X11Forwarding no
       Subsystem sftp /bin/false
   - path: /etc/ssh/sshd_config.d/rsa.conf
+    permissions: "0640"
     content: |
       PubkeyAcceptedAlgorithms +ssh-rsa
   - path: /etc/docker/daemon.json
