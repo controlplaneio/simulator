@@ -2,7 +2,6 @@
 
 resource "aws_s3_bucket" "k8sjoin" {
   bucket_prefix = "k8sjoin"
-  acl           = "private"
   force_destroy = true
 
   tags = merge(
@@ -13,4 +12,7 @@ resource "aws_s3_bucket" "k8sjoin" {
   )
 }
 
-
+resource "aws_s3_bucket_acl" "k8sjoin_acl" {
+  bucket = aws_s3_bucket.k8sjoin.id
+  acl    = "private"
+}
