@@ -326,7 +326,7 @@ wait_for_ready_pods() {
 }
 
 get_pods() {
-  local QUERY_DOCKER="docker inspect \$(docker ps -aq)"
+  local QUERY_CONTAINERS="crictl inspect \$(crictl ps -aq 2>/dev/null)"
   local QUERY_KUBECTL="kubectl get pods --all-namespaces -o json $POD_SELECTOR"
   local TMP_FILE="${TMP_DIR}/docker-"
   export _TRY_LIMIT_SLEEP=10
@@ -336,15 +336,15 @@ get_pods() {
   try-limit 30 wait_for_ready_pods
 
   # poll for healthy nodes before gathering data
-  try-limit 15 "run_ssh '$(get_master)' '${QUERY_DOCKER}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_master)' '${QUERY_CONTAINERS}'" >/dev/null
   try-limit 15 "run_ssh '$(get_master)' '${QUERY_KUBECTL}'" >/dev/null
-  try-limit 15 "run_ssh '$(get_node 1)' '${QUERY_DOCKER}'" >/dev/null
-  try-limit 15 "run_ssh '$(get_node 2)' '${QUERY_DOCKER}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_node 1)' '${QUERY_CONTAINERS}'" >/dev/null
+  try-limit 15 "run_ssh '$(get_node 2)' '${QUERY_CONTAINERS}'" >/dev/null
 
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_master)" >|"${TMP_FILE}"master
+  echo "${QUERY_CONTAINERS}" | run_ssh "$(get_master)" >|"${TMP_FILE}"master
   echo "${QUERY_KUBECTL}" | run_ssh "$(get_master)" >|"${TMP_FILE}"all-pods
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
-  echo "${QUERY_DOCKER}" | run_ssh "$(get_node 2)" >|"${TMP_FILE}"node-2
+  echo "${QUERY_CONTAINERS}" | run_ssh "$(get_node 1)" >|"${TMP_FILE}"node-1
+  echo "${QUERY_CONTAINERS}" | run_ssh "$(get_node 2)" >|"${TMP_FILE}"node-2
 
   if is_local_debug; then
     echo "${TMP_FILE}"all-pods

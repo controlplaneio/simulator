@@ -1,7 +1,7 @@
 #!/bin/bash
 set -Eeuxo pipefail
 
-sudo /tmp/authorized_keys.sh sublimino denhamparry 06kellyjac rowan-baker wakeward jpts
+sudo /tmp/authorized_keys.sh sublimino 06kellyjac rowan-baker wakeward jpts
 rm /tmp/authorized_keys.sh
 
 # Install necessary dependencies
@@ -17,7 +17,7 @@ sudo systemctl mask apt-daily-upgrade.service
 sudo systemctl disable apt-daily.timer
 sudo systemctl mask apt-daily.service
 
-VERSION='1.20.*'
+VERSION='1.24.*'
 cat <<EOF | sudo bash
 set -Eeuxo pipefail
 
@@ -27,7 +27,7 @@ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main"  > /etc/apt/sources
 apt update
 apt install -y --allow-downgrades \
   kubelet=${VERSION} kubeadm=${VERSION} kubectl=${VERSION} \
-  docker.io \
+  containerd \
   awscli \
   jq \
   cri-tools
@@ -38,9 +38,14 @@ mkdir -p /run/download
 wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /run/download/yq
 install /run/download/yq /usr/bin
 
-systemctl enable docker
-systemctl daemon-reload
-systemctl restart docker
+mkdir -p /etc/containerd
+containerd config default > /etc/containerd/config.toml
+sed -i "s/SystemdCgroup = false/SystemdCgroup = true/g" /etc/containerd/config.toml
+systemctl restart containerd
+
+echo "runtime-endpoint: unix:///run/containerd/containerd.sock" > /etc/crictl.yaml
+
+systemctl enable containerd
 systemctl stop kubelet
 
 apt clean

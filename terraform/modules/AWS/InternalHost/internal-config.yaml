@@ -31,7 +31,7 @@ system_info:
 packages:
   - figlet
   - awscli
-  - [kubectl, 1.20.*]
+  - [kubectl, ${version}.*]
 
 hostname: "internal"
 
@@ -75,11 +75,18 @@ write_files:
       session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
       session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
       @include common-password
-  - path: /etc/docker/daemon.json
+  - path: /etc/ssh/sshd_config.d/rsa.conf
     owner: root:root
     permissions: "0644"
     content: |
-      {"registry-mirrors":["https://mirror.gcr.io"]}
+      PubkeyAcceptedAlgorithms +ssh-rsa
+  - path: /etc/containerd/certs.d/docker.io/hosts.toml
+    owner: root:root
+    permissions: "0644"
+    content: |
+      server = "https://registry-1.docker.io"
+      [host."https://mirror.gcr.io"]
+        capabilities = ["pull"]
 
 runcmd:
   - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"

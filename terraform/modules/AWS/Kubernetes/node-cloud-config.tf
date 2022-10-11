@@ -9,6 +9,7 @@ data "template_file" "node_cloud_config" {
     node_inputrc           = filebase64("${path.module}/inputrc")
     node_aliases           = filebase64("${path.module}/bash_aliases")
     authorized_keys_script = filebase64("${path.module}/authorized_keys.sh")
+    version                = var.kubernetes_version
   }
 }
 

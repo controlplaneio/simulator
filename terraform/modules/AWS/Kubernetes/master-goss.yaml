@@ -1,14 +1,14 @@
 ---
 command:
-  kubectl CLIENT minor version is 20:
+  kubectl CLIENT minor version is correct:
     exec: kubectl version -o json | jq -r '.clientVersion.minor'
     exit-status: 0
-    stdout: ['20']
+    stdout: [${version_minor}]
 
-  kubectl SERVER minor version is 20:
+  kubectl SERVER minor version is correct:
     exec: kubectl version -o json | jq -r '.serverVersion.minor | sub("\\+"; "")'
     exit-status: 0
-    stdout: ['20']
+    stdout: [${version_minor}]
 
   cloud-init:
     exec: cloud-init status
@@ -34,16 +34,14 @@ port:
     listening: true
     ip:
       - '::'
+
 service:
-  docker:
+  containerd:
     enabled: true
     running: true
   kubelet:
     enabled: true
     running: true
-group:
-  docker:
-    exists: true
 
 process:
   kubelet:

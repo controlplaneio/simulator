@@ -61,6 +61,7 @@ module "Kubernetes" {
   s3_bucket_name              = module.S3Storage.S3BucketName
   default_tags                = local.aws_tags
   access_github_usernames     = var.access_github_usernames
+  kubernetes_version          = var.kubernetes_version
 }
 
 // Setup host within Kubernetes subnet
@@ -76,6 +77,7 @@ module "InternalHost" {
   iam_instance_profile_id = module.Iam.IamInstanceProfileId
   s3_bucket_name          = module.S3Storage.S3BucketName
   access_github_usernames = var.access_github_usernames
+  kubernetes_version      = var.kubernetes_version
 }
 
 // Create S3 bucket to share Kubernetes join details between

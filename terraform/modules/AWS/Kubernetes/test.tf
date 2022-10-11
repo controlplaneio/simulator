@@ -25,7 +25,7 @@ resource "null_resource" "master_test" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/master-goss.yaml"
+    content     = data.template_file.master-goss.rendered
     destination = "/root/goss.yaml"
   }
 
@@ -36,6 +36,13 @@ resource "null_resource" "master_test" {
       "/root/run-goss.sh",
       "rm /root/run-goss.sh /root/goss.yaml",
     ]
+  }
+}
+
+data "template_file" "master-goss" {
+  template = file("${path.module}/master-goss.yaml")
+  vars = {
+    "version_minor" = local.version_minor
   }
 }
 
@@ -66,7 +73,7 @@ resource "null_resource" "node_test" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/node-goss.yaml"
+    content     = data.template_file.node-goss.rendered
     destination = "/root/goss.yaml"
   }
 
@@ -80,3 +87,9 @@ resource "null_resource" "node_test" {
   }
 }
 
+data "template_file" "node-goss" {
+  template = file("${path.module}/node-goss.yaml")
+  vars = {
+    "version_minor" = local.version_minor
+  }
+}

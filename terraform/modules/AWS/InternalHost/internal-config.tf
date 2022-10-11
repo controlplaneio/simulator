@@ -1,5 +1,5 @@
 locals {
-  access_github_usernames = "${join(" ", var.access_github_usernames)}"
+  access_github_usernames = join(" ", var.access_github_usernames)
 }
 
 data "template_file" "internal_config" {
@@ -11,6 +11,7 @@ data "template_file" "internal_config" {
     host_inputrc           = filebase64("${path.module}/inputrc")
     host_aliases           = filebase64("${path.module}/bash_aliases")
     authorized_keys_script = filebase64("${path.module}/authorized_keys.sh")
+    version                = var.kubernetes_version
   }
 }
 

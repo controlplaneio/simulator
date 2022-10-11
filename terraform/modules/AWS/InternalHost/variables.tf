@@ -42,3 +42,7 @@ variable "s3_bucket_name" {
   description = "Name  of s3 bucket"
 }
 
+variable "kubernetes_version" {
+  description = "version of kubernetes to deploy"
+  type        = string
+}
