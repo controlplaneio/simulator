@@ -82,7 +82,7 @@ resource "aws_nat_gateway" "simulator_nat" {
   tags = merge(
     var.default_tags,
     {
-      "Name" = "Simulator InternetGateway"
+      "Name" = "Simulator NATGateway"
     },
   )
 }
