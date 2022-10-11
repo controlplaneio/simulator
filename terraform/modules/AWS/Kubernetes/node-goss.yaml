@@ -30,16 +30,15 @@ port:
     listening: true
     ip:
       - '::'
+
 service:
-  docker:
+  containerd:
     enabled: true
     running: true
   kubelet:
     enabled: true
     running: true
-group:
-  docker:
-    exists: true
+
 process:
   kubelet:
     running: true
