@@ -248,7 +248,7 @@ run_scenario() {
 
   run_scripts "${SCENARIO_DIR}"
 
-  run_cleanup "${SCENARIO_DIR}"
+  run_cover_tracks_current_scenario "${SCENARIO_DIR}"
 
   # TODO: allow scenarios to signal they break kubeapi, to avoid this command
   if [[ "${SCENARIO}" != "kcna21-back-to-the-future" ]]; then
@@ -259,7 +259,7 @@ run_scenario() {
 
   clean_bastion
 
-  cleanup
+  local_cleanup
 }
 
 clean_bastion() {
@@ -279,14 +279,9 @@ clean_bastion() {
   #    - /.*/
   #    stderr: []
   #    timeout: 10000
-
-  # this removes all evidence of previous logins to the bastion from the `last` command
-#  cat <<'EOF' | run_ssh "$(get_bastion)" || true
-#printf "" | tee /var/log/wtmp
-#EOF
 }
 
-cleanup() {
+local_cleanup() {
   if [[ ! -f "${SCENARIO_DIR}/no-cleanup-local.do" ]]; then
       shopt -u nullglob
       if [[ -n $(compgen -G "${TMP_DIR}"/perturb-script-file-*) ]]; then
@@ -691,8 +686,8 @@ run_scripts() {
   info "Completed script files"
 }
 
-run_cleanup() {
-  info 'Perturb scenario cleanup started'
+run_cover_tracks_current_scenario() {
+  info 'Covering tracks for scenario...'
 
   local SCENARIO_DIR="${1}"
 
@@ -705,8 +700,9 @@ run_cleanup() {
   # cover tracks on all nodes, reboot all nodes if required
 
   if [[ ! -f "${SCENARIO_DIR}/no-cleanup.do" ]]; then
-    info "Covering tracks"
     SCRIPTS_TO_RUN+=" ${COVER_TRACKS_SCRIPT}"
+  else
+    info "Covering tracks not required"
   fi
 
   if [[ -f "${SCENARIO_DIR}/reboot-all.do" ]]; then

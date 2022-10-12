@@ -1,22 +1,25 @@
-# clean up fs
-find  /etc/kubernetes -exec touch {} +
-rm -f ~/.bash_history
+#!/bin/bash
 
-rm -f \
-  /opt/challenge.txt \
-  /root/flag.txt \
-  /root/flag-found.txt
+set -Eeuo pipefail
 
-# clean up pods
-# rm all pods
-
-# clean up deploys etc?
-
-# clean events?
-# kubectl delete --raw /api/v1/namespaces/default/ee454724358c72 --help ??
+# remove cmd history
+rm -f /root/.bash_history
+rm -f /home/ubuntu/.bash_history
 
 # clean syslogs
 find /var/log/journal /run/log/ -name "*.journal" -delete 2>/dev/null
+echo "" > /var/log/syslog
 
+# rm cloud init logs
+rm -f /var/log/cloud-init.log
+rm -f /var/log/cloud-init-output.log
+rm -rf /var/lib/cloud/
+rm -rf /run/cloud-init/
+rm -f /tmp/cloud-init.log
 
-# clean apt cache
+# TODO(JCP): clean kube events
+
+# clean user logins
+echo "" > /var/log/wtmp
+echo "" > /var/log/lastlog
+echo "" > /var/log/auth.log
