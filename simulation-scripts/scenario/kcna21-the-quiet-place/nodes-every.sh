@@ -47,7 +47,3 @@ kubectl $KOPTS delete pods,ds,deploy -n falco --selector='app!=falco' --force --
 kubectl $KOPTS delete pods,deploy -n kube-system -l 'k8s-app notin (calico-node,kube-dns,kube-proxy,calico-kube-controllers), tier!=control-plane'
 EOF
 chmod +x /opt/kill_ssh.sh
-
-## manual cleanup
-rm -f /root/.bash_history
-journalctl --vacuum-time 1s --quiet 2>/dev/null
