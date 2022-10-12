@@ -6,6 +6,11 @@ resource "aws_instance" "simulator_bastion" {
   associate_public_ip_address = true
   subnet_id                   = var.subnet_id
   user_data                   = data.template_file.cloud_config.rendered
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
 
   tags = merge(
     var.default_tags,

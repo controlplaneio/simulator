@@ -111,7 +111,7 @@ runcmd:
   - 'systemctl daemon-reload'
   - 'systemctl enable --now containerd'
 
-  - 'kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version=stable-${version}'
+  - 'kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version=stable-${version} --token-ttl 15m'
   - 'mkdir /root/.kube'
   - 'cp /etc/kubernetes/admin.conf /root/.kube/config'
 

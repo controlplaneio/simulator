@@ -11,6 +11,11 @@ resource "aws_instance" "simulator_master_instances" {
     count.index,
   )
   iam_instance_profile = var.iam_instance_profile_id
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
 
   root_block_device {
     volume_size = 20
@@ -37,6 +42,11 @@ resource "aws_instance" "simulator_node_instances" {
     count.index
   )
   iam_instance_profile = var.iam_instance_profile_id
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 1
+  }
 
   root_block_device {
     volume_size = 20
