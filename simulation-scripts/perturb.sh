@@ -62,7 +62,7 @@ BASTION_HOST=""
 IS_FORCE=0
 TMP_DIR="${KUBE_SIM_TMP:-/home/launch}/.kubesim"
 SSH_CONFIG_FILE="${KUBE_SIM_TMP:-$HOME/.kubesim}/cp_simulator_config"
-SSH_GENERATED_KEY_PATH=""
+SSH_USER_KEY_PATH=""
 FOUND_SCENARIO=""
 POD_SELECTOR="-l job-name!=mount"
 
@@ -152,7 +152,7 @@ main() {
 
   info "Generating new SSH keypairs"
 
-  provision_user_ssh_key_to_bastion
+  provision_user_ssh_key
 
   success "End of perturb"
 }
@@ -167,34 +167,40 @@ ssh-keygen-headless() {
   ssh-keygen -b 2048 -t rsa -f "${FILE_PATH}" -q -N ""
 }
 
-provision_user_ssh_key_to_bastion() {
+provision_user_ssh_key() {
   if [[ "${INTERNAL_HOST:-}" == "" ]]; then
     warning "INTERNAL_HOST not set, needed for secure SSH key provisioning"
     return
   fi
 
-  local PERMISSIBLE_USER_SSH_HOSTS=("${INTERNAL_HOST}" "${BASTION_HOST}")
+  local PERMISSIBLE_USER_SSH_HOSTS=("${INTERNAL_HOST}")
   local SSH_PRIVATE_KEY SSH_PUBLIC_KEY
 
-  ssh-keygen-headless "${SSH_GENERATED_KEY_PATH}"
-  SSH_PRIVATE_KEY="${SSH_GENERATED_KEY_PATH}"
-  SSH_PUBLIC_KEY="${SSH_PRIVATE_KEY}.pub"
+  ssh-keygen-headless "${SSH_USER_KEY_PATH}"
 
-  info "Writing new SSH keypairs to ${PERMISSIBLE_USER_SSH_HOSTS[*]}"
+  SSH_PRIVATE_KEY="${SSH_USER_KEY_PATH}"
+  SSH_PUBLIC_KEY="${SSH_USER_KEY_PATH}.pub"
+
+  BASTION_KEY_PREFIX='command="exec /home/ubuntu/.bash_login_script",no-agent-forwarding'
+
+  info "Adding user SSH public key to ubuntu@ ${PERMISSIBLE_USER_SSH_HOSTS[*]}"
   for THIS_HOST in "${PERMISSIBLE_USER_SSH_HOSTS[@]}"; do
     echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /home/ubuntu/.ssh/authorized_keys" | run_ssh "${THIS_HOST}"
   done
 
-  info "Adding SSH public key for root@internal_host"
+  info "Adding user SSH public key to ubuntu@bastion host"
+  echo "echo '${BASTION_KEY_PREFIX} $(cat "${SSH_PUBLIC_KEY}")' >> /home/ubuntu/.ssh/authorized_keys" | run_ssh "${BASTION_HOST}"
+
+  info "Adding user SSH public key to root@internal host"
   echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /root/.ssh/authorized_keys" | run_ssh "${INTERNAL_HOST}"
 
   # TODO: quick hack to provision keys for BTTF, should parse tasks.yaml properly
   if [[ "${SCENARIO}" == "kcna21-back-to-the-future" ]]; then
-    info "Adding SSH pubilic key for root@node-0"
+    info "Adding user SSH public key to root@node-0 host"
     echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /root/.ssh/authorized_keys" | run_ssh "$(get_node 1)"
   fi
 
-  info "Overwriting or creating Bastion keys in cp_simulator_rsa"
+  info "Adding user SSH private key ubuntu@bastion host"
   echo "cd /home/ubuntu/.ssh/ && echo '$(cat "${SSH_PRIVATE_KEY}")' > cp_simulator_rsa \
     && chmod 0600 cp_simulator_rsa && chown ubuntu:ubuntu cp_simulator_rsa" | run_ssh "${BASTION_HOST}"
 }
@@ -850,7 +856,7 @@ parse_arguments() {
     --ssh-key-path)
       shift
       not_empty_or_usage "${1:-}"
-      SSH_GENERATED_KEY_PATH="${1}"
+      SSH_USER_KEY_PATH="${1}"
       ;;
     --debug)
       set -x
