@@ -173,19 +173,27 @@ provision_user_ssh_key_to_bastion() {
     return
   fi
 
-  local PERMISSIBLE_USER_SSH_HOSTS=("${INTERNAL_HOST}" "${BASTION_HOST}")
+  local PERMISSIBLE_USER_SSH_HOSTS=("${INTERNAL_HOST}")
   local SSH_PRIVATE_KEY SSH_PUBLIC_KEY
 
   ssh-keygen-headless "${SSH_GENERATED_KEY_PATH}"
   SSH_PRIVATE_KEY="${SSH_GENERATED_KEY_PATH}"
   SSH_PUBLIC_KEY="${SSH_PRIVATE_KEY}.pub"
 
-  info "Writing new SSH keypairs to ${PERMISSIBLE_USER_SSH_HOSTS[*]}"
+  SSH_PRIVATE_KEY="${SSH_USER_KEY_PATH}"
+  SSH_PUBLIC_KEY="${SSH_USER_KEY_PATH}.pub"
+
+  BASTION_KEY_PREFIX='command="exec /home/ubuntu/.bash_login_script",no-agent-forwarding'
+
+  info "Adding user SSH public key to ${PERMISSIBLE_USER_SSH_HOSTS[*]}"
   for THIS_HOST in "${PERMISSIBLE_USER_SSH_HOSTS[@]}"; do
     echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /home/ubuntu/.ssh/authorized_keys" | run_ssh "${THIS_HOST}"
   done
 
-  info "Adding SSH public key for root@internal_host"
+  info "Adding user SSH public key to Bastion host"
+  echo "echo '${BASTION_KEY_PREFIX} $(cat "${SSH_PUBLIC_KEY}")' >> /home/ubuntu/.ssh/authorized_keys" | run_ssh "${BASTION_HOST}"
+
+  info "Adding user SSH public key for root@internal_host"
   echo "echo '$(cat "${SSH_PUBLIC_KEY}")' >> /root/.ssh/authorized_keys" | run_ssh "${INTERNAL_HOST}"
 
   # TODO: quick hack to provision keys for BTTF, should parse tasks.yaml properly
