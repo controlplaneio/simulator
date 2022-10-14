@@ -602,7 +602,7 @@ run_kubectl_yaml() {
   local HOST
   HOST=$(get_master)
   local FILES
-  local FILES_STRING
+  local LOGFILE
 
   _TRY_LIMIT_SLEEP=5 \
     _TRY_QUIET=true \
@@ -621,23 +621,36 @@ run_kubectl_yaml() {
       # shellcheck disable=SC2185
       FILES=$(find -regex '.*.ya?ml' | sort)
 
-      FILES_STRING=$(for FILE in ${FILES}; do
-        cat "${FILE}"
-        echo '---'
-      done)
-
       info "Testing Kubernetes YAML files in dry run"
-      echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" --dry-run -f - &>/dev/null || true
-
-      info "kubectl ${ACTION} YAML files to the cluster"
-      if ! echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null; then
-        info "kubectl ${ACTION} attempt 1: failed. Sleeping 10s..."
-        sleep 10
-        if ! echo "${FILES_STRING}" | run_ssh "${HOST}" kubectl "${ACTION}" -f - &>/dev/null; then
-          info "kubectl ${ACTION} attempt 2: failed"
-          error "Error running SSH command: echo \"${FILES_STRING}\" kubectl \"${ACTION}\" -f -"
+      for FILE in ${FILES}; do
+        if ! run_ssh "${HOST}" kubectl "${ACTION}" --dry-run=client -f - >/dev/null < "${FILE}"; then
+            info "kubectl ${ACTION} -f ${FILE} --dry-run failed"
         fi
+      done
+
+      declare -a failedYamls
+      info "kubectl ${ACTION} YAML files to the cluster"
+      for FILE in ${FILES}; do
+        if ! run_ssh "${HOST}" kubectl "${ACTION}" -f - < "${FILE}"; then
+          warning "kubectl ${ACTION} -f ${FILE} attempt 1: failed. Will retry."
+          failedYamls+=("${FILE}")
+        fi
+      done
+
+      if [[ -n "${failedYamls[*]}" ]]; then
+        info "Sleeping 10s..."
+        sleep 10
       fi
+
+      for FILE in "${failedYamls[@]}"; do
+        info "Retrying kubectl ${ACTION} ${FILE} YAML file to the cluster"
+        LOGFILE="$(mktemp)"
+        if ! run_ssh "${HOST}" kubectl "${ACTION}" -f - < "${FILE}" |& tee "$LOGFILE"; then
+          warning "kubectl ${ACTION} -f ${FILE} attempt 2: failed"
+          error "Logging output captured -> $LOGFILE"
+        fi
+        rm "$LOGFILE"
+      done
     )
   done
 }
