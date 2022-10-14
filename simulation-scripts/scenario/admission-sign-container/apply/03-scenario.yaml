@@ -48,12 +48,6 @@ kind: Namespace
 metadata:
   name: authorized
 ---
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: default
-  namespace: authorized
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:

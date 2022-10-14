@@ -70,7 +70,7 @@ metadata:
   name: clusterpolicy-checker
   namespace: kube-system
 spec:
-  backoffLimit: 9999999999
+  backoffLimit: 999999999
   template:
     spec:
       serviceAccountName: cp-checker
