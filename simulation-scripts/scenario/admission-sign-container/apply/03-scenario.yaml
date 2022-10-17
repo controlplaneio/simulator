@@ -35,12 +35,14 @@ metadata:
   name: safe-sign
   namespace: sign
 spec:
+  type: NodePort
   selector:
     app: safe-sign
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8090
+    nodePort: 30080
 ---
 ## Authorized Resources
 apiVersion: v1
