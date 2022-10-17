@@ -620,6 +620,7 @@ run_kubectl_yaml() {
       cd "${SCENARIO_DIR%/}/${ACTION}/"
       # shellcheck disable=SC2185
       FILES=$(find -regex '.*.ya?ml' | sort)
+      declare -a FAILEDYAMLS
 
       info "Testing Kubernetes YAML files in dry run"
       for FILE in ${FILES}; do
@@ -628,21 +629,20 @@ run_kubectl_yaml() {
         fi
       done
 
-      declare -a failedYamls
       info "kubectl ${ACTION} YAML files to the cluster"
       for FILE in ${FILES}; do
         if ! run_ssh "${HOST}" kubectl "${ACTION}" -f - < "${FILE}"; then
           warning "kubectl ${ACTION} -f ${FILE} attempt 1: failed. Will retry."
-          failedYamls+=("${FILE}")
+          FAILEDYAMLS+=("${FILE}")
         fi
       done
 
-      if [[ -n "${failedYamls[*]}" ]]; then
+      if [[ -n "${FAILEDYAMLS[*]}" ]]; then
         info "Sleeping 10s..."
         sleep 10
       fi
 
-      for FILE in "${failedYamls[@]}"; do
+      for FILE in "${FAILEDYAMLS[@]}"; do
         info "Retrying kubectl ${ACTION} ${FILE} YAML file to the cluster"
         LOGFILE="$(mktemp)"
         if ! run_ssh "${HOST}" kubectl "${ACTION}" -f - < "${FILE}" |& tee "$LOGFILE"; then
