@@ -2,6 +2,16 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
+## kubecon NA 2022
+
+  - name: KCNA22 Factory Lockout
+    path: ./scenario/admission-sign-container
+    id: admission-sign-container
+    description: "KCNA22: Hashjack has taken over authorized area in the factory. Can you get back in and remove him?"
+    category: KubeCon
+
+## kubecon NA 2021
+
   - name: KCNA21 The Prestige
     path: ./scenario/kcna21-the-prestige
     id: kcna21-the-prestige

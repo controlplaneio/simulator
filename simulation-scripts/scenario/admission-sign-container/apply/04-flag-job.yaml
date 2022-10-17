@@ -1,0 +1,105 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cp-checker
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno-cr
+rules:
+- apiGroups:
+  - kyverno.io
+  resources:
+  - clusterpolicies
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: policy-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kyverno-cr
+subjects:
+- kind: ServiceAccount
+  name: cp-checker
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: basic-access
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: basic-access-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: basic-access
+subjects:
+- kind: ServiceAccount
+  name: cp-checker
+  namespace: kube-system
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: clusterpolicy-checker
+  namespace: kube-system
+spec:
+  backoffLimit: 999999999
+  template:
+    spec:
+      serviceAccountName: cp-checker
+      containers:
+        - name: clusterpolicy-checker
+          image: nixery.dev/shell/kubectl/curl/jq
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -Eeuo pipefail
+              NS_MSG="No resources found in authorized namespace.";
+              HASHJACK='"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE6lvZM3TZvfb24ox9CHi8aG4KWW3t\nLCjZA0A5DBvy1/CKWuDU+GlcUAy31Qg+rECuuyT2W/hdtr+TjkIFnIHy6A==\n-----END PUBLIC KEY-----"';
+              PAT='-----BEGIN PUBLIC KEY-----[\\]n.*[\\]n-----END PUBLIC KEY-----'
+              function DEPLOYED_CONTAINER {
+                  (kubectl get pods -n authorized 2>&1)
+              }
+              function POLICY_CHECK {
+                  (kubectl get clusterpolicies -A -ojson | jq '.items[].spec.rules[].verifyImages[].attestors[].entries[].keys.publicKeys' | sort -u)
+              }
+              # Waiting for pod to be deployed into the authorized namespace
+              while [[ $(DEPLOYED_CONTAINER) == "${NS_MSG}" ]];
+              do
+                  sleep 30
+              done
+              # Waiting for PUBLIC KEY to be rotated
+              until [[ $(POLICY_CHECK) != "${HASHJACK}" && $(POLICY_CHECK) =~ $PAT ]];
+              do
+                  sleep 10
+              done
+              (kubectl create secret generic flag --from-literal=flag=flag_ctf{FACTORY_LOCKED_HASHJACK_CRY} --namespace=authorized)
+      restartPolicy: Never
+status: {}

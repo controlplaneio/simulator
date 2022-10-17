@@ -1,0 +1,249 @@
+/*
+
+Letter Template 
+
+https://templatemo.com/tm-510-letter
+
+*/
+
+body {
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+	font-size: 24px;
+	font-weight: 300;
+	overflow-x: hidden;
+	
+}
+
+a, button {
+	transition: all 0.3s ease;
+	color: #FFFFFF;
+}
+
+button:focus {
+    outline: none;
+}
+
+a:hover {
+	color: #FFFF00;
+	text-decoration: underline;
+}
+a:focus {
+	text-decoration: none;
+	outline: none;
+}
+
+h1 {
+	color: #FFFFFF;
+	font-size: 4rem;	
+}
+
+p {
+	color: #FFFFFF;	
+}
+
+#particles-js {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 99%;
+}
+
+.cb-slideshow-text-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+}
+
+.tm-content {
+    z-index: 1001;
+}
+
+.form-control::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: white;
+}
+.form-control::-moz-placeholder { /* Firefox 19+ */
+  color: white;
+}
+.form-control:-ms-input-placeholder { /* IE 10+ */
+  color: white;
+}
+.form-control:-moz-placeholder { /* Firefox 18- */
+  color: white;
+}
+
+.form-control::placeholder {
+    color: white;
+}
+
+.form-control {  
+    color: #FFFFFF;
+    border-radius: .5rem;
+    background-color: transparent;
+    border: 1px solid #FFFFFF;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 1.4rem;
+    font-weight: 300;
+    padding: 0.75rem 1.2rem;
+}
+
+.form-section {  
+    color: #FFFFFF;
+    background-color: transparent;
+    margin-bottom: 100px;
+    
+}
+
+.contact_email {
+	color: #FFFFFF;
+}
+.tm-btn-subscribe {
+	background-color: #006699;
+	border-radius: .5rem;
+    border-color: white;
+	padding: 0.75rem 1.6rem;
+    font-weight: 300;
+    font-size: 1.4rem;
+    cursor: pointer;
+}
+
+.tm-btn-subscribe:hover {
+    background-color: #055278;
+}
+
+.tm-social-icons-container {
+    margin: 10px;
+}
+
+.tm-social-link {
+    border-color: #FFFFFF;
+    color: black;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+}
+
+.fa {
+    color: #FFFFFF;
+}
+
+.footer-link {
+    margin: 20px;
+	font-size: 18px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: white;
+    text-align:center;
+    width:100%;
+    z-index: 1001;
+}
+
+/* Animation */
+.cb-slideshow,
+.cb-slideshow:after {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 0;
+}
+
+.cb-slideshow li {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    color: transparent;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: none;
+    opacity: 0;
+    z-index: 0;
+    -webkit-backface-visibility: hidden;
+    -webkit-animation: imageAnimation 72s linear infinite 0s;
+    -moz-animation: imageAnimation 72s linear infinite 0s;
+    -o-animation: imageAnimation 72s linear infinite 0s;
+    -ms-animation: imageAnimation 72s linear infinite 0s;
+    animation: imageAnimation 72s linear infinite 0s;
+
+}
+
+
+.cb-slideshow li:nth-child(1) { 
+    background-image: url(../img/letter_bg_01.jpg)
+}
+.cb-slideshow li:nth-child(2) { 
+    background-image: url(../img/letter_bg_02.jpg);
+    -webkit-animation-delay: 12s;
+    -moz-animation-delay: 12s;
+    -o-animation-delay: 12s;
+    -ms-animation-delay: 12s;
+    animation-delay: 12s; 
+}
+.cb-slideshow li:nth-child(3) { 
+    background-image: url(../img/letter_bg_03.jpg);
+    -webkit-animation-delay: 24s;
+    -moz-animation-delay: 24s;
+    -o-animation-delay: 24s;
+    -ms-animation-delay: 24s;
+    animation-delay: 24s; 
+}
+.cb-slideshow li:nth-child(4) { 
+    background-image: url(../img/letter_bg_01.jpg);
+    animation-delay: 36s; 
+}
+.cb-slideshow li:nth-child(5) { 
+    background-image: url(../img/letter_bg_02.jpg);
+    animation-delay: 48s; 
+}
+.cb-slideshow li:nth-child(6) { 
+    background-image: url(../img/letter_bg_03.jpg);
+    animation-delay: 60s; 
+}
+
+
+@keyframes imageAnimation { 
+	0% {
+	    opacity: 0;
+	    animation-timing-function: ease-in;
+	}
+	8% {
+	    opacity: 1;
+	    transform: scale(1.15);
+	    animation-timing-function: ease-out;
+	}
+	17% {
+	    opacity: 1;
+	    transform: scale(1.20);
+	}
+	25% {
+	    opacity: 0;
+	    transform: scale(1.40);
+	}
+	100% { opacity: 0 }
+}
+
+
+@media screen and (max-width: 1140px) { 
+    .cb-slideshow li div h3 { font-size: 140px }
+}
+@media screen and (max-width: 600px) { 
+    .cb-slideshow li div h3 { font-size: 80px }
+	.tm-content {
+		margin-top: 80px;
+	}
+}
+
+@media screen and (max-width: 576px) { 
+    .cb-slideshow li div h3 { font-size: 80px }
+	
+	.tm-btn-subscribe {
+		margin-top: 20px;
+	}
+}

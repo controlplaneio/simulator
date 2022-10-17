@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Deployed signed container to authorized namespace and replace compromised key.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: factory-terminal
+      podNamespace: factory
+    summary: Can you regain control of the authorized namespace?
+name: admission-sign-container
