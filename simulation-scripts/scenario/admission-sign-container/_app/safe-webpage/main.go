@@ -50,11 +50,29 @@ func devform(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dir, _ := search(r.FormValue("q"))
-	for _, r := range dir {
-		fmt.Fprintf(w, r+"\n")
+	creds := creds(r.FormValue("u"), r.FormValue("p"))
+	if creds != false {
+		dir, _ := search(r.FormValue("q"))
+		for _, r := range dir {
+			fmt.Fprintf(w, r+"\n")
+		}
+	} else {
+		fmt.Fprintf(w, "Incorrect Username and Password")
+		return
 	}
+}
 
+func creds(user string, pwd string) bool {
+	var creds bool
+	creds = false
+	if user == "developer" {
+		if pwd == "password" {
+			creds = true
+		}
+	} else {
+		creds = false
+	}
+	return creds
 }
 
 func search(root string) ([]string, error) {
