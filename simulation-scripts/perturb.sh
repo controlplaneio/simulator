@@ -578,6 +578,7 @@ validate_instructions() {
     *nodes-every.sh) ;;
     *master.sh) ;;
     *internal.sh) ;;
+    *bastion.sh) ;;
 
     test.sh) ;;
 
@@ -690,6 +691,9 @@ run_scripts() {
       ;;
     *internal.sh)
       run_file_on_host "${FILE}" "$(get_internal)"
+      ;;
+    *bastion.sh)
+      run_file_on_host "${FILE}" "$(get_bastion)"
       ;;
 
     test.sh)
