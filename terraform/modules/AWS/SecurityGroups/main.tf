@@ -55,6 +55,13 @@ resource "aws_security_group" "simulator_controlplane_sg" {
   }
 
   ingress {
+    protocol    = "tcp"
+    from_port   = 30000
+    to_port     = 32767
+    cidr_blocks = [var.public_subnet_cidr_block]
+  }
+
+  ingress {
     protocol    = -1
     from_port   = 0
     to_port     = 0
