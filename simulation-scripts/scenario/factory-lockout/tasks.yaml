@@ -11,4 +11,4 @@ tasks:
       podName: factory-terminal
       podNamespace: factory
     summary: Can you regain control of the authorized namespace?
-name: admission-sign-container
+name: factory-lockout
