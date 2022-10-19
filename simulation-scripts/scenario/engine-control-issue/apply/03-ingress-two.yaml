@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ingress-developer
+  namespace: engine-x-line-two
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ingress-developer-bind
+  namespace: engine-x-line-two
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ingress-edit
+subjects:
+- kind: ServiceAccount
+  name: ingress-developer
+  namespace: engine-x-line-two
+- kind: ServiceAccount
+  name: ingress-nginx-one
+  namespace: engine-x-line-one
+---

@@ -9,6 +9,11 @@ scenarios:
     id: admission-sign-container
     description: "KCNA22: Hashjack has taken over authorized area in the factory. Can you get back in and remove him?"
     category: KubeCon
+  - name: KCNA22 Engine Control Issue
+    path: ./scenario/engine-control-issue
+    id: engine-control-issue
+    description: x
+    category: KubeCon
 
 ## kubecon NA 2021
 
@@ -148,7 +153,3 @@ scenarios:
     difficulty: KubeCon
     description: "A pod is making odd calls to the API server; what's going on?"
     category: KubeCon
-
-
-
-

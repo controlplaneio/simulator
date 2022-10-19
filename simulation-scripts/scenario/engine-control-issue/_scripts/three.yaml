@@ -1,0 +1,17 @@
+controller:
+  image:
+    tag: v1.2.0
+    digest: ""
+  ingressClassResource:
+    name: nginx-three
+    controllerValue: k8s.io/ingress-nginx-three
+  allowSnippetAnnotations: true
+  scope:
+    enabled: true
+    namespace: engine-x-line-three
+  admissionWebhooks:
+    enabled: false
+  service:
+    type: ClusterIP
+rbac:
+  scope: true
