@@ -203,6 +203,32 @@ subjects:
   name: factory-engineer
   namespace: factory
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: factory-ns-access
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: factory-clusterrole
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: factory-ns-access
+subjects:
+- kind: ServiceAccount
+  name: factory-engineer
+  namespace: factory
+---
 apiVersion: v1
 kind: Pod
 metadata:
