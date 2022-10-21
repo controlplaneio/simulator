@@ -5,7 +5,7 @@ controller:
   ingressClassResource:
     name: nginx-three
     controllerValue: k8s.io/ingress-nginx-three
-  allowSnippetAnnotations: true
+  allowSnippetAnnotations: false
   scope:
     enabled: true
     namespace: engine-x-line-three

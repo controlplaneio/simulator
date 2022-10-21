@@ -30,7 +30,7 @@ metadata:
   name: ingress-nginx-two-controller
   namespace: engine-x-line-two
 data:
-  allow-snippet-annotations: "true"
+  allow-snippet-annotations: "false"
 ---
 # Source: ingress-nginx/templates/controller-role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
