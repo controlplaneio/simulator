@@ -5,7 +5,7 @@ controller:
   ingressClassResource:
     name: nginx-two
     controllerValue: k8s.io/ingress-nginx-two
-  allowSnippetAnnotations: true
+  allowSnippetAnnotations: false
   scope:
     enabled: true
     namespace: engine-x-line-two
