@@ -14,6 +14,11 @@ scenarios:
     id: engine-control-issue
     description: x
     category: KubeCon
+  - name: KCNA22 Control Room Malfunction
+    path: ./scenario/control-room-malfunction
+    id: control-room-malfunction
+    description: "KCNA22: Follow the captain to discover how he took control of the system before it's too late!"
+    category: KubeCon
 
 ## kubecon NA 2021
 
