@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: control-panel
+  namespace: control-room
+spec:
+  selector:
+    matchLabels:
+      app: control-panel
+  template:
+    metadata:
+      labels:
+        app: control-panel
+    spec:
+      containers:
+        - name: panel-1
+          image: ubuntu:22.04
+          command:
+            - sleep
+            - inf
+          securityContext:
+            capabilities:
+              add:
+              - SYS_ADMIN
+              - SYS_PTRACE
+          volumeMounts:
+            - name: panel1
+              mountPath: "/opt/control-panel/.control-su̷r̶f̵a̸c̷e̴/ḑ̶͍̩͎̭̥̘̥̲̫̒ͅr̴̩͆̾̆͐̔̂̏͐͑́̆̓̕͜͝ͅi̷̫̊̐͋̅v̸̖̙̹͙͖̗́̏͊̀̋̿̓̐͗́̎̎̓̃e̶̩͆̎̽͆̿̾̑̄͑̇̊̾̕͝r̶͓͙̙̩͖̥̪̥͍̝̫͂̈͗͑͆͛̈́̈́̔̉ͅ/"
+              readOnly: true
+            - name: panel2
+              mountPath: "/opt/control-panel/.control-su̷r̶f̵a̸c̷e̴/d̶͚͗ṛ̶͛i̷͚͒v̵̭̄e̴̒ͅr̸̙̔/"
+              readOnly: true
+            - name: panel3
+              mountPath: "/opt/control-panel/.control-su̷r̶f̵a̸c̷e̴/d̷͙̃r̸̟̈́ȋ̴̙v̶̮͋e̷͔͆r̷̻͠/"
+              readOnly: true
+            - name: panel4
+              mountPath: "/opt/control-panel/.control-su̷r̶f̵a̸c̷e̴/d̸͍̎r̴͙͛i̸̕ͅv̷͉̆e̵̢͋r̵̼͐/"
+              readOnly: true
+      volumes:
+      - name: panel1
+        hostPath:
+          path: /proc
+      - name: panel2
+        hostPath:
+          path: /opt/treasure
+      - name: panel3
+        hostPath:
+          path: /usr/share/
+      - name: panel4
+        hostPath:
+          path: "/sys/devices/pci0000:00/"
+          type: Directory
