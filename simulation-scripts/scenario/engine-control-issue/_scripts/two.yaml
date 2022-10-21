@@ -1,0 +1,17 @@
+controller:
+  image:
+    tag: v1.1.3
+    digest: ""
+  ingressClassResource:
+    name: nginx-two
+    controllerValue: k8s.io/ingress-nginx-two
+  allowSnippetAnnotations: true
+  scope:
+    enabled: true
+    namespace: engine-x-line-two
+  admissionWebhooks:
+    enabled: false
+  service:
+    type: ClusterIP
+rbac:
+  scope: true
