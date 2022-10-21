@@ -5,8 +5,8 @@ scenarios:
 ## kubecon NA 2022
 
   - name: KCNA22 Factory Lockout
-    path: ./scenario/admission-sign-container
-    id: admission-sign-container
+    path: ./scenario/factory-lockout
+    id: factory-lockout
     description: "KCNA22: Hashjack has taken over authorized area in the factory. Can you get back in and remove him?"
     category: KubeCon
   - name: KCNA22 Engine Control Issue

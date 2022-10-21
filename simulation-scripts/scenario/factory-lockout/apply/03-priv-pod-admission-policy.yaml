@@ -1,0 +1,43 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-privilege
+spec:
+  background: false
+  rules:
+  - match:
+      resources:
+        kinds:
+        - Pod
+        namespaces:
+        - default
+        - authorized
+    name: restrict-privilege
+    validate:
+      pattern:
+        spec:
+          =(initContainers):
+          - =(securityContext):
+              =(privileged): "false"
+              =(allowPrivilegeEscalation): "false"
+              =(procMount): "Default"
+              =(sysctls): "null"
+              =(capabilites):
+                X(add): "null"
+          containers:
+          - =(securityContext):
+              =(privileged): "false"
+              =(procMount): "Default"
+              =(sysctls): "null"
+              =(allowPrivilegeEscalation): "false"
+              =(capabilites):
+                X(add): "null"
+          =(hostPID): "false"
+          =(hostIPC): "false"
+          =(hostNetwork): "false"
+          =(volumes):
+            - X(hostPath): "null"
+      message: 'Containers cannot be privileged in the authorized area.'
+  validationFailureAction: enforce
+---

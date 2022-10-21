@@ -88,7 +88,7 @@ spec:
                   (kubectl get pods -n authorized 2>&1)
               }
               function POLICY_CHECK {
-                  (kubectl get clusterpolicies -A -ojson | jq '.items[].spec.rules[].verifyImages[].attestors[].entries[].keys.publicKeys' | sort -u)
+                  (kubectl get clusterpolicies signed-admission -n kyverno -ojson | jq '.spec.rules[].verifyImages[].attestors[].entries[].keys.publicKeys' | sort -u)
               }
               # Waiting for pod to be deployed into the authorized namespace
               while [[ $(DEPLOYED_CONTAINER) == "${NS_MSG}" ]];

@@ -127,9 +127,15 @@ metadata:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: factory-access
+  name: factory-auth-access
   namespace: authorized
 rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespace
+  verbs:
+  - get
 - apiGroups:
   - ""
   resources:
@@ -158,12 +164,40 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: factory-sa-role
+  name: factory-auth-role
   namespace: authorized
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: factory-access
+  name: factory-auth-access
+subjects:
+- kind: ServiceAccount
+  name: factory-engineer
+  namespace: factory
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: factory-sign-access
+  namespace: sign
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: factory-sign-role
+  namespace: sign
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: factory-sign-access
 subjects:
 - kind: ServiceAccount
   name: factory-engineer
@@ -172,14 +206,12 @@ subjects:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: factory-engineer-list
+  name: factory-ns-access
 rules:
 - apiGroups:
   - ""
   resources:
   - namespaces
-  - pods
-  - services
   verbs:
   - get
   - list
@@ -187,11 +219,11 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: factory-engineer-clusterrole
+  name: factory-clusterrole
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: factory-engineer-list
+  name: factory-ns-access
 subjects:
 - kind: ServiceAccount
   name: factory-engineer
