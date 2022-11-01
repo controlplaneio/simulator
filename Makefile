@@ -79,7 +79,7 @@ gpg-preflight:
 
 # --- DOCKER
 run: validate-reqs docker-build ## Run the simulator - the build stage of the container runs all the cli tests
-	@docker run                                                             \
+	@$(DOCKER) run                                                             \
 		-h launch                                                       \
 		-v $(SIMULATOR_AWS_CREDS_PATH):/home/launch/.aws                \
 		-v $(KUBE_SIM_TMP):/home/launch/.kubesim                        \
@@ -94,7 +94,7 @@ docker-build-nocache: ## Builds the launch container without the Docker cache
 	@touch ~/.kubesim/simulator.yaml
 	@mkdir -p $(SIMULATOR_TFVAR_DIR)
 	@touch $(SIMULATOR_TFVAR_DIR)/bastion.tfvars
-	@docker build --no-cache -t $(CONTAINER_NAME_LATEST) .
+	@$(DOCKER) build --no-cache -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-build
 docker-build: ## Builds the launch container
@@ -102,12 +102,12 @@ docker-build: ## Builds the launch container
 	@touch ~/.kubesim/simulator.yaml
 	@mkdir -p $(SIMULATOR_TFVAR_DIR)
 	@touch $(SIMULATOR_TFVAR_DIR)/bastion.tfvars
-	@docker build -t $(CONTAINER_NAME_LATEST) .
+	@$(DOCKER) build -t $(CONTAINER_NAME_LATEST) .
 
 .PHONY: docker-test
 docker-test: validate-reqs docker-build ## Run the tests
 	@export AWS_DEFAULT_REGION="testing propagation to AWS_REGION var"; \
-	docker run                                                          \
+	$(DOCKER) run                                                          \
 		-v "$(SIMULATOR_AWS_CREDS_PATH)":/home/launch/.aws          \
 		--env-file launch-environment                               \
 		--rm -t $(CONTAINER_NAME_LATEST)                            \
@@ -175,10 +175,10 @@ release: validate-reqs gpg-preflight previous-tag release-tag docker-test docker
 	git push origin $(RELEASE_TAG)
 	hub release create -F $(TMP_FILE) -a dist/simulator -a kubesim $(RELEASE_TAG)
 	rm -rf $(TMP_FILE)
-	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
-	docker push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
-	docker tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:latest
-	docker push $(DOCKER_HUB_ORG)/simulator:latest
+	$(DOCKER) tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
+	$(DOCKER) push $(DOCKER_HUB_ORG)/simulator:$(RELEASE_TAG)
+	$(DOCKER) tag $(CONTAINER_NAME_LATEST) $(DOCKER_HUB_ORG)/simulator:latest
+	$(DOCKER) push $(DOCKER_HUB_ORG)/simulator:latest
 	cd attack && RELEASE_TAG=$(RELEASE_TAG) make release
 
 
