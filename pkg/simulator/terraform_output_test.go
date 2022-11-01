@@ -58,6 +58,11 @@ func Test_ToSSHConfig(t *testing.T) {
 			Type:      []interface{}{},
 			Value:     []string{"127.0.0.2", "127.0.0.3"},
 		},
+		InternalNodePrivateIP: simulator.StringOutput{
+			Sensitive: false,
+			Type:      "string",
+			Value:     "127.0.0.4",
+		},
 	}
 	expected := `Host bastion 8.8.8.8
   Hostname 8.8.8.8
@@ -81,6 +86,13 @@ Host node-0 127.0.0.2
   ProxyJump bastion
 Host node-1 127.0.0.3
   Hostname 127.0.0.3
+  User root
+  RequestTTY force
+  IdentityFile ~/.kubesim/cp_simulator_rsa
+  UserKnownHostsFile ~/.kubesim/cp_simulator_known_hosts
+  ProxyJump bastion
+Host internal 127.0.0.4
+  Hostname 127.0.0.4
   User root
   RequestTTY force
   IdentityFile ~/.kubesim/cp_simulator_rsa
