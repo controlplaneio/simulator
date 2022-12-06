@@ -61,13 +61,20 @@ rules:
   resources:
   - policies
   - clusterpolicies
+  resourceNames:
+  - "signed-admission"
   verbs:
   - create
-  - delete
-  - get
-  - list
   - patch
   - update
+- apiGroups:
+  - kyverno.io
+  resources:
+  - policies
+  - clusterpolicies
+  verbs:
+  - get
+  - list
   - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
