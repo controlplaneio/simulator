@@ -34,11 +34,11 @@ system_info:
 packages:
   - figlet
   - containerd
-  - cri-tools
+  - [cri-tools, 1.25.*]
   - awscli
-  - [kubelet, ${version}.*]
-  - [kubeadm, ${version}.*]
-  - [kubectl, ${version}.*]
+  - [kubelet, ${version}*]
+  - [kubeadm, ${version}*]
+  - [kubectl, ${version}*]
 
 hostname: "${hostname}"
 
