@@ -10,6 +10,7 @@ data "template_file" "master_cloud_config" {
     master_aliases         = filebase64("${path.module}/bash_aliases")
     authorized_keys_script = filebase64("${path.module}/authorized_keys.sh")
     version                = var.kubernetes_version
+    version_major_minor    = local.version_major_minor
   }
 }
 

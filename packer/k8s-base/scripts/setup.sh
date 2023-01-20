@@ -17,7 +17,11 @@ sudo systemctl mask apt-daily-upgrade.service
 sudo systemctl disable apt-daily.timer
 sudo systemctl mask apt-daily.service
 
-VERSION='1.24.*'
+# Temporarily hold these packages back due to a bug:
+# https://github.com/kubernetes/release/issues/2866
+# If crictl is forced up to 1.26.x, it expects the new CRI runtiem api and kubeadm fails
+VERSION='1.24.9*'
+CRICTL_VERSION='1.25.*'
 cat <<EOF | sudo bash
 set -Eeuxo pipefail
 
@@ -30,7 +34,7 @@ apt install -y --allow-downgrades \
   containerd \
   awscli \
   jq \
-  cri-tools
+  cri-tools=${CRICTL_VERSION}
 
 kubeadm config images pull &
 
