@@ -45,6 +45,7 @@ install /run/download/yq /usr/bin
 mkdir -p /etc/containerd
 containerd config default > /etc/containerd/config.toml
 sed -i "s/SystemdCgroup = false/SystemdCgroup = true/g" /etc/containerd/config.toml
+sed -i -e "s/disable_apparmor.*$/disable_apparmor = true/g" /etc/containerd/config.toml
 systemctl restart containerd
 
 echo "runtime-endpoint: unix:///run/containerd/containerd.sock" > /etc/crictl.yaml
