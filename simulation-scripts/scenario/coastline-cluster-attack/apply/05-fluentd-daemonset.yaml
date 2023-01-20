@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: coastline-fluentd
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: coastline-fluentd
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - namespaces
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - authentication.k8s.io/v1
+  resources:
+  - serviceaccounts/token
+  verbs:
+  - create
+- apiGroups:
+  - authentication.k8s.io/v1
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: coastline-fluentd
+roleRef:
+  kind: ClusterRole
+  name: coastline-fluentd
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: coastline-fluentd
+  namespace: kube-system
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: coastline-fluentd
+  namespace: kube-system
+  labels:
+    k8s-app: fluentd-logging
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-logging
+      version: v1
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-logging
+        version: v1
+    spec:
+      serviceAccountName: coastline-fluentd
+      containers:
+      - name: coastline-fluentd
+        image: fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
+        env:
+          # - name: K8S_NODE_NAME
+          #   valueFrom:
+          #     fieldRef:
+          #       fieldPath: spec.nodeName
+          - name:  FLUENT_ELASTICSEARCH_HOST
+            value: "quickstart-es-http"
+          - name:  FLUENT_ELASTICSEARCH_PORT
+            value: "9200"
+          - name: FLUENT_ELASTICSEARCH_SCHEME
+            value: "http"
+          # Option to configure elasticsearch plugin with self signed certs
+          # ================================================================
+          - name: FLUENT_ELASTICSEARCH_SSL_VERIFY
+            value: "false"
+          # Option to configure elasticsearch plugin with tls
+          # ================================================================
+          - name: FLUENT_ELASTICSEARCH_SSL_VERSION
+            value: "TLSv1_2"
+          # X-Pack Authentication
+          # =====================
+          - name: FLUENT_ELASTICSEARCH_USER
+            value: "elastic"
+          - name: FLUENT_ELASTICSEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: coastline-es-elastic-user
+                key: elastic
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+        # - name: dockercontainerlogdirectory
+        #   mountPath: /var/lib/docker/containers
+        #   readOnly: true
+        # When actual pod logs in /var/log/pods, the following lines should be used.
+        - name: dockercontainerlogdirectory
+          mountPath: /var/log/pods
+          readOnly: true
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      # When actual pod logs in /var/lib/docker/containers, the following lines should be used.
+      # - name: dockercontainerlogdirectory
+      #   hostPath:
+      #     path: /var/lib/docker/containers
+      # When actual pod logs in /var/log/pods, the following lines should be used.
+      - name: dockercontainerlogdirectory
+        hostPath:
+          path: /var/log/pods

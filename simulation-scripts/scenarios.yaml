@@ -9,12 +9,16 @@ scenarios:
     id: ci-runner-ng-breakout
     description: "CNSCon: There is a containerd socket mounted into the container, is it possible to traverse the cluster?"
     category: KubeCon
-
   - name: CNSecCon NA 23 PSS Misconfiguration
     path: ./scenario/pss-misconfiguration
     id: pss-misconfiguration
     description: "CNSCon: An unrestricted Pod is admitted in the cluster regardless of the security context restrictions in place: what's happening?"
     category: CNSecCon
+  - name: CNSEC23 Coastline Cluster Attack
+    path: ./scenario/coastline-cluster-attack
+    id: coastline-cluster-attack
+    description: "CNSEC23: Hashjack has taken over a jumpbox in coastline. He wants you get cluster admin"
+    category: KubeCon
 
 ## kubecon NA 2022
 
