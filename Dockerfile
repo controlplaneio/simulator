@@ -35,7 +35,7 @@ ENV PATH $PATH:/go/bin
 
 ENV GO111MODULE on
 RUN mkdir -p /go/ && \
-    go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.3
+    go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.7
 
 COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
 RUN terraform-bundle package terraform-bundle.hcl && \
