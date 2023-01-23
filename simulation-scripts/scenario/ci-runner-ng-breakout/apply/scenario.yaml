@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ci-runner-ng
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: jenk-ng-runner-s82n6
+  name: jenk-ng-runner-s82n6
+  namespace: ci-runner-ng
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: jenk-ng-runner-s82n6
+  template:
+    metadata:
+      labels:
+        name: jenk-ng-runner-s82n6
+    spec:
+      containers:
+      - image: docker.io/controlplaneoffsec/cri-tools:latest
+        name: jenk-ng-runner-s82n6
+        imagePullPolicy: Always
+        command:
+          - sleep
+          - inf
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: run-containerd
+          mountPath: /run/containerd/
+        - name: var-lib-containerd
+          mountPath: /var/lib/containerd
+        - name: tmp
+          mountPath: /tmp
+        securityContext:
+          capabilities:
+            add:
+              - SYS_ADMIN
+              - SYS_PTRACE
+      volumes:
+      - name: var-lib-containerd
+        hostPath:
+          path: /var/lib/containerd
+      - name: run-containerd
+        hostPath:
+          path: /run/containerd/
+      - name: tmp
+        hostPath:
+          path: /tmp

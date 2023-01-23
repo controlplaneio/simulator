@@ -2,6 +2,12 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
+  - name: CI Runner-NG Breakout
+    path: ./scenario/ci-runner-ng-breakout
+    id: ci-runner-ng-breakout
+    description: "CNSCon: There is a containerd socket mounted into the container, is it possible to traverse the cluster?"
+    category: KubeCon
+
 ## kubecon NA 2022
 
   - name: KCNA22 Factory Lockout
