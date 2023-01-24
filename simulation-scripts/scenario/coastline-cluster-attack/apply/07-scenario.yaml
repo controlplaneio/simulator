@@ -29,13 +29,13 @@ spec:
     spec:
       containers:
       - name: emydocephalus
-        image: ttl.sh/emydocephalus-3ewr-342erf:6h
+        image: ttl.sh/emydocephalus-3ewr-342erf:12h
         ports:
         - name: http
           containerPort: 8080
         imagePullPolicy: IfNotPresent
       - name: hydrelaps
-        image: ttl.sh/hydrelaps-3ewr-342erf:6h
+        image: ttl.sh/hydrelaps-3ewr-342erf:12h
         ports:
         - name: http
           containerPort: 5000
@@ -68,13 +68,13 @@ spec:
       shareProcessNamespace: true
       containers:
       - name: emydocephalus
-        image: ttl.sh/emydocephalus-3ewr-342erf:6h
+        image: ttl.sh/emydocephalus-3ewr-342erf:12h
         ports:
         - name: http
           containerPort: 8080
         imagePullPolicy: IfNotPresent
       - name: hydrelaps
-        image: ttl.sh/hydrelaps-3ewr-342erf:6h
+        image: ttl.sh/hydrelaps-3ewr-342erf:12h
         ports:
         - name: http
           containerPort: 5000
@@ -181,7 +181,7 @@ spec:
   serviceAccountName: sre
   containers:
   # basic container image
-  - image: ttl.sh/kctl-48fg-43fasf:6h
+  - image: ttl.sh/kctl-48fg-43fasf:12h
     command: ["sleep", "2d"]
     name: jumpbox-terminal
     securityContext:
