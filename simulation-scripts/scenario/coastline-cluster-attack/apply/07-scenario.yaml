@@ -181,7 +181,7 @@ spec:
   serviceAccountName: sre
   containers:
   # basic container image
-  - image: ttl.sh/kctl-48fg-43fasf:12h
+  - image: ttl.sh/jumpbox-48fg-43fasf:12h
     command: ["sleep", "2d"]
     name: jumpbox-terminal
     securityContext:
