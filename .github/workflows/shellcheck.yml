@@ -1,24 +1,26 @@
 name: Shellcheck
-on: [pull_request]
+
+on:
+  pull_request:
+    paths:
+      - "**.sh"
+      - bashrc
+
 jobs:
   shellcheck:
     name: Shellcheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
+
       - name: Shellcheck
-        uses: reviewdog/action-shellcheck@v1
+        uses: ludeeus/action-shellcheck@master
         with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
-          path: "."
-          pattern: "*.sh"
-          exclude: "./.git/*"
+          ignore_paths: .git
+          ignore_names: bashrc
+
       - name: Shellcheck-Bashrc
         uses: reviewdog/action-shellcheck@v1
         with:
-          github_token: ${{ secrets.github_token }}
-          reporter: github-pr-review
-          path: "."
-          pattern: "bashrc"
-          exclude: "./.git/*"
+          ignore_paths: .git
+          ignore_names: "*.sh"

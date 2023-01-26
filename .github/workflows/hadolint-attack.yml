@@ -1,18 +1,18 @@
-name: Hadolint
+name: Hadolint Attack
 
 on:
   pull_request:
     paths:
-      - Dockerfile
+      - attack/Dockerfile
 
 jobs:
-  hadolint-simulator:
-    name: Hadolint Simulator
+  hadolint-attack:
+    name: Hadolint Attack
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
     - name: hadolint on pr
       uses: hadolint/hadolint-action@v3
       with:
-        dockerfile: Dockerfile
+        dockerfile: attack/Dockerfile
         failure-threshold: warning
