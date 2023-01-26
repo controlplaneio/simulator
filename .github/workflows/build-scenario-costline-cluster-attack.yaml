@@ -1,0 +1,31 @@
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - simulation-scripts/scenario/coastline-cluster-attack/_app/**
+
+jobs:
+  build-img-emydocephalus:
+  - name: Build Img
+    runs-on: ubuntu-latest
+    uses: ./.github/workflows/build-scenario-templates.yaml
+    with:
+      scenario-id: coastline-cluster-attack
+      subdir: _app/emydocephalus
+      tags: type=raw,value=emydocephalus,priority=1000
+
+  - name: Build Img
+    runs-on: ubuntu-latest
+    uses: ./.github/workflows/build-scenario-templates.yaml
+    with:
+      scenario-id: coastline-cluster-attack
+      subdir: _app/hydrelaps
+      tags: type=raw,value=hydrelaps,priority=1000
+
+  - name: Build Img
+    runs-on: ubuntu-latest
+    uses: ./.github/workflows/build-scenario-templates.yaml
+    with:
+      scenario-id: coastline-cluster-attack
+      subdir: _app/jumpbox
+      tags: type=raw,value=jumpbox,priority=1000
