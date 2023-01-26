@@ -29,13 +29,13 @@ spec:
     spec:
       containers:
       - name: emydocephalus
-        image: ttl.sh/emydocephalus-3ewr-342erf:12h
+        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:emydocephalus
         ports:
         - name: http
           containerPort: 8080
         imagePullPolicy: IfNotPresent
       - name: hydrelaps
-        image: ttl.sh/hydrelaps-3ewr-342erf:12h
+        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:hydrelaps
         ports:
         - name: http
           containerPort: 5000
@@ -68,13 +68,13 @@ spec:
       shareProcessNamespace: true
       containers:
       - name: emydocephalus
-        image: ttl.sh/emydocephalus-3ewr-342erf:12h
+        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:emydocephalus
         ports:
         - name: http
           containerPort: 8080
         imagePullPolicy: IfNotPresent
       - name: hydrelaps
-        image: ttl.sh/hydrelaps-3ewr-342erf:12h
+        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:hydrelaps
         ports:
         - name: http
           containerPort: 5000
@@ -181,7 +181,7 @@ spec:
   serviceAccountName: sre
   containers:
   # basic container image
-  - image: ttl.sh/jumpbox-48fg-43fasf:12h
+  - image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:jumpbox
     command: ["sleep", "2d"]
     name: jumpbox-terminal
     securityContext:
