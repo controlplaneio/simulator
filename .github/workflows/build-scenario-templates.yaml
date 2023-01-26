@@ -16,13 +16,9 @@ on:
 
 jobs:
   build-scenario-ctr-image:
-    name: Build Ctr Image
-    runs-on: ubuntu-latest
-    steps:
-      - name: build
-        uses: controlplaneio/kubesim-container-images/.github/workflows/templates.yaml@main
-        with:
-          ctx: simulation-scripts/scenario/${{ inputs.scenario-id }}/${{ inputs.subdir }}
-          dockerfile: ${{ inputs.dockerfile }}
-          tags: ${{ inputs.tags }}
-          name: scenario-${{ inputs.scenario-id }}
+    uses: controlplaneio/kubesim-container-images/.github/workflows/templates.yaml@main
+    with:
+      ctx: simulation-scripts/scenario/${{ inputs.scenario-id }}/${{ inputs.subdir }}
+      dockerfile: ${{ inputs.dockerfile }}
+      tags: ${{ inputs.tags }}
+      name: scenario-${{ inputs.scenario-id }}

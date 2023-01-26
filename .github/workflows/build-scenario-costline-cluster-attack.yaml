@@ -6,24 +6,20 @@ on:
 
 jobs:
   build-img-emydocephalus:
-  - name: Build Img
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/build-scenario-templates.yaml
     with:
       scenario-id: coastline-cluster-attack
       subdir: _app/emydocephalus
       tags: type=raw,value=emydocephalus,priority=1000
 
-  - name: Build Img
-    runs-on: ubuntu-latest
+  build-img-hydrelaps:
     uses: ./.github/workflows/build-scenario-templates.yaml
     with:
       scenario-id: coastline-cluster-attack
       subdir: _app/hydrelaps
       tags: type=raw,value=hydrelaps,priority=1000
 
-  - name: Build Img
-    runs-on: ubuntu-latest
+  build-img-jumpbox:
     uses: ./.github/workflows/build-scenario-templates.yaml
     with:
       scenario-id: coastline-cluster-attack
