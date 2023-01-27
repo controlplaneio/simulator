@@ -16,7 +16,7 @@ resource "null_resource" "master_test" {
     private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
-    timeout = "10m"
+    timeout = "30m"
   }
 
   provisioner "file" {
@@ -64,7 +64,7 @@ resource "null_resource" "node_test" {
     private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
-    timeout = "10m"
+    timeout = "30m"
   }
 
   provisioner "file" {

@@ -11,7 +11,7 @@ resource "null_resource" "internal_host_test" {
     private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
-    timeout = "10m"
+    timeout = "30m"
   }
 
   provisioner "file" {

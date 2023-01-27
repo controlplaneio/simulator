@@ -4,7 +4,6 @@ resource "null_resource" "bastion_test" {
   }
 
   // Ensure we can SSH as root for the goss tests and also for preturb.sh
-  // Ensure we can SSH as root for the goss tests and also for preturb.sh
   connection {
     host = aws_instance.simulator_bastion.public_ip
     type = "ssh"
@@ -15,7 +14,7 @@ resource "null_resource" "bastion_test" {
     private_key = file(pathexpand("~/.kubesim/cp_simulator_rsa"))
 
     // Increase the timeout so the server has time to reboot
-    timeout = "10m"
+    timeout = "30m"
   }
 
   provisioner "file" {
