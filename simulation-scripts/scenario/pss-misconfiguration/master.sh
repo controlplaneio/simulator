@@ -75,12 +75,30 @@ from datetime import datetime
 
 def is_valid(conf):
 
+  # missing top level information in the config file makes it invalid
+
+  if not conf['apiVersion'] == 'apiserver.config.k8s.io/v1':
+    return False
+
+  if not conf['kind'] == 'AdmissionConfiguration':
+    return False
+
   # missing kube-system and platform exemptions make it invalid
 
   if not 'kube-system' in conf['plugins'][0]['configuration']['exemptions']['namespaces']:
     return False
 
   if not 'platform' in conf['plugins'][0]['configuration']['exemptions']['namespaces']:
+    return False
+
+  # misconfigured API version for PSA admission makes it invalid
+
+  if not conf['plugins'][0]['configuration']['apiVersion'] == 'pod-security.admission.config.k8s.io/v1beta1':
+    return False
+
+  # misconfigured config name for PSA
+
+  if not conf['plugins'][0]['name'] == 'PodSecurity':
     return False
 
   return True
