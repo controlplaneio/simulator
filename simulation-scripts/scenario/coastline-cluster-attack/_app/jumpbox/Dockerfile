@@ -3,6 +3,7 @@
 FROM controlplaneoffsec/kubectl
 
 WORKDIR /
+RUN apt update && apt install -y curl
 RUN useradd -ms /bin/bash sre
 USER sre
 COPY --chown=sre:sre chat-archive.enc /home/sre/chat-archive.enc
