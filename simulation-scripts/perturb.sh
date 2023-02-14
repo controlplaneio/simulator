@@ -181,7 +181,7 @@ provision_user_ssh_key() {
   SSH_PRIVATE_KEY="${SSH_USER_KEY_PATH}"
   SSH_PUBLIC_KEY="${SSH_USER_KEY_PATH}.pub"
 
-  BASTION_KEY_PREFIX='command="exec /home/ubuntu/.bash_login_script",no-agent-forwarding'
+  BASTION_KEY_PREFIX='command="exec sudo /opt/bash_login_script",restrict,pty,port-forwarding'
 
   info "Adding user SSH public key to ubuntu@ ${PERMISSIBLE_USER_SSH_HOSTS[*]}"
   for THIS_HOST in "${PERMISSIBLE_USER_SSH_HOSTS[@]}"; do
