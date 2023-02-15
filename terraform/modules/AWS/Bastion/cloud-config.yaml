@@ -24,6 +24,9 @@ packages:
 hostname: "bastion"
 
 runcmd:
+  # We have to remove access here, as it baked into the Ubuntu AMI
+  - "rm /etc/sudoers.d/90-cloud-init-users"
+  - "gpasswd -d ubuntu sudo"
   - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"
   - "systemctl daemon-reload"
   - "systemctl enable --now docker"
@@ -46,8 +49,9 @@ write_files:
     permissions: "0755"
     content: !!binary |
       ${bastion_aliases}
-  - path: /home/ubuntu/.bash_login_script
-    permissions: "0755"
+  - path: /opt/bash_login_script
+    permissions: "0700"
+    owner: root:root
     content: |
       #!/bin/bash
       set -Eeuo pipefail
@@ -56,10 +60,10 @@ write_files:
       export NODE_IP_ADDRESSES=${node_ip_addresses}
       export INTERNAL_HOST_IP=${internal_host_private_ip}
       if [[ "$${BASE64_SSH_KEY:-}" == "" ]]; then
-        export BASE64_SSH_KEY=$(base64 -w0 ~/.ssh/cp_simulator_rsa)
+        export BASE64_SSH_KEY=$(base64 -w0 /home/ubuntu/.ssh/cp_simulator_rsa)
       fi
 
-      exec sudo -E docker run -h attack \
+      exec docker run -h attack \
         -v /home/ubuntu/progress.json:/progress.json \
         -v /home/ubuntu/tasks.yaml:/tasks.yaml \
         -v /home/ubuntu/challenge.txt:/challenge.txt \
@@ -71,7 +75,11 @@ write_files:
   - path: /home/ubuntu/.bash_login
     permissions: "0755"
     content: |
-      exec ~/.bash_login_script
+      exec sudo /opt/bash_login_script
+  - path: /etc/sudoers.d/bash_login
+    permissions: "0600"
+    content: |
+      ubuntu    ALL=(ALL:ALL) NOPASSWD: /opt/bash_login_script
   - path: /home/ubuntu/progress.json
     permissions: "0666"
     content: "{}"
@@ -132,6 +140,7 @@ write_files:
     permissions: "0640"
     content: |
       PubkeyAcceptedAlgorithms +ssh-rsa
+      HostKeyAlgorithms +ssh-rsa
   - path: /etc/docker/daemon.json
     owner: root:root
     permissions: "0644"

@@ -86,6 +86,7 @@ write_files:
     permissions: "0644"
     content: |
       PubkeyAcceptedAlgorithms +ssh-rsa
+      HostKeyAlgorithms +ssh-rsa
   - path: /etc/modules-load.d/k8s.conf
     permissions: "0644"
     content: "br_netfilter"
