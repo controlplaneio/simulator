@@ -12,11 +12,6 @@ variable "access_key_name" {
   default     = "simulator_ssh_access_key"
 }
 
-variable "access_github_usernames" {
-  description = "ssh access for these users"
-  type        = list(string)
-}
-
 variable "security_group" {
   description = "configure security group"
 }
@@ -50,3 +45,12 @@ variable "internal_host_private_ip" {
   description = "The Internal Host Private IP address"
 }
 
+variable "cloudinit_common" {
+  description = "Common cloud-init config"
+  type        = string
+}
+
+variable "cloudinit_merge_strategy" {
+  description = "cloud-init merge strategy"
+  type        = string
+}

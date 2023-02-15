@@ -1,22 +1,5 @@
 #cloud-config
 
-package_update: true
-package_upgrade: false
-disable_root: 0
-
-# defaults with extended timeout
-# timeout will become active when cloud-init updates to
-# relying on apt built-in timeout functionality
-system_info:
-  apt_get_command: [
-    "apt-get",
-    "--option=Dpkg::Options::=--force-confold",
-    "--option=Dpkg::Options::=--force-unsafe-io",
-    "--assume-yes",
-    "--quiet",
-    "--option=Dpkg::Lock::Timeout=-1"
-  ]
-
 packages:
   - docker.io
   - figlet
@@ -27,28 +10,16 @@ runcmd:
   # We have to remove access here, as it baked into the Ubuntu AMI
   - "rm /etc/sudoers.d/90-cloud-init-users"
   - "gpasswd -d ubuntu sudo"
-  - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"
-  - "systemctl daemon-reload"
+  # Setup Docker
+  - "systemctl disable --now kubelet"
   - "systemctl enable --now docker"
   - "docker pull ${attack_container_repo}:${attack_container_tag}"
 
 write_files:
-  - path: /etc/bash.bashrc
-    permissions: "0755"
+  - path: /etc/profile.d/motd.sh
+    permissions: "0775"
     content: !!binary |
-      ${bastion_bashrc}
-  - path: /root/authorized_keys.sh
-    permissions: '0755'
-    content: !!binary |
-      ${bastion_auth_keys}
-  - path: /home/ubuntu/.inputrc
-    permissions: "0755"
-    content: !!binary |
-      ${bastion_inputrc}
-  - path: /home/ubuntu/.bash_aliases
-    permissions: "0755"
-    content: !!binary |
-      ${bastion_aliases}
+      ${bastion_motd}
   - path: /opt/bash_login_script
     permissions: "0700"
     owner: root:root
@@ -91,68 +62,12 @@ write_files:
     permissions: "0666"
     content: |
       No scenario tasks found. Have you launched a scenario with 'simulator scenario launch ...'?
-  - path: /etc/default/motd-news
-    owner: root:root
-    permissions: "0644"
-    content: |
-      # Don't call home to canonical
-      ENABLED=0
-  - path: /etc/pam.d/sshd
-    owner: root:root
-    permissions: "0644"
-    content: |
-      # Defaults with comments removed and motd disabled
-      @include common-auth
-      account    required     pam_nologin.so
-      @include common-account
-      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so close
-      session    required     pam_loginuid.so
-      session    optional     pam_keyinit.so force revoke
-      @include common-session
-      session    optional     pam_mail.so standard noenv # [1]
-      session    required     pam_limits.so
-      session    required     pam_env.so # [1]
-      session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
-      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
-      @include common-password
-  - path: /etc/ssh/sshd_config
-    permissions: "0640"
-    content: |
-      Include /etc/ssh/sshd_config.d/*.conf
   - path: /etc/ssh/sshd_config.d/bastion.conf
     permissions: "0640"
     content: |
-      ClientAliveInterval 30
-      ClientAliveCountMax 240
-      UsePAM yes
-      PasswordAuthentication no
-      KbdInteractiveAuthentication no
-      PrintMotd no
-      # trial enabling this
-      TCPKeepAlive yes
       # Allow SendEnv of BASE64_SSH_KEY to enable SSHing to the instances in the
       # private subnet (the kubernetes master and nodes)
       AcceptEnv BASE64_SSH_KEY LANG LC_*
       # Hardening
       X11Forwarding no
       Subsystem sftp /bin/false
-  - path: /etc/ssh/sshd_config.d/rsa.conf
-    permissions: "0640"
-    content: |
-      PubkeyAcceptedAlgorithms +ssh-rsa
-      HostKeyAlgorithms +ssh-rsa
-  - path: /etc/docker/daemon.json
-    owner: root:root
-    permissions: "0644"
-    content: |
-      {"registry-mirrors":["https://mirror.gcr.io"]}
-  - path: /etc/containerd/certs.d/docker.io/hosts.toml
-    owner: root:root
-    permissions: "0644"
-    content: |
-      server = "https://registry-1.docker.io"
-      [host."https://mirror.gcr.io"]
-        capabilities = ["pull"]
-
-output:
-  all: "| tee -a /var/log/cloud-init-output.log"

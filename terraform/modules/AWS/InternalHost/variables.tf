@@ -12,11 +12,6 @@ variable "access_key_name" {
   default     = "simulator_ssh_access_key"
 }
 
-variable "access_github_usernames" {
-  description = "ssh access for these users"
-  type        = list(string)
-}
-
 variable "control_plane_sg_id" {
   description = "configure security group"
 }
@@ -44,5 +39,15 @@ variable "s3_bucket_name" {
 
 variable "kubernetes_version" {
   description = "version of kubernetes to deploy"
+  type        = string
+}
+
+variable "cloudinit_common" {
+  description = "Common cloud-init config"
+  type        = string
+}
+
+variable "cloudinit_merge_strategy" {
+  description = "cloud-init merge strategy"
   type        = string
 }

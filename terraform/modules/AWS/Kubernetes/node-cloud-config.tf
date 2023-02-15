@@ -1,15 +1,18 @@
-data "template_file" "node_cloud_config" {
-  count    = var.number_of_cluster_instances
-  template = file("${path.module}/node-cloud-config.yaml")
-  vars = {
-    hostname               = "k8s-node-${count.index}"
-    s3_bucket_name         = var.s3_bucket_name
-    github_usernames       = local.access_github_usernames
-    node_bashrc            = filebase64("${path.module}/bashrc")
-    node_inputrc           = filebase64("${path.module}/inputrc")
-    node_aliases           = filebase64("${path.module}/bash_aliases")
-    authorized_keys_script = filebase64("${path.module}/authorized_keys.sh")
-    version                = var.kubernetes_version
+data "cloudinit_config" "node" {
+  count = var.number_of_cluster_instances
+  part {
+    content_type = "text/cloud-config"
+    merge_type   = var.cloudinit_merge_strategy
+    content      = var.cloudinit_common
+  }
+  part {
+    content_type = "text/cloud-config"
+    merge_type   = var.cloudinit_merge_strategy
+    content = templatefile("${path.module}/node-cloud-config.yaml", {
+      hostname       = "k8s-node-${count.index}"
+      s3_bucket_name = var.s3_bucket_name
+      version        = var.kubernetes_version
+    })
   }
 }
 

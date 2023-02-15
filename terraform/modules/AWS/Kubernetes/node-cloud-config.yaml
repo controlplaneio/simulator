@@ -3,30 +3,6 @@
 # wait for an internet connection
 bootcmd:
   - until ping -W 1 -c1 8.8.8.8 >/dev/null; do sleep 1; done
-  - curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-
-package_update: true
-package_upgrade: false
-disable_root: false
-
-apt:
-  source:
-    kubernetes:
-      source: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
-
-# defaults with --allow-downgrade and extended timeout
-# timeout will become active when cloud-init updates to
-# relying on apt built-in timeout functionality
-system_info:
-  apt_get_command: [
-    "apt-get",
-    "--option=Dpkg::Options::=--force-confold",
-    "--option=Dpkg::Options::=--force-unsafe-io",
-    "--assume-yes",
-    "--quiet",
-    "--allow-downgrades",
-    "--option=Dpkg::Lock::Timeout=-1"
-  ]
 
 # cri-tools included to ensure we always have crictl
 # currently a dependency of kubeadm, which will pull
@@ -43,50 +19,6 @@ packages:
 hostname: "${hostname}"
 
 write_files:
-  - path: /etc/bash.bashrc
-    permissions: "0755"
-    content: !!binary |
-      ${node_bashrc}
-  - path: /root/authorized_keys.sh
-    permissions: '0755'
-    content: !!binary |
-      ${authorized_keys_script}
-  - path: /root/.inputrc
-    permissions: "0755"
-    content: !!binary |
-      ${node_inputrc}
-  - path: /root/.bash_aliases
-    permissions: "0755"
-    content: !!binary |
-      ${node_aliases}
-  - path: /etc/default/motd-news
-    owner: root:root
-    permissions: "0644"
-    content: |
-      ENABLED=0
-  - path: /etc/pam.d/sshd
-    owner: root:root
-    permissions: "0644"
-    content: |
-      # Defaults with comments removed and motd disabled
-      @include common-auth
-      account    required     pam_nologin.so
-      @include common-account
-      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so close
-      session    required     pam_loginuid.so
-      session    optional     pam_keyinit.so force revoke
-      @include common-session
-      session    optional     pam_mail.so standard noenv # [1]
-      session    required     pam_limits.so
-      session    required     pam_env.so # [1]
-      session    required     pam_env.so user_readenv=1 envfile=/etc/default/locale
-      session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_selinux.so open
-      @include common-password
-  - path: /etc/ssh/sshd_config.d/rsa.conf
-    permissions: "0644"
-    content: |
-      PubkeyAcceptedAlgorithms +ssh-rsa
-      HostKeyAlgorithms +ssh-rsa
   - path: /etc/modules-load.d/k8s.conf
     permissions: "0644"
     content: "br_netfilter"
@@ -96,18 +28,10 @@ write_files:
       net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
       net.ipv4.ip_forward = 1
-  - path: /etc/containerd/certs.d/docker.io/hosts.toml
-    permissions: "0644"
-    content: |
-      server = "https://registry-1.docker.io"
-      [host."https://mirror.gcr.io"]
-        capabilities = ["pull"]
 
 runcmd:
   - "modprobe br_netfilter"
   - "sysctl --load=/etc/sysctl.d/k8s.conf"
-
-  - "/root/authorized_keys.sh ${github_usernames} && rm -rf /root/authorized_keys.sh"
 
   - "systemctl daemon-reload"
   - "systemctl enable --now containerd"
@@ -115,6 +39,3 @@ runcmd:
   - "while true; do aws s3 ls s3://${s3_bucket_name}/join.txt > /dev/null; if [ $? -ne 0 ]; then sleep 10; else break; fi; done && aws s3 cp s3://${s3_bucket_name}/join.txt /tmp"
   - "if ! sh /tmp/join.txt; then sleep 30; if ! sh /tmp/join.txt; then sleep 90; sh /tmp/join.txt; fi; fi"
   - "rm -f /tmp/join.txt"
-
-output:
-  all: "| tee -a /var/log/cloud-init-output.log"

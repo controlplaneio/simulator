@@ -7,7 +7,7 @@ resource "aws_instance" "simulator_master_instances" {
   associate_public_ip_address = false
   subnet_id                   = var.private_subnet_id
   user_data = element(
-    data.template_file.master_cloud_config.*.rendered,
+    data.cloudinit_config.master.*.rendered,
     count.index,
   )
   iam_instance_profile = var.iam_instance_profile_id
@@ -38,7 +38,7 @@ resource "aws_instance" "simulator_node_instances" {
   associate_public_ip_address = false
   subnet_id                   = var.private_subnet_id
   user_data = element(
-    data.template_file.node_cloud_config.*.rendered,
+    data.cloudinit_config.node.*.rendered,
     count.index
   )
   iam_instance_profile = var.iam_instance_profile_id
@@ -61,7 +61,6 @@ resource "aws_instance" "simulator_node_instances" {
 }
 
 locals {
-  access_github_usernames = join(" ", var.access_github_usernames)
-  version_minor           = split(".", var.kubernetes_version)[1]
-  version_major_minor     = join(".", ["1", local.version_minor])
+  version_minor       = split(".", var.kubernetes_version)[1]
+  version_major_minor = join(".", ["1", local.version_minor])
 }

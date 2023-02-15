@@ -54,12 +54,17 @@ variable "default_tags" {
   type        = map(string)
 }
 
-variable "access_github_usernames" {
-  description = "ssh access for these users"
-  type        = list(string)
-}
-
 variable "kubernetes_version" {
   description = "version of kubernetes to deploy"
+  type        = string
+}
+
+variable "cloudinit_common" {
+  description = "Common cloud-init config"
+  type        = string
+}
+
+variable "cloudinit_merge_strategy" {
+  description = "cloud-init merge strategy"
   type        = string
 }
