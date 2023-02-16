@@ -54,10 +54,11 @@ if [[ $- == *i* ]]; then
 
   try_motd() {
     if [[ -f "/etc/profile.d/motd.sh" ]]; then
+        # shellcheck source=/dev/null
         source /etc/profile.d/motd.sh
         motd
     else
-        # shellcheck disable=SC2046
+        # shellcheck disable=SC2046 disable=SC1117
         echo -e "\r$(tput setaf 2)$(figlet $(hostname))$(tput sgr0)"
     fi
   }

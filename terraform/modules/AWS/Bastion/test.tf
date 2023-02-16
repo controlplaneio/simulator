@@ -23,7 +23,10 @@ resource "null_resource" "bastion_test" {
   }
 
   provisioner "file" {
-    content     = data.template_file.goss_template.rendered
+    content = templatefile("${path.module}/goss.yaml", {
+      attack_container_tag  = var.attack_container_tag,
+      attack_container_repo = var.attack_container_repo
+    })
     destination = "/root/goss.yaml"
   }
 
