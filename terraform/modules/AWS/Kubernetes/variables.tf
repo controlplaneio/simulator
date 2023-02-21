@@ -14,6 +14,16 @@ variable "bastion_public_ip" {
   description = "IP address of the bastion for connecting to run tests"
 }
 
+variable "master_ip_addresses" {
+  description = "pre-assigned Master IP addresses"
+  type        = list(string)
+}
+
+variable "node_ip_addresses" {
+  description = "pre-assigned Node IP addresses"
+  type        = list(string)
+}
+
 variable "master_instance_type" {
   description = "instance type for master node(s) "
   default     = "t2.medium"

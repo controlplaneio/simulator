@@ -13,6 +13,16 @@ variable "private_subnet_cidr" {
   default     = "172.31.2.0/24"
 }
 
+variable "number_of_master_instances" {
+  description = "Number of Master Nodes"
+  type        = number
+}
+
+variable "number_of_cluster_instances" {
+  description = "Number of Worker Nodes"
+  type        = number
+}
+
 variable "default_tags" {
   description = "Default tags for all resources"
   type        = map(string)

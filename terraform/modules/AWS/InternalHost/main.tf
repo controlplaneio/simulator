@@ -3,6 +3,7 @@ resource "aws_instance" "simulator_internal_host" {
   key_name                    = var.access_key_name
   instance_type               = var.instance_type
   vpc_security_group_ids      = [var.control_plane_sg_id]
+  private_ip                  = var.internal_ip_address
   associate_public_ip_address = false
   subnet_id                   = var.private_subnet_id
   user_data                   = data.cloudinit_config.cc.rendered
