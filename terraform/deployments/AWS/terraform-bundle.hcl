@@ -1,19 +1,19 @@
 terraform {
-  version = "0.13.3"
+  version = "0.13.7"
 }
 
 providers {
   aws = {
-    versions = ["~> 3.6"]
+    versions = ["~> 4.51"]
   }
   null = {
-    versions = ["~> 2.1"]
+    versions = ["~> 3.2"]
   }
   random = {
-    versions = ["~> 2.1"]
+    versions = ["~> 3.4"]
   }
-  template = {
-    versions = ["~> 2.1"]
+  cloudinit = {
+    versions = ["~> 2.2"]
   }
 }
 

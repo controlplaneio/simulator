@@ -1,86 +1,55 @@
 #---------------------------------------#
-# Dependencies, Linting & JS unit tests #
+# JS unit tests                         #
 #---------------------------------------#
-FROM debian:buster-slim AS dependencies
+FROM docker.io/library/node:18-bullseye AS scenario-tools
 
+WORKDIR /app/scenario-tools
+COPY --chown=1000 ./tools/scenario-tools/ .
+
+# Run javascript linting and unit tests
+RUN npm install \
+ && npm test
+
+#---------------------------------------#
+# Dependencies & Linting                #
+#---------------------------------------#
+FROM debian:bullseye-slim AS dependencies
 # We're using sh not bash at this point
 # hadolint ignore=DL4006
 RUN apt-get update                                                                    \
     && DEBIAN_FRONTEND=noninteractive apt-get install  -y --no-install-recommends     \
+    binutils                                                                          \
     curl                                                                              \
-    software-properties-common                                                        \
-    && curl -sL https://deb.nodesource.com/setup_13.x | bash -                        \
-    && apt-get update                                                                 \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends      \
     build-essential                                                                   \
     ca-certificates                                                                   \
     git                                                                               \
-    nodejs                                                                            \
     shellcheck                                                                        \
-    unzip
-
-# Download and save golang latest for use in other layers and install
-ARG GO_INSTALL_VERSION=1.13.7
-# hadolint ignore=DL3003,DL3010
-RUN mkdir /downloads                                                  \
-    && cd /downloads                                                  \
-    && curl -sLO https://dl.google.com/go/go${GO_INSTALL_VERSION}.linux-amd64.tar.gz \
-    && tar -C /usr/local -xzf go${GO_INSTALL_VERSION}.linux-amd64.tar.gz
-
-ENV PATH $PATH:/usr/local/go/bin
-
-# Install terraform
-ENV GOPATH /go
-ENV PATH $PATH:/go/bin
-
-ENV GO111MODULE on
-RUN mkdir -p /go/ && \
-    go get github.com/hashicorp/terraform/tools/terraform-bundle@v0.13.7
-
-COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
-RUN terraform-bundle package terraform-bundle.hcl && \
-    mkdir -p terraform-bundle                     && \
-    unzip -d terraform-bundle terraform_*.zip
+    unzip                                                                             \
+    jq
 
 # Default configuration for dep
-ARG JQ_VERSION=1.6
-ARG YQ_VERSION=2.4.1
-ARG GOSS_VERSION=v0.3.7
-ARG HADOLINT_VERSION=v1.16.3
+ARG YQ_VERSION=3.4.1
+ARG GOSS_VERSION=v0.3.21
+ARG HADOLINT_VERSION=v2.12.0
 ARG lint_user=lint
 
-# Install JQ
-RUN curl -sL https://github.com/stedolan/jq/releases/download/jq-${JQ_VERSION}/jq-linux64 \
-      -o /usr/local/bin/jq                                                                \
-    && chmod +x /usr/local/bin/jq \
-    && jq --version
-
 ## Install YQ
-RUN curl --fail -sL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
-      -o /usr/local/bin/yq                                                           \
-    && chmod +x /usr/local/bin/yq \
+RUN curl -sSOL https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \
+    && install -Dm755 -s yq_linux_amd64 /usr/local/bin/yq \
     && yq --version
 
 ## Install Goss
-RUN curl -sL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
-         -o /usr/local/bin/goss                                                                    \
-    && chmod +rx /usr/local/bin/goss && goss --version
+RUN curl -sSOL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSION}/goss-linux-amd64 \
+    && install -Dm755 -s goss-linux-amd64 /usr/local/bin/goss \
+    && goss --version
 
 # Install Hadolint and setup non-root lint user
-RUN curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
-        -o /usr/local/bin/hadolint                                                                            \
-    && chmod +x /usr/local/bin/hadolint \
-    && useradd -ms /bin/bash ${lint_user} \
-    && mkdir /app \
+RUN curl -sSOL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
+    && install -Dm755 hadolint-Linux-x86_64 /usr/local/bin/hadolint \
     && hadolint --version
 
-WORKDIR /app/scenario-tools
-
-COPY --chown=1000 ./tools/scenario-tools/ /app/scenario-tools/
-
-# Run javascript linting and unit tests
-RUN npm install   \
-    && npm test
+RUN useradd -ms /bin/bash ${lint_user} \
+    && mkdir -p /app
 
 WORKDIR /app
 
@@ -105,16 +74,15 @@ RUN hadolint Dockerfile &&                       \
     shellcheck CloudInitCommon/bashrc &&         \
     shellcheck launch-files/bashrc
 
-WORKDIR /app/scenario-tools
-
 #-----------------------#
 # Golang Build and Test #
 #-----------------------#
-FROM debian:buster-slim AS build-and-test
+FROM docker.io/library/golang:1.16-bullseye AS build-and-test
 
 RUN apt-get update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     awscli                                                                       \
+    binutils                                                                          \
     build-essential                                                              \
     ca-certificates                                                              \
     curl                                                                         \
@@ -122,65 +90,54 @@ RUN apt-get update                                                              
     openssh-client                                                               \
     unzip
 
-# Install golang version downloaded in dependency stage
-COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
-# hadolint ignore=DL3010
-COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
-# We want to minimise layers to keep the build fast
-# hadolint ignore=DL3010
-RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
-    && rm go*.linux-amd64.tar.gz
-ENV PATH $PATH:/usr/local/go/bin
+# Install terraform
+ARG GOLANGCI_LINT_VERSION=v1.51.2
+ARG TERRAFORM_VERSION=v0.13.7
+
+WORKDIR /app
+
+ENV GO111MODULE on
+RUN go get github.com/hashicorp/terraform/tools/terraform-bundle@${TERRAFORM_VERSION}
+
+COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
+RUN terraform-bundle package terraform-bundle.hcl \
+ && mkdir -p terraform-bundle \
+ && unzip -d terraform-bundle terraform_*.zip \
+ && install -Dm755 -s terraform-bundle/terraform /usr/local/bin/
 
 # Setup non-root build user
 ARG build_user=build
 RUN useradd -ms /bin/bash ${build_user} \
-# Create golang src directory
-    &&  mkdir -p /go/src/github.com/kubernetes-simulator/simulator \
-# Create an empty public kubesim directory the tests
-    && mkdir -p /home/${build_user}/.kubesim                            \
-# Create module cache and copy manifest files
-    &&  mkdir -p /home/${build_user}/go/pkg/mod
+# Create an empty public kubesim directory for the tests
+ && mkdir -p /home/${build_user}/.kubesim \
+ && chown -R ${build_user}:${build_user} /home/${build_user}
 
-COPY ./go.* /go/src/github.com/kubernetes-simulator/simulator/
-
-# Give ownership of module cache and src tree to build user
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/kubernetes-simulator/simulator \
-    && chown -R ${build_user}:${build_user} /home/${build_user}
+# Give ownership of src tree to build user
+RUN mkdir -p simulator \
+ && chown -R ${build_user}:${build_user} simulator
+WORKDIR /app/simulator
 
 # Run all build and test steps as build user
 USER ${build_user}
-
-# Install golang module dependencies before copying source to cache them in their own layer
-WORKDIR /go/src/github.com/kubernetes-simulator/simulator
+ENV GOPATH /home/${build_user}/go
+ENV PATH $PATH:$GOPATH/bin
 
 # Add the full source tree
-COPY --chown=1000 Makefile /go/src/github.com/kubernetes-simulator/simulator/
-COPY --chown=1000 prelude.mk /go/src/github.com/kubernetes-simulator/simulator/
-COPY --chown=1000 main.go /go/src/github.com/kubernetes-simulator/simulator/
-COPY --chown=1000 pkg/  /go/src/github.com/kubernetes-simulator/simulator/pkg
-COPY --chown=1000 cmd/  /go/src/github.com/kubernetes-simulator/simulator/cmd
-COPY --chown=1000 test/  /go/src/github.com/kubernetes-simulator/simulator/test
-
-WORKDIR /go/src/github.com/kubernetes-simulator/simulator/
-
-# TODO: (rem) why is this owned by root after the earlier chmod?
-USER root
-# We're using sh not bash at this point
-# hadolint ignore=DL4006
-RUN chown -R ${build_user}:${build_user} /go/src/github.com/kubernetes-simulator/simulator/ \
-    && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b /usr/local/bin v1.22.2
-
-USER ${build_user}
+COPY --chown=1000 ./go.* .
+COPY --chown=1000 Makefile .
+COPY --chown=1000 prelude.mk .
+COPY --chown=1000 main.go .
+COPY --chown=1000 pkg/  ./pkg
+COPY --chown=1000 cmd/  ./cmd
+COPY --chown=1000 test/  ./test
 
 # Golang build and test
-WORKDIR /go/src/github.com/kubernetes-simulator/simulator
 RUN make test-unit
 
 #------------------#
 # Launch Container #
 #------------------#
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 RUN apt-get update                                                               \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
@@ -192,46 +149,42 @@ RUN apt-get update                                                              
     curl                                                                         \
     file                                                                         \
     gettext-base                                                                 \
-    gnupg                                                                        \
+    jq                                                                           \
     lsb-release                                                                  \
-    make                                                                         \
     openssh-client                                                               \
-    tcl                                                                          \
-    tcl-expect                                                                   \
  && rm -rf /var/lib/apt/lists/*
 
-# Install golang version downloaded in dependency stage
-COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
-# hadolint ignore=DL3010
-COPY --from=dependencies /downloads/go*.linux-amd64.tar.gz .
-RUN tar -C /usr/local -xzf go*.linux-amd64.tar.gz \
-    && rm go*.linux-amd64.tar.gz
-ENV PATH $PATH:/usr/local/go/bin
+# Init Terraform Bundle
+COPY --from=build-and-test /app/terraform-bundle/plugins/ /app/.terraform/plugins/
+COPY --from=build-and-test /usr/local/bin/terraform /usr/local/bin/
 
 # Add login message
 COPY ./scripts/launch-motd /usr/local/bin/launch-motd
 RUN echo '[ ! -z "$TERM" ] && source /usr/local/bin/launch-motd' >> /etc/bash.bashrc
 
 # Use 3rd party dependencies from build
-COPY --from=dependencies /usr/local/bin/jq /usr/local/bin/jq
 COPY --from=dependencies /usr/local/bin/yq /usr/local/bin/yq
 COPY --from=dependencies /usr/local/bin/goss /usr/local/bin/goss
-COPY --from=dependencies /terraform-bundle/* /usr/local/bin/
 
-# Copy statically linked simulator binary
-COPY --from=build-and-test /go/src/github.com/kubernetes-simulator/simulator/dist/simulator /usr/local/bin/simulator
+# Copy simulator binary
+COPY --from=build-and-test /app/simulator/dist/simulator /usr/local/bin/simulator
 
 # Setup non-root launch user
 ARG launch_user=launch
 RUN useradd -ms /bin/bash ${launch_user} \
-    && mkdir /app                        \
+    && mkdir -p /app                     \
     && chown -R ${launch_user}:${launch_user} /app \
     && mkdir -p /home/${launch_user}/.kubesim \
     && chown -R ${launch_user}:${launch_user} /home/${launch_user}/.kubesim
 
 # Copy acceptance and smoke tests
-COPY --chown=1000 --from=build-and-test /go/src/github.com/kubernetes-simulator/simulator/test/ /app/test/
+#COPY --chown=1000 --from=build-and-test /app/simulator/test/ /app/test/
 
+# Copy scenario-tools
+COPY --chown=1000 --from=scenario-tools /app/scenario-tools/*.json /app/scenario-tools/
+COPY --chown=1000 --from=scenario-tools /app/scenario-tools/bin /app/scenario-tools/bin
+COPY --chown=1000 --from=scenario-tools /app/scenario-tools/lib /app/scenario-tools/lib
+COPY --chown=1000 --from=scenario-tools /app/scenario-tools/node_modules /app/scenario-tools/node_modules
 
 WORKDIR /app
 
@@ -244,7 +197,6 @@ COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
 COPY --chown=1000                     \
   ./launch-files/goss.yaml            \
   ./launch-files/launch-entrypoint.sh \
-  ./launch-files/test-acceptance.sh   \
   ./
 COPY --chown=1000 ./launch-files/bash_aliases /home/launch/.bash_aliases
 COPY --chown=1000 ./launch-files/inputrc /home/launch/.inputrc
@@ -254,7 +206,8 @@ COPY --chown=1000 launch-files/bashrc /home/launch/.bashrc
 
 RUN curl --compressed --connect-timeout 5 -LO \
   "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl" \
-  && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/
+ && install -Dm755 ./kubectl /usr/local/bin/ \
+ && rm kubectl
 
 ENV SIMULATOR_SCENARIOS_DIR=/app/simulation-scripts/ \
     SIMULATOR_TF_DIR=/app/terraform/deployments/AWS \
