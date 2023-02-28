@@ -28,15 +28,22 @@ module "SshKey" {
   access_key      = var.access_key
 }
 
+// Common cloud-init config
+module "CloudInitCommon" {
+  source                  = "../../modules/AWS/CloudInitCommon"
+  access_github_usernames = var.access_github_usernames
+}
+
 // Setup Bastion host
 module "Bastion" {
   source                   = "../../modules/AWS/Bastion"
   ami_id                   = module.Ami.AmiId
   instance_type            = var.instance_type
   access_key_name          = module.SshKey.KeyPairName
-  access_github_usernames  = var.access_github_usernames
   security_group           = module.SecurityGroups.BastionSecurityGroupID
   subnet_id                = module.Networking.PublicSubnetId
+  cloudinit_common         = module.CloudInitCommon.cloudinit_common
+  cloudinit_merge_strategy = module.CloudInitCommon.cloudinit_merge_strategy
   master_ip_addresses      = join(",", module.Kubernetes.K8sMasterPrivateIp)
   node_ip_addresses        = join(",", module.Kubernetes.K8sNodesPrivateIp)
   internal_host_private_ip = module.InternalHost.InternalHostPrivateIp
@@ -53,6 +60,8 @@ module "Kubernetes" {
   master_instance_type        = var.master_instance_type
   number_of_cluster_instances = var.number_of_cluster_instances
   cluster_nodes_instance_type = var.cluster_nodes_instance_type
+  cloudinit_common            = module.CloudInitCommon.cloudinit_common
+  cloudinit_merge_strategy    = module.CloudInitCommon.cloudinit_merge_strategy
   bastion_public_ip           = module.Bastion.BastionPublicIp
   access_key_name             = module.SshKey.KeyPairName
   control_plane_sg_id         = module.SecurityGroups.ControlPlaneSecurityGroupID
@@ -60,24 +69,24 @@ module "Kubernetes" {
   iam_instance_profile_id     = module.Iam.IamInstanceProfileId
   s3_bucket_name              = module.S3Storage.S3BucketName
   default_tags                = local.aws_tags
-  access_github_usernames     = var.access_github_usernames
   kubernetes_version          = var.kubernetes_version
 }
 
 // Setup host within Kubernetes subnet
 module "InternalHost" {
-  source                  = "../../modules/AWS/InternalHost"
-  ami_id                  = module.Ami.AmiId
-  instance_type           = var.instance_type
-  access_key_name         = module.SshKey.KeyPairName
-  control_plane_sg_id     = module.SecurityGroups.ControlPlaneSecurityGroupID
-  private_subnet_id       = module.Networking.PrivateSubnetId
-  default_tags            = local.aws_tags
-  bastion_public_ip       = module.Bastion.BastionPublicIp
-  iam_instance_profile_id = module.Iam.IamInstanceProfileId
-  s3_bucket_name          = module.S3Storage.S3BucketName
-  access_github_usernames = var.access_github_usernames
-  kubernetes_version      = var.kubernetes_version
+  source                   = "../../modules/AWS/InternalHost"
+  ami_id                   = module.Ami.AmiId
+  instance_type            = var.instance_type
+  access_key_name          = module.SshKey.KeyPairName
+  control_plane_sg_id      = module.SecurityGroups.ControlPlaneSecurityGroupID
+  private_subnet_id        = module.Networking.PrivateSubnetId
+  default_tags             = local.aws_tags
+  cloudinit_common         = module.CloudInitCommon.cloudinit_common
+  cloudinit_merge_strategy = module.CloudInitCommon.cloudinit_merge_strategy
+  bastion_public_ip        = module.Bastion.BastionPublicIp
+  iam_instance_profile_id  = module.Iam.IamInstanceProfileId
+  s3_bucket_name           = module.S3Storage.S3BucketName
+  kubernetes_version       = var.kubernetes_version
 }
 
 // Create S3 bucket to share Kubernetes join details between

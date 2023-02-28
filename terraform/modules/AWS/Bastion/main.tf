@@ -5,7 +5,7 @@ resource "aws_instance" "simulator_bastion" {
   vpc_security_group_ids      = [var.security_group]
   associate_public_ip_address = true
   subnet_id                   = var.subnet_id
-  user_data                   = data.template_file.cloud_config.rendered
+  user_data                   = data.cloudinit_config.cc.rendered
   metadata_options {
     http_endpoint               = "enabled"
     http_tokens                 = "required"

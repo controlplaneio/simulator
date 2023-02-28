@@ -6,8 +6,8 @@ terraform {
     null = {
       source = "hashicorp/null"
     }
-    template = {
-      source = "hashicorp/template"
+    cloudinit = {
+      source = "hashicorp/cloudinit"
     }
   }
   required_version = ">= 0.13"
