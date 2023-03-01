@@ -23,3 +23,14 @@ output "PrivateSubnetCidrBlock" {
   description = "Private subnet cidr block"
 }
 
+output "MasterIPAddresses" {
+  value = local.master_ips
+}
+
+output "NodeIPAddresses" {
+  value = local.node_ips
+}
+
+output "InternalIPAddress" {
+  value = local.internal_ip
+}

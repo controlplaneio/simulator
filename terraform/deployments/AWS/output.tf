@@ -4,17 +4,17 @@ output "bastion_public_ip" {
 }
 
 output "master_nodes_private_ip" {
-  value       = module.Kubernetes.K8sMasterPrivateIp
+  value       = module.Networking.MasterIPAddresses
   description = "Master node private IP"
 }
 
 output "cluster_nodes_private_ip" {
-  value       = module.Kubernetes.K8sNodesPrivateIp
+  value       = module.Networking.NodeIPAddresses
   description = "Cluster node private IPs"
 }
 
 output "internal_host_private_ip" {
-  value       = module.InternalHost.InternalHostPrivateIp
+  value       = module.Networking.InternalIPAddress
   description = "Private Subnet node IP"
 }
 

@@ -4,6 +4,7 @@ resource "aws_instance" "simulator_master_instances" {
   key_name                    = var.access_key_name
   instance_type               = var.master_instance_type
   vpc_security_group_ids      = [var.control_plane_sg_id]
+  private_ip                  = var.master_ip_addresses[count.index]
   associate_public_ip_address = false
   subnet_id                   = var.private_subnet_id
   user_data = element(
@@ -35,6 +36,7 @@ resource "aws_instance" "simulator_node_instances" {
   key_name                    = var.access_key_name
   instance_type               = var.cluster_nodes_instance_type
   vpc_security_group_ids      = [var.control_plane_sg_id]
+  private_ip                  = var.node_ip_addresses[count.index]
   associate_public_ip_address = false
   subnet_id                   = var.private_subnet_id
   user_data = element(

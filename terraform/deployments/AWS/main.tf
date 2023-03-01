@@ -9,11 +9,13 @@ locals {
 
 // Setup networking
 module "Networking" {
-  source              = "../../modules/AWS/Networking"
-  vpc_cidr            = var.vpc_cidr
-  public_subnet_cidr  = var.public_subnet_cidr
-  private_subnet_cidr = var.private_subnet_cidr
-  default_tags        = local.aws_tags
+  source                      = "../../modules/AWS/Networking"
+  vpc_cidr                    = var.vpc_cidr
+  public_subnet_cidr          = var.public_subnet_cidr
+  private_subnet_cidr         = var.private_subnet_cidr
+  number_of_master_instances  = var.number_of_master_instances
+  number_of_cluster_instances = var.number_of_cluster_instances
+  default_tags                = local.aws_tags
 }
 
 // Discovery AMI Id to use for all instances
@@ -44,9 +46,9 @@ module "Bastion" {
   subnet_id                = module.Networking.PublicSubnetId
   cloudinit_common         = module.CloudInitCommon.cloudinit_common
   cloudinit_merge_strategy = module.CloudInitCommon.cloudinit_merge_strategy
-  master_ip_addresses      = join(",", module.Kubernetes.K8sMasterPrivateIp)
-  node_ip_addresses        = join(",", module.Kubernetes.K8sNodesPrivateIp)
-  internal_host_private_ip = module.InternalHost.InternalHostPrivateIp
+  master_ip_addresses      = join(",", module.Networking.MasterIPAddresses)
+  node_ip_addresses        = join(",", module.Networking.NodeIPAddresses)
+  internal_host_private_ip = module.Networking.InternalIPAddress
   attack_container_tag     = var.attack_container_tag
   attack_container_repo    = var.attack_container_repo
   default_tags             = local.aws_tags
@@ -55,13 +57,15 @@ module "Bastion" {
 // Setup Kubernetes master and nodes
 module "Kubernetes" {
   source                      = "../../modules/AWS/Kubernetes"
-  number_of_master_instances  = var.number_of_master_instances
   ami_id                      = module.Ami.AmiId
   master_instance_type        = var.master_instance_type
+  number_of_master_instances  = var.number_of_master_instances
   number_of_cluster_instances = var.number_of_cluster_instances
   cluster_nodes_instance_type = var.cluster_nodes_instance_type
   cloudinit_common            = module.CloudInitCommon.cloudinit_common
   cloudinit_merge_strategy    = module.CloudInitCommon.cloudinit_merge_strategy
+  master_ip_addresses         = module.Networking.MasterIPAddresses
+  node_ip_addresses           = module.Networking.NodeIPAddresses
   bastion_public_ip           = module.Bastion.BastionPublicIp
   access_key_name             = module.SshKey.KeyPairName
   control_plane_sg_id         = module.SecurityGroups.ControlPlaneSecurityGroupID
@@ -80,6 +84,7 @@ module "InternalHost" {
   access_key_name          = module.SshKey.KeyPairName
   control_plane_sg_id      = module.SecurityGroups.ControlPlaneSecurityGroupID
   private_subnet_id        = module.Networking.PrivateSubnetId
+  internal_ip_address      = module.Networking.InternalIPAddress
   default_tags             = local.aws_tags
   cloudinit_common         = module.CloudInitCommon.cloudinit_common
   cloudinit_merge_strategy = module.CloudInitCommon.cloudinit_merge_strategy
