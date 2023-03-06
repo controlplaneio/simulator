@@ -82,7 +82,7 @@ stringData:
         # skip empty line
         return
       fi
-      
+
       # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
       local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
 
@@ -193,7 +193,7 @@ stringData:
     }
 
     env | (grep ENV_TO_INI || [[ $? == 1 ]]) > /tmp/existing-envs
-    
+
     # MUST BE CALLED BEFORE OTHER CONFIGURATION
     env2ini::generate_initial_secrets
 
@@ -257,7 +257,7 @@ stringData:
     chown 1000:1000 "${GITEA_TEMP}"
     chmod ug+rwx "${GITEA_TEMP}"
 
-    
+
 
   configure_gitea.sh: |-
     #!/usr/bin/env bash
@@ -441,10 +441,10 @@ spec:
         app.kubernetes.io/managed-by: Helm
         role: primary
         app.kubernetes.io/component: primary
-    spec:      
+    spec:
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -458,7 +458,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
       containers:
@@ -543,7 +543,7 @@ spec:
               mountPath: /dev/shm
             - name: data
               mountPath: /bitnami/postgresql
-              subPath: 
+              subPath:
       volumes:
         - name: dshm
           emptyDir:
@@ -594,7 +594,7 @@ spec:
         version: "4h"
         app.kubernetes.io/managed-by: Helm
     spec:
-      
+
       securityContext:
         fsGroup: 1000
       initContainers:
@@ -642,7 +642,7 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /data
-            
+
           securityContext:
             {}
         - name: init-app-ini
@@ -691,7 +691,7 @@ spec:
               mountPath: /data
             - name: inline-config-sources
               mountPath: /env-to-ini-mounts/inlines/
-            
+
           securityContext:
             {}
         - name: configure-gitea
@@ -744,7 +744,7 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /data
-            
+
       terminationGracePeriodSeconds: 60
       containers:
         - name: gitea
@@ -820,7 +820,7 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /data
-            
+
       nodeSelector:
         kubernetes.io/hostname: k8s-node-0
       volumes:
@@ -842,7 +842,7 @@ spec:
         name: data
       spec:
         accessModes:
-            - "ReadWriteOnce"        
+            - "ReadWriteOnce"
         storageClassName: "local-storage"
         resources:
           requests:

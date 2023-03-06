@@ -2,7 +2,7 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
-## kubecon EU 2023
+## Kubecon EU 2023
 
   - name: Commandeer Container
     path: ./scenario/commandeer-container
