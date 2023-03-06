@@ -1,0 +1,32 @@
+global:
+  storageClass: local-storage
+image:
+  tag: 1.18.5
+nodeSelector:
+  kubernetes.io/hostname: k8s-node-0
+gitea:
+  admin:
+    username: ctf_admin
+    password: admin123
+    email: admin@localhost.ctf
+statefulset:
+  env:
+    - name: GITEA__SERVER__ROOT_URL
+      value: http://localhost:8080
+    - name: GITEA__SERVER__DOMAIN
+      value: localhost
+    - name: GITEA__ACTIONS__ENABLED
+      value: "true"
+service:
+  http:
+    type: NodePort
+    nodePort: 30080
+persistence:
+  size: 6Gi
+memcached:
+  enabled: false
+postgresql:
+  persitence:
+    size: 2Gi
+actions:
+  enabled: true

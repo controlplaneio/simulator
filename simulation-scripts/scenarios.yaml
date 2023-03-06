@@ -9,6 +9,11 @@ scenarios:
     id: commandeer-container
     description: "KCEU23: Can you navigate Kubernetes and find the treasure?"
     category: KubeCon
+  - name: CICD
+    path: ./scenario/cicd-scenario
+    id: cicd
+    description: "KubeCon: "
+    category: KubeCon
 
 ## CNSecCon NA 2023
 
