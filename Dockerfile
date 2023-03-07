@@ -90,9 +90,7 @@ COPY --chown=1000 attack/ /app/attack/
 COPY --chown=1000 simulation-scripts/ /app/simulation-scripts/
 COPY --chown=1000 kubesim /app/kubesim
 COPY --chown=1000 Dockerfile .hadolint.yaml /app/
-COPY --chown=1000 terraform/modules/AWS/Bastion/bashrc /app/Bastion/bashrc
-COPY --chown=1000 terraform/modules/AWS/InternalHost/bashrc /app/InternalHost/bashrc
-COPY --chown=1000 terraform/modules/AWS/Kubernetes/bashrc /app/Kubernetes/bashrc
+COPY --chown=1000 terraform/modules/AWS/CloudInitCommon/bashrc /app/CloudInitCommon/bashrc
 COPY --chown=1000 launch-files/bashrc /app/launch-files/bashrc
 
 USER ${lint_user}
@@ -104,9 +102,7 @@ RUN hadolint Dockerfile &&                       \
     shellcheck attack/scripts/* &&               \
     shellcheck simulation-scripts/perturb.sh &&  \
     shellcheck kubesim &&                        \
-    shellcheck Bastion/bashrc &&                 \
-    shellcheck InternalHost/bashrc &&            \
-    shellcheck Kubernetes/bashrc &&              \
+    shellcheck CloudInitCommon/bashrc &&         \
     shellcheck launch-files/bashrc
 
 WORKDIR /app/scenario-tools
