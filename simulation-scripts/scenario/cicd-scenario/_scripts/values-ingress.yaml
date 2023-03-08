@@ -1,0 +1,17 @@
+controller:
+  image:
+    tag: v1.6.4
+    digest: ""
+  service:
+    enableHttps: false
+    externalTrafficPolicy: Local
+    type: NodePort
+    nodePorts:
+      http: 30080
+    external:
+      enabled: true # ??
+  nodeSelector:
+    kubernetes.io/hostname: k8s-master-0
+  tolerations:
+    - operator: Exists
+  allowSnippetAnnotations: false

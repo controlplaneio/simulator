@@ -10,4 +10,8 @@ helm template gitea gitea \
     --values "$SCENARIODIR/_scripts/values.yaml" \
     >"$SCENARIODIR/apply/03-gitea-deploy.yaml"
 
-#sed -i -e 's|/data/gitea/conf/app.ini|/config/app.ini|g' "$SCENARIODIR/apply/03-gitea-deploy.yaml"
+helm template ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace \
+    --values "$SCENARIODIR/_scripts/values-ingress.yaml" \
+    >"$SCENARIODIR/apply/05-ingress-deploy.yaml"
