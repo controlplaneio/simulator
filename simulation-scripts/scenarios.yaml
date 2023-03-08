@@ -2,6 +2,14 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
+## kubecon EU 2023
+
+  - name: Commandeer Container
+    path: ./scenario/commandeer-container
+    id: commandeer-container
+    description: "KCEU23: Can you navigate Kubernetes and find the treasure?"
+    category: KubeCon
+
 ## CNSecCon NA 2023
 
   - name: CI Runner-NG Breakout

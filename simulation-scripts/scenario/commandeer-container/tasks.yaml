@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Find the treasure using kubernetes navigation
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: dark-tide
+      podNamespace: sea
+    summary: Can you find the treasure?
+name: commandeer-container
