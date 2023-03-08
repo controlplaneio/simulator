@@ -11,6 +11,7 @@ jobs:
       scenario-id: coastline-cluster-attack
       subdir: _app/emydocephalus
       tags: type=raw,value=emydocephalus,priority=1000
+    secrets: inherit
 
   build-img-hydrelaps:
     uses: ./.github/workflows/build-scenario-templates.yaml
@@ -18,6 +19,7 @@ jobs:
       scenario-id: coastline-cluster-attack
       subdir: _app/hydrelaps
       tags: type=raw,value=hydrelaps,priority=1000
+    secrets: inherit
 
   build-img-jumpbox:
     uses: ./.github/workflows/build-scenario-templates.yaml
@@ -25,3 +27,4 @@ jobs:
       scenario-id: coastline-cluster-attack
       subdir: _app/jumpbox
       tags: type=raw,value=jumpbox,priority=1000
+    secrets: inherit
