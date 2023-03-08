@@ -22,3 +22,4 @@ jobs:
       dockerfile: ${{ inputs.dockerfile }}
       tags: ${{ inputs.tags }}
       name: scenario-${{ inputs.scenario-id }}
+    secrets: inherit
