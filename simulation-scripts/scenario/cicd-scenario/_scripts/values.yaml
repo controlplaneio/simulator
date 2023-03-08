@@ -1,13 +1,13 @@
 global:
   storageClass: local-storage
 image:
-  tag: 1.18.5
+  tag: 1.19.0-rc1
 nodeSelector:
   kubernetes.io/hostname: k8s-node-0
 gitea:
   admin:
     username: ctf_admin
-    password: admin123
+    password: ahXeehohsoo2suej4tee0ol5xeeteM1w
     email: admin@localhost.ctf
 statefulset:
   env:
@@ -15,12 +15,27 @@ statefulset:
       value: http://localhost:8080
     - name: GITEA__SERVER__DOMAIN
       value: localhost
+    - name: GITEA__SERVER__DISABLE_SSH
+      value: "true"
+    - name: GITEA__ADMIN__DISABLE_REGULAR_ORG_CREATION
+      value: "true"
+    - name: GITEA__SERVICE__DEFAULT_ALLOW_CREATE_ORGANIZATION
+      value: "false"
+    - name: GITEA__ATTACHMENT__ENABLED
+      value: "false"
+    - name: GITEA__PACKAGES__ENABLED
+      value: "false"
+    - name: GITEA__MIRROR__ENABLED
+      value: "false"
     - name: GITEA__ACTIONS__ENABLED
       value: "true"
+    - name: GITEA__LOG__DISABLE_ROUTER_LOG
+      value: "true"
+    - name: GITEA__LOG__ENABLE_XORM_LOG
+      value: "false"
 service:
   http:
-    type: NodePort
-    nodePort: 30080
+    type: ClusterIP
 persistence:
   size: 6Gi
 memcached:

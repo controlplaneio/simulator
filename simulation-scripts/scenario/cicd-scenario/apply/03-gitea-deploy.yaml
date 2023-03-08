@@ -12,7 +12,7 @@ metadata:
   namespace: gitea-system
 type: Opaque
 data:
-  postgresql-postgres-password: "YlVXVXJQMHZMRA=="
+  postgresql-postgres-password: "VGFHV1NlOHRBcQ=="
   postgresql-password: "Z2l0ZWE="
 ---
 # Source: gitea/templates/gitea/config.yaml
@@ -25,8 +25,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.18.5"
-    version: "1.18.5"
+    app.kubernetes.io/version: "1.19.0-rc1"
+    version: "1.19.0-rc1"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -61,8 +61,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.18.5"
-    version: "1.18.5"
+    app.kubernetes.io/version: "1.19.0-rc1"
+    version: "1.19.0-rc1"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -231,8 +231,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.18.5"
-    version: "1.18.5"
+    app.kubernetes.io/version: "1.19.0-rc1"
+    version: "1.19.0-rc1"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -365,17 +365,17 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.18.5"
-    version: "1.18.5"
+    app.kubernetes.io/version: "1.19.0-rc1"
+    version: "1.19.0-rc1"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
 spec:
-  type: NodePort
+  type: ClusterIP
+  clusterIP: None
   ports:
   - name: http
     port: 3000
-    nodePort: 30080
     targetPort: 3000
   selector:
     app.kubernetes.io/name: gitea
@@ -391,8 +391,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.18.5"
-    version: "1.18.5"
+    app.kubernetes.io/version: "1.19.0-rc1"
+    version: "1.19.0-rc1"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -571,8 +571,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.18.5"
-    version: "1.18.5"
+    app.kubernetes.io/version: "1.19.0-rc1"
+    version: "1.19.0-rc1"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -584,14 +584,14 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b4687e63c9e4e28f0174885255d6825bac24c73e8274e12dbcc551d06f8c89b2
+        checksum/config: b11acea5942723d9a0ceb74285351b0d54b8d798de00717e3524360f78c25ee3
       labels:
         helm.sh/chart: gitea-7.0.4
         app: gitea
         app.kubernetes.io/name: gitea
         app.kubernetes.io/instance: gitea
-        app.kubernetes.io/version: "1.18.5"
-        version: "1.18.5"
+        app.kubernetes.io/version: "1.19.0-rc1"
+        version: "1.19.0-rc1"
         app.kubernetes.io/managed-by: Helm
     spec:
       
@@ -599,7 +599,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-directories
-          image: "gitea/gitea:1.18.5"
+          image: "gitea/gitea:1.19.0-rc1"
           imagePullPolicy: Always
           command: ["/usr/sbin/init_directory_structure.sh"]
           env:
@@ -615,8 +615,24 @@ spec:
               value: http://localhost:8080
             - name: GITEA__SERVER__DOMAIN
               value: localhost
+            - name: GITEA__SERVER__DISABLE_SSH
+              value: "true"
+            - name: GITEA__ADMIN__DISABLE_REGULAR_ORG_CREATION
+              value: "true"
+            - name: GITEA__SERVICE__DEFAULT_ALLOW_CREATE_ORGANIZATION
+              value: "false"
+            - name: GITEA__ATTACHMENT__ENABLED
+              value: "false"
+            - name: GITEA__PACKAGES__ENABLED
+              value: "false"
+            - name: GITEA__MIRROR__ENABLED
+              value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__LOG__DISABLE_ROUTER_LOG
+              value: "true"
+            - name: GITEA__LOG__ENABLE_XORM_LOG
+              value: "false"
           volumeMounts:
             - name: init
               mountPath: /usr/sbin
@@ -628,7 +644,7 @@ spec:
           securityContext:
             {}
         - name: init-app-ini
-          image: "gitea/gitea:1.18.5"
+          image: "gitea/gitea:1.19.0-rc1"
           imagePullPolicy: Always
           command: ["/usr/sbin/config_environment.sh"]
           env:
@@ -644,8 +660,24 @@ spec:
               value: http://localhost:8080
             - name: GITEA__SERVER__DOMAIN
               value: localhost
+            - name: GITEA__SERVER__DISABLE_SSH
+              value: "true"
+            - name: GITEA__ADMIN__DISABLE_REGULAR_ORG_CREATION
+              value: "true"
+            - name: GITEA__SERVICE__DEFAULT_ALLOW_CREATE_ORGANIZATION
+              value: "false"
+            - name: GITEA__ATTACHMENT__ENABLED
+              value: "false"
+            - name: GITEA__PACKAGES__ENABLED
+              value: "false"
+            - name: GITEA__MIRROR__ENABLED
+              value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__LOG__DISABLE_ROUTER_LOG
+              value: "true"
+            - name: GITEA__LOG__ENABLE_XORM_LOG
+              value: "false"
           volumeMounts:
             - name: config
               mountPath: /usr/sbin
@@ -659,7 +691,7 @@ spec:
           securityContext:
             {}
         - name: configure-gitea
-          image: "gitea/gitea:1.18.5"
+          image: "gitea/gitea:1.19.0-rc1"
           command: ["/usr/sbin/configure_gitea.sh"]
           imagePullPolicy: Always
           securityContext:
@@ -676,13 +708,29 @@ spec:
             - name: GITEA_ADMIN_USERNAME
               value: "ctf_admin"
             - name: GITEA_ADMIN_PASSWORD
-              value: "admin123"
+              value: "ahXeehohsoo2suej4tee0ol5xeeteM1w"
             - name: GITEA__SERVER__ROOT_URL
               value: http://localhost:8080
             - name: GITEA__SERVER__DOMAIN
               value: localhost
+            - name: GITEA__SERVER__DISABLE_SSH
+              value: "true"
+            - name: GITEA__ADMIN__DISABLE_REGULAR_ORG_CREATION
+              value: "true"
+            - name: GITEA__SERVICE__DEFAULT_ALLOW_CREATE_ORGANIZATION
+              value: "false"
+            - name: GITEA__ATTACHMENT__ENABLED
+              value: "false"
+            - name: GITEA__PACKAGES__ENABLED
+              value: "false"
+            - name: GITEA__MIRROR__ENABLED
+              value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__LOG__DISABLE_ROUTER_LOG
+              value: "true"
+            - name: GITEA__LOG__ENABLE_XORM_LOG
+              value: "false"
           volumeMounts:
             - name: init
               mountPath: /usr/sbin
@@ -694,7 +742,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: gitea
-          image: "gitea/gitea:1.18.5"
+          image: "gitea/gitea:1.19.0-rc1"
           imagePullPolicy: Always
           env:
             # SSH Port values have to be set here as well for openssh configuration
@@ -716,8 +764,24 @@ spec:
               value: http://localhost:8080
             - name: GITEA__SERVER__DOMAIN
               value: localhost
+            - name: GITEA__SERVER__DISABLE_SSH
+              value: "true"
+            - name: GITEA__ADMIN__DISABLE_REGULAR_ORG_CREATION
+              value: "true"
+            - name: GITEA__SERVICE__DEFAULT_ALLOW_CREATE_ORGANIZATION
+              value: "false"
+            - name: GITEA__ATTACHMENT__ENABLED
+              value: "false"
+            - name: GITEA__PACKAGES__ENABLED
+              value: "false"
+            - name: GITEA__MIRROR__ENABLED
+              value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__LOG__DISABLE_ROUTER_LOG
+              value: "true"
+            - name: GITEA__LOG__ENABLE_XORM_LOG
+              value: "false"
           ports:
             - name: ssh
               containerPort: 22
