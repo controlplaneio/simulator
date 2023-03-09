@@ -1,3 +1,4 @@
 variable "access_github_usernames" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
