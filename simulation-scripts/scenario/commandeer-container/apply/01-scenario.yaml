@@ -199,7 +199,6 @@ metadata:
 spec:
   serviceAccountName: scurvy-dog
   containers:
-  # basic container image
   - image: docker.io/controlplaneoffsec/kubectl:latest
     command: ["sleep", "2d"]
     name: harpoon
