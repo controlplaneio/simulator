@@ -1,7 +1,10 @@
 global:
   storageClass: local-storage
 image:
-  tag: 1.19.0-rc1
+  registry: ttl.sh
+  repository: gitea-dev
+  tag: 4h
+  #tag: 1.19.0-rc1
 nodeSelector:
   kubernetes.io/hostname: k8s-node-0
 gitea:
@@ -29,6 +32,8 @@ statefulset:
       value: "false"
     - name: GITEA__ACTIONS__ENABLED
       value: "true"
+    - name: GITEA__ACTIONS__DEFAULT_ACTIONS_URL
+      value: https://github.com
     - name: GITEA__LOG__DISABLE_ROUTER_LOG
       value: "true"
     - name: GITEA__LOG__ENABLE_XORM_LOG

@@ -20,3 +20,8 @@ WantedBy=multi-user.target
 EOF
 
 systemctl enable --now socat
+
+## Configure Gitea
+#CSRF=$(curl -sS -c cookie.jar "$BASEURL" --retry 3 --retry-connrefused --retry-delay 5 | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
+#curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/login" -d "user_name=$USER&password=$PASS&_csrf=$CSRF"
+#TOKEN=$(curl -sSL -b cookie.jar "$BASEURL/admin/runners" | grep -A3 'Registration Token' | awk -F'"' '/value/ {print $4}')

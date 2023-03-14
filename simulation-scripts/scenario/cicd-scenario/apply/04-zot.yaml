@@ -57,7 +57,7 @@ spec:
       targetPort: zot
       protocol: TCP
   selector:
-    app.kubernetes.io/name: zot
+    app: zot
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1

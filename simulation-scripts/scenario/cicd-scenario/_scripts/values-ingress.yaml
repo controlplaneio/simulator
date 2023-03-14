@@ -15,3 +15,5 @@ controller:
   tolerations:
     - operator: Exists
   allowSnippetAnnotations: false
+  admissionWebhooks:
+    enabled: false

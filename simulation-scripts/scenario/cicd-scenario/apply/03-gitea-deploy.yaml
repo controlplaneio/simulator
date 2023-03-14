@@ -12,7 +12,7 @@ metadata:
   namespace: gitea-system
 type: Opaque
 data:
-  postgresql-postgres-password: "VGFHV1NlOHRBcQ=="
+  postgresql-postgres-password: "eEU3SGhYTnExbg=="
   postgresql-password: "Z2l0ZWE="
 ---
 # Source: gitea/templates/gitea/config.yaml
@@ -25,8 +25,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.19.0-rc1"
-    version: "1.19.0-rc1"
+    app.kubernetes.io/version: "4h"
+    version: "4h"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -61,8 +61,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.19.0-rc1"
-    version: "1.19.0-rc1"
+    app.kubernetes.io/version: "4h"
+    version: "4h"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -231,8 +231,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.19.0-rc1"
-    version: "1.19.0-rc1"
+    app.kubernetes.io/version: "4h"
+    version: "4h"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -365,8 +365,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.19.0-rc1"
-    version: "1.19.0-rc1"
+    app.kubernetes.io/version: "4h"
+    version: "4h"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -391,8 +391,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.19.0-rc1"
-    version: "1.19.0-rc1"
+    app.kubernetes.io/version: "4h"
+    version: "4h"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -571,8 +571,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "1.19.0-rc1"
-    version: "1.19.0-rc1"
+    app.kubernetes.io/version: "4h"
+    version: "4h"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -584,14 +584,14 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b11acea5942723d9a0ceb74285351b0d54b8d798de00717e3524360f78c25ee3
+        checksum/config: fbea17e287c6de0ebc54282036b3e187a1f6fef66ebb57a8fa15890bc8f44c39
       labels:
         helm.sh/chart: gitea-7.0.4
         app: gitea
         app.kubernetes.io/name: gitea
         app.kubernetes.io/instance: gitea
-        app.kubernetes.io/version: "1.19.0-rc1"
-        version: "1.19.0-rc1"
+        app.kubernetes.io/version: "4h"
+        version: "4h"
         app.kubernetes.io/managed-by: Helm
     spec:
       
@@ -599,7 +599,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-directories
-          image: "gitea/gitea:1.19.0-rc1"
+          image: "ttl.sh/gitea-dev:4h"
           imagePullPolicy: Always
           command: ["/usr/sbin/init_directory_structure.sh"]
           env:
@@ -629,6 +629,8 @@ spec:
               value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__ACTIONS__DEFAULT_ACTIONS_URL
+              value: https://github.com
             - name: GITEA__LOG__DISABLE_ROUTER_LOG
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
@@ -644,7 +646,7 @@ spec:
           securityContext:
             {}
         - name: init-app-ini
-          image: "gitea/gitea:1.19.0-rc1"
+          image: "ttl.sh/gitea-dev:4h"
           imagePullPolicy: Always
           command: ["/usr/sbin/config_environment.sh"]
           env:
@@ -674,6 +676,8 @@ spec:
               value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__ACTIONS__DEFAULT_ACTIONS_URL
+              value: https://github.com
             - name: GITEA__LOG__DISABLE_ROUTER_LOG
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
@@ -691,7 +695,7 @@ spec:
           securityContext:
             {}
         - name: configure-gitea
-          image: "gitea/gitea:1.19.0-rc1"
+          image: "ttl.sh/gitea-dev:4h"
           command: ["/usr/sbin/configure_gitea.sh"]
           imagePullPolicy: Always
           securityContext:
@@ -727,6 +731,8 @@ spec:
               value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__ACTIONS__DEFAULT_ACTIONS_URL
+              value: https://github.com
             - name: GITEA__LOG__DISABLE_ROUTER_LOG
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
@@ -742,7 +748,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: gitea
-          image: "gitea/gitea:1.19.0-rc1"
+          image: "ttl.sh/gitea-dev:4h"
           imagePullPolicy: Always
           env:
             # SSH Port values have to be set here as well for openssh configuration
@@ -778,6 +784,8 @@ spec:
               value: "false"
             - name: GITEA__ACTIONS__ENABLED
               value: "true"
+            - name: GITEA__ACTIONS__DEFAULT_ACTIONS_URL
+              value: https://github.com
             - name: GITEA__LOG__DISABLE_ROUTER_LOG
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
