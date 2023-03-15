@@ -33,7 +33,8 @@ tea login default ctf
 
 # Create developer user
 USER="developer"
-DATA="{\"email\":\"$USER@localhost.ctf\",\"username\":\"$USER\",\"password\":\"$(uuidgen)\"}"
+DEV_PASS="zah2sahvojae2aishei6DeivuzeeV7lu"
+DATA="{\"email\":\"$USER@localhost.ctf\",\"username\":\"$USER\",\"password\":\"$DEV_PASS\"}"
 JSON=$(curl "$BASEURL/api/v1/admin/users" -XPOST -d "$DATA")
 SUCCESS=$(echo "$JSON" | jq .active -r)
 if [[ "$SUCCESS" != "true" ]]; then
@@ -70,7 +71,7 @@ for r in developer1 dev2; do
 done
 # Create repo
 REPO="production-image-build"
-tea repo create --owner "$ORG" --name "$REPO" --init
+tea repo create --owner "$ORG" --name "$REPO"
 
 # Set repo features
 # Requires patch
