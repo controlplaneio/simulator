@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rescue-drop-prod
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: process-orders
+  namespace: rescue-drop-prod
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: processor
+            image: ttl.sh/db-process-532h-5gs65-wakeward:12h
+            args: ["--db", "/data/db/orders.db"]
+            imagePullPolicy: IfNotPresent
+            volumeMounts:
+            - mountPath: /db
+              name: dbpath
+          volumes:
+          - name: dbpath
+            hostPath:
+              path: /data/db
+          nodeName: k8s-master-0
+          restartPolicy: OnFailure
