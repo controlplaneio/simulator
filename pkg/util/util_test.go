@@ -1,6 +1,7 @@
 package util_test
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -45,7 +46,7 @@ func Test_DetectPublicIP(t *testing.T) {
 }
 
 func Test_EnvOrDefault(t *testing.T) {
-	key := "SIMULATOR_TEST_" + string(time.Now().Unix())
+	key := fmt.Sprintf("SIMULATOR_TEST_%d", time.Now().Unix())
 	defaulted := util.EnvOrDefault(key, "setting")
 	assert.Equal(t, defaulted, "setting", "Did not return default")
 
