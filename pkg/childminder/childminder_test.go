@@ -17,7 +17,7 @@ func fixture(name string) string {
 func Test_Run(t *testing.T) {
 	expected := util.MustSlurp(fixture("tf-help.txt"))
 	logger := logrus.New()
-	cm := childminder.NewChildMinder(logger, "./", []string{}, "terraform", "help")
+	cm := childminder.NewChildMinder(logger, "./", []string{}, "terraform", "-help")
 	out, err := cm.Run()
 
 	assert.Nil(t, err, "Got an error")
@@ -29,7 +29,7 @@ func Test_Run(t *testing.T) {
 func Test_Run_invalid_working_dir(t *testing.T) {
 	wd := strings.Repeat("deadbeef", 1024)
 	logger := logrus.New()
-	cm := childminder.NewChildMinder(logger, wd, []string{}, "terraform", "help")
+	cm := childminder.NewChildMinder(logger, wd, []string{}, "terraform", "-help")
 	out, err := cm.Run()
 
 	assert.NotNil(t, err, "Got no error")
@@ -40,7 +40,7 @@ func Test_Run_invalid_working_dir(t *testing.T) {
 func Test_Run_silently(t *testing.T) {
 	expected := util.MustSlurp(fixture("tf-help.txt"))
 	logger := logrus.New()
-	cm := childminder.NewChildMinder(logger, "./", []string{}, "terraform", "help")
+	cm := childminder.NewChildMinder(logger, "./", []string{}, "terraform", "-help")
 	out, _, err := cm.RunSilently()
 
 	assert.Nil(t, err, "Got an error")

@@ -31,6 +31,7 @@ RUN apt-get update                                                              
 ARG YQ_VERSION=3.4.1
 ARG GOSS_VERSION=v0.3.21
 ARG HADOLINT_VERSION=v2.12.0
+ARG TERRAFORM_VERSION=1.4.1
 ARG lint_user=lint
 
 ## Install YQ
@@ -47,6 +48,12 @@ RUN curl -sSOL https://github.com/aelsabbahy/goss/releases/download/${GOSS_VERSI
 RUN curl -sSOL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 \
     && install -Dm755 hadolint-Linux-x86_64 /usr/local/bin/hadolint \
     && hadolint --version
+
+# Install terraform
+RUN curl -sSL --fail "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" \
+    -o terraform.zip \
+ && unzip terraform.zip \
+ && install -Dm755 -s terraform /usr/local/bin/
 
 RUN useradd -ms /bin/bash ${lint_user} \
     && mkdir -p /app
@@ -90,20 +97,7 @@ RUN apt-get update                                                              
     openssh-client                                                               \
     unzip
 
-# Install terraform
-ARG GOLANGCI_LINT_VERSION=v1.51.2
-ARG TERRAFORM_VERSION=v0.13.7
-
 WORKDIR /app
-
-ENV GO111MODULE on
-RUN go get github.com/hashicorp/terraform/tools/terraform-bundle@${TERRAFORM_VERSION}
-
-COPY ./terraform/deployments/AWS/terraform-bundle.hcl .
-RUN terraform-bundle package terraform-bundle.hcl \
- && mkdir -p terraform-bundle \
- && unzip -d terraform-bundle terraform_*.zip \
- && install -Dm755 -s terraform-bundle/terraform /usr/local/bin/
 
 # Setup non-root build user
 ARG build_user=build
@@ -132,6 +126,7 @@ COPY --chown=1000 cmd/  ./cmd
 COPY --chown=1000 test/  ./test
 
 # Golang build and test
+COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/
 RUN make test-unit
 
 #------------------#
@@ -154,9 +149,8 @@ RUN apt-get update                                                              
     openssh-client                                                               \
  && rm -rf /var/lib/apt/lists/*
 
-# Init Terraform Bundle
-COPY --from=build-and-test /app/terraform-bundle/plugins/ /app/.terraform/plugins/
-COPY --from=build-and-test /usr/local/bin/terraform /usr/local/bin/
+# Init Terraform
+COPY --from=dependencies /usr/local/bin/terraform /usr/local/bin/
 
 # Add login message
 COPY ./scripts/launch-motd /usr/local/bin/launch-motd
@@ -191,7 +185,8 @@ WORKDIR /app
 # Add terraform and perturb/scenario scripts to the image and goss.yaml to verify the container
 ARG config_file="./launch-files/simulator.yaml"
 COPY --chown=1000 ./terraform/ ./terraform/
-RUN terraform init --get-plugins=true --backend=false terraform/deployments/*
+RUN terraform -chdir=terraform/deployments/AWS init --get=true --backend=false \
+ && chown -R ${launch_user}:${launch_user} terraform/deployments/AWS
 
 COPY --chown=1000 ./simulation-scripts/ ./simulation-scripts/
 COPY --chown=1000                     \
