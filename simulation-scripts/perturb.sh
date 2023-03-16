@@ -448,30 +448,15 @@ copy_challenge_and_tasks() {
   fi
 
   info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  scp \
-    -F "${SSH_CONFIG_FILE}" \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "LogLevel=ERROR" \
-    "${tmpchallenge}" "root@${BASTION_HOST}:/home/ubuntu/challenge.txt"
+  run_scp "${tmpchallenge}" "root@${BASTION_HOST}:/home/ubuntu/challenge.txt"
   rm "${tmpchallenge}"
 
   info "Copying scenario hash from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  scp \
-    -F "${SSH_CONFIG_FILE}" \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "LogLevel=ERROR" \
-    "${tmphash}" "root@${BASTION_HOST}:/home/ubuntu/hash.txt"
+  run_scp "${tmphash}" "root@${BASTION_HOST}:/home/ubuntu/hash.txt"
   rm "${tmphash}"
 
   info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  scp \
-    -F "${SSH_CONFIG_FILE}" \
-    -o "StrictHostKeyChecking=no" \
-    -o "UserKnownHostsFile=/dev/null" \
-    -o "LogLevel=ERROR" \
-    "${tmptasks}" "root@${BASTION_HOST}:/home/ubuntu/tasks.yaml"
+  run_scp "${tmptasks}" "root@${BASTION_HOST}:/home/ubuntu/tasks.yaml"
   rm "${tmptasks}"
   popd >/dev/null
 }
@@ -579,6 +564,7 @@ validate_instructions() {
     *master.sh) ;;
     *internal.sh) ;;
     *bastion.sh) ;;
+    *local.sh) ;;
 
     test.sh) ;;
 
@@ -695,6 +681,9 @@ run_scripts() {
     *bastion.sh)
       run_file_on_host "${FILE}" "$(get_bastion)"
       ;;
+    *local.sh)
+      run_file "${FILE}"
+      ;;
 
     test.sh)
       :
@@ -773,6 +762,19 @@ run_ssh() {
     root@"${@}"
 }
 
+run_scp() {
+  local LFILE="$1"
+  local REMOTE="$2"
+  # globbing explicitly allowed for LFILE
+  # shellcheck disable=SC2145 disable=SC2086
+  command scp "${SCP_FLAGS-""}"\
+    -F "${SSH_CONFIG_FILE}" \
+    -o "StrictHostKeyChecking=no" \
+    -o "UserKnownHostsFile=/dev/null" \
+    -o "LogLevel=ERROR" \
+    ${LFILE} "root@${REMOTE}"
+}
+
 cat_script_to_run() {
   local FILE="${1}"
   if [[ "${IS_DRY_RUN:-}" == 1 ]]; then
@@ -794,6 +796,25 @@ run_file_on_host() {
     set -Eeuxo pipefail
     cat_script_to_run "${FILE}"
   ) | run_ssh "${HOST}" |& tee /dev/stderr >>"${TMP_DIR}/perturb-script-file-${HOST}.log"
+  unset BASH_XTRACEFD
+  exec {FD}>&-
+}
+
+run_file() {
+  local FILE="${1}"
+  export SSH_CONFIG_FILE MASTER_HOST BASTION_HOST INTERNAL_HOST NODE_HOSTS
+  export -f run_ssh run_scp get_master get_bastion get_node get_internal
+  touch "${TMP_DIR}/perturb-script-file-local.log"
+  cat_script_to_run "${FILE}" >>"${TMP_DIR}/perturb-script-file-local.log"
+  exec {FD}>>"${TMP_DIR}/perturb-script-file-local.log"
+  BASH_XTRACEFD=$FD
+  (
+    set -Eeuxo pipefail
+    cat_script_to_run "${FILE}"
+  ) | (
+    cd "$(dirname "${FILE}")"
+    bash
+  ) |& tee /dev/stderr >>"${TMP_DIR}/perturb-script-file-local.log"
   unset BASH_XTRACEFD
   exec {FD}>&-
 }
