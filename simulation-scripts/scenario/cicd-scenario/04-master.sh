@@ -31,16 +31,38 @@ fi
 tea login add -n ctf -u http://localhost:30080 -t "$TOKEN"
 tea login default ctf
 
-# Create developer user
-USER="developer"
-DEV_PASS="zah2sahvojae2aishei6DeivuzeeV7lu"
-DATA="{\"email\":\"$USER@localhost.ctf\",\"username\":\"$USER\",\"password\":\"$DEV_PASS\"}"
-JSON=$(curl "$BASEURL/api/v1/admin/users" -XPOST -d "$DATA")
-SUCCESS=$(echo "$JSON" | jq .active -r)
-if [[ "$SUCCESS" != "true" ]]; then
-    echo "Creating user $USER failed"
-    exit 1
-fi
+DEV1="{\"full_name\": \"Jonathan Castillo\", \"login_name\": \"jcastillo\", \"username\": \"jcastillo\", \"email\": \"jcastillo@rescue.drop\", \"password\": \"9zvB2cQf2tdC\"}"
+DEV2="{\"full_name\": \"Lauren Mcfarland\", \"login_name\": \"lmcfarland\", \"username\": \"lmcfarland\", \"email\": \"lmcfarland@rescue.drop\", \"password\": \"kmyPlZv8w3Cj\"}"
+DEV3="{\"full_name\": \"Jacob Gutierrez\", \"login_name\": \"jgutierrez\", \"username\": \"jgutierrez\", \"email\": \"jgutierrez@rescue.drop\", \"password\": \"EpLLztbxH7pu\"}"
+DEV4="{\"full_name\": \"Bryan Thompson\", \"login_name\": \"bthompson\", \"username\": \"bthompson\", \"email\": \"bthompson@rescue.drop\", \"password\": \"NZ7HlHtgG6a6\"}"
+DEV5="{\"full_name\": \"Randy Nguyen\", \"login_name\": \"rnguyen\", \"username\": \"rnguyen\", \"email\": \"rnguyen@rescue.drop\", \"password\": \"2moaH42uXi1H\"}"
+DEV6="{\"full_name\": \"Alexander Scott\", \"login_name\": \"ascott\", \"username\": \"ascott\", \"email\": \"ascott@rescue.drop\", \"password\": \"gbiJIiAg4zKj\"}"
+DEV7="{\"full_name\": \"Jennifer Lucas\", \"login_name\": \"jlucas\", \"username\": \"jlucas\", \"email\": \"jlucas@rescue.drop\", \"password\": \"9YCuacxJGB5s\"}"
+DEV8="{\"full_name\": \"Kristy Garner\", \"login_name\": \"kgarner\", \"username\": \"kgarner\", \"email\": \"kgarner@rescue.drop\", \"password\": \"lqeQkqiU3GnW\"}"
+DEV9="{\"full_name\": \"Joyce Vazquez\", \"login_name\": \"jvazquez\", \"username\": \"jvazquez\", \"email\": \"jvazquez@rescue.drop\", \"password\": \"f87wMWnJIyOu\"}"
+OPS1="{\"full_name\": \"Benjamin Gibbs\", \"login_name\": \"bgibbs\", \"username\": \"bgibbs\", \"email\": \"bgibbs@rescue.drop\", \"password\": \"p9i41rFv4QUf\"}"
+OPS2="{\"full_name\": \"Jason Cox\", \"login_name\": \"jcox\", \"username\": \"jcox\", \"email\": \"jcox@rescue.drop\", \"password\": \"B6cBTNcweE45\"}"
+OPS3="{\"full_name\": \"Katherine Perez\", \"login_name\": \"kperez\", \"username\": \"kperez\", \"email\": \"kperez@rescue.drop\", \"password\": \"aSLBQtc7eH64\"}"
+REV1="{\"full_name\": \"Dawn Shaw\", \"login_name\": \"dshaw\", \"username\": \"dshaw\", \"email\": \"dshaw@rescue.drop\", \"password\": \"ZPkyZABfsTD9\"}"
+REV2="{\"full_name\": \"Ian Ramos\", \"login_name\": \"iramos\", \"username\": \"iramos\", \"email\": \"iramos@rescue.drop\", \"password\": \"B6ejWLgmcmE1\"}"
+REV3="{\"full_name\": \"Julia Flynn\", \"login_name\": \"jflynn\", \"username\": \"jflynn\", \"email\": \"jflynn@rescue.drop\", \"password\": \"mawNbk5JFi0W\"}"
+
+ALL=("$DEV1" "$DEV2" "$DEV3" "$DEV4" "$DEV5" "$DEV6" "$DEV7" "$DEV8" "$DEV9" "$OPS1" "$OPS2" "$OPS3" "$REV1" "$REV2" "$REV3")
+DEV=("$DEV1" "$DEV2" "$DEV3" "$DEV4" "$DEV5" "$DEV6" "$DEV7" "$DEV8" "$DEV9")
+OPS=("$OPS1" "$OPS2" "$OPS3")
+REV=("$REV1" "$REV2" "$REV3")
+
+# Create all users
+for USER in "${ALL[@]}"
+do
+    USERNAME=$(echo "$USER" | jq .username -r)
+    JSON=$(curl "$BASEURL/api/v1/admin/users" -XPOST -d "$USER")
+    SUCCESS=$(echo "$JSON" | jq .active -r)
+    if [[ "$SUCCESS" != "true" ]]; then
+        echo "Creating $USERNAME failed"
+        exit 1
+    fi
+done
 
 # Set Admin user to private
 DATA="{\"login_name\":\"$GITEA_SERVER_USER\",\"visibility\":\"private\"}"
@@ -52,7 +74,7 @@ if [[ "$SUCCESS" != "private" ]]; then
 fi
 
 # Create org structure
-ORG="supersecureorg"
+ORG="rescue-drop"
 tea org create "$ORG"
 for NAME in developers devops reviewers; do
     DATA="{\"name\":\"$NAME\",\"permission\":\"write\",\"can_create_org_repo\":false,\"units\":[\"repo.code\",\"repo.pulls\"],\"includes_all_repositories\": true}"
@@ -64,11 +86,43 @@ for NAME in developers devops reviewers; do
     fi
 done
 
-# Add reviewers
-ID=$(curl "$BASEURL/api/v1/orgs/$ORG/teams/search?q=reviewers" | jq '.data[0].id' -r )
-for r in developer1 dev2; do
-    curl "$BASEURL/api/v1/team/$ID/members/$r" -XPUT
+# Get Team ID to prevent sequence inconsistencies
+DEV_TEAM=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="developers") | .id')
+for USER in "${DEV[@]}"
+do
+    USERNAME=$(echo "$USER" | jq .username -r)
+    JSON=$(curl "$BASEURL/api/v1/teams/$DEV_TEAM/members/$USERNAME" -X PUT)
+    SUCCESS=$(echo "$JSON" | jq .errors -r)
+    if [[ "$SUCCESS" == "null" ]]; then
+        echo "Putting $USERNAME into developers failed"
+        exit 1
+    fi
 done
+
+OPS_TEAM=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="devops") | .id')
+for USER in "${OPS[@]}"
+do
+    USERNAME=$(echo "$USER" | jq .username -r)
+    JSON=$(curl "$BASEURL/api/v1/teams/$OPS_TEAM/members/$USERNAME" -X PUT)
+    SUCCESS=$(echo "$JSON" | jq .errors -r)
+    if [[ "$SUCCESS" == "null" ]]; then
+        echo "Putting $USERNAME into devops failed"
+        exit 1
+    fi
+done
+
+REV_TEAM=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="reviewers") | .id')
+for USER in "${REV[@]}"
+do
+    USERNAME=$(echo "$USER" | jq .username -r)
+    JSON=$(curl "$BASEURL/api/v1/teams/$REV_TEAM/members/$USERNAME" -X PUT)
+    SUCCESS=$(echo "$JSON" | jq .errors -r)
+    if [[ "$SUCCESS" == "null" ]]; then
+        echo "Putting $USERNAME into reviewers failed"
+        exit 1
+    fi
+done
+
 # Create repo
 REPO="production-image-build"
 tea repo create --owner "$ORG" --name "$REPO"
