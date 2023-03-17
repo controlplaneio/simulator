@@ -1,0 +1,22 @@
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - simulation-scripts/scenario/commandeer-container/_app/**
+
+jobs:
+  build-img-misty-gally:
+    uses: ./.github/workflows/build-scenario-templates.yaml
+    with:
+      scenario-id: commandeer-container
+      subdir: _app/misty-gally
+      tags: type=raw,value=misty-gally,priority=1000
+    secrets: inherit
+
+  build-img-treasure-chest:
+    uses: ./.github/workflows/build-scenario-templates.yaml
+    with:
+      scenario-id: commandeer-container
+      subdir: _app/treasure-chest
+      tags: type=raw,value=treasure-chest,priority=1000
+    secrets: inherit
