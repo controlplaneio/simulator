@@ -3,12 +3,11 @@ module github.com/kubernetes-simulator/simulator
 require (
 	github.com/aws/aws-sdk-go v1.21.7
 	github.com/fatih/structs v1.1.0
-	github.com/glendc/go-external-ip v0.0.0-20170425150139-139229dcdddd
+	github.com/glendc/go-external-ip v0.1.0
 	github.com/go-test/deep v1.0.5
-	github.com/jc21/go-external-ip v0.0.0-20200511063623-13fd30ed5433
 	github.com/magiconair/properties v1.8.1 // indirect
 	github.com/olekukonko/tablewriter v0.0.4
-	github.com/pelletier/go-toml v1.4.0 // indirect
+	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/errors v0.8.1
 	github.com/sirupsen/logrus v1.2.0
 	github.com/spf13/afero v1.2.2 // indirect

@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/jc21/go-external-ip"
+	"github.com/glendc/go-external-ip"
 	"github.com/pkg/errors"
 )
 
