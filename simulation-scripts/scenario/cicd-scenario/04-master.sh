@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bashBASEURL="http://localhost:30080"
 
 set -Eeuo pipefail
 shopt -s expand_aliases
@@ -28,6 +28,7 @@ if [[ "$TOKEN" == "null" ]]; then
     echo "Failed to get cli TOKEN"
     exit 1
 fi
+rm -f /root/.config/tea/config.yml
 tea login add -n ctf -u http://localhost:30080 -t "$TOKEN"
 tea login default ctf
 
@@ -56,7 +57,8 @@ REV=("$REV1" "$REV2" "$REV3")
 for USER in "${ALL[@]}"
 do
     USERNAME=$(echo "$USER" | jq .username -r)
-    JSON=$(curl "$BASEURL/api/v1/admin/users" -XPOST -d "$USER")
+    DATA=$(echo "$USER" | jq '.must_change_password = false' )
+    JSON=$(curl "$BASEURL/api/v1/admin/users" -XPOST -d "$DATA")
     SUCCESS=$(echo "$JSON" | jq .active -r)
     if [[ "$SUCCESS" != "true" ]]; then
         echo "Creating $USERNAME failed"
@@ -138,13 +140,46 @@ if [[ "$SUCCESS" != "true" ]]; then
 fi
 
 # create branch protection
-DATA='{"rule_name":"main","required_approvals":99,"enable_approvals_whitelist":true,"approvals_whitelist_teams":["reviewers"]}'
+set +e
+read -r -d '' DATA <<EOF
+{
+  "rule_name": "main",
+  "required_approvals": 99,
+  "enable_approvals_whitelist": true,
+  "approvals_whitelist_teams": ["reviewers"],
+  "enable_push": true,
+  "enable_push_whitelist": true,
+  "push_whitelist_usernames": ["jcastillo"]
+}
+EOF
+set -e
 JSON=$(curl "$BASEURL/api/v1/repos/$ORG/$REPO/branch_protections" -XPOST -d "$DATA")
 SUCCESS=$(echo "$JSON" | jq .created_at -r)
 if [[ "$SUCCESS" == "null" ]]; then
     echo "Adding branch protection for $ORG/$REPO failed"
     exit 1
 fi
+
+# Add a CI secret
+# There is no API endpoint :(
+SECRET_NAME="DEPLOY_KEY"
+SECRET_VALUE="storeimage"
+
+# 1st CSRF & Login
+CSRF=$(curl -sS -c cookie.jar "$BASEURL" | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
+curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/login" -d "user_name=$GITEA_SERVER_USER&password=$GITEA_SERVER_PASSWORD&_csrf=$CSRF"
+
+# Re-fetch CSRF for safety & second req
+CSRF=$(curl -sS -c cookie.jar -b cookie.jar "$BASEURL/$ORG/$REPO/settings/secrets" | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
+RESP=$(curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/$ORG/$REPO/settings/secrets" -d "_csrf=$CSRF&title=${SECRET_NAME}&content=${SECRET_VALUE}" -v 2>&1)
+SUCCESS=$(echo "$RESP" | grep -F "macaron_flash" | perl -0777 -pe 's/.*flash=success%3DThe%2Bsecret(.*)has%2Bbeen%2Badded.*/\1/msg')
+if [[ "$SUCCESS" == "" ]]; then
+    echo "Adding CI secret ${SECRET_NAME} failed"
+    exit 1
+fi
+
+## Prep for git repo
+mkdir -p /tmp/gitrepo
 
 ## Order Processor Database
 mkdir -p /data/db
