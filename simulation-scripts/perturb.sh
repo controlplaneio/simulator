@@ -448,15 +448,15 @@ copy_challenge_and_tasks() {
   fi
 
   info "Copying challenge.txt from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  run_scp "${tmpchallenge}" "root@${BASTION_HOST}:/home/ubuntu/challenge.txt"
+  run_scp "${tmpchallenge}" "${BASTION_HOST}:/home/ubuntu/challenge.txt"
   rm "${tmpchallenge}"
 
   info "Copying scenario hash from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  run_scp "${tmphash}" "root@${BASTION_HOST}:/home/ubuntu/hash.txt"
+  run_scp "${tmphash}" "${BASTION_HOST}:/home/ubuntu/hash.txt"
   rm "${tmphash}"
 
   info "Copying tasks.yaml from ${SCENARIO_DIR} to ${BASTION_HOST}"
-  run_scp "${tmptasks}" "root@${BASTION_HOST}:/home/ubuntu/tasks.yaml"
+  run_scp "${tmptasks}" "${BASTION_HOST}:/home/ubuntu/tasks.yaml"
   rm "${tmptasks}"
   popd >/dev/null
 }
@@ -767,7 +767,7 @@ run_scp() {
   local REMOTE="$2"
   # globbing explicitly allowed for LFILE
   # shellcheck disable=SC2145 disable=SC2086
-  command scp "${SCP_FLAGS-""}"\
+  command scp -r \
     -F "${SSH_CONFIG_FILE}" \
     -o "StrictHostKeyChecking=no" \
     -o "UserKnownHostsFile=/dev/null" \
