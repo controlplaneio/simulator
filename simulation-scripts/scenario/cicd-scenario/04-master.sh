@@ -12,7 +12,7 @@ GITEA_SERVER_PASSWORD="ahXeehohsoo2suej4tee0ol5xeeteM1w"
 BASEURL="http://localhost:30080"
 
 # shellcheck disable=SC2139
-alias curl="curl -u \"$GITEA_SERVER_USER:$GITEA_SERVER_PASSWORD\" -H 'Content-type: application/json'"
+alias curlj="curl -u \"$GITEA_SERVER_USER:$GITEA_SERVER_PASSWORD\" -H 'Content-type: application/json'"
 
 #CSRF=$(curl -sS -c cookie.jar "$BASEURL" --retry 3 --retry-connrefused --retry-delay 5 | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
 #curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/login" -d "user_name=$GITEA_SERVER_USER&password=$GITEA_SERVER_PASSWORD&_csrf=$CSRF"
@@ -21,7 +21,7 @@ alias curl="curl -u \"$GITEA_SERVER_USER:$GITEA_SERVER_PASSWORD\" -H 'Content-ty
 #TOKEN=$(echo "$RESP" | grep -F "macaron_flash" | perl -0777 -pe 's/.*info%3D(.*)%26success%3DYour%2Bnew%2Btoken.*/\1/msg')
 
 set -x
-JSON=$(curl "$BASEURL/api/v1/users/ctf_admin/tokens" -XPOST --retry 3 --retry-connrefused --retry-delay 5 -d "{\"name\":\"cli_token\",\"scopes\":[\"all\"]}")
+JSON=$(curlj "$BASEURL/api/v1/users/ctf_admin/tokens" -XPOST --retry 3 --retry-connrefused --retry-delay 5 -d "{\"name\":\"cli_token\",\"scopes\":[\"all\"]}")
 TOKEN=$(echo "$JSON" | jq .sha1 -r)
 
 if [[ "$TOKEN" == "null" ]]; then
@@ -58,7 +58,7 @@ for USER in "${ALL[@]}"
 do
     USERNAME=$(echo "$USER" | jq .username -r)
     DATA=$(echo "$USER" | jq '.must_change_password = false' )
-    JSON=$(curl "$BASEURL/api/v1/admin/users" -XPOST -d "$DATA")
+    JSON=$(curlj "$BASEURL/api/v1/admin/users" -XPOST -d "$DATA")
     SUCCESS=$(echo "$JSON" | jq .active -r)
     if [[ "$SUCCESS" != "true" ]]; then
         echo "Creating $USERNAME failed"
@@ -68,7 +68,7 @@ done
 
 # Set Admin user to private
 DATA="{\"login_name\":\"$GITEA_SERVER_USER\",\"visibility\":\"private\"}"
-JSON=$(curl "$BASEURL/api/v1/admin/users/$GITEA_SERVER_USER" -XPATCH -d "$DATA")
+JSON=$(curlj "$BASEURL/api/v1/admin/users/$GITEA_SERVER_USER" -XPATCH -d "$DATA")
 SUCCESS=$(echo "$JSON" | jq .visibility -r)
 if [[ "$SUCCESS" != "private" ]]; then
     echo "Editing user $USER failed"
@@ -80,7 +80,7 @@ ORG="rescue-drop"
 tea org create "$ORG"
 for NAME in developers devops reviewers; do
     DATA="{\"name\":\"$NAME\",\"permission\":\"write\",\"can_create_org_repo\":false,\"units\":[\"repo.code\",\"repo.pulls\"],\"includes_all_repositories\": true}"
-    JSON=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" -XPOST -d "$DATA")
+    JSON=$(curlj "$BASEURL/api/v1/orgs/$ORG/teams" -XPOST -d "$DATA")
     SUCCESS=$(echo "$JSON" | jq .id -r)
     if [[ "$SUCCESS" == "null" ]]; then
         echo "Creating team $NAME failed"
@@ -89,11 +89,11 @@ for NAME in developers devops reviewers; do
 done
 
 # Get Team ID to prevent sequence inconsistencies
-DEV_TEAM=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="developers") | .id')
+DEV_TEAM=$(curlj "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="developers") | .id')
 for USER in "${DEV[@]}"
 do
     USERNAME=$(echo "$USER" | jq .username -r)
-    JSON=$(curl "$BASEURL/api/v1/teams/$DEV_TEAM/members/$USERNAME" -X PUT)
+    JSON=$(curlj "$BASEURL/api/v1/teams/$DEV_TEAM/members/$USERNAME" -X PUT)
     SUCCESS=$(echo "$JSON" | jq .errors -r)
     if [[ "$SUCCESS" == "null" ]]; then
         echo "Putting $USERNAME into developers failed"
@@ -101,11 +101,11 @@ do
     fi
 done
 
-OPS_TEAM=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="devops") | .id')
+OPS_TEAM=$(curlj "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="devops") | .id')
 for USER in "${OPS[@]}"
 do
     USERNAME=$(echo "$USER" | jq .username -r)
-    JSON=$(curl "$BASEURL/api/v1/teams/$OPS_TEAM/members/$USERNAME" -X PUT)
+    JSON=$(curlj "$BASEURL/api/v1/teams/$OPS_TEAM/members/$USERNAME" -X PUT)
     SUCCESS=$(echo "$JSON" | jq .errors -r)
     if [[ "$SUCCESS" == "null" ]]; then
         echo "Putting $USERNAME into devops failed"
@@ -113,11 +113,11 @@ do
     fi
 done
 
-REV_TEAM=$(curl "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="reviewers") | .id')
+REV_TEAM=$(curlj "$BASEURL/api/v1/orgs/$ORG/teams" | jq '.[] | select(.name=="reviewers") | .id')
 for USER in "${REV[@]}"
 do
     USERNAME=$(echo "$USER" | jq .username -r)
-    JSON=$(curl "$BASEURL/api/v1/teams/$REV_TEAM/members/$USERNAME" -X PUT)
+    JSON=$(curlj "$BASEURL/api/v1/teams/$REV_TEAM/members/$USERNAME" -X PUT)
     SUCCESS=$(echo "$JSON" | jq .errors -r)
     if [[ "$SUCCESS" == "null" ]]; then
         echo "Putting $USERNAME into reviewers failed"
@@ -132,7 +132,7 @@ tea repo create --owner "$ORG" --name "$REPO"
 # Set repo features
 # Requires patch
 DATA='{"has_actions":true,"has_wiki":false,"has_releases":false,"has_projects":false}'
-JSON=$(curl "$BASEURL/api/v1/repos/$ORG/$REPO" -XPATCH -d "$DATA")
+JSON=$(curlj "$BASEURL/api/v1/repos/$ORG/$REPO" -XPATCH -d "$DATA")
 SUCCESS=$(echo "$JSON" | jq .has_actions -r)
 if [[ "$SUCCESS" != "true" ]]; then
     echo "Editing repo $REPO failed"
@@ -153,7 +153,7 @@ read -r -d '' DATA <<EOF
 }
 EOF
 set -e
-JSON=$(curl "$BASEURL/api/v1/repos/$ORG/$REPO/branch_protections" -XPOST -d "$DATA")
+JSON=$(curlj "$BASEURL/api/v1/repos/$ORG/$REPO/branch_protections" -XPOST -d "$DATA")
 SUCCESS=$(echo "$JSON" | jq .created_at -r)
 if [[ "$SUCCESS" == "null" ]]; then
     echo "Adding branch protection for $ORG/$REPO failed"

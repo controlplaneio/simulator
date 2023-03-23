@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DEPLOY_USER: ci
-      DEPLOY_KEY: storeimage
       REGISTRY: __REGISTRY_IP__:30080
     steps:
       - name: Git Checkout
