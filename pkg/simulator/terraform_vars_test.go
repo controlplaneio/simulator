@@ -23,7 +23,12 @@ attack_container_repo = "controlplane/simulator-attack"
 attack_container_tag = "latest"
 state_bucket_name = "test-bucket"
 `
-	assert.Equal(t, expected, tfv.String())
+	contents, err := tfv.Marshal()
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Equal(t, expected, string(contents))
 }
 
 func Test_Ensure_TfVarsFile_with_settings(t *testing.T) {
@@ -60,5 +65,10 @@ attack_container_repo = "controlplane/simulator-attack"
 attack_container_tag = "latest"
 state_bucket_name = "test-bucket"
 `
-	assert.Equal(t, expected, tfv.String())
+	contents, err := tfv.Marshal()
+	if err != nil {
+		panic(err)
+	}
+
+	assert.Equal(t, expected, string(contents))
 }
