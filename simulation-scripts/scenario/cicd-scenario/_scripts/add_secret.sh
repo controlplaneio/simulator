@@ -7,7 +7,7 @@ GITEA_SERVER_PASSWORD="ahXeehohsoo2suej4tee0ol5xeeteM1w"
 BASEURL="localhost:8080"
 ORG="rescue-drop"
 REPO="production-image-build"
-SECRET_NAME="DEPLOY_USER"
+SECRET_NAME="DEPLOY_KEY"
 SECRET_VALUE="storeimage"
 
 
