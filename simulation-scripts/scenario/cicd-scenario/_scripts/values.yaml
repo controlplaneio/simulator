@@ -38,6 +38,10 @@ statefulset:
       value: "true"
     - name: GITEA__LOG__ENABLE_XORM_LOG
       value: "false"
+    - name: GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER
+      value: "true"
+    - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
+      value: "false"
 service:
   http:
     type: ClusterIP

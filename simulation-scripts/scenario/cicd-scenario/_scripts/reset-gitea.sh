@@ -16,6 +16,12 @@ SUCCESS=$(curl "$BASEURL/api/v1/repos/$ORG/$REPO" -XDELETE -o /dev/null -w "%{ht
 if [[ "$SUCCESS" != "204" ]]; then
     echo "Deleting $REPO failed with $SUCCESS"
 fi
+REPO="test-ci"
+SUCCESS=$(curl "$BASEURL/api/v1/repos/iramos/$REPO" -XDELETE -o /dev/null -w "%{http_code}" )
+if [[ "$SUCCESS" != "204" ]]; then
+    echo "Deleting $REPO failed with $SUCCESS"
+fi
+
 
 SUCCESS=$(curl "$BASEURL/api/v1/orgs/$ORG" -XDELETE -o /dev/null -w "%{http_code}" )
 if [[ "$SUCCESS" != "204" ]]; then

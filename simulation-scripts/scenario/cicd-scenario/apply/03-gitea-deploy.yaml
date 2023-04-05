@@ -4,16 +4,17 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: gitea-postgresql
+  namespace: "gitea-system"
   labels:
     app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.17
+    helm.sh/chart: postgresql-12.2.6
     app.kubernetes.io/instance: gitea
     app.kubernetes.io/managed-by: Helm
-  namespace: gitea-system
 type: Opaque
 data:
-  postgresql-postgres-password: "eEU3SGhYTnExbg=="
-  postgresql-password: "Z2l0ZWE="
+  postgres-password: "eUxwT0tTM1gwQQ=="
+  password: "Z2l0ZWE="
+  # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
 # Source: gitea/templates/gitea/config.yaml
 apiVersion: v1
@@ -21,7 +22,7 @@ kind: Secret
 metadata:
   name: gitea-inline-config
   labels:
-    helm.sh/chart: gitea-7.0.4
+    helm.sh/chart: gitea-8.0.2
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -57,7 +58,7 @@ kind: Secret
 metadata:
   name: gitea
   labels:
-    helm.sh/chart: gitea-7.0.4
+    helm.sh/chart: gitea-8.0.2
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -227,7 +228,7 @@ kind: Secret
 metadata:
   name: gitea-init
   labels:
-    helm.sh/chart: gitea-7.0.4
+    helm.sh/chart: gitea-8.0.2
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -301,22 +302,23 @@ stringData:
 
     echo '==== END GITEA CONFIGURATION ===='
 ---
-# Source: gitea/charts/postgresql/templates/svc-headless.yaml
+# Source: gitea/charts/postgresql/templates/primary/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: gitea-postgresql-headless
+  name: gitea-postgresql-hl
+  namespace: "gitea-system"
   labels:
     app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.17
+    helm.sh/chart: postgresql-12.2.6
     app.kubernetes.io/instance: gitea
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: primary
     # Use this annotation in addition to the actual publishNotReadyAddresses
     # field below because the annotation will stop being respected soon but the
     # field is broken in some versions of Kubernetes:
     # https://github.com/kubernetes/kubernetes/issues/58662
     service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-  namespace: gitea-system
 spec:
   type: ClusterIP
   clusterIP: None
@@ -331,29 +333,32 @@ spec:
   selector:
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/instance: gitea
+    app.kubernetes.io/component: primary
 ---
-# Source: gitea/charts/postgresql/templates/svc.yaml
+# Source: gitea/charts/postgresql/templates/primary/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: gitea-postgresql
+  namespace: "gitea-system"
   labels:
     app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.17
+    helm.sh/chart: postgresql-12.2.6
     app.kubernetes.io/instance: gitea
     app.kubernetes.io/managed-by: Helm
-  annotations:
-  namespace: gitea-system
+    app.kubernetes.io/component: primary
 spec:
   type: ClusterIP
+  sessionAffinity: None
   ports:
     - name: tcp-postgresql
       port: 5432
       targetPort: tcp-postgresql
+      nodePort: null
   selector:
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/instance: gitea
-    role: primary
+    app.kubernetes.io/component: primary
 ---
 # Source: gitea/templates/gitea/http-svc.yaml
 apiVersion: v1
@@ -361,7 +366,7 @@ kind: Service
 metadata:
   name: gitea-http
   labels:
-    helm.sh/chart: gitea-7.0.4
+    helm.sh/chart: gitea-8.0.2
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -387,7 +392,7 @@ kind: Service
 metadata:
   name: gitea-ssh
   labels:
-    helm.sh/chart: gitea-7.0.4
+    helm.sh/chart: gitea-8.0.2
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -408,38 +413,37 @@ spec:
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
 ---
-# Source: gitea/charts/postgresql/templates/statefulset.yaml
+# Source: gitea/charts/postgresql/templates/primary/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: gitea-postgresql
+  namespace: "gitea-system"
   labels:
     app.kubernetes.io/name: postgresql
-    helm.sh/chart: postgresql-10.3.17
+    helm.sh/chart: postgresql-12.2.6
     app.kubernetes.io/instance: gitea
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: primary
-  annotations:
-  namespace: gitea-system
 spec:
-  serviceName: gitea-postgresql-headless
   replicas: 1
+  serviceName: gitea-postgresql-hl
   updateStrategy:
+    rollingUpdate: {}
     type: RollingUpdate
   selector:
     matchLabels:
       app.kubernetes.io/name: postgresql
       app.kubernetes.io/instance: gitea
-      role: primary
+      app.kubernetes.io/component: primary
   template:
     metadata:
       name: gitea-postgresql
       labels:
         app.kubernetes.io/name: postgresql
-        helm.sh/chart: postgresql-10.3.17
+        helm.sh/chart: postgresql-12.2.6
         app.kubernetes.io/instance: gitea
         app.kubernetes.io/managed-by: Helm
-        role: primary
         app.kubernetes.io/component: primary
     spec:
       affinity:
@@ -453,22 +457,18 @@ spec:
                     app.kubernetes.io/name: postgresql
                     app.kubernetes.io/instance: gitea
                     app.kubernetes.io/component: primary
-                namespaces:
-                  - "gitea-system"
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
 
       securityContext:
         fsGroup: 1001
+      hostNetwork: false
+      hostIPC: false
       containers:
-        - name: gitea-postgresql
-          image: docker.io/bitnami/postgresql:11.11.0-debian-10-r62
+        - name: postgresql
+          image: docker.io/bitnami/postgresql:15.2.0-debian-11-r14
           imagePullPolicy: "IfNotPresent"
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
           securityContext:
             runAsUser: 1001
           env:
@@ -480,24 +480,31 @@ spec:
               value: "/bitnami/postgresql"
             - name: PGDATA
               value: "/bitnami/postgresql/data"
+            # Authentication
+            - name: POSTGRES_USER
+              value: "gitea"
             - name: POSTGRES_POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: gitea-postgresql
-                  key: postgresql-postgres-password
-            - name: POSTGRES_USER
-              value: "gitea"
+                  key: postgres-password
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: gitea-postgresql
-                  key: postgresql-password
+                  key: password
             - name: POSTGRES_DB
               value: "gitea"
+            # Replication
+            # Initdb
+            # Standby
+            # LDAP
             - name: POSTGRESQL_ENABLE_LDAP
               value: "no"
+            # TLS
             - name: POSTGRESQL_ENABLE_TLS
               value: "no"
+            # Audit
             - name: POSTGRESQL_LOG_HOSTNAME
               value: "false"
             - name: POSTGRESQL_LOG_CONNECTIONS
@@ -506,6 +513,7 @@ spec:
               value: "false"
             - name: POSTGRESQL_PGAUDIT_LOG_CATALOG
               value: "off"
+            # Others
             - name: POSTGRESQL_CLIENT_MIN_MESSAGES
               value: "error"
             - name: POSTGRESQL_SHARED_PRELOAD_LIBRARIES
@@ -514,30 +522,36 @@ spec:
             - name: tcp-postgresql
               containerPort: 5432
           livenessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
             exec:
               command:
                 - /bin/sh
                 - -c
                 - exec pg_isready -U "gitea" -d "dbname=gitea" -h 127.0.0.1 -p 5432
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
           readinessProbe:
+            failureThreshold: 6
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
             exec:
               command:
                 - /bin/sh
                 - -c
                 - -e
+
                 - |
                   exec pg_isready -U "gitea" -d "dbname=gitea" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 6
+          resources:
+            limits: {}
+            requests:
+              cpu: 250m
+              memory: 256Mi
           volumeMounts:
             - name: dshm
               mountPath: /dev/shm
@@ -548,7 +562,6 @@ spec:
         - name: dshm
           emptyDir:
             medium: Memory
-            sizeLimit: 1Gi
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -567,7 +580,7 @@ metadata:
   name: gitea
   annotations:
   labels:
-    helm.sh/chart: gitea-7.0.4
+    helm.sh/chart: gitea-8.0.2
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -584,9 +597,9 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: fbea17e287c6de0ebc54282036b3e187a1f6fef66ebb57a8fa15890bc8f44c39
+        checksum/config: e486a3b40c7d5ad3a8442938f69c45dde6e4c2c6d87751a5477b01060ff7f0df
       labels:
-        helm.sh/chart: gitea-7.0.4
+        helm.sh/chart: gitea-8.0.2
         app: gitea
         app.kubernetes.io/name: gitea
         app.kubernetes.io/instance: gitea
@@ -635,6 +648,10 @@ spec:
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
               value: "false"
+            - name: GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER
+              value: "true"
+            - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
+              value: "false"
           volumeMounts:
             - name: init
               mountPath: /usr/sbin
@@ -681,6 +698,10 @@ spec:
             - name: GITEA__LOG__DISABLE_ROUTER_LOG
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
+              value: "false"
+            - name: GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER
+              value: "true"
+            - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
               value: "false"
           volumeMounts:
             - name: config
@@ -737,6 +758,10 @@ spec:
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
               value: "false"
+            - name: GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER
+              value: "true"
+            - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
+              value: "false"
           volumeMounts:
             - name: init
               mountPath: /usr/sbin
@@ -756,6 +781,8 @@ spec:
               value: "22"
             - name: SSH_PORT
               value: "22"
+            - name: SSH_LOG_LEVEL
+              value: "INFO"
             - name: GITEA_APP_INI
               value: /data/gitea/conf/app.ini
             - name: GITEA_CUSTOM
@@ -789,6 +816,10 @@ spec:
             - name: GITEA__LOG__DISABLE_ROUTER_LOG
               value: "true"
             - name: GITEA__LOG__ENABLE_XORM_LOG
+              value: "false"
+            - name: GITEA__REPOSITORY__ENABLE_PUSH_CREATE_USER
+              value: "true"
+            - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
               value: "false"
           ports:
             - name: ssh

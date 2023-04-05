@@ -9,6 +9,6 @@ tasks:
     sortOrder: 1
     startingPoint:
       mode: pod
-      podName: x
-      podNamespace: x
+      podName: jumpbox
+      podNamespace: dmz
     summary: x

@@ -20,9 +20,16 @@ alias curlj="curl -u \"$GITEA_SERVER_USER:$GITEA_SERVER_PASSWORD\" -H 'Content-t
 #RESP=$(curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/settings/applications" -d "_csrf=$CSRF&name=cli&scope=repo&scope=admin%3Aorg&scope=admin%3Apublic_key&scope=admin%3Arepo_hook&scope=admin%3Aorg_hook&scope=notification&scope=user&scope=delete_repo&scope=package&scope=admin%3Aapplication&scope=sudo" -v 2>&1)
 #TOKEN=$(echo "$RESP" | grep -F "macaron_flash" | perl -0777 -pe 's/.*info%3D(.*)%26success%3DYour%2Bnew%2Btoken.*/\1/msg')
 
-set -x
-JSON=$(curlj "$BASEURL/api/v1/users/ctf_admin/tokens" -XPOST --retry 3 --retry-connrefused --retry-delay 5 -d "{\"name\":\"cli_token\",\"scopes\":[\"all\"]}")
-TOKEN=$(echo "$JSON" | jq .sha1 -r)
+function get_cli_token() {
+    set -x
+    TUSER=${1:-"$GITEA_SERVER_USER"}
+    TPASS=${2:-"$GITEA_SERVER_PASSWORD"}
+    SUFFIX=$(tr -dc a-z0-9 </dev/urandom | head -c 6)
+    JSON=$(curl -u "$TUSER:$TPASS" -H 'Content-type: application/json' -sS --fail-with-body "$BASEURL/api/v1/users/$TUSER/tokens" -XPOST --retry 3 --retry-connrefused --retry-delay 5 -d "{\"name\":\"cli_token_$SUFFIX\",\"scopes\":[\"all\"]}")
+    echo "$JSON" | jq .sha1 -r
+    set +x
+}
+TOKEN=$(get_cli_token "ctf_admin")
 
 if [[ "$TOKEN" == "null" ]]; then
     echo "Failed to get cli TOKEN"
@@ -65,6 +72,10 @@ do
         exit 1
     fi
 done
+
+# Create token for compromised user
+TOKEN2=$(get_cli_token "iramos" "B6ejWLgmcmE1")
+echo "$TOKEN2" > /tmp/iramos-token
 
 # Set Admin user to private
 DATA="{\"login_name\":\"$GITEA_SERVER_USER\",\"visibility\":\"private\"}"
@@ -127,7 +138,8 @@ done
 
 # Create repo
 REPO="production-image-build"
-tea repo create --owner "$ORG" --name "$REPO"
+DESC="Build for our production job processing"
+tea repo create --owner "$ORG" --name "$REPO" --desc "$DESC"
 
 # Set repo features
 # Requires patch
@@ -144,7 +156,7 @@ set +e
 read -r -d '' DATA <<EOF
 {
   "rule_name": "main",
-  "required_approvals": 99,
+  "required_approvals": 1,
   "enable_approvals_whitelist": true,
   "approvals_whitelist_teams": ["reviewers"],
   "enable_push": true,
@@ -160,26 +172,29 @@ if [[ "$SUCCESS" == "null" ]]; then
     exit 1
 fi
 
-# Add a CI secret
+# Add a CI secrets
 # There is no API endpoint :(
-SECRET_NAME="DEPLOY_KEY"
-SECRET_VALUE="storeimage"
 
-# 1st CSRF & Login
-CSRF=$(curl -sS -c cookie.jar "$BASEURL" | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
-curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/login" -d "user_name=$GITEA_SERVER_USER&password=$GITEA_SERVER_PASSWORD&_csrf=$CSRF"
+function add_secret() {
+    local SECRET_NAME="$1"
+    local SECRET_VALUE="$2"
+    # 1st CSRF & Login
+    CSRF=$(curl -sS -c cookie.jar "$BASEURL" | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
+    curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/login" -d "user_name=$GITEA_SERVER_USER&password=$GITEA_SERVER_PASSWORD&_csrf=$CSRF"
 
-# Re-fetch CSRF for safety & second req
-CSRF=$(curl -sS -c cookie.jar -b cookie.jar "$BASEURL/$ORG/$REPO/settings/secrets" | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
-RESP=$(curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/$ORG/$REPO/settings/secrets" -d "_csrf=$CSRF&title=${SECRET_NAME}&content=${SECRET_VALUE}" -v 2>&1)
-SUCCESS=$(echo "$RESP" | grep -F "macaron_flash" | perl -0777 -pe 's/.*flash=success%3DThe%2Bsecret(.*)has%2Bbeen%2Badded.*/\1/msg')
-if [[ "$SUCCESS" == "" ]]; then
-    echo "Adding CI secret ${SECRET_NAME} failed"
-    exit 1
-fi
+    # Re-fetch CSRF for safety & second req
+    CSRF=$(curl -sS -c cookie.jar -b cookie.jar "$BASEURL/$ORG/$REPO/settings/secrets" | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
+    RESP=$(curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/$ORG/$REPO/settings/secrets" -d "_csrf=$CSRF&title=${SECRET_NAME}&content=${SECRET_VALUE}" -v 2>&1)
+    SUCCESS=$(echo "$RESP" | grep -F "macaron_flash" | perl -0777 -pe 's/.*flash=success%3DThe%2Bsecret(.*)has%2Bbeen%2Badded.*/\1/msg')
+    if [[ "$SUCCESS" == "" ]]; then
+        echo "Adding CI secret ${SECRET_NAME} failed"
+        exit 1
+    fi
+}
 
-## Prep for git repo
-mkdir -p /tmp/gitrepo
+add_secret "DEPLOY_KEY" "storeimage"
+RUNNER_KUBECONFIG=$(cat /etc/kubernetes/runner.conf)
+add_secret "KUBECONFIG" "$RUNNER_KUBECONFIG"
 
 ## Order Processor Database
 mkdir -p /data/db

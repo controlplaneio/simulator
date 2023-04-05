@@ -10,7 +10,11 @@ jobs:
     env:
       DEPLOY_USER: ci
       REGISTRY: __REGISTRY_IP__:30080
+      KUBE_APISERVER: __REGISTRY_IP__:6443
     steps:
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v3
+
       - name: Git Checkout
         uses: https://gitea.com/actions/checkout@v3
 
@@ -34,3 +38,9 @@ jobs:
         with:
           push: true
           tags: ${{ env.REGISTRY }}/prod-image:latest
+
+      - name: Deploy to Cluster
+        run: |
+          export KUBECONFIG=$(mktemp)
+          echo "${{ secrets.KUBECONFIG }}" > $KUBECONFIG
+          kubectl apply -f cronjob.yaml
