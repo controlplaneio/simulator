@@ -195,6 +195,7 @@ function add_secret() {
 add_secret "DEPLOY_KEY" "storeimage"
 RUNNER_KUBECONFIG=$(cat /etc/kubernetes/runner.conf)
 add_secret "KUBECONFIG" "$RUNNER_KUBECONFIG"
+add_secret "CTF_FLAG" "flag_ctf{SECRETS_REVEALED_2_THOSE_WHO_ENVISION_FLAWS}"
 
 ## Order Processor Database
 mkdir -p /data/db

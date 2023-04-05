@@ -31,7 +31,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
-  _generals_: ""
+  _generals_: APP_NAME="Rescue Drop"
   database: |-
     DB_TYPE=postgres
     HOST=gitea-postgresql.gitea-system.svc.cluster.local:5432

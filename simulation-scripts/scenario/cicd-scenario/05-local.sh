@@ -61,3 +61,24 @@ git commit -m "Add make to Dockerfile"
 git push localhost
 #shred -u /tmp/iramos-token
 EOF
+
+BOTUSER="kgarner"
+BOTPASS="lqeQkqiU3GnW"
+BOTREPO="chatbot"
+
+run_scp "./_git-repo-chatbot/" "$MASTER_IP:/tmp/chatbotrepo"
+run_scp "./_git-repo-chatbot/.config" "$MASTER_IP:/tmp/chatbotrepo"
+run_scp "./_git-repo-chatbot/.data" "$MASTER_IP:/tmp/chatbotrepo"
+run_scp "./_git-repo-chatbot/.env" "$MASTER_IP:/tmp/chatbotrepo"
+
+run_ssh "$MASTER_IP" bash <<EOF
+cd /tmp/chatbotrepo/
+git config --global init.defaultBranch main
+git init
+git config --local user.name "$BOTUSER"
+git config --local user.email "$BOTUSER@$DOMAIN"
+git remote add localhost http://$BOTUSER:$BOTPASS@localhost:30080/$BOTUSER/$BOTREPO
+git add .
+git commit -m "wip: template for chatbot"
+git push localhost
+EOF
