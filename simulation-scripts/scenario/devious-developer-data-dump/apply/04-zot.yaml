@@ -1,0 +1,150 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zot
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zot-config
+data:
+  config.json: |
+    {
+        "distSpecVersion": "1.1.0-dev",
+        "http": {
+            "address":"0.0.0.0",
+            "port":"5000",
+            "auth": {
+                "htpasswd": {
+                  "path": "/etc/zot/htpasswd"
+                },
+                "failDelay": 1
+            }
+        },
+        "storage":{
+            "rootDirectory":"/data/zot",
+            "commit": true,
+            "dedupe": true,
+            "gc": true,
+            "gcDelay": "1h",
+            "gcInterval": "6h"
+        },
+        "log": {
+            "level": "debug",
+            "output":"/dev/stdout",
+            "audit":"/var/log/zot/zot-audit.log"
+        }
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ba
+type: Opaque
+data:
+  # htpasswd -bnB ci storeimage > htpasswd
+  htpasswd: Y2k6JDJ5JDA1JDNoaG81V1ZaWlZKL1JRekoya3B6OHVURFRGVGlCR0NLRzJ0aUpzUnQxbHNkeEdXaGxqYnl1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zot
+spec:
+  type: ClusterIP
+  ports:
+    - name: zot
+      port: 5000
+      targetPort: zot
+      protocol: TCP
+  selector:
+    app: zot
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: zot-storage
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: zot-data-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: zot-storage
+  hostPath:
+    path: /mnt/zot
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-master-0
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: zot-data-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: zot-storage
+  resources:
+    requests:
+      storage: 5Gi
+  volumeMode: Filesystem
+  volumeName: zot-data-pv
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zot
+  labels:
+    app: zot
+spec:
+  selector:
+    matchLabels:
+      app: zot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zot
+    spec:
+      serviceAccountName: zot
+      nodeName: k8s-master-0
+      tolerations:
+      - operator: Exists
+      containers:
+      - name: zot
+        securityContext:
+          allowPrivilegeEscalation: false
+        image: docker.io/controlplaneoffsec/zot-registry:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - name: zot
+            containerPort: 5000
+        volumeMounts:
+        - name: config
+          mountPath: /etc/zot
+          readOnly: true
+        - name: data
+          mountPath: /data/zot
+      volumes:
+      - name: config
+        projected:
+          sources:
+          - configMap:
+              name: zot-config
+          - secret:
+              name: ba
+      - name: data
+        persistentVolumeClaim:
+          claimName: zot-data-pvc

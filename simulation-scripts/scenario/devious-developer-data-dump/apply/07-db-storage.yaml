@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prod-db
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  local:
+    path: /data/db/
+  claimRef:
+    name: prod-db
+    namespace: rescue-drop-prod
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - k8s-master-0
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prod-db
+  namespace: rescue-drop-prod
+spec:
+  storageClassName: local-storage
+  volumeName: prod-db
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

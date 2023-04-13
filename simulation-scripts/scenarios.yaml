@@ -2,12 +2,17 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
-## kubecon EU 2023
+## Kubecon EU 2023
 
   - name: Commandeer Container
     path: ./scenario/commandeer-container
     id: commandeer-container
     description: "KCEU23: Can you navigate Kubernetes and find the treasure?"
+    category: KubeCon
+  - name: Devious Developer Data Dump
+    path: ./scenario/devious-developer-data-dump
+    id: devious-developer-data-dump
+    description: "KCEU23: Can you navigate Rescue Drop's CI/CD infrastructure, following Hashjack to the goal?"
     category: KubeCon
 
 ## CNSecCon NA 2023
