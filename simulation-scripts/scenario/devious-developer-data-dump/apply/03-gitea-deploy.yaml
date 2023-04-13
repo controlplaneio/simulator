@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgres-password: "aDFyTVNZRDZMWg=="
+  postgres-password: "RU9aSWRCT3cxbQ=="
   password: "Z2l0ZWE="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
@@ -26,8 +26,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "4h"
-    version: "4h"
+    app.kubernetes.io/version: "latest"
+    version: "latest"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -62,8 +62,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "4h"
-    version: "4h"
+    app.kubernetes.io/version: "latest"
+    version: "latest"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -232,8 +232,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "4h"
-    version: "4h"
+    app.kubernetes.io/version: "latest"
+    version: "latest"
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
@@ -370,8 +370,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "4h"
-    version: "4h"
+    app.kubernetes.io/version: "latest"
+    version: "latest"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -396,8 +396,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "4h"
-    version: "4h"
+    app.kubernetes.io/version: "latest"
+    version: "latest"
     app.kubernetes.io/managed-by: Helm
   annotations:
     {}
@@ -585,8 +585,8 @@ metadata:
     app: gitea
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
-    app.kubernetes.io/version: "4h"
-    version: "4h"
+    app.kubernetes.io/version: "latest"
+    version: "latest"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 1
@@ -598,14 +598,14 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: e486a3b40c7d5ad3a8442938f69c45dde6e4c2c6d87751a5477b01060ff7f0df
+        checksum/config: 3ddab7e3fbf632c3d9414212662de9656bdcfaa2a698e5d66914e5c9cf812651
       labels:
         helm.sh/chart: gitea-8.0.2
         app: gitea
         app.kubernetes.io/name: gitea
         app.kubernetes.io/instance: gitea
-        app.kubernetes.io/version: "4h"
-        version: "4h"
+        app.kubernetes.io/version: "latest"
+        version: "latest"
         app.kubernetes.io/managed-by: Helm
     spec:
       
@@ -613,7 +613,7 @@ spec:
         fsGroup: 1000
       initContainers:
         - name: init-directories
-          image: "ttl.sh/gitea-dev:4h"
+          image: "controlplaneoffsec/gitea:latest"
           imagePullPolicy: Always
           command: ["/usr/sbin/init_directory_structure.sh"]
           env:
@@ -666,7 +666,7 @@ spec:
           securityContext:
             {}
         - name: init-app-ini
-          image: "ttl.sh/gitea-dev:4h"
+          image: "controlplaneoffsec/gitea:latest"
           imagePullPolicy: Always
           command: ["/usr/sbin/config_environment.sh"]
           env:
@@ -721,7 +721,7 @@ spec:
           securityContext:
             {}
         - name: configure-gitea
-          image: "ttl.sh/gitea-dev:4h"
+          image: "controlplaneoffsec/gitea:latest"
           command: ["/usr/sbin/configure_gitea.sh"]
           imagePullPolicy: Always
           securityContext:
@@ -780,7 +780,7 @@ spec:
       terminationGracePeriodSeconds: 60
       containers:
         - name: gitea
-          image: "ttl.sh/gitea-dev:4h"
+          image: "controlplaneoffsec/gitea:latest"
           imagePullPolicy: Always
           env:
             # SSH Port values have to be set here as well for openssh configuration
