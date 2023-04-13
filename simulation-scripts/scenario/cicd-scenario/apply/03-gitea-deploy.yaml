@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  postgres-password: "eUxwT0tTM1gwQQ=="
+  postgres-password: "aDFyTVNZRDZMWg=="
   password: "Z2l0ZWE="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
@@ -31,7 +31,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 stringData:
-  _generals_: APP_NAME="Rescue Drop"
+  _generals_: ""
   database: |-
     DB_TYPE=postgres
     HOST=gitea-postgresql.gitea-system.svc.cluster.local:5432
@@ -83,7 +83,7 @@ stringData:
         # skip empty line
         return
       fi
-
+      
       # 'xargs echo -n' trims all leading/trailing whitespaces and a trailing new line
       local setting="$(awk -F '=' '{print $1}' <<< "${line}" | xargs echo -n)"
 
@@ -194,7 +194,7 @@ stringData:
     }
 
     env | (grep ENV_TO_INI || [[ $? == 1 ]]) > /tmp/existing-envs
-
+    
     # MUST BE CALLED BEFORE OTHER CONFIGURATION
     env2ini::generate_initial_secrets
 
@@ -258,7 +258,7 @@ stringData:
     chown 1000:1000 "${GITEA_TEMP}"
     chmod ug+rwx "${GITEA_TEMP}"
 
-
+    
 
   configure_gitea.sh: |-
     #!/usr/bin/env bash
@@ -446,9 +446,11 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: primary
     spec:
+      serviceAccountName: default
+      
       affinity:
         podAffinity:
-
+          
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -460,7 +462,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-
+          
       securityContext:
         fsGroup: 1001
       hostNetwork: false
@@ -543,7 +545,7 @@ spec:
                 - /bin/sh
                 - -c
                 - -e
-
+                
                 - |
                   exec pg_isready -U "gitea" -d "dbname=gitea" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
@@ -557,7 +559,6 @@ spec:
               mountPath: /dev/shm
             - name: data
               mountPath: /bitnami/postgresql
-              subPath:
       volumes:
         - name: dshm
           emptyDir:
@@ -607,7 +608,7 @@ spec:
         version: "4h"
         app.kubernetes.io/managed-by: Helm
     spec:
-
+      
       securityContext:
         fsGroup: 1000
       initContainers:
@@ -652,6 +653,8 @@ spec:
               value: "true"
             - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
               value: "false"
+            - name: GITEA____APP_NAME
+              value: Rescue Drop
           volumeMounts:
             - name: init
               mountPath: /usr/sbin
@@ -659,7 +662,7 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /data
-
+            
           securityContext:
             {}
         - name: init-app-ini
@@ -703,6 +706,8 @@ spec:
               value: "true"
             - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
               value: "false"
+            - name: GITEA____APP_NAME
+              value: Rescue Drop
           volumeMounts:
             - name: config
               mountPath: /usr/sbin
@@ -712,7 +717,7 @@ spec:
               mountPath: /data
             - name: inline-config-sources
               mountPath: /env-to-ini-mounts/inlines/
-
+            
           securityContext:
             {}
         - name: configure-gitea
@@ -762,6 +767,8 @@ spec:
               value: "true"
             - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
               value: "false"
+            - name: GITEA____APP_NAME
+              value: Rescue Drop
           volumeMounts:
             - name: init
               mountPath: /usr/sbin
@@ -769,7 +776,7 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /data
-
+            
       terminationGracePeriodSeconds: 60
       containers:
         - name: gitea
@@ -821,6 +828,8 @@ spec:
               value: "true"
             - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
               value: "false"
+            - name: GITEA____APP_NAME
+              value: Rescue Drop
           ports:
             - name: ssh
               containerPort: 22
@@ -851,7 +860,7 @@ spec:
               mountPath: /tmp
             - name: data
               mountPath: /data
-
+            
       nodeSelector:
         kubernetes.io/hostname: k8s-node-0
       volumes:
@@ -873,7 +882,7 @@ spec:
         name: data
       spec:
         accessModes:
-            - "ReadWriteOnce"
+            - "ReadWriteOnce"        
         storageClassName: "local-storage"
         resources:
           requests:

@@ -42,6 +42,8 @@ statefulset:
       value: "true"
     - name: GITEA__REPOSITORY__DEFAULT_PUSH_CREATE_PRIVATE
       value: "false"
+    - name: GITEA____APP_NAME
+      value: Rescue Drop
 service:
   http:
     type: ClusterIP
