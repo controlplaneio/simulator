@@ -1,10 +1,8 @@
 global:
   storageClass: local-storage
 image:
-  registry: ttl.sh
-  repository: gitea-dev
-  tag: 4h
-  #tag: 1.19.0-rc1
+  repository: controlplaneoffsec/gitea
+  tag: latest
 nodeSelector:
   kubernetes.io/hostname: k8s-node-0
 gitea:
