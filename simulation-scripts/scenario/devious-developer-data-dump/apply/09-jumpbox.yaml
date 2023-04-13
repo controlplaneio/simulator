@@ -91,7 +91,7 @@ metadata:
   namespace: dmz
 spec:
   containers:
-  - image: docker.io/controlplaneoffsec/kubectl
+  - image: docker.io/controlplaneoffsec/kubectl:latest
     command:
       - sleep
       - inf
