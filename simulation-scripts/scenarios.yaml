@@ -9,10 +9,10 @@ scenarios:
     id: commandeer-container
     description: "KCEU23: Can you navigate Kubernetes and find the treasure?"
     category: KubeCon
-  - name: CICD
-    path: ./scenario/cicd-scenario
-    id: cicd
-    description: "KubeCon: "
+  - name: Devious Developer Data Dump
+    path: ./scenario/devious-developer-data-dump
+    id: devious-developer-data-dump
+    description: "KCEU23: Can you navigate Rescue Drop's CI/CD infrastructure, following Hashjack to the goal?"
     category: KubeCon
 
 ## CNSecCon NA 2023
