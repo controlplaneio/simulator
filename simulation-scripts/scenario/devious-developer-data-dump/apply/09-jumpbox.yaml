@@ -90,6 +90,7 @@ metadata:
   name: jumpbox
   namespace: dmz
 spec:
+  nodeName: k8s-node-0
   containers:
   - image: docker.io/controlplaneoffsec/kubectl:latest
     command:
