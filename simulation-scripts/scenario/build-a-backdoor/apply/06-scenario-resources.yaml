@@ -1,0 +1,179 @@
+## Attach Container
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ii-prod
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ii-management-services
+  namespace: ii-prod
+  labels:
+    app: ii
+spec:
+  containers:
+  - name: mgmt-service
+    image: ttl.sh/iiapp-664hf92-wakeward:6h
+    ports:
+    - containerPort: 8080
+      name: mgmt
+    - containerPort: 5724
+      name: admin
+    env:
+    - name: AUTH_USERID
+      valueFrom:
+        secretKeyRef:
+          name: ops-mgmt
+          key: username
+    - name: AUTH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: ops-mgmt
+          key: password
+    securityContext:
+      allowPrivilegeEscalation: false
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mgmt-service
+  namespace: ii-prod
+spec:
+  selector:
+    app: ii
+  ports:
+  - name: mgmt
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ops-mgmt
+  namespace: ii-prod
+type: kubernetes.io/basic-auth
+stringData:
+  username: system
+  password: system
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ii-mgmt-np
+  namespace: ii-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: ii
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - port: 8080
+---
+## JumpBox Resources
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dmz
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre
+  namespace: dmz
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ii-auth-access
+  namespace: ii-prod
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - networkpolicies
+  - ingresses
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ii-auth-rb
+  namespace: ii-prod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ii-auth-access
+subjects:
+- kind: ServiceAccount
+  name: sre
+  namespace: dmz
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cr-read
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-ns-read-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cr-read
+subjects:
+- kind: ServiceAccount
+  name: sre
+  namespace: dmz
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jumpbox-terminal
+  namespace: dmz
+spec:
+  serviceAccountName: sre
+  containers:
+  # basic container image
+  - image: docker.io/controlplaneoffsec/kubectl:latest
+    command: ["sleep", "2d"]
+    name: jumpbox-terminal
+    securityContext:
+      allowPrivilegeEscalation: false
+  restartPolicy: Always
