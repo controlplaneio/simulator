@@ -1,0 +1,171 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: disallow-ingress-nginx-custom-snippets
+  annotations:
+    policies.kyverno.io/title: Disallow Custom Snippets
+    policies.kyverno.io/category: Security, NGINX Ingress
+    policies.kyverno.io/subject: ConfigMap, Ingress
+    policies.kyverno.io/minversion: "1.6.0"
+    kyverno.io/kyverno-version: "1.6.0"
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/description: >-
+      Users that can create or update ingress objects can use the custom snippets
+      feature to obtain all secrets in the cluster (CVE-2021-25742). This policy
+      disables allow-snippet-annotations in the ingress-nginx configuration and
+      blocks *-snippet annotations on an Ingress.
+      See: https://github.com/kubernetes/ingress-nginx/issues/7837
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: check-config-map
+      match:
+        any:
+        - resources:
+            kinds:
+            - ConfigMap
+      validate:
+        message: "ingress-nginx allow-snippet-annotations must be set to false"
+        pattern:
+          =(data):
+            =(allow-snippet-annotations) : "false"
+    - name: check-ingress-annotations
+      match:
+        any:
+        - resources:
+            kinds:
+            - networking.k8s.io/v1/Ingress
+      validate:
+        message: "SECOPS ALERT: Blocking attempted Nginx exploit"
+        pattern:
+          metadata:
+            =(annotations):
+              X(*-snippet): "?*"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-annotations
+  annotations:
+    policies.kyverno.io/title: Restrict NGINX Ingress annotation values
+    policies.kyverno.io/category: Security, NGINX Ingress
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Ingress
+    policies.kyverno.io/minversion: "1.6.0"
+    kyverno.io/kyverno-version: "1.6.0"
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/description: >-
+      This policy mitigates CVE-2021-25746 by restricting `metadata.annotations` to safe values.
+      See: https://github.com/kubernetes/ingress-nginx/blame/main/internal/ingress/inspector/rules.go.
+      This issue has been fixed in NGINX Ingress v1.2.0. For NGINX Ingress version 1.0.5+ the
+      "annotation-value-word-blocklist" configuration setting is also recommended.
+      Please refer to the CVE for details.
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: check-ingress
+      match:
+        any:
+        - resources:
+            kinds:
+            - networking.k8s.io/v1/Ingress
+      validate:
+        message: "SECOPS ALERT: Blocking attempted Nginx exploit"
+        deny:
+          conditions:
+            any:
+            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('\\s*alias\\s*.*;', @)}}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('\\s*root\\s*.*;', @)}}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('/etc/(passwd|shadow|group|nginx|ingress-controller)', @)}}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('/var/run/secrets', @)}}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('.*_by_lua.*', @)}}"
+              operator: AnyIn
+              value: [true]
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-ingress-paths
+  annotations:
+    policies.kyverno.io/title: Restrict NGINX Ingress path values
+    policies.kyverno.io/category: Security, NGINX Ingress
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Ingress
+    policies.kyverno.io/minversion: "1.6.0"
+    kyverno.io/kyverno-version: "1.6.0"
+    kyverno.io/kubernetes-version: "1.23"
+    policies.kyverno.io/description: >-
+      This policy mitigates CVE-2021-25745 by restricting `spec.rules[].http.paths[].path` to safe values.
+      Additional paths can be added as required. This issue has been fixed in NGINX Ingress v1.2.0.
+      Please refer to the CVE for details.
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: check-paths
+      match:
+        any:
+        - resources:
+            kinds:
+            - networking.k8s.io/v1/Ingress
+      validate:
+        message: "SECOPS ALERT: Blocking attempted Nginx exploit"
+        deny:
+          conditions:
+            any:
+            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/etc') }}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/var/run/secrets') }}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/root') }}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/var/run/kubernetes/serviceaccount') }}"
+              operator: AnyIn
+              value: [true]
+            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/etc/kubernetes/admin.conf') }}"
+              operator: AnyIn
+              value: [true]
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-ingress-classes
+  annotations:
+    policies.kyverno.io/title: Restrict Ingress Classes
+    policies.kyverno.io/category: Sample
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Ingress
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/description: >-
+      Ingress classes should only be allowed which match up to deployed Ingress controllers
+      in the cluster. Allowing users to define classes which cannot be satisfied by a deployed
+      Ingress controller can result in either no or undesired functionality. This policy checks
+      Ingress resources and only allows those which define `HAProxy` or `nginx` in the respective
+      annotation. This annotation has largely been replaced as of Kubernetes 1.18 with the IngressClass
+      resource.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+  - name: validate-ingress
+    match:
+      any:
+      - resources:
+          kinds:
+          - Ingress
+    validate:
+      message: "SECOPS ALERT: Unknown Ingress Class defined"
+      pattern:
+        metadata:
+          annotations:
+            kubernetes.io/ingress.class: "nginx"
