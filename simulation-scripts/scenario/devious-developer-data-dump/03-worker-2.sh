@@ -26,8 +26,8 @@ systemctl stop docker
 echo "{\"registry-mirrors\":[\"https://mirror.gcr.io\"],\"insecure-registries\":[\"$MASTER_IP:30080\"]}" > /etc/docker/daemon.json
 systemctl enable --now docker
 
-# Gitea may take a minute to come up here; allow 120s
-CSRF=$(curl -sS --fail -c cookie.jar "$BASEURL" --retry 12 --retry-connrefused --retry-delay 10 | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
+# Gitea may take a minute to come up here; allow 300s
+CSRF=$(curl -sS --fail -c cookie.jar "$BASEURL" --retry 30 --retry-connrefused --retry-delay 10 | awk -F' ' '/csrfToken/ {print $2}' | tr -d "',")
 curl -sSL -b cookie.jar -c cookie.jar -XPOST "$BASEURL/user/login" -d "user_name=$USER&password=$PASS&_csrf=$CSRF"
 TOKEN=$(curl -sSL --fail -b cookie.jar "$BASEURL/admin/runners" | grep -A3 'Registration Token' | awk -F'"' '/value/ {print $4}')
 
