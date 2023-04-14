@@ -41,7 +41,7 @@ module "Bastion" {
   source                   = "../../modules/AWS/Bastion"
   ami_id                   = module.Ami.AmiId
   instance_type            = var.instance_type
-  access_key_name          = module.SshKey.KeyPairName
+  access_key               = module.SshKey.KeyPair
   security_group           = module.SecurityGroups.BastionSecurityGroupID
   subnet_id                = module.Networking.PublicSubnetId
   cloudinit_common         = module.CloudInitCommon.cloudinit_common
@@ -67,7 +67,7 @@ module "Kubernetes" {
   master_ip_addresses         = module.Networking.MasterIPAddresses
   node_ip_addresses           = module.Networking.NodeIPAddresses
   bastion_public_ip           = module.Bastion.BastionPublicIp
-  access_key_name             = module.SshKey.KeyPairName
+  access_key                  = module.SshKey.KeyPair
   control_plane_sg_id         = module.SecurityGroups.ControlPlaneSecurityGroupID
   private_subnet_id           = module.Networking.PrivateSubnetId
   iam_instance_profile_id     = module.Iam.IamInstanceProfileId
@@ -81,7 +81,7 @@ module "InternalHost" {
   source                   = "../../modules/AWS/InternalHost"
   ami_id                   = module.Ami.AmiId
   instance_type            = var.instance_type
-  access_key_name          = module.SshKey.KeyPairName
+  access_key               = module.SshKey.KeyPair
   control_plane_sg_id      = module.SecurityGroups.ControlPlaneSecurityGroupID
   private_subnet_id        = module.Networking.PrivateSubnetId
   internal_ip_address      = module.Networking.InternalIPAddress

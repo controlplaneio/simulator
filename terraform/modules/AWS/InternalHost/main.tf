@@ -1,6 +1,6 @@
 resource "aws_instance" "simulator_internal_host" {
   ami                         = var.ami_id
-  key_name                    = var.access_key_name
+  key_name                    = var.access_key.key_name
   instance_type               = var.instance_type
   vpc_security_group_ids      = [var.control_plane_sg_id]
   private_ip                  = var.internal_ip_address

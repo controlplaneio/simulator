@@ -39,8 +39,8 @@ variable "cluster_nodes_instance_type" {
   default     = "t1.micro"
 }
 
-variable "access_key_name" {
-  description = "Name of ssh key held in KMS"
+variable "access_key" {
+  description = "ssh key resource"
 }
 
 variable "control_plane_sg_id" {
