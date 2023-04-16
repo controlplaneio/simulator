@@ -1,9 +1,5 @@
 #cloud-config
 
-# wait for an internet connection
-bootcmd:
-  - until ping -W 1 -c1 8.8.8.8 >/dev/null; do sleep 1; done
-
 # cri-tools included to ensure we always have crictl
 # currently a dependency of kubeadm, which will pull
 # in the correct version for us

@@ -1,5 +1,12 @@
 #cloud-config
 
+# fix bug where ssh-import-id occasionally times-out
+# wait for an internet connection
+bootcmd:
+  - sed -i -e 's/^DEFAULT_TIMEOUT =.*/DEFAULT_TIMEOUT = 120.0/' /usr/lib/python3/dist-packages/ssh_import_id/__init__.py
+  - rm -rf /usr/lib/python3/dist-packages/ssh_import_id/__pycache__
+  - until ping -W 1 -c1 8.8.8.8 >/dev/null; do sleep 1; done
+
 package_update: true
 package_upgrade: false
 disable_root: false
