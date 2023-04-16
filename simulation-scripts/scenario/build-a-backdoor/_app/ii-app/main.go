@@ -47,8 +47,8 @@ func main() {
 	}
 
 	priv := http.NewServeMux()
-	priv.HandleFunc("/admin", app.opsAdmin(app.bdHandler))
-	priv.Handle("/", http.RedirectHandler("/admin", http.StatusSeeOther))
+	priv.HandleFunc("/", app.opsAdmin(app.bdHandler))
+	//priv.Handle("/", http.RedirectHandler("/admin", http.StatusSeeOther))
 
 	privsrv := &http.Server{
 		Addr:         ":5724",
