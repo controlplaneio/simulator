@@ -8,6 +8,7 @@ FROM golang:1.18-bullseye AS build
 WORKDIR /hashjacker
 
 COPY /static /var/www/static
+COPY /tmp /tmp
 
 # Go Webapp
 COPY go.mod ./
@@ -22,10 +23,9 @@ FROM gcr.io/distroless/base-debian10
 
 WORKDIR /
 
-COPY --from=build --chown=nonroot:nonroot /var/www /var/www
+COPY --from=build /var/www /var/www
+COPY --from=build /tmp /tmp
 COPY --from=build /go/bin /usr/bin
-
-USER nonroot:nonroot
 
 EXPOSE 8080
 

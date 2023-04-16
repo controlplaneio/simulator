@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# store custom psa configuration on master node
+cat <<"EOF" > /root/hashjacker.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ii-management-services
+  namespace: ii-pord
+  labels:
+    app: ii
+spec:
+  containers:
+  - name: hashjacker
+    image: controlplaneoffsec/build-a-backdoor:hashjacker
+    ports:
+    - containerPort: 8080
+    env:
+    - name: P
+      value: "ha5hjackk3y4d3crypt1ngs3cret1mg!"
+  restartPolicy: Always
+EOF
+
+# Checks whether backdoor is accessible externally
+cat <<- "EOF" > /root/backdoor-checker.sh
+#!/bin/bash
+
 set -Eeuo pipefail
 
 function ING_IP {
@@ -37,3 +62,10 @@ then
 else
     echo "$SERVICE_MSG"
 fi
+EOF
+
+# configure cron daemon
+chmod +x /root/backdoor-checker.sh
+cat <<-"EOF" > /etc/cron.d/backdoor-checker
+*/1 * * * * root /root/backdoor-checker.sh
+EOF

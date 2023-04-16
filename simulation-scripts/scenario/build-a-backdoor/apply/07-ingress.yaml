@@ -13,6 +13,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: mgmt-service
+            name: ii-prod-mgmt-service
             port:
               number: 80
