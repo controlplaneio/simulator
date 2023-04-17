@@ -169,3 +169,37 @@ spec:
         metadata:
           annotations:
             kubernetes.io/ingress.class: "nginx"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-web-port-removal
+  annotations:
+    policies.kyverno.io/title: Restrict Web Port Removal
+    policies.kyverno.io/category: Sample
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Ingress
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/description: >-
+      The Ingress Web Port must not be removed to persist the service.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+  - name: restrict-web-port-removal
+    match:
+      any:
+      - resources:
+          kinds:
+          - Ingress
+    validate:
+      message: "SECOPS ALERT: Removal of the Web Port is restricted"
+      pattern:
+        spec:
+          rules:
+          - http:
+              ^(paths):
+              - backend:
+                  service:
+                    port:
+                      number: 80

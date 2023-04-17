@@ -24,6 +24,8 @@ Captain Hλ$ħ𝔍Ⱥ¢k has discovered an authentication bypass in a remote oper
 
 Unfortunately Introspective Insight SecOps team have applied multiple security controls to restrict access to the service
 
-As an insider, the Dread Pirate wants you to allow remote access to the operations management port for the exploit to fire.
+As an insider, the Dread Pirate wants you to allow remote access to the operations management port for the exploit to fire
+
+Remember you must be stealthy and ensure the current website continues to be publicly accessible
 
 If successful, Captain Hλ$ħ𝔍Ⱥ¢k will drop you a secret payment for your malicious actions. Good Luck!
