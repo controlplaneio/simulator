@@ -4,6 +4,11 @@ scenarios:
 
 ## Kubecon EU 2023
 
+  - name: Build-a-Backdoor
+    path: ./scenario/build-a-backdoor
+    id: build-a-backdoor
+    description: "KCEU23: Build a backdoor for Hashjack to exploit"
+    category: KubeCon
   - name: Commandeer Container
     path: ./scenario/commandeer-container
     id: commandeer-container
