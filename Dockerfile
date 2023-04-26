@@ -117,10 +117,11 @@ ENV GOPATH /home/${build_user}/go
 ENV PATH $PATH:$GOPATH/bin
 
 # Add the full source tree
-COPY --chown=1000 ./go.* .
-COPY --chown=1000 Makefile .
-COPY --chown=1000 prelude.mk .
-COPY --chown=1000 main.go .
+COPY --chown=1000 ./go.* ./
+COPY --chown=1000 Makefile ./
+COPY --chown=1000 prelude.mk ./
+COPY --chown=1000 main.go ./
+
 COPY --chown=1000 pkg/  ./pkg
 COPY --chown=1000 cmd/  ./cmd
 COPY --chown=1000 test/  ./test
