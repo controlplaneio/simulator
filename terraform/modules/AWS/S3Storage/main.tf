@@ -12,7 +12,11 @@ resource "aws_s3_bucket" "k8sjoin" {
   )
 }
 
-resource "aws_s3_bucket_acl" "k8sjoin_acl" {
+resource "aws_s3_bucket_public_access_block" "k8sjoin" {
   bucket = aws_s3_bucket.k8sjoin.id
-  acl    = "private"
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
