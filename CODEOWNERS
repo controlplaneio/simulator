@@ -4,25 +4,25 @@
 * @kubernetes-simulator/simulator
 
 # Scenarios
-/simulation-scripts/scenario @abdullahgarcia @jondkent @jpts @sublimino
+/simulation-scripts/scenario @abdullahgarcia @jondkent @sublimino
 
 # Terraform
-/terraform @jondkent @abdullahgarcia @jpts
+/terraform @jondkent @abdullahgarcia
 
 # Tools
-/tools @abdullahgarcia @jondkent @jpts
+/tools @abdullahgarcia @jondkent
 
 # Attack Container
-/attack @jondkent @abdullahgarcia @jpts @sublimino
+/attack @jondkent @abdullahgarcia @sublimino
 
 # Simulator Binaries
-/cmd @jondkent @abdullahgarcia @jpts
-/pkg @jondkent @abdullahgarcia @jpts
+/cmd @jondkent @abdullahgarcia
+/pkg @jondkent @abdullahgarcia
 
 # kubesim
-/kubesim @jondkent @abdullahgarcia @jpts
+/kubesim @jondkent @abdullahgarcia
 
 # Build Files
-/Dockerfile @jondkent @abdullahgarcia @jpts
-/Jenkinsfile @jondkent @abdullahgarcia @jpts
-/Makefile @jondkent @abdullahgarcia @jpts
+/Dockerfile @jondkent @abdullahgarcia
+/Jenkinsfile @jondkent @abdullahgarcia
+/Makefile @jondkent @abdullahgarcia
