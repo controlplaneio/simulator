@@ -1,0 +1,114 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: navigator
+  namespace: south-atlantic
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - pods/exec
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - serviceaccounts
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: navigator-rb
+  namespace: south-atlantic
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: navigator
+subjects:
+- kind: ServiceAccount
+  name: swashbyter
+  namespace: arctic
+---
+## Southern Access
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: invader
+  namespace: south-atlantic
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cabin-boy-uniform
+  namespace: southern
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cabin-boy-bd
+  namespace: southern
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cabin-boy-uniform
+subjects:
+- kind: ServiceAccount
+  name: roger
+  namespace: south-atlantic
+---
+## South-Pacific Access
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: navy-uniform
+  namespace: south-atlantic
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: navy-uniform-rb
+  namespace: south-atlantic
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: navy-uniform
+subjects:
+- kind: ServiceAccount
+  name: roger
+  namespace: south-atlantic

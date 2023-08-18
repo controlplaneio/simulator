@@ -1,0 +1,14 @@
+category: Workshop
+difficulty: Workshop
+kind: cp.simulator/scenario:1.0.0
+objective: Sail the Seven Seas and find all the missing map pieces!
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: fancy
+      podNamespace: arctic
+    summary: Can you plunder the Royal Fortune?
+name: seven-seas
