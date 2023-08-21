@@ -1,7 +1,7 @@
 # These owners will be the default owners for everything in
 # the repo, unless a later match takes precedence.
 
-* @kubernetes-simulator/simulator
+* @controlplaneio/simulator
 
 # Scenarios
 /simulation-scripts/scenario @abdullahgarcia @jondkent @sublimino
