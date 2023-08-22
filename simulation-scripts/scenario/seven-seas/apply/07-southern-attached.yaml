@@ -30,6 +30,7 @@ rules:
   resources:
   - pods
   verbs:
+  - get
   - list
 - apiGroups:
   - "networking.k8s.io"
@@ -109,9 +110,16 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - namespace
+  - pods
   verbs:
   - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -126,4 +134,58 @@ subjects:
 - kind: ServiceAccount
   name: terrible-disguise
   namespace: southern
-
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: td-ocean-viewer
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: td-ocean-viewer-cr
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ocean-viewer-cr
+subjects:
+- kind: ServiceAccount
+  name: terrible-disguise
+  namespace: southern
+---
+### Southern Access
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: first-mate
+  namespace: southern
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: first-mate-rb
+  namespace: southern
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: first-mate
+subjects:
+- kind: ServiceAccount
+  name: terrible-disguise
+  namespace: southern

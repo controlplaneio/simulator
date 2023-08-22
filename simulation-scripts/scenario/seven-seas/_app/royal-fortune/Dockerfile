@@ -5,7 +5,6 @@ RUN apt update && apt install -y openssh-server
 COPY authorized_keys /root/.ssh/authorized_keys
 
 # System Config
-RUN echo royal-fortune > /etc/hostname
 RUN chmod -x /etc/update-motd.d/*
 
 COPY 01-royal-fortune /etc/update-motd.d/01-royal-fortune

@@ -19,9 +19,9 @@ cat <<EOF >"/mnt/.cache/crows-nest/shinny-object"
 eW91LWxvb2stdXAtYXQtdGhlLXNoaW5ueS1vYmplY3QtYW5kLWEtc2VhZ3VsbC1hcHBlYXJzLW91dC1vZi1zdW5saWdodC1kcm9wcGluZy1hLWxpdHRsZS1wcmVzZW50LW9uLXlvdXItZmFjZS5UaGlzLWlzLW5vdC10aGUtcG9vcC1kZWNrLXNjcmFtLXlvdS1mbHlpbmctd3JldGNoIQo=
 EOF
 
-# flag_ctf{BOARDED_THE_NEFARIOUS_SHIP_WAY_DAH_DO_THAT}
+# flag_ctf{BOARDED_THE_NEFARIOUS_SHIP_WHY_DAH_DO_THAT}
 cat <<EOF >"/mnt/.cache/crows-nest/flag"
-ZmxhZ19jdGZ7Qk9BUkRFRF9USEVfTkVGQVJJT1VTX1NISVBfV0FZX0RBSF9ET19USEFUfQ==
+ZmxhZ19jdGZ7Qk9BUkRFRF9USEVfTkVGQVJJT1VTX1NISVBfV0hZX0RBSF9ET19USEFUfQ==
 EOF
 
 cat <<EOF >"/mnt/.cache/bow/shark-infested-waters/shark"
