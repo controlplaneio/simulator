@@ -2,7 +2,7 @@
 
 set -Eeuxo pipefail
 
-mkdir -p /mnt/.cache/crows-nest
+mkdir -p /mnt/.cache/crows-nest/stern
 mkdir -p /mnt/.cache/bowsprit
 mkdir -p /mnt/.cache/hull
 mkdir -p /mnt/.cache/bow/shark-infested-waters
