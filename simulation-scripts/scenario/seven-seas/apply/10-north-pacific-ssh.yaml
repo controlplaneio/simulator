@@ -6,6 +6,7 @@ metadata:
   labels:
     ship: royal-fortune
 spec:
+    hostPID: true
     containers:
     - name: royal-fortune
       # image: docker.io/controlplaneoffsec/seven-seas:royal-fortune

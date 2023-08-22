@@ -46,7 +46,7 @@ spec:
       command: ["sleep", "2d"]
       securityContext:
         allowPrivilegeEscalation: false
-      restartPolicy: Always
+    restartPolicy: Always
 ---
 apiVersion: v1
 kind: Pod
@@ -65,7 +65,7 @@ spec:
         name: path
       securityContext:
         allowPrivilegeEscalation: false
-      restartPolicy: Always
+    restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service

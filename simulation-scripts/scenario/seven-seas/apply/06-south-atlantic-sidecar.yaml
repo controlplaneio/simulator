@@ -76,7 +76,7 @@ roleRef:
   name: cabin-boy-uniform
 subjects:
 - kind: ServiceAccount
-  name: roger
+  name: invader
   namespace: south-atlantic
 ---
 ## South-Pacific Access
@@ -110,5 +110,5 @@ roleRef:
   name: navy-uniform
 subjects:
 - kind: ServiceAccount
-  name: roger
+  name: invader
   namespace: south-atlantic

@@ -71,11 +71,11 @@ spec:
       securityContext:
         allowPrivilegeEscalation: false
       volumeMounts:
-        - mountPath: /opt/
+        - mountPath: /mnt/
           name: area
     volumes:
     - hostPath:
-        path: /
+        path: /mnt
         type: Directory
       name: area
     restartPolicy: Always
