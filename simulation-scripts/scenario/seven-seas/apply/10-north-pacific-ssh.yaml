@@ -30,3 +30,17 @@ spec:
   - protocol: TCP
     port: 22
     targetPort: 2222
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: clearing
+spec:
+  podSelector:
+    matchLabels:
+      ship: royal-fortune
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          sea: south-pacific
