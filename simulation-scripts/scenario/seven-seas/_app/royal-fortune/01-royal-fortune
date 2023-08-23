@@ -1,11 +1,4 @@
-#!/bin/sh
 
-echo ""
-echo "
-        WELCOME TO THE ROYAL TREASURE, ENTER AND PLUNDER!
-"
-
-echo "
                     ____...------------...____
                _.-'  /o/__ ____ __ __  __ \o\_ '-._
              .'     / /                    \ \     '.
@@ -22,4 +15,6 @@ echo "
               |==== .'.'^'.'.====|=== .'.'^'.'.====|
               |  _\o/   __  {.' __  '.} _   _\o/  _|
               |====================================|
-"
+
+          WELCOME TO THE ROYAL FORTUNE, ENTER AND PLUNDER!
+

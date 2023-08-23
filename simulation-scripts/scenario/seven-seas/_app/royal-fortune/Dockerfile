@@ -6,9 +6,9 @@ COPY authorized_keys /root/.ssh/authorized_keys
 
 # System Config
 RUN chmod -x /etc/update-motd.d/*
-
-COPY 01-royal-fortune /etc/update-motd.d/01-royal-fortune
-RUN chmod +x /etc/update-motd.d/01-royal-fortune
+COPY banner /etc/legal
+COPY 01-royal-fortune /etc/motd
+RUN chmod +x /etc/motd
 
 RUN sed -i '/#Port 22/c\Port 2222' /etc/ssh/sshd_config
 RUN sed -i '/#PermitRootLogin prohibit-password/c\PermitRootLogin prohibit-password' /etc/ssh/sshd_config
