@@ -2,6 +2,14 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
+## Workshops
+
+  - name: Seven Seas
+    path: ./scenario/seven-seas
+    id: seven-seas
+    description: "Sail the Seven Seas and find all the missing map pieces!"
+    category: Workshops
+
 ## Kubecon EU 2023
 
   - name: Build-a-Backdoor

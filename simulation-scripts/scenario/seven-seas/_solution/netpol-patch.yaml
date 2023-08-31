@@ -1,0 +1,11 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: blockade
+  namespace: indian
+spec:
+  podSelector:
+    matchLabels:
+      ship: adventure-galley
+  ingress:
+  - {}
