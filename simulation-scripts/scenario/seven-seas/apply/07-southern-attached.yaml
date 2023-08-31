@@ -66,8 +66,7 @@ spec:
     serviceAccountName: terrible-disguise
     containers:
     - name: whydah
-      image: ttl.sh/whga-t3g462442s-wakeward:12h
-      # image: docker.io/controlplaneoffsec/seven-seas:whydah-galley
+      image: docker.io/controlplaneoffsec/seven-seas:whydah-galley
       command: ["sleep", "2d"]
       securityContext:
         allowPrivilegeEscalation: false

@@ -41,8 +41,7 @@ spec:
     serviceAccountName: swashbyter
     containers:
     - name: lookout
-      image: ttl.sh/fan-345325ghv-wakeward:12h
-      # image: docker.io/controlplaneoffsec/seven-seas:fancy
+      image: docker.io/controlplaneoffsec/seven-seas:fancy
       command: ["sleep", "2d"]
       securityContext:
         allowPrivilegeEscalation: false
@@ -58,8 +57,7 @@ metadata:
 spec:
     containers:
     - name: path-of-the-pirate
-      image: ttl.sh/potp-8734g9342-wakeward:12h
-      # image: docker.io/controlplaneoffsec/seven-seas:path-of-the-pirate
+      image: docker.io/controlplaneoffsec/seven-seas:potp
       ports:
       - containerPort: 8080
         name: path

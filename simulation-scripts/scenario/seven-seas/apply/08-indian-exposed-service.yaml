@@ -21,8 +21,7 @@ metadata:
 spec:
   containers:
   - name: adventure-galley
-    # image: docker.io/controlplaneoffsec/seven-seas:adventure-galley
-    image: ttl.sh/adg-d34fasa-wakeward:12h
+    image: docker.io/controlplaneoffsec/seven-seas:adventure-galley
     ports:
     - containerPort: 8080
       name: target

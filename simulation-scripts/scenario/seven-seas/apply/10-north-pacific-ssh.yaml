@@ -9,8 +9,7 @@ spec:
     hostPID: true
     containers:
     - name: royal-fortune
-      # image: docker.io/controlplaneoffsec/seven-seas:royal-fortune
-      image: ttl.sh/rf-ssh-552341sa-wakeward:12h
+      image: docker.io/controlplaneoffsec/seven-seas:royal-fortune
       ports:
       - containerPort: 2222
         name: coordinates

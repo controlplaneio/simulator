@@ -188,8 +188,7 @@ spec:
         patchStrategicMerge:
           spec:
             containers:
-            # - image: docker.io/controlplane/seven-seas:blockade-ship
-            - image: ttl.sh/bs-532f-934a-wakeward:12h
+            - image: docker.io/controlplaneoffsec/seven-seas:blockade-ship
               command: ["sleep", "2d"]
               name: blockade-ship
               securityContext:
