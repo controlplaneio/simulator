@@ -19,7 +19,7 @@
 
 Captain Hλ$ħ𝔍Ⱥ¢k previous navigated the Seven Seas to locate the fabled pirate ship the "Royal Fortune".
 
-Located deep within ship is wonderous treasure but to access it you will need to find all the missing map pieces.
+Located deep within the ship is wondrous treasure but to access it you will need to find all the missing map pieces.
 
 Time to set sail and use your knowledge of Kubernetes and Containers to master all the oceans.
 

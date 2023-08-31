@@ -50,7 +50,7 @@ func main() {
 
 func (app *application) protectedHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "DIRECT HIT! It looks like something fell out of the hold.")
-	log.Printf("treasure_map_5: %s", os.Getenv("MAP5"))
+	log.Printf("treasure-map-5: %s", os.Getenv("MAP5"))
 }
 
 func (app *application) formHandler(next http.HandlerFunc) http.HandlerFunc {

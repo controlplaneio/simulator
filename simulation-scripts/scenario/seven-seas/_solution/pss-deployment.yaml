@@ -21,7 +21,8 @@ spec:
           type: RuntimeDefault
       containers:
       - name: invader
-        image: <custom-non-root-image-with-kubectl>
+      # Image must have ssh and kubectl pre-installed (Dockerfile included)
+        image: ttl.sh/invader-sag34afsa-wakeward:12h
         command: ["sleep", "2d"]
         imagePullPolicy: IfNotPresent
         securityContext:
