@@ -8,7 +8,7 @@ scenarios:
     path: ./scenario/seven-seas
     id: seven-seas
     description: "Sail the Seven Seas and find all the missing map pieces!"
-    category: Workshops
+    category: Workshop
 
 ## Kubecon EU 2023
 
