@@ -2,6 +2,14 @@ name: scenarios
 kind: cp.simulator/scenarios:0.1
 scenarios:
 
+## Kubecon NA 2023
+
+  - name: Identity Theft
+    path: ./scenario/identity-theft
+    id: identity-theft
+    description: "Can you steal the identity of the pod-checker users?"
+    category: KubeCon
+
 ## Workshops
 
   - name: Seven Seas
