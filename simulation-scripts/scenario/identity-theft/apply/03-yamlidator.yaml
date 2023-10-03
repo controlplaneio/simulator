@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yamlidator
+  namespace: public-services
+spec:
+  ports:
+  - name: yamlidator
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: yamlidator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: yamlidator
+  namespace: public-services
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: priv-svc-access
+  namespace: private-services
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: priv-svc-access-rb
+  namespace: private-services
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: priv-svc-access
+subjects:
+- kind: ServiceAccount
+  name: yamlidator
+  namespace: public-services
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ns-viewer
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ns-viewer-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ns-viewer
+subjects:
+- kind: ServiceAccount
+  name: yamlidator
+  namespace: public-services
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: yamlidator
+  name: yamlidator
+  namespace: public-services
+spec:
+    serviceAccountName: yamlidator
+    containers:
+    - name: yamlidator
+    # image: docker.io/controlplaneoffsec/identity-theft:yamlidator
+      image: ttl.sh/wakeward-9834jgd-ymld:12h
+      ports:
+      - containerPort: 5000
+        name: http
+      volumeMounts:
+      - mountPath: /mnt/
+        name: yaml
+    volumes:
+    - hostPath:
+        path: /mnt
+        type: Directory
+      name: yaml
+    restartPolicy: Always
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: yamlidator
+spec:
+  podSelector:
+    matchLabels:
+      app: yamlidator
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          ns: frontend
