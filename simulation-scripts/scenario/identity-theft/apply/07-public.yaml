@@ -44,7 +44,7 @@ spec:
     containers:
     - name: hacker-prompt
       # image: docker.io/controlplaneoffsec/identity-theft:public-terminal
-      image: ttl.sh/wakeward-0438sdf9-3424erf-pt:12h
+      image: ttl.sh/wakeward-435sa2a-pubt:12h
       command: ["sleep", "2d"]
       securityContext:
         allowPrivilegeEscalation: false

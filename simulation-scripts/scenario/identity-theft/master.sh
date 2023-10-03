@@ -2,6 +2,25 @@
 
 set -Eeuxo pipefail
 
+function GETDEXIP {
+  (kubectl get pods -n dex -ojson | jq -r '.items[].status.podIP')
+}
+
+until [[ -z $(GETDEXIP) ]];
+do
+    sleep 5
+done
+
+
+function GETSSIP {
+  (kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
+}
+
+until [[ -z $(GETSSIP) ]];
+do
+    sleep 5
+done
+
 DEXIP=$(kubectl get pods -n dex -ojson | jq -r '.items[].status.podIP')
 SSIP=$(kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
 
@@ -27,8 +46,8 @@ ID_TOKEN=$(curl -s -X POST "$DEX" \
 # Create all users
 for USER in "${USERS[@]}"
 do
-    curl -X POST "${SECRET_STORE}" \
+    curl -X POST "$SECRET_STORE" \
      -H "content-type: application/json" \
-     -H "Authorization: Bearer ${ID_TOKEN}" \
+     -H "Authorization: Bearer $ID_TOKEN" \
      -d "$USER"
 done
