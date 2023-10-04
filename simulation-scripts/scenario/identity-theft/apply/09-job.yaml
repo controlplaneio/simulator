@@ -1,21 +1,20 @@
 apiVersion: batch/v1
-kind: CronJob
+kind: Job
 metadata:
   name: query-service
   namespace: frontend
 spec:
-  schedule: "* * * * *"
-  jobTemplate:
+  backoffLimit: 999999999
+  template:
     spec:
-      template:
-        spec:
-          containers:
-          - name: ss-query
-            image: nixery.dev/shell/kubectl/curl/jq
-            command: ["bash", "-c"]
-            args:
-              - |
-                set -Eeuo pipefail
+      containers:
+        - name: ss-query
+          image: nixery.dev/shell/kubectl/curl/jq
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -Eeuo pipefail
+              while true; do
                 SECRET_STORE="http://secret-store.private-services.svc.cluster.local:5050/api/v1/users"
                 DEX="http://dex.dex.svc.cluster.local:5556/dex/token"
 
@@ -32,4 +31,7 @@ spec:
 
                 curl "${SECRET_STORE}" \
                     -H "Authorization: Bearer ${ID_TOKEN}"
-          restartPolicy: OnFailure
+                sleep 60
+                done
+      restartPolicy: Never
+status: {}
