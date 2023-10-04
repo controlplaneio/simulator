@@ -17,7 +17,7 @@ RUN curl -sfSOL "https://dl.k8s.io/release/v$VERSION/bin/linux/amd64/kubectl"
 FROM ubuntu:20.04
 
 RUN apt update && apt install -y --no-install-recommends \
-    ca-certificates python3 python3-pip\
+    ca-certificates python3 python3-pip curl vim jq\
  && apt clean all
 
 COPY --from=dl /dl/kubectl-example /usr/local/bin/

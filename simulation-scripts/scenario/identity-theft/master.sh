@@ -6,17 +6,16 @@ function GETDEXIP {
   (kubectl get pods -n dex -ojson | jq -r '.items[].status.podIP')
 }
 
-until [[ -z $(GETDEXIP) ]];
+while [ "$(GETDEXIP)" = "" ] || [ "$(GETDEXIP)" = "null" ];
 do
     sleep 5
 done
-
 
 function GETSSIP {
   (kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
 }
 
-until [[ -z $(GETSSIP) ]];
+while [ "$(GETSSIP)" = "" ] || [ "$(GETSSIP)" = "null" ];
 do
     sleep 5
 done

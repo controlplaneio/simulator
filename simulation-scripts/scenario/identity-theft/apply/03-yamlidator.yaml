@@ -131,8 +131,7 @@ spec:
     serviceAccountName: yamlidator
     containers:
     - name: yamlidator
-    # image: docker.io/controlplaneoffsec/identity-theft:yamlidator
-      image: ttl.sh/wakeward-9834jgd-ymld:12h
+      image: docker.io/controlplaneoffsec/identity-theft:yamlidator
       ports:
       - containerPort: 5000
         name: http

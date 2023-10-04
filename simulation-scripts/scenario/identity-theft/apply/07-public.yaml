@@ -43,8 +43,7 @@ spec:
     serviceAccountName: elitehexor
     containers:
     - name: hacker-prompt
-      # image: docker.io/controlplaneoffsec/identity-theft:public-terminal
-      image: ttl.sh/wakeward-435sa2a-pubt:12h
+      image: docker.io/controlplaneoffsec/identity-theft:public-terminal
       command: ["sleep", "2d"]
       securityContext:
         allowPrivilegeEscalation: false

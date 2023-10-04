@@ -22,8 +22,7 @@ metadata:
 spec:
     containers:
     - name: pod-checker
-      image: ttl.sh/wakeward-7430sfv2-pcker:12h
-      # image: docker.io/controlplaneoffsec/identity-theft:pod-checker
+      image: docker.io/controlplaneoffsec/identity-theft:pod-checker
       env:
       - name: YAMLIDATOR_URL
         value: http://yamlidator.public-services.svc.cluster.local:5000
