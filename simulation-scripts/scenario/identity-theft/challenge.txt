@@ -15,7 +15,7 @@
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 Captain Hλ$ħ𝔍Ⱥ¢k's motley crew have set their sights on Pod-Checker, a k8s pod schema validation service.
 
-Based on OSINT, Pod-Checker has an secure, user store which is actively used for storing secrets.
+Based on OSINT, Pod-Checker has a secure, user store which is actively used for storing secrets.
 
 Infiltrate the organisation, obtain persistence and plunder the users' identities.
 
