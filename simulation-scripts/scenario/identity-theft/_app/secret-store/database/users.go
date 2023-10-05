@@ -1,8 +1,8 @@
 package database
 
 import (
-	"wakeward/yaml-ctf/_app/secret-store/config"
-	"wakeward/yaml-ctf/_app/secret-store/models"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/config"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/models"
 )
 
 func GetUserByEmail(email string) (models.User, error) {

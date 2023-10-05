@@ -3,9 +3,9 @@ package controllers
 import (
 	"encoding/base64"
 	"net/http"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/database"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/models"
 	"time"
-	"wakeward/yaml-ctf/_app/secret-store/database"
-	"wakeward/yaml-ctf/_app/secret-store/models"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"

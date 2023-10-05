@@ -2,8 +2,8 @@ package main
 
 import (
 	"log"
-	"wakeward/yaml-ctf/_app/secret-store/config"
-	"wakeward/yaml-ctf/_app/secret-store/controllers"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/config"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/controllers"
 
 	"github.com/gin-gonic/gin"
 )

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"wakeward/yaml-ctf/_app/secret-store/models"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/models"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"

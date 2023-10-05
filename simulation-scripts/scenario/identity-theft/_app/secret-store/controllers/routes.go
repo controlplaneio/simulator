@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"wakeward/yaml-ctf/_app/secret-store/config"
-	docs "wakeward/yaml-ctf/_app/secret-store/docs"
-	"wakeward/yaml-ctf/_app/secret-store/middleware"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/config"
+	docs "simulation-scripts/scenario/identity-theft/_app/secret-store/docs"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/middleware"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -26,4 +26,5 @@ func UserRoutes(auth *config.Authenticator, r *gin.Engine) {
 		}
 	}
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	r.GET("/", Default)
 }

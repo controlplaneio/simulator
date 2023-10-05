@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"wakeward/yaml-ctf/_app/secret-store/config"
+	"simulation-scripts/scenario/identity-theft/_app/secret-store/config"
 )
 
 // Authorize ID Token and Claims.

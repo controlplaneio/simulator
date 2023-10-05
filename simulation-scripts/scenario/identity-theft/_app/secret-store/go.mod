@@ -1,4 +1,4 @@
-module wakeward/yaml-ctf/_app/secret-store
+module simulation-scripts/scenario/identity-theft/_app/secret-store
 
 go 1.20
 
