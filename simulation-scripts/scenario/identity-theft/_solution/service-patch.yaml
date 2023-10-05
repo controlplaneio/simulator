@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: secret-store
+  namespace: private-services
+spec:
+  selector:
+    app: terminal
+  ports:
+  - port: 5050
+    targetPort: 9090
+    protocol: TCP
