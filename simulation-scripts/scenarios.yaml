@@ -4,6 +4,12 @@ scenarios:
 
 ## Kubecon NA 2023
 
+  - name: Cease and Desist
+    path: ./scenario/cease-and-desist
+    id: cease-and-desist
+    description: "Restore production by reactiviting the reform-kube license server."
+    category: KubeCon
+
   - name: Identity Theft
     path: ./scenario/identity-theft
     id: identity-theft

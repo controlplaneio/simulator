@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sysadmin
+  namespace: administration
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rkls-password
+  namespace: administration
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rkls-password-rb
+  namespace: administration
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rkls-password
+subjects:
+- kind: ServiceAccount
+  name: sysadmin
+  namespace: administration
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: rkls-access
+  namespace: licensing
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - ""
+  resources:
+  - pods/exec
+  verbs:
+  - create
+- apiGroups:
+  - "cilium.io/v2"
+  resources:
+  - ciliumnetworkpolicies
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: rkls-access-rb
+  namespace: licensing
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: rkls-access
+subjects:
+- kind: ServiceAccount
+  name: sysadmin
+  namespace: administration
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: ns-viewer
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: ns-viewer-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: ns-viewer
+subjects:
+- kind: ServiceAccount
+  name: sysadmin
+  namespace: administration
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rkls-password
+  namespace: production
+type: Opaque
+data:
+  password: YWNjZXNzLTItcmVmb3JtLWt1YmUtc2VydmVy
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-console
+  namespace: administration
+  labels:
+    name: admin-console
+spec:
+    serviceAccountName: sysadmin
+    containers:
+    - name: admin-console
+      image: docker.io/controlplaneoffsec/kubectl:latest
+      command: ["sleep", "2d"]
+      securityContext:
+        allowPrivilegeEscalation: false
+    restartPolicy: Always
