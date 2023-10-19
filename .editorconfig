@@ -3,16 +3,12 @@ root = true
 [*]
 charset = utf-8
 end_of_line = lf
-indent_size = 4
+indent_size = 2
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 max_line_length = 120
 tab_width = 4
-
-[*.proto]
-indent_size = 2
-tab_width = 2
 
 [{*.bash,*.sh,*.zsh}]
 indent_size = 2
@@ -26,10 +22,6 @@ indent_size = 2
 
 [{*.hcl,*.nomad}]
 indent_size = 2
-
-[{*.pb,*.textproto}]
-indent_size = 2
-tab_width = 2
 
 [{*.tf,*.tfvars}]
 indent_size = 2
