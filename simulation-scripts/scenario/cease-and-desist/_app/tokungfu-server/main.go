@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 
@@ -15,7 +16,11 @@ type Kind struct {
 func main() {
 	router := gin.Default()
 	router.GET("/", run)
-	router.Run("localhost:8080")
+
+	log.Print("Server listening on http://localhost:8080/")
+	if err := http.ListenAndServe("0.0.0.0:8080", router); err != nil {
+		log.Fatalf("There was an error with the http server: %v", err)
+	}
 }
 
 func run(c *gin.Context) {

@@ -31,7 +31,7 @@ roleRef:
   name: check-license
 subjects:
 - kind: ServiceAccount
-  name: reform-kube
+  name: reform-kube-operator
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -63,7 +63,7 @@ roleRef:
   name: deployer
 subjects:
 - kind: ServiceAccount
-  name: reform-kube
+  name: reform-kube-operator
   namespace: kube-system
 ---
 apiVersion: batch/v1
@@ -87,7 +87,7 @@ spec:
               LICENSE="valid"
               LICENSE_KEY="2fc593b894ef1402987d2595487d9763"
 
-              POD="{\"apiVersion\":\"v1\",\"kind\":\"Pod\",\"metadata\":{\"annotations\":{},\"name\":\"tokungfu-server\",\"namespace\":\"production\"},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"FLAG\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"flag\",\"name\":\"flag\"}}}],\"image\":\"ttl.sh/wakeward-321sa5-4324ff-pr:12h\",\"name\":\"tokungfu-server\",\"ports\":[{\"containerPort\":8080,\"name\":\"http\"}]}],\"restartPolicy\":\"Always\"}}"
+              POD="{\"apiVersion\":\"v1\",\"kind\":\"Pod\",\"metadata\":{\"annotations\":{},\"name\":\"tokungfu-server\",\"namespace\":\"production\"},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"FLAG\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"flag\",\"name\":\"flag\"}}}],\"image\":\"ttl.sh/wakeward-349g9ud09s-tokfu:12h\",\"name\":\"tokungfu-server\",\"ports\":[{\"containerPort\":8080,\"name\":\"http\"}]}],\"restartPolicy\":\"Always\"}}"
 
               function LICENSE_CHECK {
                 (kubectl get pods rkls -n licensing -ojson | jq -r '.metadata.labels.license')

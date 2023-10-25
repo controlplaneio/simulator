@@ -50,7 +50,7 @@ func main() {
 		fmt.Println("Trial mode enabled")
 		fmt.Println("FLAG:", os.Getenv("FLAG"))
 		licenseFile, _ := json.Marshal(licenseKey{Key: "bGljZW5zZV9rZXk9dHJpYWwK"})
-		err := os.WriteFile("license.json", licenseFile, 0444)
+		err := os.WriteFile("/reform-kube/license.json", licenseFile, 0444)
 		if err != nil {
 			fmt.Println("Error writing license file")
 			os.Exit(1)
@@ -93,6 +93,8 @@ func licenseCheck() error {
 		}
 		fmt.Println("Product activation successful")
 		return nil
+	} else if licResp.Key == "bGljZW5zZV9rZXk9dHJpYWwK" {
+		return fmt.Errorf("production license key required")
 	}
 
 	return fmt.Errorf("invalid license key")

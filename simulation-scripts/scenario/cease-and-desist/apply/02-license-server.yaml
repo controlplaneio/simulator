@@ -40,7 +40,7 @@ metadata:
   namespace: licensing
 type: Opaque
 data:
-  flag: ZmxhZ19jdGZ7QV9UUklBTF9MSUNFTlNFX1dPTlRfV09SS180X1BST0R9
+  flag: ZmxhZ19jdGZ7QV9GUkVFX1NBTVBMRV80X1lPVV8yX1RSWX0=
 ---
 apiVersion: v1
 kind: Pod
@@ -61,6 +61,5 @@ spec:
         secretKeyRef:
           name: flag
           key: flag
-  restartPolicy: Always
-
-
+    securityContext:
+      allowPrivilegeEscalation: false

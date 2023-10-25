@@ -52,11 +52,18 @@ rules:
   verbs:
   - create
 - apiGroups:
-  - "cilium.io/v2"
+  - cilium.io
   resources:
   - ciliumnetworkpolicies
   verbs:
   - get
+  resourceNames:
+  - rkls-egress
+- apiGroups:
+  - cilium.io
+  resources:
+  - ciliumnetworkpolicies
+  verbs:
   - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -99,11 +106,39 @@ subjects:
   name: sysadmin
   namespace: administration
 ---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: production-access
+  namespace: production
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: production-access-rb
+  namespace: production
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: production-access
+subjects:
+- kind: ServiceAccount
+  name: sysadmin
+  namespace: administration
+---
 apiVersion: v1
 kind: Secret
 metadata:
   name: rkls-password
-  namespace: production
+  namespace: administration
 type: Opaque
 data:
   password: YWNjZXNzLTItcmVmb3JtLWt1YmUtc2VydmVy
@@ -112,15 +147,15 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: admin-console
-  namespace: administration
   labels:
     name: admin-console
+  namespace: administration
 spec:
-    serviceAccountName: sysadmin
-    containers:
-    - name: admin-console
-      image: docker.io/controlplaneoffsec/kubectl:latest
-      command: ["sleep", "2d"]
-      securityContext:
-        allowPrivilegeEscalation: false
-    restartPolicy: Always
+  serviceAccountName: sysadmin
+  containers:
+  - name: admin-console
+    image: ttl.sh/wakeward-215f35-adm-con:12h
+    command: ["sleep", "2d"]
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      allowPrivilegeEscalation: false

@@ -30,3 +30,51 @@ EOF
 helm upgrade --install --repo https://helm.cilium.io cilium cilium --version 1.13.4 --values ./values.yaml --namespace kube-system
 
 kubectl wait -n kube-system --selector='app.kubernetes.io/name=cilium-agent' --for=condition=Ready --timeout=10m pods
+
+# Replace workloads to use Cilium (as there is no kube-proxy)
+
+cat <<EOF > pods.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rkls
+  namespace: licensing
+  labels:
+    name: rkls
+spec:
+  serviceAccountName: reform-kube
+  containers:
+  - image: ttl.sh/wakeward-23h40as1-rks:12h
+    command: ["sleep", "2d"]
+    name: rkls
+    env:
+    - name: FLAG
+      valueFrom:
+        secretKeyRef:
+          name: flag
+          key: flag
+    securityContext:
+      allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin-console
+  labels:
+    name: admin-console
+  namespace: administration
+spec:
+  serviceAccountName: sysadmin
+  containers:
+  - name: admin-console
+    image: ttl.sh/wakeward-215f35-adm-con:12h
+    command: ["sleep", "2d"]
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      allowPrivilegeEscalation: false
+EOF
+
+kubectl replace --force -f ./pods.yaml
+
+JOBPOD=$(kubectl get pods -n kube-system -ojson | jq -r '.items[].metadata.name' | grep 'reform-kube')
+kubectl delete pods "$JOBPOD" -n kube-system

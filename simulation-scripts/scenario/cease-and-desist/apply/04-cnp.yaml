@@ -1,7 +1,7 @@
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
-  name: dns-policy-test
+  name: rkls-egress
   namespace: licensing
 spec:
   egress:
@@ -35,4 +35,21 @@ spec:
         protocol: TCP
   endpointSelector:
     matchLabels:
-      k8s:name: admin-console
+      k8s:name: rkls
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: kube-api-access
+  namespace: licensing
+spec:
+  egress:
+  - toEntities:
+    - kube-apiserver
+    toPorts:
+    - ports:
+      - port: '6443'
+        protocol: TCP
+  endpointSelector:
+    matchLabels:
+      k8s:name: rkls
