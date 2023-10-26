@@ -52,7 +52,7 @@ metadata:
 spec:
   serviceAccountName: reform-kube
   containers:
-  - image: controlplaneoffsec/cease-and-desist:rks
+  - image: docker.io/controlplaneoffsec/cease-and-desist:rks
     command: ["sleep", "2d"]
     name: rkls
     env:

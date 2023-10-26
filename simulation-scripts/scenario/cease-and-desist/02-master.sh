@@ -44,7 +44,7 @@ metadata:
 spec:
   serviceAccountName: reform-kube
   containers:
-  - image: controlplaneoffsec/cease-and-desist:rks
+  - image: docker.io/controlplaneoffsec/cease-and-desist:rks
     command: ["sleep", "2d"]
     name: rkls
     env:
@@ -67,7 +67,7 @@ spec:
   serviceAccountName: sysadmin
   containers:
   - name: admin-console
-    image: controlplaneoffsec/cease-and-desist:admin-console
+    image: docker.io/controlplaneoffsec/cease-and-desist:admin-console
     command: ["sleep", "2d"]
     imagePullPolicy: IfNotPresent
     securityContext:
