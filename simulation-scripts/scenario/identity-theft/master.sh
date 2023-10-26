@@ -27,7 +27,7 @@ SECRET_STORE="http://$SSIP:5050/api/v1/users"
 DEX="http://$DEXIP:5556/dex/token"
 
 USER1="{\"email\":\"admin@pod-checker.local\",\"firstName\":\"ultra\",\"lastName\":\"violet\",\"password\":\"the-keys-to-the-kingdom\", \"secret\": \"podcheckerauth\"}"
-USER2="{\"email\":\"flag@pod-checker.local\",\"firstName\":\"ctf\",\"lastName\":\"flag\",\"password\":\"ctf_flag{BRAVO_BONUS_POINTS_FOR_CRACKING_THIS}\", \"secret\": \"ctf_flag{O_I_DC_WHAT_YOU_HAVE_DONE_THERE}\"}"
+USER2="{\"email\":\"flag@pod-checker.local\",\"firstName\":\"ctf\",\"lastName\":\"flag\",\"password\":\"ctf_flag{BRAVO_BONUS_POINTS_FOR_CRACKING_THIS}\", \"secret\": \"flag_ctf{O_I_DC_WHAT_YOU_HAVE_DONE_THERE}\"}"
 USER3="{\"email\":\"db@pod-checker.local\",\"firstName\":\"infra\",\"lastName\":\"red\",\"password\":\"administer-the-secret-store-247!\", \"secret\": \"dbsecretstoreauth\"}"
 USER4="{\"email\":\"wakeward@pod-checker.local\",\"firstName\":\"kevin\",\"lastName\":\"ward\",\"password\":\"i-am-the-author-of-this!\", \"secret\": \"ihopeyouenjoyedthis!\"}"
 
