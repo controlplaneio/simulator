@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reform-kube-operator
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: check-license
+  namespace: licensing
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - update
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: check-license-rb
+  namespace: licensing
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: check-license
+subjects:
+- kind: ServiceAccount
+  name: reform-kube-operator
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: deployer
+  namespace: production
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - patch
+  - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: deployer-rb
+  namespace: production
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: deployer
+subjects:
+- kind: ServiceAccount
+  name: reform-kube-operator
+  namespace: kube-system
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: reform-kube-operator
+  namespace: kube-system
+spec:
+  backoffLimit: 999999999
+  template:
+    spec:
+      serviceAccountName: reform-kube-operator
+      containers:
+        - name: check-and-deploy
+          image: nixery.dev/shell/kubectl/curl/jq
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -Eeuo pipefail
+
+              LICENSE="valid"
+              LICENSE_KEY="2fc593b894ef1402987d2595487d9763"
+
+              POD="{\"apiVersion\":\"v1\",\"kind\":\"Pod\",\"metadata\":{\"annotations\":{},\"name\":\"tokungfu-server\",\"namespace\":\"production\"},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"FLAG\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"flag\",\"name\":\"flag\"}}}],\"image\":\"docker.io/controlplaneoffsec/cease-and-desist:tokungfu-shop\",\"name\":\"tokungfu-server\",\"ports\":[{\"containerPort\":8080,\"name\":\"http\"}]}],\"restartPolicy\":\"Always\"}}"
+
+              function LICENSE_CHECK {
+                (kubectl get pods rkls -n licensing -ojson | jq -r '.metadata.labels.license')
+              }
+
+              function LICENSE_KEY_CHECK {
+                (kubectl get pods rkls -n licensing -ojson | jq -r '.metadata.labels.license_key')
+              }
+              # Waiting for licensing server to be labelled
+              while [[ $(LICENSE_CHECK) != "${LICENSE}" && $(LICENSE_KEY_CHECK) != "${LICENSE_KEY}" ]];
+              do
+              sleep 30
+              done
+              (echo "$POD" | kubectl create -f -)
+      restartPolicy: Never
+status: {}

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: flag
+  namespace: production
+type: Opaque
+data:
+  flag: ZmxhZ19jdGZ7T1BFTl9XSURFX0FORF9FQVRfU09NRV9UT0ZVfQ==
