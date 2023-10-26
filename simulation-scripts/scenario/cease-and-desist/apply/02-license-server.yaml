@@ -52,7 +52,7 @@ metadata:
 spec:
   serviceAccountName: reform-kube
   containers:
-  - image: ttl.sh/wakeward-23h40as1-rks:12h
+  - image: controlplaneoffsec/cease-and-desist:rks
     command: ["sleep", "2d"]
     name: rkls
     env:
