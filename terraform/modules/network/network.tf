@@ -10,6 +10,17 @@ resource "aws_vpc" "network" {
   )
 }
 
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.network.id
+
+  tags = merge(
+    var.tags,
+    {
+      "Name" = title(var.name)
+    }
+  )
+}
+
 resource "aws_internet_gateway" "network" {
   vpc_id = aws_vpc.network.id
 
