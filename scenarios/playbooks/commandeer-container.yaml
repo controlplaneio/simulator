@@ -1,0 +1,9 @@
+---
+
+- name: Commandeer Container
+  hosts: bastion
+  become: yes
+  vars:
+    state: present
+  roles:
+    - commandeer-container
