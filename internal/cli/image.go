@@ -16,22 +16,25 @@ var imageCmd = &cobra.Command{
 	Use: "image",
 }
 
-var template string
+// TODO: Add flags for containerd, runc, cni, and kubernetes version
 
 var imageBuildCmd = &cobra.Command{
-	Use:   "build",
+	Use:   "build [name]",
 	Short: "Build the packer image",
+	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		runner := container.New(cfg)
 
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
 
+		name := args[0]
+
 		command := []string{
 			"image",
 			"build",
 			"--template",
-			fmt.Sprintf("%s.pkr.hcl", template),
+			fmt.Sprintf("%s.pkr.hcl", name),
 		}
 
 		err := runner.Run(ctx, command)
@@ -40,8 +43,6 @@ var imageBuildCmd = &cobra.Command{
 }
 
 func init() {
-	imageBuildCmd.Flags().StringVar(&template, "template", "", "the packer template to build; bastion, or k8s")
 	imageCmd.AddCommand(imageBuildCmd)
-
 	simulatorCmd.AddCommand(imageCmd)
 }

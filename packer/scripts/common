@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Disable dynamic motd news
+sudo sed -i 's/ENABLED=1/ENABLED=0/' /etc/default/motd-news
+
+# Remove dynamic motd
+sudo sed -i 's/.*pam_motd.so.*//' /etc/pam.d/sshd
+
+# Configure motd
+sudo tee /etc/profile.d/motd.sh > /dev/null << 'EOF'
+echo "$(tput setaf 3)$(figlet $(hostname))$(tput sgr0)
+"
+EOF
+sudo chmod +x /etc/profile.d/motd.sh
+
+# Configure sshd
+sudo sed -i 's/#ClientAliveInterval.*/ClientAliveInterval 30/' /etc/ssh/sshd_config
+sudo sed -i 's/#ClientAliveCountMax.*/ClientAliveCountMax 240/' /etc/ssh/sshd_config
+sudo sed -i 's/X11Forwarding yes/X11Forwarding no/' /etc/ssh/sshd_config
+# In simulator v1 hardening, but not required
+#sudo sed -i 's/Subsystem.*sftp.*/Subsystem sftp \/bin\/false/' /etc/ssh/sshd_config
+sudo systemctl restart sshd
+
+## TODO: verify if this makes sense
+sudo tee /etc/ssh/sshd_config.d/rsa.conf > /dev/null << EOF
+PubkeyAcceptedAlgorithms +ssh-rsa
+HostKeyAlgorithms +ssh-rsa
+EOF

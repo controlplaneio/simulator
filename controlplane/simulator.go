@@ -10,12 +10,7 @@ import (
 	"github.com/controlplaneio/simulator/controlplane/commands"
 )
 
-type PackerTemplate string
-
 const (
-	BastionImage PackerTemplate = "bastion"
-	K8sImage     PackerTemplate = "k8s"
-
 	SimulatorDir = "/simulator"
 	Home         = "config"
 	Scenarios    = "scenarios"
@@ -45,7 +40,7 @@ type Simulator interface {
 	// CreateBucket creates the S3 bucket used to store Simulator state.
 	CreateBucket(ctx context.Context, name string) error
 	// BuildImage runs Packer to create the specified AMI.
-	BuildImage(ctx context.Context, name PackerTemplate) error
+	BuildImage(ctx context.Context, name string) error
 	// CreateInfrastructure runs Terraform to create the Simulator infrastructure.
 	CreateInfrastructure(ctx context.Context, bucket string, key string, name string) error
 	// DestroyInfrastructure runs Terraform to destroy the Simulator infrastructure.
@@ -65,7 +60,7 @@ func (s simulator) CreateBucket(ctx context.Context, name string) error {
 	return aws.CreateBucket(ctx, name)
 }
 
-func (s simulator) BuildImage(ctx context.Context, name PackerTemplate) error {
+func (s simulator) BuildImage(ctx context.Context, name string) error {
 	slog.Debug("simulator build", "image", name)
 
 	err := commands.PackerInitCommand(PackerTemplateDir, string(name)).Run(ctx)

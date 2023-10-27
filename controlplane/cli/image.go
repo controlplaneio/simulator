@@ -25,7 +25,7 @@ var buildCmd = &cobra.Command{
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.BuildImage(ctx, controlplane.PackerTemplate(template))
+		return cp.BuildImage(ctx, template)
 	},
 }
 
