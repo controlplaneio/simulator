@@ -1,0 +1,53 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+    state: "{{ state }}"
+  loop:
+    - manifests/01-kyverno-install.yaml
+    - manifests/02-netpol-policies.yaml
+    - manifests/03-nodeport-policy.yaml
+    - manifests/04-ingress-policies.yaml
+    - manifests/05-nginx-ingress-controllers.yaml
+    - manifests/06-scenario-resources.yaml
+    - manifests/07-ingress.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Hashjack
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.file', 'scripts/internal.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Remove hashjack
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: "{{ state }}"
+  loop:
+    - /home/ubuntu/hashjacker.yaml
+    - /home/ubuntu/backdoor-checker.sh
+    - /etc/cron.d/backdoor-checker
+  when: "state == 'absent' and 'bastion' in inventory_hostname"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: dmz
+    pod: jumpbox-terminal
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"

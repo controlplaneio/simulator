@@ -1,0 +1,12 @@
+[Unit]
+Description=Socat Forward
+
+[Service]
+Type=simple
+ExecStartPre=-killall -9 -q socat
+ExecStart=socat TCP4-LISTEN:{{ socat_listen_port }},reuseaddr,fork TCP4:{{ socat_target_ip }}:{{ socat_target_port }}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

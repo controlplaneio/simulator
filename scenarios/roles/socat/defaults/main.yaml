@@ -1,0 +1,3 @@
+socat_listen_port: 8080
+socat_target_ip: localhost
+socat_target_port: 30080
