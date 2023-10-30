@@ -1,0 +1,30 @@
+---
+
+- name: Configure socat service
+  ansible.builtin.template:
+    src: socat.service
+    dest: /etc/systemd/system/socat.service
+    mode: 0755
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Start socat service
+  ansible.builtin.systemd_service:
+    name: socat
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Stop socat service
+  ansible.builtin.systemd_service:
+    name: socat
+    state: stopped
+    enabled: no
+    daemon_reload: yes
+  when: "state == 'absent' and 'bastion' in inventory_hostname"
+
+- name: Remove socat service
+  ansible.builtin.file:
+    path: /etc/systemd/system/socat.service
+    state: "{{ state }}"
+  when: "state == 'absent' and 'bastion' in inventory_hostname"

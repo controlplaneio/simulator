@@ -1,0 +1,11 @@
+---
+
+- name: Build a Backdoor
+  hosts: bastion:master-1
+  become: yes
+  vars:
+    state: present
+    socat_target_ip: "{{ hostvars['master-1']['ansible_facts']['default_ipv4']['address'] }}"
+  roles:
+    - build-a-backdoor
+    - socat

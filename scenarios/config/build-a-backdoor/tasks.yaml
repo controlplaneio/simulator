@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Undo Kubernetes controls to allow access to an exploitable application
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: jumpbox-terminal
+      podNamespace: dmz
+    summary: Can you build a backdoor for Hashjack to exploit?
+name: build-a-backdoor

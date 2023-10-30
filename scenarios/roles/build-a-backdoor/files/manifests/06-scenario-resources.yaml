@@ -1,0 +1,284 @@
+## Attach Container
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ii-prod
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ii-management-services
+  namespace: ii-prod
+  labels:
+    app: ii
+spec:
+  containers:
+  - name: ii-website
+    image: controlplaneoffsec/build-a-backdoor:ii-app
+    ports:
+    - containerPort: 8080
+      name: web
+    - containerPort: 5724
+      name: ops-mgmt
+    env:
+    - name: AUTH_USERID
+      valueFrom:
+        secretKeyRef:
+          name: ops-mgmt
+          key: username
+    - name: AUTH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: ops-mgmt
+          key: password
+    securityContext:
+      allowPrivilegeEscalation: false
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ii-prod-mgmt-service
+  namespace: ii-prod
+spec:
+  selector:
+    app: ii
+  ports:
+  - name: web
+    port: 80
+    targetPort: 8080
+    protocol: TCP
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ops-mgmt
+  namespace: ii-prod
+type: kubernetes.io/basic-auth
+stringData:
+  username: system
+  password: system
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ii-prod-mgmt-np
+  namespace: ii-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: ii
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - port: 8080
+---
+## JumpBox Resources
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dmz
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sre
+  namespace: dmz
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ii-prod-auth-access
+  namespace: ii-prod
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  - configmaps
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - networkpolicies
+  - ingresses
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ii-prod-auth-rb
+  namespace: ii-prod
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ii-prod-auth-access
+subjects:
+- kind: ServiceAccount
+  name: sre
+  namespace: dmz
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ingress-nginx-auth-access
+  namespace: ingress-nginx
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ingress-nginx-auth-rb
+  namespace: ingress-nginx
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ingress-nginx-auth-access
+subjects:
+- kind: ServiceAccount
+  name: sre
+  namespace: dmz
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cr-read
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cluster-ns-read-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cr-read
+subjects:
+- kind: ServiceAccount
+  name: sre
+  namespace: dmz
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jumpbox-terminal
+  namespace: dmz
+spec:
+  serviceAccountName: sre
+  containers:
+  # basic container image
+  - image: controlplaneoffsec/build-a-backdoor:ii-jumpbox
+    command: ["sleep", "2d"]
+    name: jumpbox-terminal
+    securityContext:
+      allowPrivilegeEscalation: false
+  restartPolicy: Always
+---
+## Misconfigured helm chart causes incorrect ns deployment
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ii-pord
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ii-pord-mgmt-service
+  namespace: ii-pord
+spec:
+  type: NodePort
+  selector:
+    app: ii
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 30080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: ii-pord-mgmt-np
+  namespace: ii-pord
+spec:
+  podSelector:
+    matchLabels:
+      app: ii
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - port: 8080
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ii-pord-auth-access
+  namespace: ii-pord
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - pods
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "networking.k8s.io"
+  resources:
+  - networkpolicies
+  - ingresses
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ii-pord-auth-rb
+  namespace: ii-pord
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ii-pord-auth-access
+subjects:
+- kind: ServiceAccount
+  name: sre
+  namespace: dmz
