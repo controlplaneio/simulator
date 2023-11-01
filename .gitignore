@@ -1,0 +1,6 @@
+.idea/
+.simulator/
+config/*
+!config/.gitkeep
+bin/
+terraform/workspaces/simulator/.terraform/

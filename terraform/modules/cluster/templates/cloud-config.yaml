@@ -1,0 +1,12 @@
+#cloud-config
+cloud_final_modules:
+  - [ users-groups,always ]
+users:
+  - name: default
+  - name: player
+    shell: /bin/bash
+    ssh_authorized_keys:
+#      - command="/etc/simulator/run" ${player_public_key}
+      - ${player_public_key}
+package_update: true
+package_upgrade: true
