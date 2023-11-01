@@ -7,7 +7,7 @@ import (
 )
 
 var name, bucket string
-var dev bool
+var dev, rootless bool
 
 var configCmd = &cobra.Command{
 	Use:   "config",
@@ -33,6 +33,8 @@ var configCmd = &cobra.Command{
 			cfg.Cli.Dev = false
 			cfg.Container.Image = "controlplane/simulator:latest"
 		}
+
+		cfg.Container.Rootless = rootless
 	},
 }
 
@@ -40,6 +42,7 @@ func init() {
 	configCmd.PersistentFlags().StringVar(&name, "name", "simulator", "the name for the infrastructure")
 	configCmd.PersistentFlags().StringVar(&bucket, "bucket", "", "the s3 bucket used for storage")
 	configCmd.PersistentFlags().BoolVar(&dev, "dev", false, "developer mode")
+	configCmd.PersistentFlags().BoolVar(&rootless, "rootless", false, "docker running in rootless mode")
 
 	simulatorCmd.AddCommand(configCmd)
 }

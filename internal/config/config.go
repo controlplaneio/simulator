@@ -27,7 +27,8 @@ type Config struct {
 	} `yaml:"cli,omitempty"`
 
 	Container struct {
-		Image string `yaml:"image"`
+		Image    string `yaml:"image"`
+		Rootless bool   `yaml:"rootless,omitempty"`
 	} `yaml:"container"`
 }
 
