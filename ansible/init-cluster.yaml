@@ -1,0 +1,61 @@
+---
+
+- name: Initialise the kubernetes cluster
+  hosts: all
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: Run kubeadm init
+      ansible.builtin.shell:
+        cmd: kubeadm init
+        creates: /etc/kubernetes/admin.conf
+      when: inventory_hostname in groups['masters'][0]
+
+    - name: Create join command
+      ansible.builtin.shell: kubeadm token create --print-join-command
+      become: yes
+      register: join_command
+      when: inventory_hostname in groups['masters'][0]
+
+    - name: Join nodes
+      ansible.builtin.shell: "{{ hostvars[groups['masters'][0]].join_command.stdout }}"
+      when: inventory_hostname in groups['nodes']
+
+    - name: Create .kube directories on bastion
+      ansible.builtin.file:
+        path: "/home/{{ item }}/.kube"
+        state: directory
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: '0755'
+      loop:
+        - ubuntu
+        - player
+      when: "'bastion' in inventory_hostname"
+
+    - name: Retrieve kubeconfig from master
+      ansible.builtin.fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: kubeconfig
+        flat: yes
+      when: "'master-1' in inventory_hostname"
+
+    - name: Copy kubeconfig to bastion
+      ansible.builtin.copy:
+        src: kubeconfig
+        dest: "/home/{{ item }}/.kube/config"
+        owner: "{{ item }}"
+        group: "{{ item }}"
+        mode: 0440
+      loop:
+        - ubuntu
+        - player
+      when: "'bastion' in inventory_hostname"
+
+    - name: Remove pulled kubeconfig
+      ansible.builtin.file:
+        path: kubeconfig
+        state: absent
+      become: no
+      run_once: yes
+      delegate_to: localhost

@@ -1,0 +1,5 @@
+name: simulator
+cli:
+  dev: false
+container:
+  image: controlplane/simulator:latest
