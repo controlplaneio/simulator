@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Obtain cluster admin
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: jumpbox-terminal
+      podNamespace: dmz
+    summary: Can you obtain cluster admin of coastline?
+name: coastline-cluster-attack
