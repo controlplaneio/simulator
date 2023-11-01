@@ -1,0 +1,61 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+    state: "{{ state }}"
+  loop:
+    - manifests/01-elastic-cloud-install.yaml
+    - manifests/02-elastic-operator.yaml
+    - manifests/03-es-storage-init.yaml
+    - manifests/04-elasticsearch-install.yaml
+    - manifests/05-fluentd-daemonset.yaml
+    - manifests/06-kyverno-install.yaml
+    - manifests/07-scenario.yaml
+    - manifests/08-kyverno-container-policy.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Set flag master
+  ansible.builtin.copy:
+    dest: /root/flag.txt
+    content: 'flag_ctf{WELCOME_2_HASHJACKS_MOTLEY_CREW}'
+  when: "state == 'present' and 'master-1' in inventory_hostname"
+
+- name: Set flag nodes
+  ansible.builtin.copy:
+    dest: /root/flag.txt
+    content: 'flag_ctf{WORKER_NODE_PWNED_GO_4_MASTER}'
+  when: "state == 'present' and inventory_hostname in groups['nodes']"
+
+- name: Remove flag master
+  ansible.builtin.file:
+    path: /root/flag.txt
+    state: absent
+  when: "state == 'absent' and 'master-1' in inventory_hostname"
+
+- name: Remove flag nodes
+  ansible.builtin.file:
+    path: /root/flag.txt
+    state: absent
+  when: "state == 'absent' and inventory_hostname in groups['nodes']"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: dmz
+    pod: jumpbox-terminal
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"
