@@ -92,15 +92,22 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		}...)
 	}
 
+	containerConfig := &container.Config{
+		Image:        r.Config.Container.Image,
+		Env:          aws.Env,
+		Cmd:          command,
+		Tty:          true,
+		AttachStdout: true,
+		AttachStderr: true,
+	}
+
+	if r.Config.Container.Rootless {
+		// map to host user for directory access
+		containerConfig.User = "0:0"
+	}
+
 	cont, err := cli.ContainerCreate(ctx,
-		&container.Config{
-			Image:        r.Config.Container.Image,
-			Env:          aws.Env,
-			Cmd:          command,
-			Tty:          true,
-			AttachStdout: true,
-			AttachStderr: true,
-		},
+		containerConfig,
 		&container.HostConfig{
 			Mounts: mounts,
 		},
@@ -137,7 +144,7 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 
 	err = cli.ContainerStart(ctx, cont.ID, types.ContainerStartOptions{})
 	if err != nil {
-		return StartFailed
+		return errors.Join(StartFailed, err)
 	}
 
 	var wg sync.WaitGroup
