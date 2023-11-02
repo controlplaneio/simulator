@@ -117,30 +117,39 @@ subjects:
   name: yamlidator
   namespace: public-services
 ---
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   labels:
     app: yamlidator
   name: yamlidator
   namespace: public-services
 spec:
-    serviceAccountName: yamlidator
-    containers:
-    - name: yamlidator
-      image: docker.io/controlplaneoffsec/identity-theft:yamlidator
-      ports:
-      - containerPort: 5000
-        name: http
-      volumeMounts:
-      - mountPath: /mnt/
-        name: yaml
-    volumes:
-    - hostPath:
-        path: /mnt
-        type: Directory
-      name: yaml
-    restartPolicy: Always
+  selector:
+    matchLabels:
+      app: yamlidator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: yamlidator
+    spec:
+        serviceAccountName: yamlidator
+        containers:
+        - name: yamlidator
+          image: docker.io/controlplaneoffsec/identity-theft:yamlidator
+          ports:
+          - containerPort: 5000
+            name: http
+          volumeMounts:
+          - mountPath: /mnt/
+            name: yaml
+        volumes:
+        - hostPath:
+            path: /mnt
+            type: Directory
+          name: yaml
+        restartPolicy: Always
 ---
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
@@ -149,7 +158,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: yamlidator
+      app: batch
   ingress:
   - from:
     - namespaceSelector:
