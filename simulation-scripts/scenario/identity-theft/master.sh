@@ -12,7 +12,7 @@ do
 done
 
 function GETSSIP {
-  (kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
+  (kubectl get pods -n private-services -ojson | jq -r '.items[].status.podIP')
 }
 
 while [ "$(GETSSIP)" = "" ] || [ "$(GETSSIP)" = "null" ];
