@@ -41,9 +41,6 @@ rules:
   - get
   - list
   - create
-  - update
-  - patch
-  - delete
   - watch
 - apiGroups:
   - ""
