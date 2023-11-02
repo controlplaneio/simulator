@@ -17,7 +17,7 @@ function GETSSIP {
 
 while [ "$(GETSSIP)" = "" ] || [ "$(GETSSIP)" = "null" ];
 do
-    sleep 5
+    sleep 10
 done
 
 DEXIP=$(kubectl get pods -n dex -ojson | jq -r '.items[].status.podIP')
