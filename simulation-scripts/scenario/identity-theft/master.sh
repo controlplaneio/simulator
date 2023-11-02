@@ -12,16 +12,16 @@ do
 done
 
 function GETSSIP {
-  (kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
+  (kubectl get pods -n private-services -ojson | jq -r '.items[].status.podIP')
 }
 
 while [ "$(GETSSIP)" = "" ] || [ "$(GETSSIP)" = "null" ];
 do
-    sleep 5
+    sleep 10
 done
 
 DEXIP=$(kubectl get pods -n dex -ojson | jq -r '.items[].status.podIP')
-SSIP=$(kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
+SSIP=$(kubectl get pods -n private-services -ojson | jq -r '.items[].status.podIP')
 
 SECRET_STORE="http://$SSIP:5050/api/v1/users"
 DEX="http://$DEXIP:5556/dex/token"

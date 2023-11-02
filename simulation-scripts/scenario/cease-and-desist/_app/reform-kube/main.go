@@ -48,7 +48,7 @@ func main() {
 
 	if trial {
 		fmt.Println("Trial mode enabled")
-		fmt.Println("FLAG:", os.Getenv("FLAG"))
+		fmt.Println("FLAG: flag_ctf{A_FREE_SAMPLE_4_YOU_2_TRY}")
 		licenseFile, _ := json.Marshal(licenseKey{Key: "bGljZW5zZV9rZXk9dHJpYWwK"})
 		err := os.WriteFile("/reform-kube/license.json", licenseFile, 0444)
 		if err != nil {
