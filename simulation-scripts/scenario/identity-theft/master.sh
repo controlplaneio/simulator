@@ -21,7 +21,7 @@ do
 done
 
 DEXIP=$(kubectl get pods -n dex -ojson | jq -r '.items[].status.podIP')
-SSIP=$(kubectl get pods secret-store -n private-services -ojson | jq -r '.status.podIP')
+SSIP=$(kubectl get pods -n private-services -ojson | jq -r '.items[].status.podIP')
 
 SECRET_STORE="http://$SSIP:5050/api/v1/users"
 DEX="http://$DEXIP:5556/dex/token"
