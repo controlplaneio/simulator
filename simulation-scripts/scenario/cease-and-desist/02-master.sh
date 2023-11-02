@@ -47,12 +47,6 @@ spec:
   - image: docker.io/controlplaneoffsec/cease-and-desist:rks
     command: ["sleep", "2d"]
     name: rkls
-    env:
-    - name: FLAG
-      valueFrom:
-        secretKeyRef:
-          name: flag
-          key: flag
     securityContext:
       allowPrivilegeEscalation: false
 ---

@@ -34,15 +34,6 @@ subjects:
   namespace: licensing
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: flag
-  namespace: licensing
-type: Opaque
-data:
-  flag: ZmxhZ19jdGZ7QV9GUkVFX1NBTVBMRV80X1lPVV8yX1RSWX0=
----
-apiVersion: v1
 kind: Pod
 metadata:
   name: rkls
@@ -55,11 +46,5 @@ spec:
   - image: docker.io/controlplaneoffsec/cease-and-desist:rks
     command: ["sleep", "2d"]
     name: rkls
-    env:
-    - name: FLAG
-      valueFrom:
-        secretKeyRef:
-          name: flag
-          key: flag
     securityContext:
       allowPrivilegeEscalation: false
