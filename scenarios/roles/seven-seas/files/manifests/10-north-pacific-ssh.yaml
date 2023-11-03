@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: royal-fortune
+  namespace: north-pacific
+  labels:
+    ship: royal-fortune
+spec:
+    hostPID: true
+    containers:
+    - name: royal-fortune
+      image: docker.io/controlplaneoffsec/seven-seas:royal-fortune
+      ports:
+      - containerPort: 2222
+        name: coordinates
+      securityContext:
+        privileged: true
+    nodeName: master-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: plot-a-course
+  namespace: north-pacific
+spec:
+  selector:
+    ship: royal-fortune
+  ports:
+  - protocol: TCP
+    port: 22
+    targetPort: 2222
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: clearing
+  namespace: north-pacific
+spec:
+  podSelector:
+    matchLabels:
+      ship: royal-fortune
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          sea: south-pacific

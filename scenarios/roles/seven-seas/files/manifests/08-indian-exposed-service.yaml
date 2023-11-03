@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: crack-in-hull
+  namespace: indian
+spec:
+  selector:
+    ship: adventure-galley
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: adventure-galley
+  namespace: indian
+  labels:
+    ship: adventure-galley
+spec:
+  containers:
+  - name: adventure-galley
+    image: docker.io/controlplaneoffsec/seven-seas:adventure-galley
+    ports:
+    - containerPort: 8080
+      name: target
+    env:
+    - name: ACTION
+      valueFrom:
+        secretKeyRef:
+          name: action
+          key: action
+    - name: OBJECT
+      valueFrom:
+        secretKeyRef:
+          name: object
+          key: object
+    - name: MAP5
+      valueFrom:
+        secretKeyRef:
+          name: treasure-map-5
+          key: treasure-map-5
+    securityContext:
+      allowPrivilegeEscalation: false
+  restartPolicy: Always
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: action
+  namespace: indian
+type: Opaque
+data:
+  action: bGF1bmNo
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: object
+  namespace: indian
+type: Opaque
+data:
+  object: Y3liZXItdHJvamFuLWNyYWNraW5nLWNhbm5vbmJhbGw=
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: treasure-map-5
+  namespace: indian
+type: Opaque
+data:
+  treasure-map-5: cW05SVpza05hd201SkN4dW50Q0hnMitiUGlydHFOWmNxVVYyd1d4Vm1LT0tIVGM0WTU4VUVTVE1pT3Z2UEZGY091VDV2aQpGN1Y1RklncFNFWWZNeTcxQ1ZtR21vMGxKUUFGWm1WRGYwUFFqaUxoWURuL3grTVMydmlUU3pJYXU4SUJ1MEJ1MHJqWElhCkRURE9KVXN1S1J5UTlFSUJXZHVrMlMzK2QrTHFYVHg1djJZcUlQWis1cTRkcERsbWVuSE43Zm9FVnlDNmhIR2dtSEZnSjIKNjlIdFo4SFdWdGt3dis0bWFRZXZaQ1BubTVDcGVkZ21HWVgxZElPTVh0LzRZUjRQcjZ6SzZXOVIzTWN2K0ZKVkRNcUUzUgpRMHY0bStDZ3ZEYW5iWWFVTHBBQUFCQVFDUE0rSG4zZVRneDYvL3ZCTEVNejdFY2N5T0FLRnIvRHJZdGcrT2pMUmhaaWNaCmNZcUh2UDZ1b2M5TUEzZlFLMllDWnhGTzgyTXBCWXVCbmg2eXBQb1BJbjJWaEpSbHd2ejlmZDdLdEtSWnJaZ0UwV1hHOWgKZUVvcXl2c1dRajFJVTJhWjVtcGpHOEE4K2ZOb1Q3UlJPUjRNOExyMWc3blRNWnk5MjJqVVdGeUZnNTJBY2FNRjNqeFkybg==
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: options
+  namespace: indian
+data:
+  action: |
+    - "use"
+    - "fire"
+    - "launch"
+    - "throw"
+  object: |
+    - "digital-parrot-clutching-a-cursed-usb"
+    - "rubber-chicken-with-a-pulley-in-the-middle"
+    - "cyber-trojan-cracking-cannonball"
+    - "hashjack-hypertext-harpoon"
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: blockade
+  namespace: indian
+spec:
+  podSelector:
+    matchLabels:
+      ship: adventure-galley
+  ingress:
+  - from:
+    - podSelector: {}

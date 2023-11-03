@@ -1,0 +1,11 @@
+---
+
+- name: Seven Seas
+  hosts: all
+  become: yes
+  vars:
+    state: present
+    socat_target_ip: "{{ hostvars['master-1']['ansible_facts']['default_ipv4']['address'] }}"
+  roles:
+    - seven-seas
+    - socat
