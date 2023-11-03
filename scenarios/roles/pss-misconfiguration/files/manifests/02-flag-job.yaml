@@ -1,0 +1,180 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cp-checker
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cp-checker
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - patch
+  - update
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cp-checker-list
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cp-checker-bind
+  namespace: dev-app-factory
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cp-checker
+subjects:
+- kind: ServiceAccount
+  name: cp-checker
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cp-checker-list-bind
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cp-checker-list
+subjects:
+- kind: ServiceAccount
+  name: cp-checker
+  namespace: kube-system
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: namespace-checker
+  namespace: kube-system
+spec:
+  backoffLimit: 999999999
+  template:
+    spec:
+      serviceAccountName: cp-checker
+      containers:
+        - name: namespace-checker
+          image: nixery.dev/shell/kubectl/curl/jq
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -Eeuo pipefail
+              PSA_LEVEL='"restricted"';
+              function NAMESPACE_LABEL_CHECK {
+                  (kubectl get ns dev-app-factory -ojson | jq '.metadata.labels."pod-security.kubernetes.io/enforce"')
+              }
+              # Waiting for namespace label to change
+              while [[ $(NAMESPACE_LABEL_CHECK) != $PSA_LEVEL ]];
+              do
+                  sleep 10
+              done
+              
+              (kubectl create secret generic flag-xyz --from-literal=flag=flag_ctf{MISCONFIG_GOT_PSA_LEVEL_WRONG} --namespace=dev-app-factory)
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: psa-config-checker
+  namespace: kube-system
+spec:
+  backoffLimit: 999999999
+  template:
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+      - operator: Exists
+      serviceAccountName: cp-checker
+      containers:
+        - name: psa-config-checker
+          image: docker.io/controlplaneoffsec/kubectl:latest
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -Eeuo pipefail
+              # Waiting for the psa exemption to be removed, and ensure the defaults not be changed
+              until ! grep "system:serviceaccount:kube-system:replicaset-controller" /master/opt/k8s-upgrade/psa-config.yaml && grep "kube-system" /master/opt/k8s-upgrade/psa-config.yaml && grep "platform" /master/opt/k8s-upgrade/psa-config.yaml;
+              do
+                sleep 10
+              done
+
+              (kubectl create secret generic flag-wasd --from-literal=flag=flag_ctf{MISCONFIG_GOT_PSA_EXEMPTIONS_WRONG} --namespace=dev-app-factory)
+          volumeMounts:
+          - name: psaconfig
+            mountPath: /master/opt/k8s-upgrade/
+            readOnly: true
+      volumes:
+      - name: psaconfig
+        hostPath:
+          path: /opt/k8s-upgrade/
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pod-checker
+  namespace: kube-system
+spec:
+  backoffLimit: 999999999
+  template:
+    spec:
+      serviceAccountName: cp-checker
+      containers:
+        - name: pod-checker
+          image: nixery.dev/shell/kubectl/curl/jq
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -Eeuo pipefail
+              NS_MSG="No resources found in dev-app-factory namespace.";
+              POD_FORBID_EVENT="pods.*is forbidden: violates PodSecurity.*nginx-pod"
+              function POD_RUNNING {
+                (kubectl get pods -n dev-app-factory 2>&1)
+              }
+              function DEPLOY_SECURITY_WARNING_EVENT {
+                (kubectl get deploy nginx -n dev-app-factory -ojson | jq '.status.conditions[-1] | select(.reason=="FailedCreate") | .message ')
+              }
+              # Wait for Pod to be deleted for good and forbidden by PSS
+              until [[ $(POD_RUNNING) == "${NS_MSG}" && $(DEPLOY_SECURITY_WARNING_EVENT) =~ $POD_FORBID_EVENT ]];
+              do
+                  sleep 10
+              done
+              
+              (kubectl create secret generic flag-gotit --from-literal=flag=flag_ctf{MISCONFIG_PSS_HASHJACK_SAD_BLOCKED} --namespace=dev-app-factory)
+      restartPolicy: Never

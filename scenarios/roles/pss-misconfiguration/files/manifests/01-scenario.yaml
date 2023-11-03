@@ -1,0 +1,156 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev-app-factory
+  labels:
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/enforce: privileged
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev-app-factory
+  labels:
+    app: nginx
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - image: nginx:latest
+          name: nginx-pod
+          securityContext:
+            allowPrivilegeEscalation: true
+            runAsNonRoot: false
+            runAsUser: 0
+            capabilities:
+              add: ["SETUID", "SETGID", "SYS_CHROOT","CHOWN","KILL"]
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: platform
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: platform-admin
+  namespace: platform
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: platform-admin
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+  - delete
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - "apps"
+  resources:
+  - deployments
+  - daemonsets
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: platform-admin-list
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - resourcequotas
+  - limitranges
+  resourceNames:
+  - "dev-app-factory"
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: platform-admin-bind
+  namespace: dev-app-factory
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: platform-admin
+subjects:
+  - kind: ServiceAccount
+    name: platform-admin
+    namespace: platform
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: platform-admin-bind
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: platform-admin-list
+subjects:
+  - kind: ServiceAccount
+    name: platform-admin
+    namespace: platform
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: admin
+  namespace: platform
+spec:
+  serviceAccountName: platform-admin
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: ""
+  tolerations:
+  - operator: Exists
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  containers:
+  - image: docker.io/controlplaneoffsec/kubectl:latest
+    command: ["sleep", "2d"]
+    name: admin
+    imagePullPolicy: Always
+    volumeMounts:
+    - name: dm9sltetcm8
+      mountPath: /etc/kubernetes/manifests
+      readOnly: true
+    - name: dm9sltitcnc
+      mountPath: /etc/kubërnëtës
+  volumes:
+  - name: dm9sltetcm8
+    hostPath:
+      path: /etc/kubernetes/manifests
+  - name: dm9sltitcnc
+    hostPath:
+      path: /opt/k8s-upgrade

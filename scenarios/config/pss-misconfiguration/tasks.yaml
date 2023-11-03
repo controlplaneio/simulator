@@ -1,0 +1,23 @@
+category: CNSecCon
+difficulty: CNSecCon
+kind: cp.simulator/scenario:1.0.0
+objective: Fix misconfigurations
+tasks:
+  "1":
+    hints:
+    - penalty: 10
+      text: luckily, pod security is namespaced nowadays!
+    - penalty: 10
+      text: who controls the controllers? they might have thought they are exempt from security policies...but be very careful when you attempt to change their mind!
+    - penalty: 10
+      text: https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-admission-controller/#configure-the-admission-controller
+    - penalty: 10
+      text: security does not apply to ancient Pods
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: admin
+      podNamespace: platform
+      podHost: master-0
+    summary: Can you fix the Pod Security misconfigurations so that the attacker's Pod can't be admitted anymore in the cluster?
+name: pss-misconfiguration
