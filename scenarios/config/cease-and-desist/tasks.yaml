@@ -1,0 +1,14 @@
+category: KubeCon
+difficulty: KubeCon
+kind: cp.simulator/scenario:1.0.0
+objective: Restore production by reactiviting the reform-kube license server.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: admin-console
+      podNamespace: administration
+    summary: Restore production by reactiviting the reform-kube license server.
+name: cease-and-desist
