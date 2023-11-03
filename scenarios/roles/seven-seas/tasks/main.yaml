@@ -1,0 +1,76 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+    state: "{{ state }}"
+  loop:
+    - manifests/00-namespaces.yaml
+    - manifests/01-kyverno-install.yaml
+    - manifests/02-kyverno-policies.yaml
+    - manifests/04-arctic-start.yaml
+    - manifests/05-north-atlantic-secret.yaml
+    - manifests/06-south-atlantic-sidecar.yaml
+    - manifests/07-southern-attached.yaml
+    - manifests/08-indian-exposed-service.yaml
+    - manifests/09-south-pacific-pss.yaml
+    - manifests/10-north-pacific-ssh.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Set flag
+  ansible.builtin.copy:
+    dest: /root/flag.txt
+    content: flag_ctf{TOTAL_MASTERY_OF_THE_SEVEN_SEAS}
+  when: "state == 'present' and 'master-1' in inventory_hostname"
+
+- name: Remove flag
+  ansible.builtin.file:
+    path: /root/flag.txt
+    state: absent
+  when: "state == 'absent' and 'master-1' in inventory_hostname"
+
+- name: 01-worker-2
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.file', 'scripts/01-worker-2.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "state == 'present' and inventory_hostname in groups['nodes']"
+
+- name: Remove 01-worker-2
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /mnt/.cache/bow
+    - /mnt/.cache/bowsprit
+    - /mnt/.cache/crows-nest
+    - /mnt/.cache/forecastle
+    - /mnt/.cache/helm
+    - /mnt/.cache/hold
+    - /mnt/.cache/hull
+    - /mnt/.cache/poop-deck
+    - /mnt/.cache/ratlines
+    - /mnt/.cache/stern
+    - /mnt/.cache/yardarm
+  when: "state == 'absent' and inventory_hostname in groups['nodes']"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: arctic
+    pod: fancy
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"

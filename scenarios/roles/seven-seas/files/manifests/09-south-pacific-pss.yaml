@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: treasure-map-6
+  namespace: south-pacific
+type: Opaque
+data:
+  treasure-map-6: c05iTlViNmxmY3JGcXk0Z3VoYTFBYVdZM20rVzQxZlBXK0xEOWhUdTd0blNEQjd1eXVCU2puL0VlazBPb2hvcGRsVkViMAptUXhsZGJwSWMycXp2TkIveVA4cXV3dnY5NlN5amtWeVF3VU55T0xxZ0pNUDlnQWVSeUhSWnVwNEFuV0ttM21QVDdSRGU3CmZONnMxa0ppanpWT2NBMHhBQUFCQVFEbkNTR3NqSHgvelBQbmNUNkM1MUl5S29zbmJNQWs3b1M4TmQ2blNlM1VuQXdkT1oKcmJacFUvbnN1Q04yK0NYbzVyVVNDWGk1SUU2L2dWVFpKVUdyUElDSVhYS2w2aDhZbUJaaUdVVmsxbHZzalZHWnliMUpFTAp3QndBN3FiQzg5ejFlSFkrMkhLbkdjTnR4am5RM0gwS0hURHpXQS9EN0JCZHlmOXJ3RXFnRm4rRnZBUEMyNm1ONUVhbmM5CkZMdmFpKzBNSkpvT25RTmpRODJ2OGNndlhBeHdiQnlNcFA2MzZzWUZyTWZxZFR6MHF0bnpNUDdzVlhPa2VFcXRsVW4wL3UKUXV0N005K3FQS1NEN0wyd3p5bVpndzNldXU5WXFBbitRcDA5dDlhcVdjZ1VuUExDT0N5ZGpweXhCMVJuWmsyMzN4ZytVTA==
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: port-finder
+  namespace: south-pacific
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: cartographer
+  namespace: south-pacific
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cartographer-rb
+  namespace: south-pacific
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: cartographer
+subjects:
+- kind: ServiceAccount
+  name: port-finder
+  namespace: south-pacific
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: quartermaster
+  namespace: north-pacific
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  verbs:
+  - get
+  - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: quartermaster-rb
+  namespace: north-pacific
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: quartermaster
+subjects:
+- kind: ServiceAccount
+  name: port-finder
+  namespace: south-pacific
