@@ -1,0 +1,9 @@
+---
+
+- name: PSS Misconfiguration
+  hosts: bastion:master-1
+  become: yes
+  vars:
+    state: present
+  roles:
+    - pss-misconfiguration

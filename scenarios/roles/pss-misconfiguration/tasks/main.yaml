@@ -1,0 +1,40 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+    state: "{{ state }}"
+  loop:
+    - manifests/01-scenario.yaml
+    - manifests/02-flag-job.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+# TODO: how to reverse?
+
+- name: master
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.file', 'scripts/master.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'master-1' in inventory_hostname"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: platform
+    pod: admin
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"
