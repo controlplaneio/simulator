@@ -1,2 +1,5 @@
 calico_version: 3.26.3
 weave_version: 2.8.1
+cilium_cli_version: 0.15.11
+cilium_version: 1.14.3
+cilium_params:

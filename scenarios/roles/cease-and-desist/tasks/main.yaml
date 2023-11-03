@@ -1,0 +1,79 @@
+---
+
+# TODO: verify this is idempotent
+
+- block:
+  - name: Check for kube proxy
+    ansible.builtin.shell: kubectl -n kube-system get ds
+    become: no
+    register: kube_proxy
+    changed_when: no
+    when: "'bastion' in inventory_hostname"
+
+  - name: Remove kube proxy
+    ansible.builtin.shell: kubectl delete -n kube-system ds kube-proxy
+    become: no
+    when: "'bastion' in inventory_hostname and 'kube-proxy' in kube_proxy.stdout"
+
+  - name: Update iptables
+    ansible.builtin.shell: iptables-save | grep -v KUBE | iptables-restore
+    when: "'bastion' not in inventory_hostname"
+
+  - name: Fix DNS # TODO: Figure this out, it makes no sense
+    ansible.builtin.shell: kubectl -n kube-system get cm coredns -oyaml | sed 's/\/etc\/resolv.conf/1.1.1.1/' | kubectl apply -f -
+    become: no
+    when: "'bastion' in inventory_hostname"
+
+  - name: Install cilium
+    ansible.builtin.include_role:
+      name: cluster-network
+      tasks_from: cilium
+    vars:
+      cilium_params: |
+        --set kubeProxyReplacement=strict \
+        --set k8sServiceHost={{ master_ip }} \
+        --set k8sServicePort=6443 \
+        --set bpf.masquerade=true \
+        --set bpf.tproxy=true \
+        --set bandwidthManager.enabled=true \
+        --set endpointStatus.enabled=true \
+        --set endpointStatus.status=policy
+
+  - name: Apply K8s manifests
+    kubernetes.core.k8s:
+      definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+      state: "{{ state }}"
+    loop:
+      - manifests/00-namespaces.yaml
+      - manifests/01-crds.yaml
+      - manifests/02-license-server.yaml
+      - manifests/03-tokungfu.yaml
+      - manifests/04-cnp.yaml
+      - manifests/05-deploy-job.yaml
+      - manifests/06-admin.yaml
+    become: no
+    when: "'bastion' in inventory_hostname"
+
+  when: "state == 'present'"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: administration
+    pod: admin-console
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"
+
+# TODO: look into making this uninstallable
+
+- name: Fail uninstall
+  ansible.builtin.debug:
+    msg: This scenario does not support uninstallation, please destroy and recreate the infrastructure
+  when: "state == 'absent' and 'bastion' in inventory_hostname"

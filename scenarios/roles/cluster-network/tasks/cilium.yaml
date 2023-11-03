@@ -1,0 +1,27 @@
+---
+
+- name: Download cilium cli
+  ansible.builtin.unarchive:
+    src: "https://github.com/cilium/cilium-cli/releases/download/v{{ cilium_cli_version }}/cilium-linux-amd64.tar.gz"
+    dest: /home/ubuntu
+    remote_src: yes
+    creates: /home/ubuntu/cilium
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Check cilium status
+  ansible.builtin.shell: ./cilium status
+  register: cilium_status
+  become: no
+  changed_when: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Install cilium
+  ansible.builtin.shell: "/home/ubuntu/cilium install --version v{{ cilium_version }} --wait {{ cilium_params }}"
+  become: no
+  when: "state == 'present' and 'bastion' in inventory_hostname and 'daemonsets.apps \\\"cilium\\\" not found' in cilium_status.stdout"
+
+- name: Uninstall cilium
+  ansible.builtin.shell: "/home/ubuntu/cilium uninstall --wait"
+  become: no
+  when: "state == 'absent' and 'bastion' in inventory_hostname"
