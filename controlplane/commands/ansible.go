@@ -9,15 +9,15 @@ const (
 	AnsiblePlaybook Executable = "ansible-playbook"
 )
 
-func AnsiblePlaybookCommand(workingDir, playbook string, extraVars ...string) Runnable {
+func AnsiblePlaybookCommand(workingDir, playbookDir, playbook string, extraVars ...string) Runnable {
 	args := []string{
-		fmt.Sprintf("%s/%s.yaml", workingDir, playbook),
+		fmt.Sprintf("%s/%s.yaml", playbookDir, playbook),
 	}
 
 	if len(extraVars) > 0 {
 		args = append(args,
 			"--extra-vars",
-			fmt.Sprintf("\"%s\"", strings.Join(extraVars, " ")),
+			fmt.Sprintf("%s", strings.Join(extraVars, " ")),
 		)
 	}
 

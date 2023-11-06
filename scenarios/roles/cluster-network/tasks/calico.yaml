@@ -1,0 +1,15 @@
+- name: Download calico manifests
+  ansible.builtin.get_url:
+    url: "https://raw.githubusercontent.com/projectcalico/calico/v{{ calico_version }}/manifests/calico.yaml"
+    dest: ~/calico.yaml
+    mode: '0664'
+  become: no
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Install calico
+  kubernetes.core.k8s:
+    src: ~/calico.yaml
+    state: "{{ state }}"
+    force: "{% if state == 'absent' %}yes{% else %}no{% endif %}"
+  become: no
+  when: "'bastion' in inventory_hostname"

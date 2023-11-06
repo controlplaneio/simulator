@@ -1,0 +1,7 @@
+---
+
+- name: Create scripts directory
+  ansible.builtin.file:
+    path: "{{ scripts_dir }}"
+    state: directory
+    mode: 0755

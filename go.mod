@@ -7,6 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.40.2
 	github.com/docker/docker v24.0.6+incompatible
+	github.com/olekukonko/tablewriter v0.0.5
 	github.com/opencontainers/image-spec v1.0.2
 	github.com/spf13/cobra v1.7.0
 	gopkg.in/yaml.v2 v2.2.8
@@ -38,6 +39,7 @@ require (
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
+	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/moby/term v0.5.0 // indirect
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect

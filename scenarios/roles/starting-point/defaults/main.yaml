@@ -1,0 +1,3 @@
+scripts_dir: /simulator/scripts
+challenge_file: "{{ scripts_dir }}/challenge.txt"
+starting_point_script: "{{ scripts_dir }}/starting_point"

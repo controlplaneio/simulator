@@ -1,3 +1,6 @@
+resource "local_file" "init_cluster" {
+  filename = format("%s/%s", var.admin_config_dir, local.ansible_playbook_init_cluster)
+  content = <<EOF
 ---
 
 - name: Initialise the kubernetes cluster
@@ -59,3 +62,19 @@
       become: no
       run_once: yes
       delegate_to: localhost
+EOF
+}
+
+resource "local_file" "update_known_hosts" {
+  filename = format("%s/%s", var.admin_config_dir, local.ansible_playbook_update_known_hosts)
+  content = <<EOF
+---
+
+- hosts: all
+  gather_facts: no
+  become: no
+  tasks:
+    - ansible.builtin.wait_for_connection:
+    - ansible.builtin.ping:
+EOF
+}

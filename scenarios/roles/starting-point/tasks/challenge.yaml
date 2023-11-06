@@ -1,0 +1,16 @@
+---
+
+- import_tasks: scripts-dir.yaml
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Copy challenge
+  ansible.builtin.copy:
+    content: "{{ challenge_content }}"
+    dest: "{{ challenge_file }}"
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Remove challenge
+  ansible.builtin.file:
+    path: "{{ challenge_file }}"
+    state: "{{ state }}"
+  when: "state == 'absent' and 'bastion' in inventory_hostname"

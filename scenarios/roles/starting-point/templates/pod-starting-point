@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+cat {{ challenge_file }}; echo
+
+kubectl wait --for=condition=ready pod -n {{ namespace }} {{ pod }} > /dev/null
+kubectl exec -it -n {{ namespace }} {{ pod }} -- sh
+
+exit 0

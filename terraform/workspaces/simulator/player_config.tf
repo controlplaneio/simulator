@@ -4,7 +4,7 @@ resource "local_file" "player_private_key" {
   file_permission = "0600"
 }
 
-// TODO: think about paths in S3
+// TODO: add vars for config path in S3
 
 resource "aws_s3_object" "player_private_key" {
   content_base64 = module.cluster.player_private_key

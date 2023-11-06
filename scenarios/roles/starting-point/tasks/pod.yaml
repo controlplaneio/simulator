@@ -1,0 +1,23 @@
+---
+
+- import_tasks: scripts-dir.yaml
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Create starting point script
+  ansible.builtin.template:
+    src: templates/pod-starting-point
+    dest: "{{ starting_point_script }}"
+    mode: 0555
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Remove starting point script
+  ansible.builtin.copy:
+    dest: "{{ starting_point_script }}"
+    content: |
+      #!/usr/bin/env bash
+
+      echo "Please install a scenario to play"
+
+      exit 0
+    mode: 0555
+  when: "state == 'absent' and 'bastion' in inventory_hostname"

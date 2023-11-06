@@ -27,5 +27,5 @@ aws sso login --profile simulator
 source <(aws configure export-credentials --profile simulator --format env)
 ```
 
-Be careful with timeouts, as this does not last as long as regular SSO credentials, so source the environment variables
+Be careful with timeouts, as this does not last as long as the SSO credentials, so source the environment variables
 before you run a Terraform or Packer command

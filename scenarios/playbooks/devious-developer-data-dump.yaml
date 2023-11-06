@@ -1,0 +1,14 @@
+---
+
+- name: Devious Developer Data Dump
+  hosts: all
+  become: yes
+  vars:
+    state: present
+    master_ip: "{{ hostvars['master-1']['ansible_facts']['default_ipv4']['address'] }}"
+    master_hostname: "{{ hostvars['master-1']['ansible_facts']['hostname'] }}"
+    node1_ip: "{{ hostvars['node-1']['ansible_facts']['default_ipv4']['address'] }}"
+    node1_hostname: "{{ hostvars['node-1']['ansible_facts']['hostname'] }}"
+    node2_hostname: "{{ hostvars['node-2']['ansible_facts']['hostname'] }}"
+  roles:
+    - devious-developer-data-dump
