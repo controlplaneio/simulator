@@ -1,0 +1,14 @@
+- name: Download weave manifests
+  ansible.builtin.get_url:
+    url: "https://github.com/weaveworks/weave/releases/download/v{{ weave_version }}/weave-daemonset-k8s.yaml"
+    dest: ~/weave-daemonset-k8s.yaml
+    mode: '0664'
+  become: no
+  when: "state == 'present' and 'bastion' in inventory_hostname"
+
+- name: Install weave daemonset
+  kubernetes.core.k8s:
+    src: ~/weave-daemonset-k8s.yaml
+    state: "{{ state }}"
+  become: no
+  when: "'bastion' in inventory_hostname"

@@ -71,6 +71,7 @@ func (s simulator) BuildImage(ctx context.Context, name string) error {
 	return commands.PackerBuildCommand(PackerTemplateDir, string(name)).Run(ctx)
 }
 
+// TODO: add state path and config bucket and path to support Kubesim
 func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name string) error {
 	slog.Debug("simulator create infrastructure", "bucket", bucket, "key", key, "name", name)
 
@@ -96,13 +97,13 @@ func (s simulator) DestroyInfrastructure(ctx context.Context, bucket, key, name 
 func (s simulator) InstallScenario(ctx context.Context, name string) error {
 	slog.Debug("simulator install", "scenario", name)
 
-	return commands.AnsiblePlaybookCommand(AdminConfigDir, name).Run(ctx)
+	return commands.AnsiblePlaybookCommand(AdminConfigDir, AnsiblePlaybookDir, name).Run(ctx)
 }
 
 func (s simulator) UninstallScenario(ctx context.Context, name string) error {
 	slog.Debug("simulator uninstall", "scenario", name)
 
-	return commands.AnsiblePlaybookCommand(name, "state=absent").Run(ctx)
+	return commands.AnsiblePlaybookCommand(AdminConfigDir, AnsiblePlaybookDir, name, "state=absent").Run(ctx)
 }
 
 func backendConfig(bucket, key string) []string {

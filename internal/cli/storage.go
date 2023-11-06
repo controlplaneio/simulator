@@ -18,8 +18,6 @@ var bucketCmd = &cobra.Command{
 var createBucketCmd = &cobra.Command{
 	Use: "create",
 	Run: func(cmd *cobra.Command, args []string) {
-		runner := container.New(cfg)
-
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
 
@@ -30,6 +28,7 @@ var createBucketCmd = &cobra.Command{
 			cfg.Bucket,
 		}
 
+		runner := container.New(cfg)
 		err := runner.Run(ctx, command)
 		cobra.CheckErr(err)
 	},

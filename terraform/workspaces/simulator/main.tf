@@ -15,8 +15,6 @@ variable "player_config_dir" {
   description = ""
 }
 
-# TODO: add switch to turn off ip lookup and ingress control
-
 # TODO: add switch to turn of ip lookup and ingress control
 
 locals {
@@ -24,8 +22,10 @@ locals {
   ssh_config_filename      = "cp_simulator_config"
   ssh_known_hosts_filename = "cp_simulator_known_hosts"
 
-  ansible_config_filename    = "ansible.cfg"
-  ansible_inventory_filename = "inventory.yaml"
+  ansible_config_filename             = "ansible.cfg"
+  ansible_inventory_filename          = "inventory.yaml"
+  ansible_playbook_update_known_hosts = "update-known-hosts.yaml"
+  ansible_playbook_init_cluster       = "init-cluster.yaml"
 
   bastion_ami_id        = data.aws_ami.bastion.id
   bastion_instance_type = "t2.small"
@@ -109,7 +109,7 @@ data "aws_ami" "bastion" {
     "self",
   ]
   filter {
-    name   = "name"
+    name = "name"
     values = [
       "simulator-bastion-*"
     ]
@@ -122,7 +122,7 @@ data "aws_ami" "k8s" {
     "self",
   ]
   filter {
-    name   = "name"
+    name = "name"
     values = [
       "simulator-k8s-*"
     ]

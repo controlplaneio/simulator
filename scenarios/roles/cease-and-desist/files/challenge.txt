@@ -1,0 +1,20 @@
+
+                                _______________________
+                              =(__    ___      __     _)=
+                                |                     |
+                                |                     |
+                                |  Cease and Desist!  |
+                                |                     |
+                                |                     |
+                                |     Reform-Kube     |
+                                |                     |
+                                |                     |
+                                |                     |
+                                |__    ___   __    ___|
+                              =(_______________________)=
+
+Production is Down! Your organization is using reform-kube, an OS Kubernetes management project.
+
+Unfortunately, reform-kube has changed their licensing model and is no longer open source.
+
+Login to the licensing server and see if you can resolve the issue to get Production up and running.

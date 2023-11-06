@@ -1,0 +1,170 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('template', item) | from_yaml_all }}"
+    state: "{{ state }}"
+  loop:
+    - templates/manifests/00-ns.yaml
+    - templates/manifests/01-init-storage.yaml
+    - templates/manifests/03-gitea-deploy.yaml
+    - templates/manifests/04-zot.yaml
+    - templates/manifests/05-ingress-deploy.yaml
+    - templates/manifests/06-ingress-config.yaml
+    - templates/manifests/07-db-storage.yaml
+    - templates/manifests/08-creds.yaml
+    - templates/manifests/08-runner-rbac.yaml
+    - templates/manifests/09-jumpbox.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: 00-master
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/00-master.sh') }}"
+  args:
+    executable: /bin/bash
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: "'master-1' in inventory_hostname"
+
+- name: 01-nodes-every
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/01-nodes-every.sh') }}"
+  args:
+    executable: /bin/bash
+  when: inventory_hostname in groups['nodes']
+
+- name: 01-worker-1
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/01-worker-1.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'node-1' in inventory_hostname"
+
+- name: install socat - 02-bastion
+  ansible.builtin.apt:
+    name: socat
+    state: "{{ state }}"
+  when: "'bastion' in inventory_hostname"
+
+- name: 02-bastion
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/02-bastion.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'bastion' in inventory_hostname"
+
+# TODO: delete files/scripts/02-local.sh
+
+- name: 02-local
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/{{ item }}"
+    dest: "/mnt/psql-data/gitea/public/img/{{ item }}"
+  loop:
+    - logo.png
+    - logo.svg
+    - favicon.svg
+  when: "'node-1' in inventory_hostname"
+
+- name: 02-local
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/home.tmpl"
+    dest: /mnt/psql-data/gitea/templates/home.tmpl
+  when: "'node-1' in inventory_hostname"
+
+- name: 03-master
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/03-master.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'master-1' in inventory_hostname"
+
+- name: 03-worker-2.sh
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/03-worker-2.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'node-2' in inventory_hostname"
+
+- ansible.builtin.uri:
+    url: http://localhost:30080
+  register: _result
+  until: _result.status == 200
+  retries: 180
+  delay: 5
+  when: "'master-1' in inventory_hostname"
+
+- name: 04-master.sh
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/04-master.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'master-1' in inventory_hostname"
+
+- name: 05-local.sh - gitrepo
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/_git-repo-orders-processor/"
+    dest: /tmp/gitrepo
+  when: "'master-1' in inventory_hostname"
+
+- name: 05-local.sh - 1
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/05-local_1.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'master-1' in inventory_hostname"
+
+- name: 05-local.sh - 2
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/05-local_2.sh') }}"
+  args:
+    executable: /bin/bash
+  when: inventory_hostname in groups['nodes']
+
+- name: 05-local.sh - cirepo
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/_git-repo-test-ci/"
+    dest: /tmp/cirepo
+  when: "'master-1' in inventory_hostname"
+
+- name: 05-local.sh - 3
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/05-local_3.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'master-1' in inventory_hostname"
+
+- name: 05-local.sh - chatbotrepo
+  ansible.builtin.copy:
+    src: "{{ role_path }}/files/_git-repo-chatbot/"
+    dest: /tmp/chatbotrepo
+  when: "'master-1' in inventory_hostname"
+
+- name: 05-local.sh - 4
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.template', 'templates/scripts/05-local_4.sh') }}"
+  args:
+    executable: /bin/bash
+  when: "'master-1' in inventory_hostname"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: dmz
+    pod: jumpbox
+  when: "'bastion' in inventory_hostname"
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"
+  when: "'bastion' in inventory_hostname"

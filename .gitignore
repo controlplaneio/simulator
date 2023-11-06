@@ -3,4 +3,7 @@
 config/*
 !config/.gitkeep
 bin/
+packer/.cache/
+packer/github.com/
+simulation-scripts/
 terraform/workspaces/simulator/.terraform/

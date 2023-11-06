@@ -4,6 +4,8 @@ resource "local_file" "admin_private_key" {
   file_permission = "0600"
 }
 
+// TODO: add vars for config path in S3
+
 resource "aws_s3_object" "admin_private_key" {
   content_base64 = module.cluster.admin_private_key
   bucket         = var.bucket

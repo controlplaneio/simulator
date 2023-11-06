@@ -1,8 +1,0 @@
----
-
-- hosts: all
-  gather_facts: no
-  become: no
-  tasks:
-    - ansible.builtin.wait_for_connection:
-    - ansible.builtin.ping:

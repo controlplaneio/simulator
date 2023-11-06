@@ -20,8 +20,6 @@ var infraCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create simulator infrastructure",
 	Run: func(cmd *cobra.Command, args []string) {
-		runner := container.New(cfg)
-
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
 
@@ -34,6 +32,7 @@ var infraCreateCmd = &cobra.Command{
 			cfg.Name,
 		}
 
+		runner := container.New(cfg)
 		err := runner.Run(ctx, command)
 		cobra.CheckErr(err)
 	},
@@ -43,8 +42,6 @@ var infraDestroyCmd = &cobra.Command{
 	Use:   "destroy",
 	Short: "Destroy simulator infrastructure",
 	Run: func(cmd *cobra.Command, args []string) {
-		runner := container.New(cfg)
-
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 		defer stop()
 
@@ -57,6 +54,7 @@ var infraDestroyCmd = &cobra.Command{
 			cfg.Name,
 		}
 
+		runner := container.New(cfg)
 		err := runner.Run(ctx, command)
 		cobra.CheckErr(err)
 	},

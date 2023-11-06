@@ -1,0 +1,55 @@
+---
+
+- id: cease-and-desist
+  name: Cease and Desist
+  description: "Restore production by reactiviting the reform-kube license server."
+  category: KubeCon
+  difficulty:
+
+- id: identity-theft
+  name: Identity Theft
+  description: "Can you steal the identity of the pod-checker users?"
+  category: KubeCon
+  difficulty:
+
+- id: seven-seas
+  name: Seven Seas
+  description: "Sail the Seven Seas and find all the missing map pieces!"
+  category: Workshop
+  difficulty:
+
+- id: build-a-backdoor
+  name: Build-a-Backdoor
+  description: "KCEU23: Build a backdoor for Hashjack to exploit"
+  category: KubeCon
+  difficulty:
+
+- id: devious-developer-data-dump
+  name: Devious Developer Data Dump
+  description: "KCEU23: Can you navigate Rescue Drop's CI/CD infrastructure, following Hashjack to the goal?"
+  category: KubeCon
+  difficulty:
+
+- id: commandeer-container
+  name: Commandeer Container
+  description: "KCEU23: Can you navigate Kubernetes and find the treasure?"
+  category: KubeCon
+  difficulty:
+
+- id: ci-runner-ng-breakout
+  name: CI Runner-NG Breakout
+  description: "CNSCon: There is a containerd socket mounted into the container, is it possible to traverse the cluster?"
+  category: KubeCon
+  difficulty:
+
+- id: pss-misconfiguration
+  name: CNSecCon NA 23 PSS Misconfiguration
+  description: "CNSCon: An unrestricted Pod is admitted in the cluster regardless of the security context restrictions in place: what's happening?"
+  category: CNSecCon
+  difficulty:
+
+- id: coastline-cluster-attack
+  name: CNSEC23 Coastline Cluster Attack
+  description: "CNSEC23: Hashjack has taken over a jumpbox in coastline. He wants you get cluster admin"
+  category: KubeCon
+  difficulty:
