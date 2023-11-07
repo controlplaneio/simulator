@@ -7,25 +7,25 @@ variable "bucket" {
   description = "S3 bucket where s3 bundles will be written."
 }
 
-variable "admin_config_dir" {
+variable "admin_ssh_bundle_dir" {
   description = ""
 }
 
-variable "player_config_dir" {
+variable "player_ssh_bundle_dir" {
   description = ""
 }
 
 # TODO: add switch to turn of ip lookup and ingress control
 
 locals {
-  ssh_identity_filename    = "cp_simulator_rsa"
-  ssh_config_filename      = "cp_simulator_config"
-  ssh_known_hosts_filename = "cp_simulator_known_hosts"
+  ssh_identity_filename    = "simulator_rsa"
+  ssh_config_filename      = "simulator_config"
+  ssh_known_hosts_filename = "simulator_known_hosts"
 
   ansible_config_filename             = "ansible.cfg"
   ansible_inventory_filename          = "inventory.yaml"
-  ansible_playbook_update_known_hosts = "update-known-hosts.yaml"
-  ansible_playbook_init_cluster       = "init-cluster.yaml"
+  ansible_playbook_update_known_hosts = "/simulator/ansible/playbooks/update-known-hosts.yaml"
+  ansible_playbook_init_cluster       = "/simulator/ansible/playbooks/init-cluster.yaml"
 
   bastion_ami_id        = data.aws_ami.bastion.id
   bastion_instance_type = "t2.small"

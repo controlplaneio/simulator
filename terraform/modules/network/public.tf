@@ -22,7 +22,7 @@ resource "aws_route_table" "public" {
   tags = merge(
     var.tags,
     {
-      "Name" = format("%s Public",title(var.name))
+      "Name" = format("%s Public", title(var.name))
     }
   )
 }

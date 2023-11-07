@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 
@@ -71,34 +70,7 @@ var scenarioListCmd = &cobra.Command{
 		scenarios, err := scenarios.List()
 		cobra.CheckErr(err)
 
-		table := tablewriter.NewWriter(os.Stdout)
-
-		table.SetHeader([]string{
-			"ID",
-			"Name",
-			"Description",
-			"Category",
-			"Difficulty",
-		})
-
-		table.SetHeaderColor(
-			tablewriter.Colors{tablewriter.Bold},
-			tablewriter.Colors{tablewriter.Bold},
-			tablewriter.Colors{tablewriter.Bold},
-			tablewriter.Colors{tablewriter.Bold},
-			tablewriter.Colors{tablewriter.Bold},
-		)
-
-		for _, s := range scenarios {
-			table.Append([]string{
-				s.ID,
-				s.Name,
-				s.Description,
-				s.Category,
-				s.Difficulty})
-			table.SetRowLine(true)
-		}
-		table.Render()
+		tabulateScenarios(scenarios)
 	},
 }
 
@@ -112,11 +84,39 @@ var scenarioDescribeCmd = &cobra.Command{
 		s, err := scenarios.Find(scenarioID)
 		cobra.CheckErr(err)
 
-		b, err := s.Challenge()
-		cobra.CheckErr(err)
-
-		fmt.Println(string(b))
+		tabulateScenarios([]scenarios.Scenario{s})
 	},
+}
+
+func tabulateScenarios(scenarios []scenarios.Scenario) {
+	table := tablewriter.NewWriter(os.Stdout)
+
+	table.SetHeader([]string{
+		"ID",
+		"Name",
+		"Description",
+		"Category",
+		"Difficulty",
+	})
+
+	table.SetHeaderColor(
+		tablewriter.Colors{tablewriter.Bold},
+		tablewriter.Colors{tablewriter.Bold},
+		tablewriter.Colors{tablewriter.Bold},
+		tablewriter.Colors{tablewriter.Bold},
+		tablewriter.Colors{tablewriter.Bold},
+	)
+
+	for _, s := range scenarios {
+		table.Append([]string{
+			s.ID,
+			s.Name,
+			s.Description,
+			s.Category,
+			s.Difficulty})
+		table.SetRowLine(true)
+	}
+	table.Render()
 }
 
 func init() {
