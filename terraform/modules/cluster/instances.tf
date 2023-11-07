@@ -6,7 +6,7 @@ module "instances" {
   }
 
   name                        = format("%s %s", title(var.name), each.value.name)
-  group = each.value.name
+  group                       = each.value.name
   instance_count              = each.value.count
   ami_id                      = each.value.ami_id
   instance_type               = each.value.instance_type
@@ -22,7 +22,7 @@ module "instances" {
   tags = merge(
     var.tags,
     {
-      "Name" = format("%s %s", title(var.name), title(each.value.name))
+      "Name"          = format("%s %s", title(var.name), title(each.value.name))
       "InstanceGroup" = each.value.name
     }
   )

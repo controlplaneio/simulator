@@ -12,21 +12,20 @@ import (
 
 const (
 	SimulatorDir = "/simulator"
-	Home         = "config"
-	Scenarios    = "scenarios"
+	Ansible      = "ansible"
 	Packer       = "packer"
 	Terraform    = "terraform"
 )
 
 var (
-	HomeDir         = filepath.Join(SimulatorDir, Home)
-	AdminConfigDir  = filepath.Join(HomeDir, "admin")
-	PlayerConfigDir = filepath.Join(HomeDir, "player")
+	AWSDir             = "/home/ubuntu/.aws"
+	AdminSSHBundleDir  = filepath.Join(SimulatorDir, "admin")
+	PlayerSSHBundleDir = filepath.Join(SimulatorDir, "player")
 
-	AnsibleDir                = filepath.Join(SimulatorDir, Scenarios)
-	AnsiblePlaybookDir string = filepath.Join(AnsibleDir, "playbooks")
+	AnsibleDir         = filepath.Join(SimulatorDir, Ansible)
+	AnsiblePlaybookDir = filepath.Join(AnsibleDir, "playbooks")
 
-	PackerTemplateDir string = filepath.Join(SimulatorDir, Packer)
+	PackerTemplateDir = filepath.Join(SimulatorDir, Packer)
 
 	TerraformDir          = filepath.Join(SimulatorDir, Terraform)
 	TerraformWorkspaceDir = filepath.Join(TerraformDir, "workspaces/simulator")
@@ -71,7 +70,6 @@ func (s simulator) BuildImage(ctx context.Context, name string) error {
 	return commands.PackerBuildCommand(PackerTemplateDir, string(name)).Run(ctx)
 }
 
-// TODO: add state path and config bucket and path to support Kubesim
 func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name string) error {
 	slog.Debug("simulator create infrastructure", "bucket", bucket, "key", key, "name", name)
 
@@ -81,6 +79,7 @@ func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name s
 	}
 
 	return commands.TerraformCommand(TerraformWorkspaceDir, commands.TerraformApply, terraformVars(name, bucket)).Run(ctx)
+
 }
 
 func (s simulator) DestroyInfrastructure(ctx context.Context, bucket, key, name string) error {
@@ -97,13 +96,13 @@ func (s simulator) DestroyInfrastructure(ctx context.Context, bucket, key, name 
 func (s simulator) InstallScenario(ctx context.Context, name string) error {
 	slog.Debug("simulator install", "scenario", name)
 
-	return commands.AnsiblePlaybookCommand(AdminConfigDir, AnsiblePlaybookDir, name).Run(ctx)
+	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name).Run(ctx)
 }
 
 func (s simulator) UninstallScenario(ctx context.Context, name string) error {
 	slog.Debug("simulator uninstall", "scenario", name)
 
-	return commands.AnsiblePlaybookCommand(AdminConfigDir, AnsiblePlaybookDir, name, "state=absent").Run(ctx)
+	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name, "state=absent").Run(ctx)
 }
 
 func backendConfig(bucket, key string) []string {
@@ -122,8 +121,8 @@ func terraformVars(name, bucket string) []string {
 		"-var",
 		fmt.Sprintf("bucket=%s", bucket),
 		"-var",
-		fmt.Sprintf("admin_config_dir=%s", AdminConfigDir),
+		fmt.Sprintf("admin_ssh_bundle_dir=%s", AdminSSHBundleDir),
 		"-var",
-		fmt.Sprintf("player_config_dir=%s", PlayerConfigDir),
+		fmt.Sprintf("player_ssh_bundle_dir=%s", PlayerSSHBundleDir),
 	}
 }

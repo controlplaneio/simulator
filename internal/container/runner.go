@@ -28,8 +28,6 @@ var (
 	CreateFailed = errors.New("unable to create simulator container")
 	StartFailed  = errors.New("unable to start simulator container")
 	AttachFailed = errors.New("unable to attach to simulator container")
-
-	containerAwsDir = "/home/ubuntu/.aws"
 )
 
 type Simulator interface {
@@ -52,6 +50,15 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		return NoHome
 	}
 
+	localAdminSSHBundleDir := filepath.Join(home, ".simulator/admin")
+	localPlayerSSHBundleDir := filepath.Join(home, ".simulator/player")
+	localAWSDir := filepath.Join(home, ".aws")
+
+	err2 := mkdirsIfNotExisting(localAdminSSHBundleDir, localPlayerSSHBundleDir)
+	if err2 != nil {
+		return err2
+	}
+
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return NoClient
@@ -60,14 +67,20 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 	mounts := []mount.Mount{
 		{
 			Type:     mount.TypeBind,
-			Source:   filepath.Join(r.Config.BaseDir, controlplane.Home),
-			Target:   controlplane.HomeDir,
+			Source:   localAdminSSHBundleDir,
+			Target:   controlplane.AdminSSHBundleDir,
+			ReadOnly: false,
+		},
+		{
+			Type:     mount.TypeBind,
+			Source:   localPlayerSSHBundleDir,
+			Target:   controlplane.PlayerSSHBundleDir,
 			ReadOnly: false,
 		},
 		{
 			Type:   mount.TypeBind,
-			Source: filepath.Join(home, ".aws"),
-			Target: containerAwsDir,
+			Source: localAWSDir,
+			Target: controlplane.AWSDir,
 		},
 	}
 
@@ -75,7 +88,7 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		mounts = append(mounts, []mount.Mount{
 			{
 				Type:   mount.TypeBind,
-				Source: filepath.Join(r.Config.BaseDir, controlplane.Scenarios),
+				Source: filepath.Join(r.Config.BaseDir, controlplane.Ansible),
 				Target: controlplane.AnsibleDir,
 			},
 			{
@@ -156,5 +169,17 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 
 	wg.Wait()
 
+	return nil
+}
+
+func mkdirsIfNotExisting(dirs ...string) error {
+	for _, dir := range dirs {
+		if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
+			err := os.MkdirAll(dir, 0750)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }

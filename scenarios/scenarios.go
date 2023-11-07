@@ -11,7 +11,7 @@ import (
 	"github.com/controlplaneio/simulator/controlplane"
 )
 
-//go:embed scenarios.yaml roles/*/files/challenge.txt
+//go:embed scenarios.yaml
 var config embed.FS
 
 func List() ([]Scenario, error) {
