@@ -19,7 +19,7 @@ module "instances" {
   volume_type                 = each.value.volume_type
   volume_size                 = each.value.volume_size
   user_data                   = data.template_file.cloud_config.rendered
-  tags                        = merge(
+  tags = merge(
     var.tags,
     {
       "Name"          = format("%s %s", title(var.name), title(each.value.name))
@@ -40,15 +40,22 @@ resource "aws_security_group" "instances" {
   )
 }
 
-resource "aws_security_group_rule" "instances_vpc_ingress" {
+resource "aws_security_group_rule" "instances_bastion_ingress" {
+  security_group_id        = aws_security_group.instances.id
+  type                     = "ingress"
+  protocol                 = -1
+  from_port                = 0
+  to_port                  = 0
+  source_security_group_id = aws_security_group.bastion.id
+}
+
+resource "aws_security_group_rule" "instances_cluster_ingress" {
   security_group_id = aws_security_group.instances.id
   type              = "ingress"
   protocol          = -1
   from_port         = 0
   to_port           = 0
-  cidr_blocks       = [
-    data.aws_vpc.target.cidr_block,
-  ]
+  self              = true
 }
 
 resource "aws_security_group_rule" "instances_open_egress" {
@@ -57,7 +64,7 @@ resource "aws_security_group_rule" "instances_open_egress" {
   protocol          = -1
   from_port         = 0
   to_port           = 0
-  cidr_blocks       = [
+  cidr_blocks = [
     "0.0.0.0/0",
   ]
 }
