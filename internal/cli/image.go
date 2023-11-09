@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/controlplaneio/simulator/internal/container"
+	"github.com/controlplaneio/simulator/v2/internal/container"
 )
 
 var imageCmd = &cobra.Command{

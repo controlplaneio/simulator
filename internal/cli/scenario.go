@@ -8,8 +8,8 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
 
-	"github.com/controlplaneio/simulator/internal/container"
-	"github.com/controlplaneio/simulator/scenarios"
+	"github.com/controlplaneio/simulator/v2/internal/container"
+	"github.com/controlplaneio/simulator/v2/scenarios"
 )
 
 var scenarioCmd = &cobra.Command{

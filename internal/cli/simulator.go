@@ -3,7 +3,7 @@ package cli
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/controlplaneio/simulator/internal/config"
+	"github.com/controlplaneio/simulator/v2/internal/config"
 )
 
 var cfg *config.Config

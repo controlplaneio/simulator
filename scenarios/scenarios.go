@@ -8,7 +8,7 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"github.com/controlplaneio/simulator/controlplane"
+	"github.com/controlplaneio/simulator/v2/controlplane"
 )
 
 //go:embed scenarios.yaml
