@@ -3,7 +3,6 @@ package controlplane
 import (
 	"context"
 	"fmt"
-	"log/slog"
 	"path/filepath"
 
 	"github.com/controlplaneio/simulator/controlplane/aws"
@@ -54,14 +53,10 @@ type simulator struct {
 }
 
 func (s simulator) CreateBucket(ctx context.Context, name string) error {
-	slog.Debug("simulator init", "name", name)
-
 	return aws.CreateBucket(ctx, name)
 }
 
 func (s simulator) BuildImage(ctx context.Context, name string) error {
-	slog.Debug("simulator build", "image", name)
-
 	err := commands.PackerInitCommand(PackerTemplateDir, string(name)).Run(ctx)
 	if err != nil {
 		return err
@@ -71,8 +66,6 @@ func (s simulator) BuildImage(ctx context.Context, name string) error {
 }
 
 func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name string) error {
-	slog.Debug("simulator create infrastructure", "bucket", bucket, "key", key, "name", name)
-
 	err := commands.TerraformInitCommand(TerraformWorkspaceDir, backendConfig(bucket, key)).Run(ctx)
 	if err != nil {
 		return err
@@ -83,8 +76,6 @@ func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name s
 }
 
 func (s simulator) DestroyInfrastructure(ctx context.Context, bucket, key, name string) error {
-	slog.Debug("simulator destroy infrastructure", "bucket", bucket, "key", key, "name", name)
-
 	err := commands.TerraformInitCommand(TerraformWorkspaceDir, backendConfig(bucket, key)).Run(ctx)
 	if err != nil {
 		return err
@@ -94,14 +85,10 @@ func (s simulator) DestroyInfrastructure(ctx context.Context, bucket, key, name 
 }
 
 func (s simulator) InstallScenario(ctx context.Context, name string) error {
-	slog.Debug("simulator install", "scenario", name)
-
 	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name).Run(ctx)
 }
 
 func (s simulator) UninstallScenario(ctx context.Context, name string) error {
-	slog.Debug("simulator uninstall", "scenario", name)
-
 	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name, "state=absent").Run(ctx)
 }
 
