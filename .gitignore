@@ -7,3 +7,4 @@ packer/.cache/
 packer/github.com/
 simulation-scripts/
 terraform/workspaces/simulator/.terraform/
+*tfstate*
