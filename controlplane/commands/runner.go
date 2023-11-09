@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"os/exec"
@@ -12,7 +13,7 @@ import (
 type Executable string
 
 type Runnable interface {
-	Run(ctx context.Context) error
+	Run(ctx context.Context, output ...io.Writer) error
 }
 
 type command struct {
@@ -22,14 +23,22 @@ type command struct {
 	Arguments   []string
 }
 
-func (c command) Run(ctx context.Context) error {
+func (c command) Run(ctx context.Context, output ...io.Writer) error {
 	slog.Info("running", "command", c)
+
+	// Default to writing to stdout unless an alternative writer is provided
+	var writer io.Writer
+	if len(output) == 0 {
+		writer = os.Stdout
+	} else {
+		writer = output[0]
+	}
 
 	cmd := exec.CommandContext(ctx, string(c.Executable), c.Arguments...)
 	cmd.Dir = c.WorkingDir
 	cmd.Env = c.Environment
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
+	cmd.Stdout = writer
+	cmd.Stderr = writer
 
 	// TODO: Ensure ctrl-c stops the command
 	err := cmd.Run()
