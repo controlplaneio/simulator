@@ -20,7 +20,7 @@ var defaultConfig embed.FS
 type Config struct {
 	Name    string `yaml:"name"`
 	Bucket  string `yaml:"bucket"`
-	BaseDir string `yaml:"baseDir"`
+	BaseDir string `yaml:"baseDir,omitempty"`
 
 	Cli struct {
 		Dev bool `yaml:"dev,omitempty"`

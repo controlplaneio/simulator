@@ -54,9 +54,9 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 	localPlayerSSHBundleDir := filepath.Join(home, ".simulator/player")
 	localAWSDir := filepath.Join(home, ".aws")
 
-	err2 := mkdirsIfNotExisting(localAdminSSHBundleDir, localPlayerSSHBundleDir)
-	if err2 != nil {
-		return err2
+	err = mkdirsIfNotExisting(localAdminSSHBundleDir, localPlayerSSHBundleDir)
+	if err != nil {
+		return err
 	}
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
