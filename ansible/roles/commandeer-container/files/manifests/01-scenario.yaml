@@ -13,25 +13,25 @@ metadata:
     app: bt
 spec:
   containers:
-  - name: treasure
-    image: docker.io/controlplaneoffsec/scenario-commandeer-container:treasure-chest
-    ports:
-    - containerPort: 8080
-    env:
-    - name: AUTH_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: map
-          key: username
-    - name: AUTH_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: map
-          key: password
-    - name: FLAG
-      value: "flag_ctf{ATTACH_4_ACCESS_2_TREASURE_GALORE}"
-    securityContext:
-      allowPrivilegeEscalation: false
+    - name: treasure
+      image: docker.io/controlplaneoffsec/scenario-commandeer-container:treasure-chest
+      ports:
+        - containerPort: 8080
+      env:
+        - name: AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: map
+              key: username
+        - name: AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: map
+              key: password
+        - name: FLAG
+          value: "flag_ctf{ATTACH_4_ACCESS_2_TREASURE_GALORE}"
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always
 ---
 apiVersion: v1
@@ -44,9 +44,9 @@ spec:
   selector:
     app: bt
   ports:
-  - port: 8080
-    targetPort: 8080
-    protocol: TCP
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
 ---
 apiVersion: v1
 kind: Secret
@@ -76,14 +76,14 @@ metadata:
   name: reader
   namespace: treasure-island
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  - services
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - services
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -95,9 +95,9 @@ roleRef:
   kind: Role
   name: reader
 subjects:
-- kind: ServiceAccount
-  name: cartographer
-  namespace: smugglers-cove
+  - kind: ServiceAccount
+    name: cartographer
+    namespace: smugglers-cove
 ---
 apiVersion: v1
 kind: Pod
@@ -107,13 +107,13 @@ metadata:
 spec:
   serviceAccountName: cartographer
   containers:
-  - image: docker.io/controlplaneoffsec/scenario-commandeer-container:misty-gally
-    command: ["/bin/bash"]
-    name: hold
-    tty: true
-    stdin: true
-    securityContext:
-      allowPrivilegeEscalation: false
+    - image: docker.io/controlplaneoffsec/scenario-commandeer-container:misty-gally
+      command: [ "/bin/bash" ]
+      name: hold
+      tty: true
+      stdin: true
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always
 ---
 ## JumpBox Resources
@@ -134,22 +134,22 @@ metadata:
   name: navigator
   namespace: smugglers-cove
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods/attach
-  verbs:
-  - create
-  - patch
-  - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods/attach
+    verbs:
+      - create
+      - patch
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -161,22 +161,22 @@ roleRef:
   kind: Role
   name: navigator
 subjects:
-- kind: ServiceAccount
-  name: scurvy-dog
-  namespace: sea
+  - kind: ServiceAccount
+    name: scurvy-dog
+    namespace: sea
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: compass
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -187,9 +187,9 @@ roleRef:
   kind: ClusterRole
   name: compass
 subjects:
-- kind: ServiceAccount
-  name: scurvy-dog
-  namespace: sea
+  - kind: ServiceAccount
+    name: scurvy-dog
+    namespace: sea
 ---
 apiVersion: v1
 kind: Pod
@@ -199,9 +199,9 @@ metadata:
 spec:
   serviceAccountName: scurvy-dog
   containers:
-  - image: docker.io/controlplaneoffsec/kubectl:latest
-    command: ["sleep", "2d"]
-    name: harpoon
-    securityContext:
-      allowPrivilegeEscalation: false
+    - image: docker.io/controlplaneoffsec/kubectl:latest
+      command: [ "sleep", "2d" ]
+      name: harpoon
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always

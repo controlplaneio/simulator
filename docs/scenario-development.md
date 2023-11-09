@@ -26,8 +26,9 @@ The cluster configuration for the scenario is defined in Ansible using conventio
 requires
 
 * An Ansible Playbook to be defined in the [playbooks](../ansible/playbooks) directory, using the scenario id as the
-name of the file.
-* An Ansible Role to be define in the [roles](../ansible/roles) directory, using the scenario id as the name of the role.
+  name of the file.
+* An Ansible Role to be define in the [roles](../ansible/roles) directory, using the scenario id as the name of the
+  role.
 
 There are also supplementary roles in the [roles](../ansible/roles) directory to support common functionality e.g.
 cluster network installation, configuring the player's starting point, configuring socat, etc. These will be added to

@@ -21,20 +21,20 @@ spec:
     - name: check-config-map
       match:
         any:
-        - resources:
-            kinds:
-            - ConfigMap
+          - resources:
+              kinds:
+                - ConfigMap
       validate:
         message: "ingress-nginx allow-snippet-annotations must be set to false"
         pattern:
           =(data):
-            =(allow-snippet-annotations) : "false"
+            =(allow-snippet-annotations): "false"
     - name: check-ingress-annotations
       match:
         any:
-        - resources:
-            kinds:
-            - networking.k8s.io/v1/Ingress
+          - resources:
+              kinds:
+                - networking.k8s.io/v1/Ingress
       validate:
         message: "SECOPS ALERT: Blocking attempted Nginx exploit"
         pattern:
@@ -66,29 +66,29 @@ spec:
     - name: check-ingress
       match:
         any:
-        - resources:
-            kinds:
-            - networking.k8s.io/v1/Ingress
+          - resources:
+              kinds:
+                - networking.k8s.io/v1/Ingress
       validate:
         message: "SECOPS ALERT: Blocking attempted Nginx exploit"
         deny:
           conditions:
             any:
-            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('\\s*alias\\s*.*;', @)}}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('\\s*root\\s*.*;', @)}}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('/etc/(passwd|shadow|group|nginx|ingress-controller)', @)}}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('/var/run/secrets', @)}}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{request.object.metadata.annotations.values(@)[].regex_match('.*_by_lua.*', @)}}"
-              operator: AnyIn
-              value: [true]
+              - key: "{{request.object.metadata.annotations.values(@)[].regex_match('\\s*alias\\s*.*;', @)}}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{request.object.metadata.annotations.values(@)[].regex_match('\\s*root\\s*.*;', @)}}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{request.object.metadata.annotations.values(@)[].regex_match('/etc/(passwd|shadow|group|nginx|ingress-controller)', @)}}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{request.object.metadata.annotations.values(@)[].regex_match('/var/run/secrets', @)}}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{request.object.metadata.annotations.values(@)[].regex_match('.*_by_lua.*', @)}}"
+                operator: AnyIn
+                value: [ true ]
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -112,29 +112,29 @@ spec:
     - name: check-paths
       match:
         any:
-        - resources:
-            kinds:
-            - networking.k8s.io/v1/Ingress
+          - resources:
+              kinds:
+                - networking.k8s.io/v1/Ingress
       validate:
         message: "SECOPS ALERT: Blocking attempted Nginx exploit"
         deny:
           conditions:
             any:
-            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/etc') }}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/var/run/secrets') }}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/root') }}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/var/run/kubernetes/serviceaccount') }}"
-              operator: AnyIn
-              value: [true]
-            - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/etc/kubernetes/admin.conf') }}"
-              operator: AnyIn
-              value: [true]
+              - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/etc') }}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/var/run/secrets') }}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/root') }}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/var/run/kubernetes/serviceaccount') }}"
+                operator: AnyIn
+                value: [ true ]
+              - key: "{{ request.object.spec.rules[].http.paths[].path.contains(@,'/etc/kubernetes/admin.conf') }}"
+                operator: AnyIn
+                value: [ true ]
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -157,18 +157,18 @@ spec:
   validationFailureAction: enforce
   background: true
   rules:
-  - name: validate-ingress
-    match:
-      any:
-      - resources:
-          kinds:
-          - Ingress
-    validate:
-      message: "SECOPS ALERT: Unknown Ingress Class defined"
-      pattern:
-        metadata:
-          annotations:
-            kubernetes.io/ingress.class: "nginx"
+    - name: validate-ingress
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+      validate:
+        message: "SECOPS ALERT: Unknown Ingress Class defined"
+        pattern:
+          metadata:
+            annotations:
+              kubernetes.io/ingress.class: "nginx"
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -186,20 +186,20 @@ spec:
   validationFailureAction: enforce
   background: true
   rules:
-  - name: restrict-web-port-removal
-    match:
-      any:
-      - resources:
-          kinds:
-          - Ingress
-    validate:
-      message: "SECOPS ALERT: Removal of the Web Port is restricted"
-      pattern:
-        spec:
-          rules:
-          - http:
-              ^(paths):
-              - backend:
-                  service:
-                    port:
-                      number: 80
+    - name: restrict-web-port-removal
+      match:
+        any:
+          - resources:
+              kinds:
+                - Ingress
+      validate:
+        message: "SECOPS ALERT: Removal of the Web Port is restricted"
+        pattern:
+          spec:
+            rules:
+              - http:
+                  ^(paths):
+                    - backend:
+                        service:
+                          port:
+                            number: 80

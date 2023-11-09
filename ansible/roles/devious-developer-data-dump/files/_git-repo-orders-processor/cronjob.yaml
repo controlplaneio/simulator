@@ -10,20 +10,20 @@ spec:
       template:
         spec:
           containers:
-          - name: processor
-            image: reg.rescue.drop/prod-image:latest
-            args: ["--db", "/db/orders.db"]
-            imagePullPolicy: IfNotPresent
-            securityContext:
-              allowPrivilegeEscalation: false
-            volumeMounts:
-            - mountPath: /db
-              name: dbpath
+            - name: processor
+              image: reg.rescue.drop/prod-image:latest
+              args: [ "--db", "/db/orders.db" ]
+              imagePullPolicy: IfNotPresent
+              securityContext:
+                allowPrivilegeEscalation: false
+              volumeMounts:
+                - mountPath: /db
+                  name: dbpath
           imagePullSecrets:
-          - name: prod-pull-creds
+            - name: prod-pull-creds
           volumes:
-          - name: dbpath
-            persistentVolumeClaim:
-              claimName: prod-db
+            - name: dbpath
+              persistentVolumeClaim:
+                claimName: prod-db
           nodeName: k8s-master-0
           restartPolicy: OnFailure

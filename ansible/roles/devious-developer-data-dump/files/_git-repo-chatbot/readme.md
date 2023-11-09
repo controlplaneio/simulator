@@ -2,7 +2,8 @@
 
 This is a template for creating a Web ChatBot for RescueDrop.
 
-This is based off the Botkit starter kit for web, created with the [Yeoman generator](https://github.com/howdyai/botkit/tree/master/packages/generator-botkit#readme)
+This is based off the Botkit starter kit for web, created with
+the [Yeoman generator](https://github.com/howdyai/botkit/tree/master/packages/generator-botkit#readme)
 
 ## Features
 

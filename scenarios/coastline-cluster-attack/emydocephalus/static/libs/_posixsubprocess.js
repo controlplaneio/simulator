@@ -1,6 +1,7 @@
-var $module=(function($B){
+var $module = (function ($B) {
 
-    return {
-       cloexec_pipe: function() {}   // fixme
-    }
+  return {
+    cloexec_pipe: function () {
+    }   // fixme
+  }
 })(__BRYTHON__)

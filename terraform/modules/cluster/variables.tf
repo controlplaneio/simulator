@@ -51,7 +51,7 @@ variable "bastion_volume_size" {
 
 variable "instance_groups" {
   description = ""
-  type = list(object({
+  type        = list(object({
     name                 = string
     count                = number
     ami_id               = string

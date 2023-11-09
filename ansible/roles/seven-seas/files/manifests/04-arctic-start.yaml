@@ -9,13 +9,13 @@ kind: ClusterRole
 metadata:
   name: ocean-viewer-cr
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -26,9 +26,9 @@ roleRef:
   kind: ClusterRole
   name: ocean-viewer-cr
 subjects:
-- kind: ServiceAccount
-  name: swashbyter
-  namespace: arctic
+  - kind: ServiceAccount
+    name: swashbyter
+    namespace: arctic
 ---
 apiVersion: v1
 kind: Pod
@@ -38,14 +38,14 @@ metadata:
   labels:
     ship: fancy
 spec:
-    serviceAccountName: swashbyter
-    containers:
+  serviceAccountName: swashbyter
+  containers:
     - name: lookout
       image: docker.io/controlplaneoffsec/seven-seas:fancy
-      command: ["sleep", "2d"]
+      command: [ "sleep", "2d" ]
       securityContext:
         allowPrivilegeEscalation: false
-    restartPolicy: Always
+  restartPolicy: Always
 ---
 apiVersion: v1
 kind: Pod
@@ -55,15 +55,15 @@ metadata:
   labels:
     ship: potp
 spec:
-    containers:
+  containers:
     - name: path-of-the-pirate
       image: docker.io/controlplaneoffsec/seven-seas:potp
       ports:
-      - containerPort: 8080
-        name: path
+        - containerPort: 8080
+          name: path
       securityContext:
         allowPrivilegeEscalation: false
-    restartPolicy: Always
+  restartPolicy: Always
 ---
 apiVersion: v1
 kind: Service
@@ -75,7 +75,7 @@ spec:
   selector:
     ship: potp
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-    nodePort: 30080
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30080

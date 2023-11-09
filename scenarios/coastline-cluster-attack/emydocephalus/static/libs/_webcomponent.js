@@ -1,23 +1,23 @@
 // module for Web Components
-var $module = (function($B){
+var $module = (function ($B) {
 
-var _b_ = $B.builtins
+  var _b_ = $B.builtins
 
-function define(tag_name, cls){
+  function define(tag_name, cls) {
     var $ = $B.args("define", 2, {tag_name: null, cls: null},
-            ["tag_name", "cls"], arguments, {}, null, null),
-        tag_name = $.tag_name,
-        cls = $.cls
-    if(typeof tag_name != "string"){
-        throw _b_.TypeError.$factory("first argument of define() " +
-            "must be a string, not '" + $B.class_name(tag_name) + "'")
-    }else if(tag_name.indexOf("-") == -1){
-        throw _b_.ValueError.$factory("custom tag name must " +
-            "contain a hyphen (-)")
+        ["tag_name", "cls"], arguments, {}, null, null),
+      tag_name = $.tag_name,
+      cls = $.cls
+    if (typeof tag_name != "string") {
+      throw _b_.TypeError.$factory("first argument of define() " +
+        "must be a string, not '" + $B.class_name(tag_name) + "'")
+    } else if (tag_name.indexOf("-") == -1) {
+      throw _b_.ValueError.$factory("custom tag name must " +
+        "contain a hyphen (-)")
     }
-    if(!_b_.isinstance(cls, _b_.type)){
-        throw _b_.TypeError.$factory("second argument of define() " +
-            "must be a class, not '" + $B.class_name(tag_name) + "'")
+    if (!_b_.isinstance(cls, _b_.type)) {
+      throw _b_.TypeError.$factory("second argument of define() " +
+        "must be a class, not '" + $B.class_name(tag_name) + "'")
     }
     cls.$webcomponent = true
 
@@ -85,64 +85,66 @@ function define(tag_name, cls){
     // attachShadow
     // Override __getattribute__ to handle DOMNode attributes such as
     // attachShadow
-    cls.__getattribute__ = function(self, attr){
-        try{
-            return $B.DOMNode.__getattribute__(self, attr)
-        }catch(err){
-            if($B.DOMNode[attr]){
-                if(typeof $B.DOMNode[attr] == 'function'){
-                    return function(){
-                        var args = [self]
-                        for(var i = 0, len = arguments.length; i < len; i++){
-                            args.push(arguments[i])
-                        }
-                        return $B.DOMNode[attr].apply(null, args)
-                    }
-                }else{
-                    return $B.DOMNode[attr]
-                }
+    cls.__getattribute__ = function (self, attr) {
+      try {
+        return $B.DOMNode.__getattribute__(self, attr)
+      } catch (err) {
+        if ($B.DOMNode[attr]) {
+          if (typeof $B.DOMNode[attr] == 'function') {
+            return function () {
+              var args = [self]
+              for (var i = 0, len = arguments.length; i < len; i++) {
+                args.push(arguments[i])
+              }
+              return $B.DOMNode[attr].apply(null, args)
             }
-            throw err
+          } else {
+            return $B.DOMNode[attr]
+          }
         }
+        throw err
+      }
     }
 
     var mro = [cls].concat(cls.__mro__).reverse()
-    for(var i = 0, len = mro.length; i < len; i++){
-        var pcls = mro[i]
-        for(var key in pcls){
-            if((! webcomp.hasOwnProperty(key)) &&
-                    typeof pcls[key] == "function" &&
-                    // don't set $factory (would make it a class)
-                    key !== '$factory'
-                    ){
-                webcomp.prototype[key] = (function(attr, klass){
-                    return function(){
-                        try{
-                            return $B.pyobj2jsobj(klass[attr]).call(null,
-                                $B.DOMNode.$factory(this), ...arguments)
-                        }catch(err){
-                            $B.show_error(err)
-                        }
-                    }
-                })(key, pcls)
+    for (var i = 0, len = mro.length; i < len; i++) {
+      var pcls = mro[i]
+      for (var key in pcls) {
+        if ((!webcomp.hasOwnProperty(key)) &&
+          typeof pcls[key] == "function" &&
+          // don't set $factory (would make it a class)
+          key !== '$factory'
+        ) {
+          webcomp.prototype[key] = (function (attr, klass) {
+            return function () {
+              try {
+                return $B.pyobj2jsobj(klass[attr]).call(null,
+                  $B.DOMNode.$factory(this), ...arguments)
+              } catch (err) {
+                $B.show_error(err)
+              }
             }
+          })(key, pcls)
         }
+      }
     }
 
     // define WebComp as the class to use for the specified tag name
     customElements.define(tag_name, webcomp)
     webcomp.initialized = true
-}
+  }
 
-function get(name){
+  function get(name) {
     var ce = customElements.get(name)
-    if(ce && ce.$cls){return ce.$cls}
+    if (ce && ce.$cls) {
+      return ce.$cls
+    }
     return _b_.None
-}
+  }
 
-return {
+  return {
     define: define,
     get: get
-}
+  }
 
 })(__BRYTHON__)

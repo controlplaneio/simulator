@@ -8,14 +8,14 @@ metadata:
 spec:
   serviceAccountName: invader
   containers:
-  - name: mine
-    image: bitnami/kubectl:latest
-    resources:
-      limits:
-        memory: "128Mi"
-        cpu: "500m"
-    ports:
-      - containerPort: 8080
-    command:
-      - sleep
-      - infinity
+    - name: mine
+      image: bitnami/kubectl:latest
+      resources:
+        limits:
+          memory: "128Mi"
+          cpu: "500m"
+      ports:
+        - containerPort: 8080
+      command:
+        - sleep
+        - infinity

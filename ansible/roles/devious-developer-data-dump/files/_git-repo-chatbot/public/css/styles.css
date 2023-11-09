@@ -17,6 +17,7 @@ html {
   max-width: 1000px;
   margin: 0 auto;
 }
+
 .wrapper:after {
   content: "";
   display: table;
@@ -28,11 +29,13 @@ html {
   padding: 1rem calc(1rem - 2px);
   margin-bottom: 1rem;
 }
+
 .box:after {
   content: "";
   display: table;
   clear: both;
 }
+
 .box h1,
 .box h2,
 .box h3 {
@@ -47,6 +50,7 @@ footer {
   text-align: center;
   padding: 2rem;
 }
+
 .hero h1 {
   font-size: 4rem;
   margin: 0;
@@ -73,12 +77,14 @@ div.input label {
   padding: 5px;
   background: #F0F0F0;
 }
+
 .addon input,
 .addon textarea {
   flex-grow: 1;
   border: 0;
   background: transparent;
 }
+
 .addon button {
   flex-grow: 0;
   background: transparent;
@@ -86,10 +92,12 @@ div.input label {
   border-radius: 6px;
   font-weight: bold;
 }
+
 .addon button.textarea {
   align-self: flex-start;
   padding: 0.5rem;
 }
+
 .addon button:hover {
   background: #FFF;
   color: #a795ef;
@@ -115,6 +123,7 @@ a.button {
   background-color: #FFF;
   transition: box-shadow 0.1s linear;
 }
+
 a.button:hover {
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
 }
@@ -133,25 +142,31 @@ a.button:hover {
   flex-direction: column;
   font-family: "helvetica", sans-serif;
 }
+
 #message_window .disconnected {
   background: #FFFFCC;
   padding: 0.25rem;
 }
+
 #message_window.connected .disconnected {
   display: none;
 }
+
 #message_window .offline {
   display: none;
 }
+
 #message_window.offline .disconnected {
   display: none;
 }
+
 #message_window.offline .offline {
   background: #FF0000;
   color: #FFF;
   padding: 0.25rem;
   display: block;
 }
+
 #message_window .powered_by {
   flex-shrink: 0;
   text-align: center;
@@ -160,34 +175,41 @@ a.button:hover {
   padding: 0.25rem;
   color: #666;
 }
+
 #message_window .powered_by a {
   text-decoration: none;
   color: #666;
 }
+
 #message_window .powered_by img {
   position: relative;
   top: 2px;
 }
+
 #message_window section {
   flex-grow: 1;
   flex-direction: column-reverse;
   display: flex;
   overflow-y: auto;
 }
+
 #message_window section div div {
   margin: 0.25rem;
   clear: both;
 }
+
 #message_window footer {
   border-top: 1px solid #CCC;
   padding: 0.25rem;
 }
+
 #message_window footer input[type=text] {
   flex-grow: 1;
   font-size: 1.25rem;
   outline: none;
   border: none;
 }
+
 #message_window footer button {
   width: 50px;
   background: none;
@@ -196,14 +218,17 @@ a.button:hover {
   color: blue;
   font-weight: bold;
 }
+
 #message_window form {
   display: flex;
   margin: 0;
   padding: 0.25rem;
 }
+
 #message_window #message_template {
   display: none;
 }
+
 #message_window .message {
   font-size: 14px;
   padding: 0.5rem;
@@ -214,6 +239,7 @@ a.button:hover {
   display: inline-block;
   max-width: 75%;
 }
+
 #message_window .file_attachment {
   background: #F0F0F0;
   color: #333;
@@ -221,10 +247,12 @@ a.button:hover {
   display: inline-block;
   max-width: 75%;
 }
+
 #message_window .file_attachment img {
   max-width: 100%;
   display: block;
 }
+
 #message_window .button_message {
   margin: 1rem 0;
   border-radius: 4px;
@@ -238,18 +266,22 @@ a.button:hover {
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
   display: block;
 }
+
 #message_window .message p {
   margin-top: 0;
   margin-bottom: 0.5rem;
 }
+
 #message_window .message p:last-child {
   margin-bottom: 0;
 }
+
 #message_window .message.outgoing {
   float: right;
   background: #a795ef;
   color: white;
 }
+
 #message_window #message_replies {
   text-align: center;
   overflow-x: auto;
@@ -257,16 +289,19 @@ a.button:hover {
   -webkit-overflow-scrolling: touch;
   /* Lets it scroll lazy */
 }
+
 #message_window #message_replies ul {
   list-style-type: none;
   margin: 0px auto;
   padding: 0;
 }
+
 #message_window #message_replies ul li {
   display: inline-block;
   margin: 0.5rem;
   margin-left: 0;
 }
+
 #message_window #message_replies a {
   text-decoration: none;
   display: block;
@@ -277,6 +312,7 @@ a.button:hover {
   font-size: 14px;
   cursor: pointer;
 }
+
 #message_window #message_replies a:hover {
   background: #a795ef;
   color: #FFF;
@@ -288,6 +324,7 @@ a.button:hover {
   margin: 0 auto;
   position: relative;
 }
+
 .typing-indicator span {
   height: 5px;
   width: 5px;
@@ -298,12 +335,15 @@ a.button:hover {
   border-radius: 50%;
   opacity: 0.4;
 }
+
 .typing-indicator span:nth-of-type(1) {
   animation: 1s blink infinite 0.3333s;
 }
+
 .typing-indicator span:nth-of-type(2) {
   animation: 1s blink infinite 0.6666s;
 }
+
 .typing-indicator span:nth-of-type(3) {
   animation: 1s blink infinite 0.9999s;
 }
@@ -313,12 +353,14 @@ a.button:hover {
     opacity: 1;
   }
 }
+
 /* special styles for homepage */
 #home {
   position: relative;
   max-width: 650px;
   margin: auto;
 }
+
 #home:after {
   content: "";
   display: table;
@@ -332,6 +374,7 @@ a.button:hover {
   border: 5px solid #333;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
 }
+
 #homepage_bot iframe {
   border: 0;
   height: 100%;

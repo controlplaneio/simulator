@@ -3,11 +3,13 @@
 ## Overview
 
 The player starts within a jumpbox (pod) with a DMZ namespace. From here the player must:
+
 * obtain access to the cluster
 * compromise the worker node
 * obtain cluster admin to access the master node
 
 ### Learning Objectives
+
 * Learn how ephemeral containers work
 * Use common enumeration kubernetes techniques
 * Understand different methods for obtaining credentials

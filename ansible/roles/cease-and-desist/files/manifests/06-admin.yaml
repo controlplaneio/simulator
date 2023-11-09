@@ -10,13 +10,13 @@ metadata:
   name: rkls-password
   namespace: administration
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -28,9 +28,9 @@ roleRef:
   kind: Role
   name: rkls-password
 subjects:
-- kind: ServiceAccount
-  name: sysadmin
-  namespace: administration
+  - kind: ServiceAccount
+    name: sysadmin
+    namespace: administration
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -38,33 +38,33 @@ metadata:
   name: rkls-access
   namespace: licensing
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-- apiGroups:
-  - ""
-  resources:
-  - pods/exec
-  verbs:
-  - create
-- apiGroups:
-  - cilium.io
-  resources:
-  - ciliumnetworkpolicies
-  verbs:
-  - get
-  resourceNames:
-  - rkls-egress
-- apiGroups:
-  - cilium.io
-  resources:
-  - ciliumnetworkpolicies
-  verbs:
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods/exec
+    verbs:
+      - create
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumnetworkpolicies
+    verbs:
+      - get
+    resourceNames:
+      - rkls-egress
+  - apiGroups:
+      - cilium.io
+    resources:
+      - ciliumnetworkpolicies
+    verbs:
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -76,22 +76,22 @@ roleRef:
   kind: Role
   name: rkls-access
 subjects:
-- kind: ServiceAccount
-  name: sysadmin
-  namespace: administration
+  - kind: ServiceAccount
+    name: sysadmin
+    namespace: administration
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: ns-viewer
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -102,9 +102,9 @@ roleRef:
   kind: ClusterRole
   name: ns-viewer
 subjects:
-- kind: ServiceAccount
-  name: sysadmin
-  namespace: administration
+  - kind: ServiceAccount
+    name: sysadmin
+    namespace: administration
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -112,13 +112,13 @@ metadata:
   name: production-access
   namespace: production
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -130,9 +130,9 @@ roleRef:
   kind: Role
   name: production-access
 subjects:
-- kind: ServiceAccount
-  name: sysadmin
-  namespace: administration
+  - kind: ServiceAccount
+    name: sysadmin
+    namespace: administration
 ---
 apiVersion: v1
 kind: Secret
@@ -153,9 +153,9 @@ metadata:
 spec:
   serviceAccountName: sysadmin
   containers:
-  - name: admin-console
-    image: docker.io/controlplaneoffsec/cease-and-desist:admin-console
-    command: ["sleep", "2d"]
-    imagePullPolicy: IfNotPresent
-    securityContext:
-      allowPrivilegeEscalation: false
+    - name: admin-console
+      image: docker.io/controlplaneoffsec/cease-and-desist:admin-console
+      command: [ "sleep", "2d" ]
+      imagePullPolicy: IfNotPresent
+      securityContext:
+        allowPrivilegeEscalation: false

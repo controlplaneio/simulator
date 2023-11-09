@@ -18,16 +18,16 @@ spec:
   validationFailureAction: enforce
   background: true
   rules:
-  - name: validate-nodeport
-    match:
-      any:
-      - resources:
-          kinds:
-          - Service
-          namespaces:
-          - ii-prod
-    validate:
-      message: "SECOPS ALERT: Services of type NodePort are restricted."
-      pattern:
-        spec:
-          =(type): "!NodePort"
+    - name: validate-nodeport
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              namespaces:
+                - ii-prod
+      validate:
+        message: "SECOPS ALERT: Services of type NodePort are restricted."
+        pattern:
+          spec:
+            =(type): "!NodePort"

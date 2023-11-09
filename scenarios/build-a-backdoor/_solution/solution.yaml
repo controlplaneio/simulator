@@ -7,14 +7,14 @@ spec:
   selector:
     app: ii
   ports:
-  - name: mgmt
-    port: 80
-    targetPort: 8080
-    protocol: TCP
-  - name: admin
-    port: 5724
-    targetPort: 5724
-    protocol: TCP
+    - name: mgmt
+      port: 80
+      targetPort: 8080
+      protocol: TCP
+    - name: admin
+      port: 5724
+      targetPort: 5724
+      protocol: TCP
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -26,11 +26,11 @@ spec:
     matchLabels:
       app: ii
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - ports:
-    - port: 8080
-    - port: 5724
+    - ports:
+        - port: 8080
+        - port: 5724
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -41,19 +41,19 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - http:
-      paths:
-      - path: "/"
-        pathType: Prefix
-        backend:
-          service:
-            name: ii-prod-mgmt-service
-            port:
-              number: 80
-      - path: "/backdoor"
-        pathType: Prefix
-        backend:
-          service:
-            name: ii-prod-mgmt-service
-            port:
-              number: 5724
+    - http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ii-prod-mgmt-service
+                port:
+                  number: 80
+          - path: "/backdoor"
+            pathType: Prefix
+            backend:
+              service:
+                name: ii-prod-mgmt-service
+                port:
+                  number: 5724

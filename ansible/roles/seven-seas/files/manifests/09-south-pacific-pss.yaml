@@ -19,13 +19,13 @@ metadata:
   name: cartographer
   namespace: south-pacific
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -37,9 +37,9 @@ roleRef:
   kind: Role
   name: cartographer
 subjects:
-- kind: ServiceAccount
-  name: port-finder
-  namespace: south-pacific
+  - kind: ServiceAccount
+    name: port-finder
+    namespace: south-pacific
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -47,13 +47,13 @@ metadata:
   name: quartermaster
   namespace: north-pacific
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -65,6 +65,6 @@ roleRef:
   kind: Role
   name: quartermaster
 subjects:
-- kind: ServiceAccount
-  name: port-finder
-  namespace: south-pacific
+  - kind: ServiceAccount
+    name: port-finder
+    namespace: south-pacific

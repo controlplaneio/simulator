@@ -9,46 +9,46 @@ kind: ClusterRole
 metadata:
   name: cp-checker
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - patch
-  - update
-- apiGroups:
-  - "apps"
-  resources:
-  - deployments
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - patch
+      - update
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cp-checker-list
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -60,9 +60,9 @@ roleRef:
   kind: ClusterRole
   name: cp-checker
 subjects:
-- kind: ServiceAccount
-  name: cp-checker
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: cp-checker
+    namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -73,9 +73,9 @@ roleRef:
   kind: ClusterRole
   name: cp-checker-list
 subjects:
-- kind: ServiceAccount
-  name: cp-checker
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: cp-checker
+    namespace: kube-system
 ---
 apiVersion: batch/v1
 kind: Job
@@ -90,7 +90,7 @@ spec:
       containers:
         - name: namespace-checker
           image: nixery.dev/shell/kubectl/curl/jq
-          command: ["bash", "-c"]
+          command: [ "bash", "-c" ]
           args:
             - |
               set -Eeuo pipefail
@@ -103,7 +103,7 @@ spec:
               do
                   sleep 10
               done
-              
+
               (kubectl create secret generic flag-xyz --from-literal=flag=flag_ctf{MISCONFIG_GOT_PSA_LEVEL_WRONG} --namespace=dev-app-factory)
       restartPolicy: Never
 ---
@@ -119,12 +119,12 @@ spec:
       nodeSelector:
         node-role.kubernetes.io/control-plane: ""
       tolerations:
-      - operator: Exists
+        - operator: Exists
       serviceAccountName: cp-checker
       containers:
         - name: psa-config-checker
           image: docker.io/controlplaneoffsec/kubectl:latest
-          command: ["bash", "-c"]
+          command: [ "bash", "-c" ]
           args:
             - |
               set -Eeuo pipefail
@@ -136,13 +136,13 @@ spec:
 
               (kubectl create secret generic flag-wasd --from-literal=flag=flag_ctf{MISCONFIG_GOT_PSA_EXEMPTIONS_WRONG} --namespace=dev-app-factory)
           volumeMounts:
-          - name: psaconfig
-            mountPath: /master/opt/k8s-upgrade/
-            readOnly: true
+            - name: psaconfig
+              mountPath: /master/opt/k8s-upgrade/
+              readOnly: true
       volumes:
-      - name: psaconfig
-        hostPath:
-          path: /opt/k8s-upgrade/
+        - name: psaconfig
+          hostPath:
+            path: /opt/k8s-upgrade/
       restartPolicy: Never
 ---
 apiVersion: batch/v1
@@ -158,7 +158,7 @@ spec:
       containers:
         - name: pod-checker
           image: nixery.dev/shell/kubectl/curl/jq
-          command: ["bash", "-c"]
+          command: [ "bash", "-c" ]
           args:
             - |
               set -Eeuo pipefail
@@ -175,6 +175,6 @@ spec:
               do
                   sleep 10
               done
-              
+
               (kubectl create secret generic flag-gotit --from-literal=flag=flag_ctf{MISCONFIG_PSS_HASHJACK_SAD_BLOCKED} --namespace=dev-app-factory)
       restartPolicy: Never

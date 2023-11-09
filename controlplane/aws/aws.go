@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -17,21 +18,29 @@ var (
 )
 
 func CreateBucket(ctx context.Context, name string) error {
+	slog.Info("CreateBucket", "name", name)
+
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		slog.Error("failed to create aws config", "error", err)
 	}
 
+	var bucketAlreadyOwnedByYou *types.BucketAlreadyOwnedByYou
+
 	client := s3.NewFromConfig(cfg)
 	_, err = client.CreateBucket(ctx, &s3.CreateBucketInput{
 		Bucket: aws.String(name),
 		CreateBucketConfiguration: &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraintEuWest2, // TODO: lookup AWS_REGION
+			LocationConstraint: types.BucketLocationConstraintEuWest2,
 		},
 	})
-	if err != nil { // TODO: ignore bucket already exists, and you own it
-		slog.Error("failed to create s3 bucket", "error", err)
-		return err
+	if err != nil {
+		if errors.As(err, &bucketAlreadyOwnedByYou) {
+			slog.Info("You already own this bucket")
+		} else {
+			slog.Error("CreateBucket failed", "error", err)
+			return err
+		}
 	}
 
 	return nil

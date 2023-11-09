@@ -16,27 +16,27 @@ spec:
   validationFailureAction: enforce
   background: true
   rules:
-  - name: empty-podselector
-    match:
-      any:
-      - resources:
-          kinds:
-          - NetworkPolicy
-    exclude:
-      any:
-      - resources:
-          kinds:
-          - NetworkPolicy
-          names:
-          - default-deny
-    validate:
-      message: "SECOPS ALERT: NetworkPolicies must not use an empty podSelector."
-      deny:
-        conditions:
-          any:
-          - key: "{{request.object.spec.podSelector.keys(@) | length(@)}}"
-            operator: Equals
-            value: 0
+    - name: empty-podselector
+      match:
+        any:
+          - resources:
+              kinds:
+                - NetworkPolicy
+      exclude:
+        any:
+          - resources:
+              kinds:
+                - NetworkPolicy
+              names:
+                - default-deny
+      validate:
+        message: "SECOPS ALERT: NetworkPolicies must not use an empty podSelector."
+        deny:
+          conditions:
+            any:
+              - key: "{{request.object.spec.podSelector.keys(@) | length(@)}}"
+                operator: Equals
+                value: 0
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -54,24 +54,24 @@ spec:
   validationFailureAction: enforce
   background: true
   rules:
-  - name: restrict-allow-all-ingress
-    match:
-      any:
-      - resources:
-          kinds:
-          - NetworkPolicy
-    exclude:
-      any:
-      - resources:
-          kinds:
-          - NetworkPolicy
-          names:
-          - default-deny
-    validate:
-      message: "SECOPS ALERT: NetworkPolicies must not use an allow all ingress."
-      deny:
-        conditions:
-          any:
-          - key: "{{request.object.spec.ingress[].ports[].keys(@) | length(@) }}"
-            operator: Equals
-            value: 0
+    - name: restrict-allow-all-ingress
+      match:
+        any:
+          - resources:
+              kinds:
+                - NetworkPolicy
+      exclude:
+        any:
+          - resources:
+              kinds:
+                - NetworkPolicy
+              names:
+                - default-deny
+      validate:
+        message: "SECOPS ALERT: NetworkPolicies must not use an allow all ingress."
+        deny:
+          conditions:
+            any:
+              - key: "{{request.object.spec.ingress[].ports[].keys(@) | length(@) }}"
+                operator: Equals
+                value: 0
