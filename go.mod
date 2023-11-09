@@ -1,4 +1,4 @@
-module github.com/controlplaneio/simulator
+module github.com/controlplaneio/simulator/v2
 
 go 1.21
 

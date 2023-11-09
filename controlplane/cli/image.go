@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/controlplaneio/simulator/controlplane"
+	"github.com/controlplaneio/simulator/v2/controlplane"
 )
 
 var (

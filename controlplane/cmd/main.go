@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/controlplaneio/simulator/controlplane/cli"
-	"github.com/controlplaneio/simulator/logging"
+	"github.com/controlplaneio/simulator/v2/controlplane/cli"
+	"github.com/controlplaneio/simulator/v2/logging"
 )
 
 func main() {

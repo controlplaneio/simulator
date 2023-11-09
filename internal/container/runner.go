@@ -17,9 +17,9 @@ import (
 	"github.com/docker/docker/client"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 
-	"github.com/controlplaneio/simulator/controlplane"
-	"github.com/controlplaneio/simulator/controlplane/aws"
-	"github.com/controlplaneio/simulator/internal/config"
+	"github.com/controlplaneio/simulator/v2/controlplane"
+	"github.com/controlplaneio/simulator/v2/controlplane/aws"
+	"github.com/controlplaneio/simulator/v2/internal/config"
 )
 
 var (

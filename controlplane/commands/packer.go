@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"github.com/controlplaneio/simulator/controlplane/aws"
+	"github.com/controlplaneio/simulator/v2/controlplane/aws"
 )
 
 const (

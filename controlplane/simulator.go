@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/controlplaneio/simulator/controlplane/aws"
-	"github.com/controlplaneio/simulator/controlplane/commands"
+	"github.com/controlplaneio/simulator/v2/controlplane/aws"
+	"github.com/controlplaneio/simulator/v2/controlplane/commands"
 )
 
 const (
