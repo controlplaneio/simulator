@@ -29,7 +29,7 @@ locals {
   ansible_config              = templatefile("${path.module}/templates/ansible.cfg", {
     ssh_config_filename = var.ssh_config_filename
   })
-  ansible_inventory = templatefile("${path.module}/templates/inventory.yaml", {
+  ansible_inventory = templatefile("${path.module}/templates/inventory.yaml.tpl", {
     ansible_inventory_instances = local.ansible_inventory_instances
   })
 }
