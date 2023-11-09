@@ -106,10 +106,9 @@ Role ARN from the output.
 
 ## Using SSO
 
-Terraform does not support SSO correctly until v1.6.
+Terraform does not support SSO correctly until v1.6., you can however, export the required variables to make it work
 
-In order to work with SSO, create two profiles one for sso, and one to assume the role you have created with the
-required permissions; simulator-sso and simulator in the example below.
+Create an SSO profile as usual
 
 ```shell
 [profile simulator-sso]
@@ -119,10 +118,6 @@ sso_account_id = ...
 sso_role_name = ...
 region = ...
 output = ...
-
-[profile simulator]
-role_arn = arn:aws:iam::<account-id>:role/simulator
-source_profile = simulator-sso
 ```
 
 Then, before running a `simulator image` or `simulator infra` command, ensure you have the required environment
@@ -131,5 +126,22 @@ variables set by running the following.
 ```shell
 export AWS_REGION=...
 aws sso login --profile simulator-sso
+source <(aws configure export-credentials --format env)
+```
+
+Alternatively, you can use an SSO profile to perform an STS Assume Role
+
+```shell
+[profile simulator]
+role_arn = arn:aws:iam::<account-id>:role/simulator
+source_profile = simulator-sso
+```
+
+This time, ensure you login to your SSO profile, and then generate the STS credentials
+
+```shell
+export AWS_REGION=...
+aws sso login --profile simulator-sso
 source <(aws configure export-credentials --profile simulator --format env)
 ```
+
