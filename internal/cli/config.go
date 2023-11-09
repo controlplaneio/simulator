@@ -13,11 +13,6 @@ var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Configure the simulator cli",
 	Run: func(cmd *cobra.Command, args []string) {
-		baseDir, err := os.Getwd()
-		cobra.CheckErr(err)
-
-		cfg.BaseDir = baseDir
-
 		if name != "" {
 			cfg.Name = name
 		}
@@ -29,9 +24,15 @@ var configCmd = &cobra.Command{
 		if dev {
 			cfg.Cli.Dev = true
 			cfg.Container.Image = "controlplane/simulator:dev"
+
+			baseDir, err := os.Getwd()
+			cobra.CheckErr(err)
+
+			cfg.BaseDir = baseDir
 		} else {
 			cfg.Cli.Dev = false
 			cfg.Container.Image = "controlplane/simulator:latest"
+			cfg.BaseDir = ""
 		}
 
 		cfg.Container.Rootless = rootless
