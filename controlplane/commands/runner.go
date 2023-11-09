@@ -23,13 +23,13 @@ type command struct {
 }
 
 func (c command) Run(ctx context.Context) error {
+	slog.Info("running", "command", c)
+
 	cmd := exec.CommandContext(ctx, string(c.Executable), c.Arguments...)
 	cmd.Dir = c.WorkingDir
 	cmd.Env = c.Environment
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-
-	slog.Debug("running", "command", c)
 
 	// TODO: Ensure ctrl-c stops the command
 	err := cmd.Run()

@@ -18,11 +18,12 @@ var (
 )
 
 func CreateBucket(ctx context.Context, name string) error {
-	slog.Info("CreateBucket", "name", name)
+	slog.Info("creating bucket", "name", name)
 
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
-		slog.Error("failed to create aws config", "error", err)
+		slog.Error("failed to create bucket", "name", name, "error", err)
+		return err
 	}
 
 	var bucketAlreadyOwnedByYou *types.BucketAlreadyOwnedByYou
@@ -35,10 +36,9 @@ func CreateBucket(ctx context.Context, name string) error {
 		},
 	})
 	if err != nil {
-		if errors.As(err, &bucketAlreadyOwnedByYou) {
-			slog.Info("You already own this bucket")
+		if !errors.As(err, &bucketAlreadyOwnedByYou) {
 		} else {
-			slog.Error("CreateBucket failed", "error", err)
+			slog.Error("failed to create bucket", "name", name, "error", err)
 			return err
 		}
 	}
