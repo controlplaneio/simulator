@@ -11,6 +11,6 @@ func Configure() {
 		Level:     slog.LevelError,
 	}
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, handlerOptions))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, handlerOptions))
 	slog.SetDefault(logger)
 }
