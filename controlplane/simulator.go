@@ -57,12 +57,12 @@ func (s simulator) CreateBucket(ctx context.Context, name string) error {
 }
 
 func (s simulator) BuildImage(ctx context.Context, name string) error {
-	err := commands.PackerInitCommand(PackerTemplateDir, string(name)).Run(ctx)
+	err := commands.PackerInitCommand(PackerTemplateDir, name).Run(ctx)
 	if err != nil {
 		return err
 	}
 
-	return commands.PackerBuildCommand(PackerTemplateDir, string(name)).Run(ctx)
+	return commands.PackerBuildCommand(PackerTemplateDir, name).Run(ctx)
 }
 
 func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name string) error {
