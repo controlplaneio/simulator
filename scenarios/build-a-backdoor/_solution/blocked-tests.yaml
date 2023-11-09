@@ -8,9 +8,9 @@ spec:
     matchLabels:
       app: ii
   ingress:
-  - {}
+    - { }
   policyTypes:
-  - Ingress
+    - Ingress
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -18,10 +18,10 @@ metadata:
   name: ii-mgmt-np
   namespace: ii-prod
 spec:
-  podSelector: {}
+  podSelector: { }
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - ports:
-    - port: 8080
-    - port: 5724
+    - ports:
+        - port: 8080
+        - port: 5724

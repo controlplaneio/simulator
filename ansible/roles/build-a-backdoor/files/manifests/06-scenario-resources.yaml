@@ -13,26 +13,26 @@ metadata:
     app: ii
 spec:
   containers:
-  - name: ii-website
-    image: controlplaneoffsec/build-a-backdoor:ii-app
-    ports:
-    - containerPort: 8080
-      name: web
-    - containerPort: 5724
-      name: ops-mgmt
-    env:
-    - name: AUTH_USERID
-      valueFrom:
-        secretKeyRef:
+    - name: ii-website
+      image: controlplaneoffsec/build-a-backdoor:ii-app
+      ports:
+        - containerPort: 8080
+          name: web
+        - containerPort: 5724
           name: ops-mgmt
-          key: username
-    - name: AUTH_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: ops-mgmt
-          key: password
-    securityContext:
-      allowPrivilegeEscalation: false
+      env:
+        - name: AUTH_USERID
+          valueFrom:
+            secretKeyRef:
+              name: ops-mgmt
+              key: username
+        - name: AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ops-mgmt
+              key: password
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always
 ---
 apiVersion: v1
@@ -44,10 +44,10 @@ spec:
   selector:
     app: ii
   ports:
-  - name: web
-    port: 80
-    targetPort: 8080
-    protocol: TCP
+    - name: web
+      port: 80
+      targetPort: 8080
+      protocol: TCP
 ---
 apiVersion: v1
 kind: Secret
@@ -69,10 +69,10 @@ spec:
     matchLabels:
       app: ii
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - ports:
-    - port: 8080
+    - ports:
+        - port: 8080
 ---
 ## JumpBox Resources
 apiVersion: v1
@@ -92,36 +92,36 @@ metadata:
   name: ii-prod-auth-access
   namespace: ii-prod
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  - configmaps
-  - endpoints
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - get
-  - list
-  - patch
-  - update
-- apiGroups:
-  - "networking.k8s.io"
-  resources:
-  - networkpolicies
-  - ingresses
-  verbs:
-  - get
-  - list
-  - patch
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+      - configmaps
+      - endpoints
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - patch
+      - update
+  - apiGroups:
+      - "networking.k8s.io"
+    resources:
+      - networkpolicies
+      - ingresses
+    verbs:
+      - get
+      - list
+      - patch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -133,9 +133,9 @@ roleRef:
   kind: Role
   name: ii-prod-auth-access
 subjects:
-- kind: ServiceAccount
-  name: sre
-  namespace: dmz
+  - kind: ServiceAccount
+    name: sre
+    namespace: dmz
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -143,13 +143,13 @@ metadata:
   name: ingress-nginx-auth-access
   namespace: ingress-nginx
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - services
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -161,22 +161,22 @@ roleRef:
   kind: Role
   name: ingress-nginx-auth-access
 subjects:
-- kind: ServiceAccount
-  name: sre
-  namespace: dmz
+  - kind: ServiceAccount
+    name: sre
+    namespace: dmz
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cr-read
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -187,9 +187,9 @@ roleRef:
   kind: ClusterRole
   name: cr-read
 subjects:
-- kind: ServiceAccount
-  name: sre
-  namespace: dmz
+  - kind: ServiceAccount
+    name: sre
+    namespace: dmz
 ---
 apiVersion: v1
 kind: Pod
@@ -199,12 +199,12 @@ metadata:
 spec:
   serviceAccountName: sre
   containers:
-  # basic container image
-  - image: controlplaneoffsec/build-a-backdoor:ii-jumpbox
-    command: ["sleep", "2d"]
-    name: jumpbox-terminal
-    securityContext:
-      allowPrivilegeEscalation: false
+    # basic container image
+    - image: controlplaneoffsec/build-a-backdoor:ii-jumpbox
+      command: [ "sleep", "2d" ]
+      name: jumpbox-terminal
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always
 ---
 ## Misconfigured helm chart causes incorrect ns deployment
@@ -223,10 +223,10 @@ spec:
   selector:
     app: ii
   ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 8080
-    nodePort: 30080
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+      nodePort: 30080
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -238,10 +238,10 @@ spec:
     matchLabels:
       app: ii
   policyTypes:
-  - Ingress
+    - Ingress
   ingress:
-  - ports:
-    - port: 8080
+    - ports:
+        - port: 8080
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -249,25 +249,25 @@ metadata:
   name: ii-pord-auth-access
   namespace: ii-pord
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - configmaps
-  - endpoints
-  - pods
-  - services
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - "networking.k8s.io"
-  resources:
-  - networkpolicies
-  - ingresses
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+      - endpoints
+      - pods
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "networking.k8s.io"
+    resources:
+      - networkpolicies
+      - ingresses
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -279,6 +279,6 @@ roleRef:
   kind: Role
   name: ii-pord-auth-access
 subjects:
-- kind: ServiceAccount
-  name: sre
-  namespace: dmz
+  - kind: ServiceAccount
+    name: sre
+    namespace: dmz

@@ -19,11 +19,11 @@ spec:
     - name: privileged-containers
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
-            namespaces:
-              - south-atlantic
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - south-atlantic
       validate:
         message: >-
           Nice try! Privileged mode is disallowed.
@@ -60,25 +60,25 @@ spec:
     - name: privilege-escalation
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
-            namespaces:
-              - south-atlantic
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - south-atlantic
       validate:
         message: >-
           Nice try! Privilege escalation is disallowed.
         pattern:
           spec:
             =(ephemeralContainers):
-            - =(securityContext):
-                =(allowPrivilegeEscalation): "false"
+              - =(securityContext):
+                  =(allowPrivilegeEscalation): "false"
             =(initContainers):
-            - =(securityContext):
-                =(allowPrivilegeEscalation): "false"
+              - =(securityContext):
+                  =(allowPrivilegeEscalation): "false"
             containers:
-            - =(securityContext):
-                =(allowPrivilegeEscalation): "false"
+              - =(securityContext):
+                  =(allowPrivilegeEscalation): "false"
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -102,14 +102,14 @@ spec:
     - name: host-path
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
-            namespaces:
-              - south-atlantic
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - south-atlantic
       validate:
         message: >-
-                    Nice try! HostPath volumes are forbidden.
+          Nice try! HostPath volumes are forbidden.
         pattern:
           spec:
             =(volumes):
@@ -141,30 +141,30 @@ spec:
     - name: allowed-capabilities
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
-            namespaces:
-              - south-atlantic
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - south-atlantic
       preconditions:
         all:
-        - key: "{{ request.operation || 'BACKGROUND' }}"
-          operator: NotEquals
-          value: DELETE
+          - key: "{{ request.operation || 'BACKGROUND' }}"
+            operator: NotEquals
+            value: DELETE
       validate:
         message: >-
-                Nice try! Any capabilities added other than NET_BIND_SERVICE or CAP_CHOWN are disallowed.
+          Nice try! Any capabilities added other than NET_BIND_SERVICE or CAP_CHOWN are disallowed.
         foreach:
           - list: request.object.spec.[ephemeralContainers, initContainers, containers][]
             deny:
               conditions:
                 all:
-                - key: "{{ element.securityContext.capabilities.add[] || '' }}"
-                  operator: AnyNotIn
-                  value:
-                  - NET_BIND_SERVICE
-                  - CAP_CHOWN
-                  - ''
+                  - key: "{{ element.securityContext.capabilities.add[] || '' }}"
+                    operator: AnyNotIn
+                    value:
+                      - NET_BIND_SERVICE
+                      - CAP_CHOWN
+                      - ''
 ---
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
@@ -179,18 +179,18 @@ spec:
     - name: add-sidecar
       match:
         any:
-        - resources:
-            kinds:
-              - Pod
-            namespaces:
-              - south-atlantic
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - south-atlantic
       mutate:
         patchStrategicMerge:
           spec:
             containers:
-            - image: docker.io/controlplaneoffsec/seven-seas:blockade-ship
-              command: ["sleep", "2d"]
-              name: blockade-ship
-              securityContext:
-                allowPrivilegeEscalation: false
+              - image: docker.io/controlplaneoffsec/seven-seas:blockade-ship
+                command: [ "sleep", "2d" ]
+                name: blockade-ship
+                securityContext:
+                  allowPrivilegeEscalation: false
             restartPolicy: Always

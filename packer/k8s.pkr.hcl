@@ -19,12 +19,12 @@ variable "runc_version" {
 }
 
 variable "cni_version" {
-  type = string
+  type    = string
   default = "1.3.0"
 }
 
 variable "kube_version" {
-  type = string
+  type    = string
   default = "1.28"
 }
 

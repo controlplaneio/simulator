@@ -31,7 +31,7 @@ spec:
             runAsNonRoot: false
             runAsUser: 0
             capabilities:
-              add: ["SETUID", "SETGID", "SYS_CHROOT","CHOWN","KILL"]
+              add: [ "SETUID", "SETGID", "SYS_CHROOT","CHOWN","KILL" ]
 ---
 apiVersion: v1
 kind: Namespace
@@ -49,52 +49,52 @@ kind: ClusterRole
 metadata:
   name: platform-admin
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - secrets
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - "apps"
-  resources:
-  - deployments
-  - daemonsets
-  - statefulsets
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "apps"
+    resources:
+      - deployments
+      - daemonsets
+      - statefulsets
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: platform-admin-list
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  - resourcequotas
-  - limitranges
-  resourceNames:
-  - "dev-app-factory"
-  verbs:
-  - get
-  - list
-  - patch
-  - update
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - resourcequotas
+      - limitranges
+    resourceNames:
+      - "dev-app-factory"
+    verbs:
+      - get
+      - list
+      - patch
+      - update
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -133,24 +133,24 @@ spec:
   nodeSelector:
     node-role.kubernetes.io/control-plane: ""
   tolerations:
-  - operator: Exists
+    - operator: Exists
   dnsPolicy: ClusterFirst
   restartPolicy: Always
   containers:
-  - image: docker.io/controlplaneoffsec/kubectl:latest
-    command: ["sleep", "2d"]
-    name: admin
-    imagePullPolicy: Always
-    volumeMounts:
-    - name: dm9sltetcm8
-      mountPath: /etc/kubernetes/manifests
-      readOnly: true
-    - name: dm9sltitcnc
-      mountPath: /etc/kubërnëtës
+    - image: docker.io/controlplaneoffsec/kubectl:latest
+      command: [ "sleep", "2d" ]
+      name: admin
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: dm9sltetcm8
+          mountPath: /etc/kubernetes/manifests
+          readOnly: true
+        - name: dm9sltitcnc
+          mountPath: /etc/kubërnëtës
   volumes:
-  - name: dm9sltetcm8
-    hostPath:
-      path: /etc/kubernetes/manifests
-  - name: dm9sltitcnc
-    hostPath:
-      path: /opt/k8s-upgrade
+    - name: dm9sltetcm8
+      hostPath:
+        path: /etc/kubernetes/manifests
+    - name: dm9sltitcnc
+      hostPath:
+        path: /opt/k8s-upgrade

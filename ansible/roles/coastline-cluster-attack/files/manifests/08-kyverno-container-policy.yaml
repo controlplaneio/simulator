@@ -17,18 +17,18 @@ spec:
   validationFailureAction: enforce
   background: true
   rules:
-  - name: only-allow-ephemeral-containers
-    match:
-      any:
-      - resources:
-          kinds:
-            - Pod
-          namespaces:
-            - default
-            - coastline
-    validate:
-      message: "Deployment of Regular Containers and Init Containers in Coastline is not permitted."
-      pattern:
-        spec:
-          X(containers): "null"
-          X(initContainers): "null"
+    - name: only-allow-ephemeral-containers
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              namespaces:
+                - default
+                - coastline
+      validate:
+        message: "Deployment of Regular Containers and Init Containers in Coastline is not permitted."
+        pattern:
+          spec:
+            X(containers): "null"
+            X(initContainers): "null"

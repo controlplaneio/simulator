@@ -8,4 +8,4 @@ spec:
     matchLabels:
       ship: adventure-galley
   ingress:
-  - {}
+    - { }

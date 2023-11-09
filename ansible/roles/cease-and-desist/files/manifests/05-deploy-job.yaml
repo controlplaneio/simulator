@@ -10,15 +10,15 @@ metadata:
   name: check-license
   namespace: licensing
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - update
-  - patch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - update
+      - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -30,9 +30,9 @@ roleRef:
   kind: Role
   name: check-license
 subjects:
-- kind: ServiceAccount
-  name: reform-kube-operator
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: reform-kube-operator
+    namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -40,17 +40,17 @@ metadata:
   name: deployer
   namespace: production
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - create
-  - update
-  - patch
-  - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - patch
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -62,9 +62,9 @@ roleRef:
   kind: Role
   name: deployer
 subjects:
-- kind: ServiceAccount
-  name: reform-kube-operator
-  namespace: kube-system
+  - kind: ServiceAccount
+    name: reform-kube-operator
+    namespace: kube-system
 ---
 apiVersion: batch/v1
 kind: Job
@@ -79,7 +79,7 @@ spec:
       containers:
         - name: check-and-deploy
           image: nixery.dev/shell/kubectl/curl/jq
-          command: ["bash", "-c"]
+          command: [ "bash", "-c" ]
           args:
             - |
               set -Eeuo pipefail
@@ -103,4 +103,4 @@ spec:
               done
               (echo "$POD" | kubectl create -f -)
       restartPolicy: Never
-status: {}
+status: { }

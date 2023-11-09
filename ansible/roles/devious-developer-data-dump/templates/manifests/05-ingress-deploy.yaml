@@ -326,7 +326,7 @@ spec:
             preStop:
               exec:
                 command:
-                - /wait-shutdown
+                  - /wait-shutdown
           args:
             - /nginx-ingress-controller
             - --publish-service=$(POD_NAMESPACE)/ingress-nginx-controller
@@ -337,9 +337,9 @@ spec:
           securityContext:
             capabilities:
               drop:
-              - ALL
+                - ALL
               add:
-              - NET_BIND_SERVICE
+                - NET_BIND_SERVICE
             runAsUser: 101
             allowPrivilegeEscalation: true
           env:

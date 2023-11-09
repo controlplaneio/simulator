@@ -9,7 +9,7 @@ variable "region" {
 }
 
 variable "kube_version" {
-  type = string
+  type    = string
   default = "1.28"
 }
 

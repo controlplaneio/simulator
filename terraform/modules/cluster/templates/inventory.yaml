@@ -2,16 +2,16 @@
 all:
   children:
     ungrouped:
-%{ for group in keys(ansible_inventory_instances) ~}
-    ${group}:
-%{ endfor ~}
+  %{ for group in keys(ansible_inventory_instances) ~}
+${group}:
+  %{ endfor ~}
 ungrouped:
   hosts:
     bastion:
-%{ for group in keys(ansible_inventory_instances) ~}
+  %{ for group in keys(ansible_inventory_instances) ~}
 ${group}:
   hosts:
-%{ for host in ansible_inventory_instances[group] ~}
-    ${host}:
-%{ endfor ~}
-%{ endfor ~}
+  %{ for host in ansible_inventory_instances[group] ~}
+${host}:
+  %{ endfor ~}
+  %{ endfor ~}

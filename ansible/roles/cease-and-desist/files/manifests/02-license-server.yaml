@@ -10,14 +10,14 @@ metadata:
   name: laccess
   namespace: licensing
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - update
-  - patch
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - update
+      - patch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -29,9 +29,9 @@ roleRef:
   kind: Role
   name: laccess
 subjects:
-- kind: ServiceAccount
-  name: reform-kube
-  namespace: licensing
+  - kind: ServiceAccount
+    name: reform-kube
+    namespace: licensing
 ---
 apiVersion: v1
 kind: Pod
@@ -43,8 +43,8 @@ metadata:
 spec:
   serviceAccountName: reform-kube
   containers:
-  - image: docker.io/controlplaneoffsec/cease-and-desist:rks
-    command: ["sleep", "2d"]
-    name: rkls
-    securityContext:
-      allowPrivilegeEscalation: false
+    - image: docker.io/controlplaneoffsec/cease-and-desist:rks
+      command: [ "sleep", "2d" ]
+      name: rkls
+      securityContext:
+        allowPrivilegeEscalation: false

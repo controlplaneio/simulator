@@ -7,9 +7,9 @@ spec:
   selector:
     ship: adventure-galley
   ports:
-  - protocol: TCP
-    port: 8080
-    targetPort: 8080
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
 ---
 apiVersion: v1
 kind: Pod
@@ -20,29 +20,29 @@ metadata:
     ship: adventure-galley
 spec:
   containers:
-  - name: adventure-galley
-    image: docker.io/controlplaneoffsec/seven-seas:adventure-galley
-    ports:
-    - containerPort: 8080
-      name: target
-    env:
-    - name: ACTION
-      valueFrom:
-        secretKeyRef:
-          name: action
-          key: action
-    - name: OBJECT
-      valueFrom:
-        secretKeyRef:
-          name: object
-          key: object
-    - name: MAP5
-      valueFrom:
-        secretKeyRef:
-          name: treasure-map-5
-          key: treasure-map-5
-    securityContext:
-      allowPrivilegeEscalation: false
+    - name: adventure-galley
+      image: docker.io/controlplaneoffsec/seven-seas:adventure-galley
+      ports:
+        - containerPort: 8080
+          name: target
+      env:
+        - name: ACTION
+          valueFrom:
+            secretKeyRef:
+              name: action
+              key: action
+        - name: OBJECT
+          valueFrom:
+            secretKeyRef:
+              name: object
+              key: object
+        - name: MAP5
+          valueFrom:
+            secretKeyRef:
+              name: treasure-map-5
+              key: treasure-map-5
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always
 ---
 apiVersion: v1
@@ -99,5 +99,5 @@ spec:
     matchLabels:
       ship: adventure-galley
   ingress:
-  - from:
-    - podSelector: {}
+    - from:
+        - podSelector: { }

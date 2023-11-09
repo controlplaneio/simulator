@@ -7,12 +7,12 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-  - http:
-      paths:
-      - path: "/"
-        pathType: Prefix
-        backend:
-          service:
-            name: ii-prod-mgmt-service
-            port:
-              number: 80
+    - http:
+        paths:
+          - path: "/"
+            pathType: Prefix
+            backend:
+              service:
+                name: ii-prod-mgmt-service
+                port:
+                  number: 80

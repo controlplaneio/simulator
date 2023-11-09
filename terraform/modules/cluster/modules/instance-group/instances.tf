@@ -8,7 +8,7 @@ resource "aws_instance" "instance" {
   subnet_id                   = var.subnet_id
   associate_public_ip_address = var.associate_public_ip_address
   hibernation                 = true
-  vpc_security_group_ids = [
+  vpc_security_group_ids      = [
     var.security_group_id,
   ]
 

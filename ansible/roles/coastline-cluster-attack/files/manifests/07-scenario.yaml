@@ -28,25 +28,25 @@ spec:
         app: data-burrow-prod
     spec:
       containers:
-      - name: emydocephalus
-        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:emydocephalus
-        ports:
-        - name: http
-          containerPort: 8080
-        imagePullPolicy: IfNotPresent
-      - name: hydrelaps
-        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:hydrelaps
-        ports:
-        - name: http
-          containerPort: 5000
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-        - mountPath: /host/
-          name: db
+        - name: emydocephalus
+          image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:emydocephalus
+          ports:
+            - name: http
+              containerPort: 8080
+          imagePullPolicy: IfNotPresent
+        - name: hydrelaps
+          image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:hydrelaps
+          ports:
+            - name: http
+              containerPort: 5000
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /host/
+              name: db
       volumes:
-      - hostPath:
-          path: /
-        name: db
+        - hostPath:
+            path: /
+          name: db
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -67,25 +67,25 @@ spec:
     spec:
       shareProcessNamespace: true
       containers:
-      - name: emydocephalus
-        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:emydocephalus
-        ports:
-        - name: http
-          containerPort: 8080
-        imagePullPolicy: IfNotPresent
-      - name: hydrelaps
-        image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:hydrelaps
-        ports:
-        - name: http
-          containerPort: 5000
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-        - mountPath: /host/
-          name: db
+        - name: emydocephalus
+          image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:emydocephalus
+          ports:
+            - name: http
+              containerPort: 8080
+          imagePullPolicy: IfNotPresent
+        - name: hydrelaps
+          image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:hydrelaps
+          ports:
+            - name: http
+              containerPort: 5000
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /host/
+              name: db
       volumes:
-      - hostPath:
-          path: /
-        name: db
+        - hostPath:
+            path: /
+          name: db
 ---
 ## JumpBox Resources
 apiVersion: v1
@@ -105,33 +105,33 @@ metadata:
   name: coastline-auth-access
   namespace: coastline
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - pods
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - ""
-  resources:
-  - pods/attach
-  verbs:
-  - create
-  - patch
-  - delete
-- apiGroups:
-  - ""
-  resources:
-  - pods/ephemeralcontainers
-  verbs:
-  - get
-  - list
-  - watch
-  - create
-  - patch
-  - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - pods/attach
+    verbs:
+      - create
+      - patch
+      - delete
+  - apiGroups:
+      - ""
+    resources:
+      - pods/ephemeralcontainers
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - patch
+      - delete
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -143,22 +143,22 @@ roleRef:
   kind: Role
   name: coastline-auth-access
 subjects:
-- kind: ServiceAccount
-  name: sre
-  namespace: dmz
+  - kind: ServiceAccount
+    name: sre
+    namespace: dmz
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: cluster-ns-read
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - namespaces
-  verbs:
-  - get
-  - list
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - get
+      - list
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -169,9 +169,9 @@ roleRef:
   kind: ClusterRole
   name: cluster-ns-read
 subjects:
-- kind: ServiceAccount
-  name: sre
-  namespace: dmz
+  - kind: ServiceAccount
+    name: sre
+    namespace: dmz
 ---
 apiVersion: v1
 kind: Pod
@@ -181,10 +181,10 @@ metadata:
 spec:
   serviceAccountName: sre
   containers:
-  # basic container image
-  - image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:jumpbox
-    command: ["sleep", "2d"]
-    name: jumpbox-terminal
-    securityContext:
-      allowPrivilegeEscalation: false
+    # basic container image
+    - image: docker.io/controlplaneoffsec/scenario-coastline-cluster-attack:jumpbox
+      command: [ "sleep", "2d" ]
+      name: jumpbox-terminal
+      securityContext:
+        allowPrivilegeEscalation: false
   restartPolicy: Always

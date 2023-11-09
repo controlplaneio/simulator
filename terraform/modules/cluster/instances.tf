@@ -19,7 +19,7 @@ module "instances" {
   volume_type                 = each.value.volume_type
   volume_size                 = each.value.volume_size
   user_data                   = data.template_file.cloud_config.rendered
-  tags = merge(
+  tags                        = merge(
     var.tags,
     {
       "Name"          = format("%s %s", title(var.name), title(each.value.name))
@@ -46,7 +46,7 @@ resource "aws_security_group_rule" "instances_vpc_ingress" {
   protocol          = -1
   from_port         = 0
   to_port           = 0
-  cidr_blocks = [
+  cidr_blocks       = [
     data.aws_vpc.target.cidr_block,
   ]
 }
@@ -57,7 +57,7 @@ resource "aws_security_group_rule" "instances_open_egress" {
   protocol          = -1
   from_port         = 0
   to_port           = 0
-  cidr_blocks = [
+  cidr_blocks       = [
     "0.0.0.0/0",
   ]
 }

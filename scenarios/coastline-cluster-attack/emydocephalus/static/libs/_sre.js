@@ -35,14 +35,14 @@
  * other compatibility work.
  */
 
-function assert(condition){
-    if(! condition){
-        throw Error('condition is false')
-    }
+function assert(condition) {
+  if (!condition) {
+    throw Error('condition is false')
+  }
 }
 
 const copyright =
-    " SRE 2.2.2 Copyright (c) 1997-2002 by Secret Labs AB ";
+  " SRE 2.2.2 Copyright (c) 1997-2002 by Secret Labs AB ";
 
 /*
 #define PY_SSIZE_T_CLEAN
@@ -52,8 +52,9 @@ const copyright =
 #include "pycore_moduleobject.h"  // _PyModule_GetState()
 */
 function _PyModule_GetState(mod) {
-    return mod.md_state;
+  return mod.md_state;
 }
+
 // #include "structmember.h"         // PyMemberDef
 
 // #include "sre.h"
@@ -66,161 +67,172 @@ var SRE_CODE_BITS = 32 // (8 * sizeof(SRE_CODE))
 
 /* error codes */
 const SRE_ERROR_ILLEGAL = -1, /* illegal opcode */
-      SRE_ERROR_STATE = -2, /* illegal state */
-      SRE_ERROR_RECURSION_LIMIT = -3, /* runaway recursion */
-      SRE_ERROR_MEMORY = -9, /* out of memory */
-      SRE_ERROR_INTERRUPTED = -10 /* signal handler raised exception */
+  SRE_ERROR_STATE = -2, /* illegal state */
+  SRE_ERROR_RECURSION_LIMIT = -3, /* runaway recursion */
+  SRE_ERROR_MEMORY = -9, /* out of memory */
+  SRE_ERROR_INTERRUPTED = -10 /* signal handler raised exception */
 
 var VERBOSE = false
-function TRACE(v){
-    if(VERBOSE){
-        console.log(v)
-    }
+
+function TRACE(v) {
+  if (VERBOSE) {
+    console.log(v)
+  }
 }
 
 /* -------------------------------------------------------------------- */
+
 /* search engine state */
 
-function SRE_IS_DIGIT(ch){
-    return (ch) <= '9' && Py_ISDIGIT(ch)
-}
-function SRE_IS_SPACE(ch){
-    return (ch) <= ' ' && Py_ISSPACE(ch)
-}
-function SRE_IS_LINEBREAK(ch){
-    return ch == '\n'
-}
-function SRE_IS_WORD(ch){
-    return ch <= 'z' && (Py_ISALNUM(ch) || ch == '_')
+function SRE_IS_DIGIT(ch) {
+  return (ch) <= '9' && Py_ISDIGIT(ch)
 }
 
-function sre_lower_ascii(ch){
-    return ((ch) < 128 ? Py_TOLOWER(ch) : ch);
+function SRE_IS_SPACE(ch) {
+  return (ch) <= ' ' && Py_ISSPACE(ch)
+}
+
+function SRE_IS_LINEBREAK(ch) {
+  return ch == '\n'
+}
+
+function SRE_IS_WORD(ch) {
+  return ch <= 'z' && (Py_ISALNUM(ch) || ch == '_')
+}
+
+function sre_lower_ascii(ch) {
+  return ((ch) < 128 ? Py_TOLOWER(ch) : ch);
 }
 
 /* locale-specific character predicates */
+
 /* !(c & ~N) == (c < N+1) for any unsigned c, this avoids
  * warnings when c's type supports only numbers < N+1 */
-function SRE_LOC_IS_ALNUM(ch){
-    return  (!((ch) & ~255) ? isalnum((ch)) : 0)
-}
-function SRE_LOC_IS_WORD(ch){
-    return (SRE_LOC_IS_ALNUM((ch)) || (ch) == '_')
-}
-function sre_lower_locale(ch){
-    return ((ch) < 256 ? tolower((ch)) : ch);
+function SRE_LOC_IS_ALNUM(ch) {
+  return (!((ch) & ~255) ? isalnum((ch)) : 0)
 }
 
-function sre_upper_locale(ch){
-    return ((ch) < 256 ? toupper((ch)) : ch);
+function SRE_LOC_IS_WORD(ch) {
+  return (SRE_LOC_IS_ALNUM((ch)) || (ch) == '_')
+}
+
+function sre_lower_locale(ch) {
+  return ((ch) < 256 ? tolower((ch)) : ch);
+}
+
+function sre_upper_locale(ch) {
+  return ((ch) < 256 ? toupper((ch)) : ch);
 }
 
 /* unicode-specific character predicates */
 
-function SRE_UNI_IS_DIGIT(ch){
-    return Py_UNICODE_ISDECIMAL(ch)
-}
-function SRE_UNI_IS_SPACE(ch){
-    return Py_UNICODE_ISSPACE(ch)
-}
-function SRE_UNI_IS_LINEBREAK(ch){
-    return Py_UNICODE_ISLINEBREAK(ch)
-}
-function SRE_UNI_IS_ALNUM(ch){
-    return Py_UNICODE_ISALNUM(ch)
-}
-function SRE_UNI_IS_WORD(ch){
-    return (SRE_UNI_IS_ALNUM(ch) || (ch) == '_')
-}
-function sre_lower_unicode(ch)
-{
-    return Py_UNICODE_TOLOWER(ch);
+function SRE_UNI_IS_DIGIT(ch) {
+  return Py_UNICODE_ISDECIMAL(ch)
 }
 
-function sre_upper_unicode(ch){
-    return Py_UNICODE_TOUPPER(ch);
+function SRE_UNI_IS_SPACE(ch) {
+  return Py_UNICODE_ISSPACE(ch)
 }
 
-function sre_category(category, ch){
-    switch (category) {
+function SRE_UNI_IS_LINEBREAK(ch) {
+  return Py_UNICODE_ISLINEBREAK(ch)
+}
+
+function SRE_UNI_IS_ALNUM(ch) {
+  return Py_UNICODE_ISALNUM(ch)
+}
+
+function SRE_UNI_IS_WORD(ch) {
+  return (SRE_UNI_IS_ALNUM(ch) || (ch) == '_')
+}
+
+function sre_lower_unicode(ch) {
+  return Py_UNICODE_TOLOWER(ch);
+}
+
+function sre_upper_unicode(ch) {
+  return Py_UNICODE_TOUPPER(ch);
+}
+
+function sre_category(category, ch) {
+  switch (category) {
 
     case SRE_CATEGORY_DIGIT:
-        return SRE_IS_DIGIT(ch);
+      return SRE_IS_DIGIT(ch);
     case SRE_CATEGORY_NOT_DIGIT:
-        return !SRE_IS_DIGIT(ch);
+      return !SRE_IS_DIGIT(ch);
     case SRE_CATEGORY_SPACE:
-        return SRE_IS_SPACE(ch);
+      return SRE_IS_SPACE(ch);
     case SRE_CATEGORY_NOT_SPACE:
-        return !SRE_IS_SPACE(ch);
+      return !SRE_IS_SPACE(ch);
     case SRE_CATEGORY_WORD:
-        return SRE_IS_WORD(ch);
+      return SRE_IS_WORD(ch);
     case SRE_CATEGORY_NOT_WORD:
-        return !SRE_IS_WORD(ch);
+      return !SRE_IS_WORD(ch);
     case SRE_CATEGORY_LINEBREAK:
-        return SRE_IS_LINEBREAK(ch);
+      return SRE_IS_LINEBREAK(ch);
     case SRE_CATEGORY_NOT_LINEBREAK:
-        return !SRE_IS_LINEBREAK(ch);
+      return !SRE_IS_LINEBREAK(ch);
 
     case SRE_CATEGORY_LOC_WORD:
-        return SRE_LOC_IS_WORD(ch);
+      return SRE_LOC_IS_WORD(ch);
     case SRE_CATEGORY_LOC_NOT_WORD:
-        return !SRE_LOC_IS_WORD(ch);
+      return !SRE_LOC_IS_WORD(ch);
 
     case SRE_CATEGORY_UNI_DIGIT:
-        return SRE_UNI_IS_DIGIT(ch);
+      return SRE_UNI_IS_DIGIT(ch);
     case SRE_CATEGORY_UNI_NOT_DIGIT:
-        return !SRE_UNI_IS_DIGIT(ch);
+      return !SRE_UNI_IS_DIGIT(ch);
     case SRE_CATEGORY_UNI_SPACE:
-        return SRE_UNI_IS_SPACE(ch);
+      return SRE_UNI_IS_SPACE(ch);
     case SRE_CATEGORY_UNI_NOT_SPACE:
-        return !SRE_UNI_IS_SPACE(ch);
+      return !SRE_UNI_IS_SPACE(ch);
     case SRE_CATEGORY_UNI_WORD:
-        return SRE_UNI_IS_WORD(ch);
+      return SRE_UNI_IS_WORD(ch);
     case SRE_CATEGORY_UNI_NOT_WORD:
-        return !SRE_UNI_IS_WORD(ch);
+      return !SRE_UNI_IS_WORD(ch);
     case SRE_CATEGORY_UNI_LINEBREAK:
-        return SRE_UNI_IS_LINEBREAK(ch);
+      return SRE_UNI_IS_LINEBREAK(ch);
     case SRE_CATEGORY_UNI_NOT_LINEBREAK:
-        return !SRE_UNI_IS_LINEBREAK(ch);
-    }
-    return 0;
+      return !SRE_UNI_IS_LINEBREAK(ch);
+  }
+  return 0;
 }
 
-function char_loc_ignore(pattern, ch){
-    return ch == pattern
-        || sre_lower_locale(ch) == pattern
-        || sre_upper_locale(ch) == pattern;
+function char_loc_ignore(pattern, ch) {
+  return ch == pattern
+    || sre_lower_locale(ch) == pattern
+    || sre_upper_locale(ch) == pattern;
 }
 
 
 /* helpers */
 
-function data_stack_dealloc(state)
-{
-    if (state.data_stack) {
-        PyMem_Free(state.data_stack);
-        state.data_stack = NULL;
-    }
-    state.data_stack_size = state.data_stack_base = 0;
+function data_stack_dealloc(state) {
+  if (state.data_stack) {
+    PyMem_Free(state.data_stack);
+    state.data_stack = NULL;
+  }
+  state.data_stack_size = state.data_stack_base = 0;
 }
 
-function data_stack_grow(state, size){
-    var minsize, cursize;
-    minsize = state.data_stack_base + size;
-    cursize = state.data_stack_size;
-    if (cursize < minsize) {
-        var stack;
-        cursize = minsize + minsize / 4 + 1024;
-        TRACE(("allocate/grow stack %zd\n", cursize));
-        stack = PyMem_Realloc(state.data_stack, cursize);
-        if (!stack) {
-            data_stack_dealloc(state);
-            return SRE_ERROR_MEMORY;
-        }
-        state.data_stack = stack;
-        state.data_stack_size = cursize;
+function data_stack_grow(state, size) {
+  var minsize, cursize;
+  minsize = state.data_stack_base + size;
+  cursize = state.data_stack_size;
+  if (cursize < minsize) {
+    var stack;
+    cursize = minsize + minsize / 4 + 1024;
+    TRACE(("allocate/grow stack %zd\n", cursize));
+    stack = PyMem_Realloc(state.data_stack, cursize);
+    if (!stack) {
+      data_stack_dealloc(state);
+      return SRE_ERROR_MEMORY;
     }
-    return 0;
+    state.data_stack = stack;
+    state.data_stack_size = cursize;
+  }
+  return 0;
 }
 
 /* generate 8-bit version */
@@ -248,30 +260,31 @@ function SRE(F){
 
 //const SRE_CHAR = Py_UCS4,
 //      SIZEOF_SRE_CHAR = 4
-function SRE(F){
-    return 4 //sre_ucs4_ //##F
+function SRE(F) {
+  return 4 //sre_ucs4_ //##F
 }
+
 /* #include "sre_lib.h" */
 
 /* -------------------------------------------------------------------- */
 /* factories and destructors */
 
 /* module state */
-function _sremodulestate(PatternType, MatchType, ScannerType){
-    this.Pattern_Type = Pattern_Type;
-    this.Match_Type = Match_Type;
-    this.Scanner_Type = Scanner_Type;
+function _sremodulestate(PatternType, MatchType, ScannerType) {
+  this.Pattern_Type = Pattern_Type;
+  this.Match_Type = Match_Type;
+  this.Scanner_Type = Scanner_Type;
 }
 
-function get_sre_module_state(m){
-    console.log('get module state', m)
-    var state = _PyModule_GetState(m);
-    assert(state);
-    return state;
+function get_sre_module_state(m) {
+  console.log('get module state', m)
+  var state = _PyModule_GetState(m);
+  assert(state);
+  return state;
 }
 
-function get_sre_module_state_by_class(cls){
-    return get_sre_module_state(PyType_GetModule(cls))
+function get_sre_module_state_by_class(cls) {
+  return get_sre_module_state(PyType_GetModule(cls))
 }
 
 /* see sre.h for object declarations */
@@ -292,8 +305,8 @@ class _sre.SRE_Scanner "ScannerObject *" "get_sre_module_state_by_class(tp)->Sca
 _sre.getcodesize -> int
 [clinic start generated code]*/
 
-function _sre_getcodesize_impl(module){
-    return sizeof(SRE_CODE);
+function _sre_getcodesize_impl(module) {
+  return sizeof(SRE_CODE);
 }
 
 /*[clinic input]
@@ -304,9 +317,9 @@ _sre.ascii_iscased -> bool
 
 [clinic start generated code]*/
 
-function _sre_ascii_iscased_impl(module,  character){
-    var ch = character;
-    return ch < 128 && Py_ISALPHA(ch);
+function _sre_ascii_iscased_impl(module, character) {
+  var ch = character;
+  return ch < 128 && Py_ISALPHA(ch);
 }
 
 /*[clinic input]
@@ -317,9 +330,9 @@ _sre.unicode_iscased -> bool
 
 [clinic start generated code]*/
 
-function _sre_unicode_iscased_impl(module, character){
-    var ch = character;
-    return ch != sre_lower_unicode(ch) || ch != sre_upper_unicode(ch);
+function _sre_unicode_iscased_impl(module, character) {
+  var ch = character;
+  return ch != sre_lower_unicode(ch) || ch != sre_upper_unicode(ch);
 }
 
 /*[clinic input]
@@ -330,8 +343,8 @@ _sre.ascii_tolower -> int
 
 [clinic start generated code]*/
 
-function _sre_ascii_tolower_impl(module, character){
-    return sre_lower_ascii(character);
+function _sre_ascii_tolower_impl(module, character) {
+  return sre_lower_ascii(character);
 }
 
 /*[clinic input]
@@ -342,248 +355,248 @@ _sre.unicode_tolower -> int
 
 [clinic start generated code]*/
 
-function _sre_unicode_tolower_impl(module, character){
-    return sre_lower_unicode(character);
+function _sre_unicode_tolower_impl(module, character) {
+  return sre_lower_unicode(character);
 }
 
-function state_reset(state){
-    /* state->mark will be set to 0 in SRE_OP_MARK dynamically. */
-    /*memset(state->mark, 0, sizeof(*state->mark) * SRE_MARK_SIZE);*/
+function state_reset(state) {
+  /* state->mark will be set to 0 in SRE_OP_MARK dynamically. */
+  /*memset(state->mark, 0, sizeof(*state->mark) * SRE_MARK_SIZE);*/
 
-    state.lastmark = -1;
-    state.lastindex = -1;
+  state.lastmark = -1;
+  state.lastindex = -1;
 
-    state.repeat = NULL;
+  state.repeat = NULL;
 
-    data_stack_dealloc(state);
+  data_stack_dealloc(state);
 }
 
-function getstring(string, p_length, p_isbytes, p_charsize, view){
-    /* given a python object, return a data pointer, a length (in
-       characters), and a character size.  return NULL if the object
-       is not a string (or not compatible) */
+function getstring(string, p_length, p_isbytes, p_charsize, view) {
+  /* given a python object, return a data pointer, a length (in
+     characters), and a character size.  return NULL if the object
+     is not a string (or not compatible) */
 
-    /* Unicode objects do not support the buffer API. So, get the data
-       directly instead. */
-    if (PyUnicode_Check(string)) {
-        if (PyUnicode_READY(string) == -1){
-            return NULL;
-        }
-        p_length = PyUnicode_GET_LENGTH(string);
-        p_charsize = PyUnicode_KIND(string);
-        p_isbytes = 0;
-        return PyUnicode_DATA(string);
+  /* Unicode objects do not support the buffer API. So, get the data
+     directly instead. */
+  if (PyUnicode_Check(string)) {
+    if (PyUnicode_READY(string) == -1) {
+      return NULL;
     }
+    p_length = PyUnicode_GET_LENGTH(string);
+    p_charsize = PyUnicode_KIND(string);
+    p_isbytes = 0;
+    return PyUnicode_DATA(string);
+  }
 
-    /* get pointer to byte string buffer */
-    if (PyObject_GetBuffer(string, view, PyBUF_SIMPLE) != 0) {
-        PyErr_Format(PyExc_TypeError,
-            "expected string or bytes-like object, got '%.200s'",
-            Py_TYPE(string).tp_name);
-        return NULL;
-    }
+  /* get pointer to byte string buffer */
+  if (PyObject_GetBuffer(string, view, PyBUF_SIMPLE) != 0) {
+    PyErr_Format(PyExc_TypeError,
+      "expected string or bytes-like object, got '%.200s'",
+      Py_TYPE(string).tp_name);
+    return NULL;
+  }
 
-    p_length = view.len;
-    p_charsize = 1;
-    p_isbytes = 1;
+  p_length = view.len;
+  p_charsize = 1;
+  p_isbytes = 1;
 
-    if (view.buf == NULL) {
-        PyErr_SetString(PyExc_ValueError, "Buffer is NULL");
-        PyBuffer_Release(view);
-        view.buf = NULL;
-        return NULL;
-    }
-    return view.buf;
+  if (view.buf == NULL) {
+    PyErr_SetString(PyExc_ValueError, "Buffer is NULL");
+    PyBuffer_Release(view);
+    view.buf = NULL;
+    return NULL;
+  }
+  return view.buf;
 }
 
-function state_init(state, pattern, string, start, end){
-    /* prepare state object */
+function state_init(state, pattern, string, start, end) {
+  /* prepare state object */
 
-    var length,
-        isbytes,
-        charsize,
-        ptr;
+  var length,
+    isbytes,
+    charsize,
+    ptr;
 
-    memset(state, 0, sizeof(SRE_STATE));
+  memset(state, 0, sizeof(SRE_STATE));
 
-    state.mark = PyMem_New(pattern.groups * 2);
-    if (! state.mark) {
-        PyErr_NoMemory();
-        throw err;
-    }
-    state.lastmark = -1;
-    state.lastindex = -1;
+  state.mark = PyMem_New(pattern.groups * 2);
+  if (!state.mark) {
+    PyErr_NoMemory();
+    throw err;
+  }
+  state.lastmark = -1;
+  state.lastindex = -1;
 
-    state.buffer.buf = NULL;
-    ptr = getstring(string, length, isbytes, charsize, state.buffer);
-    if (!ptr){
-        throw err;
-    }
+  state.buffer.buf = NULL;
+  ptr = getstring(string, length, isbytes, charsize, state.buffer);
+  if (!ptr) {
+    throw err;
+  }
 
-    if (isbytes && pattern.isbytes == 0) {
-        PyErr_SetString(PyExc_TypeError,
-                        "cannot use a string pattern on a bytes-like object");
-        throw err;
-    }
-    if (!isbytes && pattern.isbytes > 0) {
-        PyErr_SetString(PyExc_TypeError,
-                        "cannot use a bytes pattern on a string-like object");
-        throw err;
-    }
+  if (isbytes && pattern.isbytes == 0) {
+    PyErr_SetString(PyExc_TypeError,
+      "cannot use a string pattern on a bytes-like object");
+    throw err;
+  }
+  if (!isbytes && pattern.isbytes > 0) {
+    PyErr_SetString(PyExc_TypeError,
+      "cannot use a bytes pattern on a string-like object");
+    throw err;
+  }
 
-    /* adjust boundaries */
-    if (start < 0){
-        start = 0;
-    }else if (start > length){
-        start = length;
-    }
-    if (end < 0){
-        end = 0;
-    }else if (end > length){
-        end = length;
-    }
-    state.isbytes = isbytes;
-    state.charsize = charsize;
-    state.match_all = 0;
-    state.must_advance = 0;
+  /* adjust boundaries */
+  if (start < 0) {
+    start = 0;
+  } else if (start > length) {
+    start = length;
+  }
+  if (end < 0) {
+    end = 0;
+  } else if (end > length) {
+    end = length;
+  }
+  state.isbytes = isbytes;
+  state.charsize = charsize;
+  state.match_all = 0;
+  state.must_advance = 0;
 
-    state.beginning = ptr;
+  state.beginning = ptr;
 
-    state.start = ptr + start * state.charsize
-    state.end =  ptr + end * state.charsize
+  state.start = ptr + start * state.charsize
+  state.end = ptr + end * state.charsize
 
-    Py_INCREF(string);
-    state.string = string;
-    state.pos = start;
-    state.endpos = end;
+  Py_INCREF(string);
+  state.string = string;
+  state.pos = start;
+  state.endpos = end;
 
-    return string;
+  return string;
 }
 
-function state_fini(state){
-    if (state.buffer.buf){
-        PyBuffer_Release(state.buffer);
-    }
-    Py_XDECREF(state.string);
-    data_stack_dealloc(state);
-    /* See above PyMem_Del for why we explicitly cast here. */
-    PyMem_Free(state.mark);
-    state.mark = NULL;
+function state_fini(state) {
+  if (state.buffer.buf) {
+    PyBuffer_Release(state.buffer);
+  }
+  Py_XDECREF(state.string);
+  data_stack_dealloc(state);
+  /* See above PyMem_Del for why we explicitly cast here. */
+  PyMem_Free(state.mark);
+  state.mark = NULL;
 }
 
 /* calculate offset from start of string */
-function STATE_OFFSET(state, member){
-    return (member - state.beginning) / state.charsize
+function STATE_OFFSET(state, member) {
+  return (member - state.beginning) / state.charsize
 }
 
-function getslice(isbytes, ptr, string, start, end){
-    if (isbytes) {
-        if (PyBytes_CheckExact(string) &&
-            start == 0 && end == PyBytes_GET_SIZE(string)) {
-            Py_INCREF(string);
-            return string;
-        }
-        return PyBytes_FromStringAndSize(
-                ptr + start, end - start);
-    }else {
-        return PyUnicode_Substring(string, start, end);
+function getslice(isbytes, ptr, string, start, end) {
+  if (isbytes) {
+    if (PyBytes_CheckExact(string) &&
+      start == 0 && end == PyBytes_GET_SIZE(string)) {
+      Py_INCREF(string);
+      return string;
     }
+    return PyBytes_FromStringAndSize(
+      ptr + start, end - start);
+  } else {
+    return PyUnicode_Substring(string, start, end);
+  }
 }
 
-function state_getslice(state, index, string, empty){
-    var i, j;
+function state_getslice(state, index, string, empty) {
+  var i, j;
 
-    index = (index - 1) * 2;
+  index = (index - 1) * 2;
 
-    if (string == _b_.None ||
-            index >= state.lastmark ||
-            ! state.mark[index] ||
-            ! state.mark[index + 1]) {
-        if (empty){
-            /* want empty string */
-            i = j = 0;
-        }else {
-            Py_RETURN_NONE;
-        }
+  if (string == _b_.None ||
+    index >= state.lastmark ||
+    !state.mark[index] ||
+    !state.mark[index + 1]) {
+    if (empty) {
+      /* want empty string */
+      i = j = 0;
     } else {
-        i = STATE_OFFSET(state, state.mark[index]);
-        j = STATE_OFFSET(state, state.mark[index + 1]);
+      Py_RETURN_NONE;
     }
+  } else {
+    i = STATE_OFFSET(state, state.mark[index]);
+    j = STATE_OFFSET(state, state.mark[index + 1]);
+  }
 
-    return getslice(state.isbytes, state.beginning, string, i, j);
+  return getslice(state.isbytes, state.beginning, string, i, j);
 }
 
-function pattern_error(status){
-    switch (status) {
+function pattern_error(status) {
+  switch (status) {
     case SRE_ERROR_RECURSION_LIMIT:
-        /* This error code seems to be unused. */
-        PyErr_SetString(
-            PyExc_RecursionError,
-            "maximum recursion limit exceeded"
-            );
-        break;
+      /* This error code seems to be unused. */
+      PyErr_SetString(
+        PyExc_RecursionError,
+        "maximum recursion limit exceeded"
+      );
+      break;
     case SRE_ERROR_MEMORY:
-        PyErr_NoMemory();
-        break;
+      PyErr_NoMemory();
+      break;
     case SRE_ERROR_INTERRUPTED:
-    /* An exception has already been raised, so let it fly */
-        break;
+      /* An exception has already been raised, so let it fly */
+      break;
     default:
-        /* other error codes indicate compiler/engine bugs */
-        PyErr_SetString(
-            PyExc_RuntimeError,
-            "internal error in regular expression engine"
-            );
-    }
+      /* other error codes indicate compiler/engine bugs */
+      PyErr_SetString(
+        PyExc_RuntimeError,
+        "internal error in regular expression engine"
+      );
+  }
 }
 
-function pattern_traverse(self, visit, arg){
-    Py_VISIT(Py_TYPE(self));
-    Py_VISIT(self.groupindex);
-    Py_VISIT(self.indexgroup);
-    Py_VISIT(self.pattern);
-    return 0;
+function pattern_traverse(self, visit, arg) {
+  Py_VISIT(Py_TYPE(self));
+  Py_VISIT(self.groupindex);
+  Py_VISIT(self.indexgroup);
+  Py_VISIT(self.pattern);
+  return 0;
 }
 
-function pattern_clear(self){
-    Py_CLEAR(self.groupindex);
-    Py_CLEAR(self.indexgroup);
-    Py_CLEAR(self.pattern);
-    return 0;
+function pattern_clear(self) {
+  Py_CLEAR(self.groupindex);
+  Py_CLEAR(self.indexgroup);
+  Py_CLEAR(self.pattern);
+  return 0;
 }
 
-function pattern_dealloc(self){
-    var tp = Py_TYPE(self);
+function pattern_dealloc(self) {
+  var tp = Py_TYPE(self);
 
-    PyObject_GC_UnTrack(self);
-    if (self.weakreflist != NULL) {
-        PyObject_ClearWeakRefs(self);
-    }
-    pattern_clear(self);
-    tp.tp_free(self);
-    Py_DECREF(tp);
+  PyObject_GC_UnTrack(self);
+  if (self.weakreflist != NULL) {
+    PyObject_ClearWeakRefs(self);
+  }
+  pattern_clear(self);
+  tp.tp_free(self);
+  Py_DECREF(tp);
 }
 
-function sre_match(state, pattern){
-    if (state.charsize == 1){
-        return sre_ucs1_match(state, pattern, 1);
-    }
-    if (state.charsize == 2){
-        return sre_ucs2_match(state, pattern, 1);
-    }
-    assert(state.charsize == 4);
-    return sre_ucs4_match(state, pattern, 1);
+function sre_match(state, pattern) {
+  if (state.charsize == 1) {
+    return sre_ucs1_match(state, pattern, 1);
+  }
+  if (state.charsize == 2) {
+    return sre_ucs2_match(state, pattern, 1);
+  }
+  assert(state.charsize == 4);
+  return sre_ucs4_match(state, pattern, 1);
 }
 
-function sre_search(state, pattern){
-    if (state.charsize == 1){
-        return sre_ucs1_search(state, pattern);
-    }
-    if (state.charsize == 2){
-        return sre_ucs2_search(state, pattern);
-    }
-    assert(state.charsize == 4);
-    return sre_ucs4_search(state, pattern);
+function sre_search(state, pattern) {
+  if (state.charsize == 1) {
+    return sre_ucs1_search(state, pattern);
+  }
+  if (state.charsize == 2) {
+    return sre_ucs2_search(state, pattern);
+  }
+  assert(state.charsize == 4);
+  return sre_ucs4_search(state, pattern);
 }
 
 /*[clinic input]
@@ -599,31 +612,31 @@ Matches zero or more characters at the beginning of the string.
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_match_impl(self, cls,
-                            string, pos,
-                            endpos){
-    var module_state = get_sre_module_state_by_class(cls);
-    var state,
-        status,
-        match;
+                                     string, pos,
+                                     endpos) {
+  var module_state = get_sre_module_state_by_class(cls);
+  var state,
+    status,
+    match;
 
-    if (!state_init(state, self, string, pos, endpos)){
-        return NULL;
-    }
-    state.ptr = state.start;
+  if (!state_init(state, self, string, pos, endpos)) {
+    return NULL;
+  }
+  state.ptr = state.start;
 
-    TRACE(("|%p|%p|MATCH\n", PatternObject_GetCode(self), state.ptr));
+  TRACE(("|%p|%p|MATCH\n", PatternObject_GetCode(self), state.ptr));
 
-    status = sre_match(state, PatternObject_GetCode(self));
+  status = sre_match(state, PatternObject_GetCode(self));
 
-    TRACE(("|%p|%p|END\n", PatternObject_GetCode(self), state.ptr));
-    if (PyErr_Occurred()) {
-        state_fini(state);
-        return NULL;
-    }
-
-    match = pattern_new_match(module_state, self, state, status);
+  TRACE(("|%p|%p|END\n", PatternObject_GetCode(self), state.ptr));
+  if (PyErr_Occurred()) {
     state_fini(state);
-    return match;
+    return NULL;
+  }
+
+  match = pattern_new_match(module_state, self, state, status);
+  state_fini(state);
+  return match;
 }
 
 /*[clinic input]
@@ -639,32 +652,32 @@ Matches against all of the string.
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_fullmatch_impl(self, cls,
-                                string, pos,
-                                endpos){
-    var module_state = get_sre_module_state_by_class(cls),
-        state,
-        status,
-        match;
+                                         string, pos,
+                                         endpos) {
+  var module_state = get_sre_module_state_by_class(cls),
+    state,
+    status,
+    match;
 
-    if (!state_init(state, self, string, pos, endpos)){
-        return NULL;
-    }
-    state.ptr = state.start;
+  if (!state_init(state, self, string, pos, endpos)) {
+    return NULL;
+  }
+  state.ptr = state.start;
 
-    TRACE(("|%p|%p|FULLMATCH\n", PatternObject_GetCode(self), state.ptr));
+  TRACE(("|%p|%p|FULLMATCH\n", PatternObject_GetCode(self), state.ptr));
 
-    state.match_all = 1;
-    status = sre_match(state, PatternObject_GetCode(self));
+  state.match_all = 1;
+  status = sre_match(state, PatternObject_GetCode(self));
 
-    TRACE(("|%p|%p|END\n", PatternObject_GetCode(self), state.ptr));
-    if (PyErr_Occurred()) {
-        state_fini(state);
-        return NULL;
-    }
-
-    match = pattern_new_match(module_state, self, state, status);
+  TRACE(("|%p|%p|END\n", PatternObject_GetCode(self), state.ptr));
+  if (PyErr_Occurred()) {
     state_fini(state);
-    return match;
+    return NULL;
+  }
+
+  match = pattern_new_match(module_state, self, state, status);
+  state_fini(state);
+  return match;
 }
 
 /*[clinic input]
@@ -682,60 +695,60 @@ Return None if no position in the string matches.
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_search_impl(self, cls,
-                             string, pos,
-                             endpos){
-    var module_state = get_sre_module_state_by_class(cls),
-        state,
-        status,
-        match;
+                                      string, pos,
+                                      endpos) {
+  var module_state = get_sre_module_state_by_class(cls),
+    state,
+    status,
+    match;
 
-    if (!state_init(state, self, string, pos, endpos)){
-        return NULL
-    }
+  if (!state_init(state, self, string, pos, endpos)) {
+    return NULL
+  }
 
-    TRACE(("|%p|%p|SEARCH\n", PatternObject_GetCode(self), state.ptr));
+  TRACE(("|%p|%p|SEARCH\n", PatternObject_GetCode(self), state.ptr));
 
-    status = sre_search(state, PatternObject_GetCode(self));
+  status = sre_search(state, PatternObject_GetCode(self));
 
-    TRACE(("|%p|%p|END\n", PatternObject_GetCode(self), state.ptr));
+  TRACE(("|%p|%p|END\n", PatternObject_GetCode(self), state.ptr));
 
-    if (PyErr_Occurred()) {
-        state_fini(state);
-        return NULL;
-    }
-
-    match = pattern_new_match(module_state, self, state, status);
+  if (PyErr_Occurred()) {
     state_fini(state);
-    return match;
+    return NULL;
+  }
+
+  match = pattern_new_match(module_state, self, state, status);
+  state_fini(state);
+  return match;
 }
 
-function call(module, _function, args){
-    var name,
-        mod,
-        func,
-        result;
+function call(module, _function, args) {
+  var name,
+    mod,
+    func,
+    result;
 
-    if (!args){
-        return NULL;
-    }
-    name = PyUnicode_FromString(module);
-    if (!name){
-        return NULL;
-    }
-    mod = PyImport_Import(name);
-    Py_DECREF(name);
-    if (!mod){
-        return NULL;
-    }
-    func = PyObject_GetAttrString(mod, _function);
-    Py_DECREF(mod);
-    if (!func){
-        return NULL;
-    }
-    result = PyObject_CallObject(func, args);
-    Py_DECREF(func);
-    Py_DECREF(args);
-    return result;
+  if (!args) {
+    return NULL;
+  }
+  name = PyUnicode_FromString(module);
+  if (!name) {
+    return NULL;
+  }
+  mod = PyImport_Import(name);
+  Py_DECREF(name);
+  if (!mod) {
+    return NULL;
+  }
+  func = PyObject_GetAttrString(mod, _function);
+  Py_DECREF(mod);
+  if (!func) {
+    return NULL;
+  }
+  result = PyObject_CallObject(func, args);
+  Py_DECREF(func);
+  Py_DECREF(args);
+  return result;
 }
 
 /*[clinic input]
@@ -749,91 +762,91 @@ Return a list of all non-overlapping matches of pattern in string.
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_findall_impl(self, string,
-                              pos, endpos){
-    var state,
-        list,
-        status,
-        i, b, e;
+                                       pos, endpos) {
+  var state,
+    list,
+    status,
+    i, b, e;
 
-    if (!state_init(state, self, string, pos, endpos)){
-        return NULL;
-    }
-    list = PyList_New(0);
-    if (!list) {
-        state_fini(state);
-        return NULL;
-    }
-
-    while (state.start <= state.end) {
-
-        var item;
-
-        state_reset(state);
-
-        state.ptr = state.start;
-
-        status = sre_search(state, PatternObject_GetCode(self));
-        if (PyErr_Occurred()){
-            throw error;
-        }
-        if (status <= 0) {
-            if (status == 0){
-                break;
-            }
-            pattern_error(status);
-            throw error;
-        }
-
-        /* don't bother to build a match object */
-        switch (self.groups) {
-        case 0:
-            b = STATE_OFFSET(state, state.start);
-            e = STATE_OFFSET(state, state.ptr);
-            item = getslice(state.isbytes, state.beginning,
-                            string, b, e);
-            if (!item){
-                throw error;
-            }
-            break;
-        case 1:
-            item = state_getslice(state, 1, string, 1);
-            if (!item){
-                throw error;
-            }
-            break;
-        default:
-            item = PyTuple_New(self.groups);
-            if (!item){
-                throw error;
-            }
-            for (i = 0; i < self.groups; i++) {
-                var o = state_getslice(state, i+1, string, 1);
-                if (!o) {
-                    Py_DECREF(item);
-                    throw error;
-                }
-                PyTuple_SET_ITEM(item, i, o);
-            }
-            break;
-        }
-
-        status = PyList_Append(list, item);
-        Py_DECREF(item);
-        if (status < 0){
-            throw error;
-        }
-        state.must_advance = (state.ptr == state.start);
-        state.start = state.ptr;
-    }
-
-    state_fini(state);
-    return list;
-/*
-error:
-    Py_DECREF(list);
-    state_fini(&state);
+  if (!state_init(state, self, string, pos, endpos)) {
     return NULL;
-*/
+  }
+  list = PyList_New(0);
+  if (!list) {
+    state_fini(state);
+    return NULL;
+  }
+
+  while (state.start <= state.end) {
+
+    var item;
+
+    state_reset(state);
+
+    state.ptr = state.start;
+
+    status = sre_search(state, PatternObject_GetCode(self));
+    if (PyErr_Occurred()) {
+      throw error;
+    }
+    if (status <= 0) {
+      if (status == 0) {
+        break;
+      }
+      pattern_error(status);
+      throw error;
+    }
+
+    /* don't bother to build a match object */
+    switch (self.groups) {
+      case 0:
+        b = STATE_OFFSET(state, state.start);
+        e = STATE_OFFSET(state, state.ptr);
+        item = getslice(state.isbytes, state.beginning,
+          string, b, e);
+        if (!item) {
+          throw error;
+        }
+        break;
+      case 1:
+        item = state_getslice(state, 1, string, 1);
+        if (!item) {
+          throw error;
+        }
+        break;
+      default:
+        item = PyTuple_New(self.groups);
+        if (!item) {
+          throw error;
+        }
+        for (i = 0; i < self.groups; i++) {
+          var o = state_getslice(state, i + 1, string, 1);
+          if (!o) {
+            Py_DECREF(item);
+            throw error;
+          }
+          PyTuple_SET_ITEM(item, i, o);
+        }
+        break;
+    }
+
+    status = PyList_Append(list, item);
+    Py_DECREF(item);
+    if (status < 0) {
+      throw error;
+    }
+    state.must_advance = (state.ptr == state.start);
+    state.start = state.ptr;
+  }
+
+  state_fini(state);
+  return list;
+  /*
+  error:
+      Py_DECREF(list);
+      state_fini(&state);
+      return NULL;
+  */
 }
 
 /*[clinic input]
@@ -851,26 +864,26 @@ For each match, the iterator returns a match object.
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_finditer_impl(self, cls,
-                               string, pos,
-                               endpos){
-    var module_state = get_sre_module_state_by_class(cls),
-        scanner,
-        search,
-        iterator;
+                                        string, pos,
+                                        endpos) {
+  var module_state = get_sre_module_state_by_class(cls),
+    scanner,
+    search,
+    iterator;
 
-    scanner = pattern_scanner(module_state, self, string, pos, endpos);
-    if (!scanner){
-        return NULL;
-    }
-    search = PyObject_GetAttrString(scanner, "search");
-    Py_DECREF(scanner);
-    if (!search){
-        return NULL;
-    }
-    iterator = PyCallIter_New(search, Py_None);
-    Py_DECREF(search);
+  scanner = pattern_scanner(module_state, self, string, pos, endpos);
+  if (!scanner) {
+    return NULL;
+  }
+  search = PyObject_GetAttrString(scanner, "search");
+  Py_DECREF(scanner);
+  if (!search) {
+    return NULL;
+  }
+  iterator = PyCallIter_New(search, Py_None);
+  Py_DECREF(search);
 
-    return iterator;
+  return iterator;
 }
 
 /*[clinic input]
@@ -885,11 +898,11 @@ _sre.SRE_Pattern.scanner
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_scanner_impl(self, cls,
-                              string, pos,
-                              endpos){
-    var module_state = get_sre_module_state_by_class(cls);
+                                       string, pos,
+                                       endpos) {
+  var module_state = get_sre_module_state_by_class(cls);
 
-    return pattern_scanner(module_state, self, string, pos, endpos);
+  return pattern_scanner(module_state, self, string, pos, endpos);
 }
 
 /*[clinic input]
@@ -901,288 +914,288 @@ _sre.SRE_Pattern.split
 Split string by the occurrences of pattern.
 [clinic start generated code]*/
 
-function _sre_SRE_Pattern_split_impl(self, string, maxsplit){
-    var state,
-        list,
-        item,
-        status,
-        n,
-        i,
-        last;
+function _sre_SRE_Pattern_split_impl(self, string, maxsplit) {
+  var state,
+    list,
+    item,
+    status,
+    n,
+    i,
+    last;
 
-    assert(self.codesize != 0);
+  assert(self.codesize != 0);
 
-    if (!state_init(state, self, string, 0, PY_SSIZE_T_MAX)){
-        return NULL;
+  if (!state_init(state, self, string, 0, PY_SSIZE_T_MAX)) {
+    return NULL;
+  }
+  list = PyList_New(0);
+  if (!list) {
+    state_fini(state);
+    return NULL;
+  }
+
+  n = 0;
+  last = state.start;
+
+  while (!maxsplit || n < maxsplit) {
+
+    state_reset(state);
+
+    state.ptr = state.start;
+
+    status = sre_search(state, PatternObject_GetCode(self));
+    if (PyErr_Occurred()) {
+      throw error;
     }
-    list = PyList_New(0);
-    if (!list) {
-        state_fini(state);
-        return NULL;
-    }
-
-    n = 0;
-    last = state.start;
-
-    while (!maxsplit || n < maxsplit) {
-
-        state_reset(state);
-
-        state.ptr = state.start;
-
-        status = sre_search(state, PatternObject_GetCode(self));
-        if (PyErr_Occurred()){
-            throw error;
-        }
-        if (status <= 0) {
-            if (status == 0){
-                break;
-            }
-            pattern_error(status);
-            throw error;
-        }
-
-        /* get segment before this match */
-        item = getslice(state.isbytes, state.beginning,
-            string, STATE_OFFSET(state, last),
-            STATE_OFFSET(state, state.start)
-            );
-        if (!item){
-            throw error;
-        }
-        status = PyList_Append(list, item);
-        Py_DECREF(item);
-        if (status < 0){
-            throw error;
-        }
-        /* add groups (if any) */
-        for (i = 0; i < self.groups; i++) {
-            item = state_getslice(state, i + 1, string, 0);
-            if (!item){
-                throw error;
-            }
-            status = PyList_Append(list, item);
-            Py_DECREF(item);
-            if (status < 0){
-                throw error;
-            }
-        }
-
-        n = n + 1;
-        state.must_advance = (state.ptr == state.start);
-        last = state.start = state.ptr;
-
+    if (status <= 0) {
+      if (status == 0) {
+        break;
+      }
+      pattern_error(status);
+      throw error;
     }
 
-    /* get segment following last match (even if empty) */
+    /* get segment before this match */
     item = getslice(state.isbytes, state.beginning,
-        string, STATE_OFFSET(state, last), state.endpos
-        );
-    if (!item){
-        throw error;
+      string, STATE_OFFSET(state, last),
+      STATE_OFFSET(state, state.start)
+    );
+    if (!item) {
+      throw error;
     }
     status = PyList_Append(list, item);
     Py_DECREF(item);
-    if (status < 0){
-        throw error;
+    if (status < 0) {
+      throw error;
     }
-    state_fini(state);
-    return list;
-/*
-error:
-    Py_DECREF(list);
-    state_fini(&state);
-    return NULL;
-*/
+    /* add groups (if any) */
+    for (i = 0; i < self.groups; i++) {
+      item = state_getslice(state, i + 1, string, 0);
+      if (!item) {
+        throw error;
+      }
+      status = PyList_Append(list, item);
+      Py_DECREF(item);
+      if (status < 0) {
+        throw error;
+      }
+    }
+
+    n = n + 1;
+    state.must_advance = (state.ptr == state.start);
+    last = state.start = state.ptr;
+
+  }
+
+  /* get segment following last match (even if empty) */
+  item = getslice(state.isbytes, state.beginning,
+    string, STATE_OFFSET(state, last), state.endpos
+  );
+  if (!item) {
+    throw error;
+  }
+  status = PyList_Append(list, item);
+  Py_DECREF(item);
+  if (status < 0) {
+    throw error;
+  }
+  state_fini(state);
+  return list;
+  /*
+  error:
+      Py_DECREF(list);
+      state_fini(&state);
+      return NULL;
+  */
 }
 
-function pattern_subx(module_state, self, ptemplate, string, count, subn){
-    var state,
-        list,
-        joiner,
-        item,
-        filter,
-        match,
-        ptr,
-        status,
-        n,
-        i, b, e
-        isbytes, charsize,
-        filter_is_callable,
-        view;
+function pattern_subx(module_state, self, ptemplate, string, count, subn) {
+  var state,
+    list,
+    joiner,
+    item,
+    filter,
+    match,
+    ptr,
+    status,
+    n,
+    i, b, e
+  isbytes, charsize,
+    filter_is_callable,
+    view;
 
-    if (PyCallable_Check(ptemplate)) {
-        /* sub/subn takes either a function or a template */
-        filter = ptemplate;
-        Py_INCREF(filter);
-        filter_is_callable = 1;
+  if (PyCallable_Check(ptemplate)) {
+    /* sub/subn takes either a function or a template */
+    filter = ptemplate;
+    Py_INCREF(filter);
+    filter_is_callable = 1;
+  } else {
+    /* if not callable, check if it's a literal string */
+    var literal;
+    view.buf = NULL;
+    ptr = getstring(ptemplate, n, isbytes, charsize, view);
+    if (ptr) {
+      if (charsize == 1) {
+        literal = memchr(ptr, '\\', n) == NULL;
+      } else {
+        literal = PyUnicode_FindChar(ptemplate, '\\', 0, n, 1) == -1;
+      }
     } else {
-        /* if not callable, check if it's a literal string */
-        var literal;
-        view.buf = NULL;
-        ptr = getstring(ptemplate, n, isbytes, charsize, view);
-        if (ptr) {
-            if (charsize == 1){
-                literal = memchr(ptr, '\\', n) == NULL;
-            }else{
-                literal = PyUnicode_FindChar(ptemplate, '\\', 0, n, 1) == -1;
-            }
-        } else {
-            PyErr_Clear();
-            literal = 0;
-        }
-        if (view.buf){
-            PyBuffer_Release(view);
-        }
-        if (literal) {
-            filter = ptemplate;
-            Py_INCREF(filter);
-            filter_is_callable = 0;
-        } else {
-            /* not a literal; hand it over to the template compiler */
-            filter = call(
-                SRE_PY_MODULE, "_subx",
-                PyTuple_Pack(2, self, ptemplate)
-                );
-            if (!filter){
-                return NULL;
-            }
-            filter_is_callable = PyCallable_Check(filter);
-        }
+      PyErr_Clear();
+      literal = 0;
     }
-
-    if (!state_init(state, self, string, 0, PY_SSIZE_T_MAX)) {
-        Py_DECREF(filter);
+    if (view.buf) {
+      PyBuffer_Release(view);
+    }
+    if (literal) {
+      filter = ptemplate;
+      Py_INCREF(filter);
+      filter_is_callable = 0;
+    } else {
+      /* not a literal; hand it over to the template compiler */
+      filter = call(
+        SRE_PY_MODULE, "_subx",
+        PyTuple_Pack(2, self, ptemplate)
+      );
+      if (!filter) {
         return NULL;
+      }
+      filter_is_callable = PyCallable_Check(filter);
     }
+  }
 
-    list = PyList_New(0);
-    if (!list) {
-        Py_DECREF(filter);
-        state_fini(state);
-        return NULL;
-    }
-
-    n = i = 0;
-
-    while (!count || n < count) {
-
-        state_reset(state);
-
-        state.ptr = state.start;
-
-        status = sre_search(state, PatternObject_GetCode(self));
-        if (PyErr_Occurred()){
-            throw error;
-        }
-        if (status <= 0) {
-            if (status == 0){
-                break;
-            }
-            pattern_error(status);
-            throw error;
-        }
-
-        b = STATE_OFFSET(state, state.start);
-        e = STATE_OFFSET(state, state.ptr);
-
-        if (i < b) {
-            /* get segment before this match */
-            item = getslice(state.isbytes, state.beginning,
-                string, i, b);
-            if (!item){
-                throw error;
-            }
-            status = PyList_Append(list, item);
-            Py_DECREF(item);
-            if (status < 0){
-                throw error;
-            }
-        }
-
-        if (filter_is_callable) {
-            /* pass match object through filter */
-            match = pattern_new_match(module_state, self, state, 1);
-            if (!match){
-                throw error;
-            }
-            item = PyObject_CallOneArg(filter, match);
-            Py_DECREF(match);
-            if (!item){
-                throw error;
-            }
-        } else {
-            /* filter is literal string */
-            item = filter;
-            Py_INCREF(item);
-        }
-
-        /* add to list */
-        if (item != Py_None) {
-            status = PyList_Append(list, item);
-            Py_DECREF(item);
-            if (status < 0){
-                throw error;
-            }
-        }
-
-        i = e;
-        n = n + 1;
-        state.must_advance = (state.ptr == state.start);
-        state.start = state.ptr;
-    }
-
-    /* get segment following last match */
-    if (i < state.endpos) {
-        item = getslice(state.isbytes, state.beginning,
-                        string, i, state.endpos);
-        if (!item){
-            throw error;
-        }
-        status = PyList_Append(list, item);
-        Py_DECREF(item);
-        if (status < 0){
-            throw error;
-        }
-    }
-
-    state_fini(state);
-
-    Py_DECREF(filter);
-
-    /* convert list to single string (also removes list) */
-    joiner = getslice(state.isbytes, state.beginning, string, 0, 0);
-    if (!joiner) {
-        Py_DECREF(list);
-        return NULL;
-    }
-    if (PyList_GET_SIZE(list) == 0) {
-        Py_DECREF(list);
-        item = joiner;
-    }else {
-        if (state.isbytes){
-            item = _PyBytes_Join(joiner, list);
-        }else{
-            item = PyUnicode_Join(joiner, list);
-        }
-        Py_DECREF(joiner);
-        Py_DECREF(list);
-        if (!item){
-            return NULL;
-        }
-    }
-
-    if (subn){
-        return Py_BuildValue("Nn", item, n);
-    }
-    return item;
-/*
-error:
-    Py_DECREF(list);
-    state_fini(&state);
+  if (!state_init(state, self, string, 0, PY_SSIZE_T_MAX)) {
     Py_DECREF(filter);
     return NULL;
-*/
+  }
+
+  list = PyList_New(0);
+  if (!list) {
+    Py_DECREF(filter);
+    state_fini(state);
+    return NULL;
+  }
+
+  n = i = 0;
+
+  while (!count || n < count) {
+
+    state_reset(state);
+
+    state.ptr = state.start;
+
+    status = sre_search(state, PatternObject_GetCode(self));
+    if (PyErr_Occurred()) {
+      throw error;
+    }
+    if (status <= 0) {
+      if (status == 0) {
+        break;
+      }
+      pattern_error(status);
+      throw error;
+    }
+
+    b = STATE_OFFSET(state, state.start);
+    e = STATE_OFFSET(state, state.ptr);
+
+    if (i < b) {
+      /* get segment before this match */
+      item = getslice(state.isbytes, state.beginning,
+        string, i, b);
+      if (!item) {
+        throw error;
+      }
+      status = PyList_Append(list, item);
+      Py_DECREF(item);
+      if (status < 0) {
+        throw error;
+      }
+    }
+
+    if (filter_is_callable) {
+      /* pass match object through filter */
+      match = pattern_new_match(module_state, self, state, 1);
+      if (!match) {
+        throw error;
+      }
+      item = PyObject_CallOneArg(filter, match);
+      Py_DECREF(match);
+      if (!item) {
+        throw error;
+      }
+    } else {
+      /* filter is literal string */
+      item = filter;
+      Py_INCREF(item);
+    }
+
+    /* add to list */
+    if (item != Py_None) {
+      status = PyList_Append(list, item);
+      Py_DECREF(item);
+      if (status < 0) {
+        throw error;
+      }
+    }
+
+    i = e;
+    n = n + 1;
+    state.must_advance = (state.ptr == state.start);
+    state.start = state.ptr;
+  }
+
+  /* get segment following last match */
+  if (i < state.endpos) {
+    item = getslice(state.isbytes, state.beginning,
+      string, i, state.endpos);
+    if (!item) {
+      throw error;
+    }
+    status = PyList_Append(list, item);
+    Py_DECREF(item);
+    if (status < 0) {
+      throw error;
+    }
+  }
+
+  state_fini(state);
+
+  Py_DECREF(filter);
+
+  /* convert list to single string (also removes list) */
+  joiner = getslice(state.isbytes, state.beginning, string, 0, 0);
+  if (!joiner) {
+    Py_DECREF(list);
+    return NULL;
+  }
+  if (PyList_GET_SIZE(list) == 0) {
+    Py_DECREF(list);
+    item = joiner;
+  } else {
+    if (state.isbytes) {
+      item = _PyBytes_Join(joiner, list);
+    } else {
+      item = PyUnicode_Join(joiner, list);
+    }
+    Py_DECREF(joiner);
+    Py_DECREF(list);
+    if (!item) {
+      return NULL;
+    }
+  }
+
+  if (subn) {
+    return Py_BuildValue("Nn", item, n);
+  }
+  return item;
+  /*
+  error:
+      Py_DECREF(list);
+      state_fini(&state);
+      Py_DECREF(filter);
+      return NULL;
+  */
 }
 
 /*[clinic input]
@@ -1198,10 +1211,10 @@ Return the string obtained by replacing the leftmost non-overlapping occurrences
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_sub_impl(self, cls,
-                          repl, string, count){
-    var module_state = get_sre_module_state_by_class(cls);
+                                   repl, string, count) {
+  var module_state = get_sre_module_state_by_class(cls);
 
-    return pattern_subx(module_state, self, repl, string, count, 0);
+  return pattern_subx(module_state, self, repl, string, count, 0);
 }
 
 /*[clinic input]
@@ -1217,11 +1230,11 @@ Return the tuple (new_string, number_of_subs_made) found by replacing the leftmo
 [clinic start generated code]*/
 
 function _sre_SRE_Pattern_subn_impl(self, cls,
-                           repl, string,
-                           count){
-    var module_state = get_sre_module_state_by_class(cls);
+                                    repl, string,
+                                    count) {
+  var module_state = get_sre_module_state_by_class(cls);
 
-    return pattern_subx(module_state, self, repl, string, count, 1);
+  return pattern_subx(module_state, self, repl, string, count, 1);
 }
 
 /*[clinic input]
@@ -1229,9 +1242,9 @@ _sre.SRE_Pattern.__copy__
 
 [clinic start generated code]*/
 
-function _sre_SRE_Pattern___copy___impl(self){
-    Py_INCREF(self);
-    return self;
+function _sre_SRE_Pattern___copy___impl(self) {
+  Py_INCREF(self);
+  return self;
 }
 
 /*[clinic input]
@@ -1242,97 +1255,96 @@ _sre.SRE_Pattern.__deepcopy__
 
 [clinic start generated code]*/
 
-function _sre_SRE_Pattern___deepcopy__(self, memo){
-    Py_INCREF(self);
-    return self;
+function _sre_SRE_Pattern___deepcopy__(self, memo) {
+  Py_INCREF(self);
+  return self;
 }
 
-function pattern_repr(obj){
-    var flag_names = [
-        {name: "re.TEMPLATE", value: SRE_FLAG_TEMPLATE},
-        {name: "re.IGNORECASE", value: SRE_FLAG_IGNORECASE},
-        {name: "re.LOCALE", value: SRE_FLAG_LOCALE},
-        {name: "re.MULTILINE", value: SRE_FLAG_MULTILINE},
-        {name: "re.DOTALL", value: SRE_FLAG_DOTALL},
-        {name: "re.UNICODE", value: SRE_FLAG_UNICODE},
-        {name: "re.VERBOSE", value: SRE_FLAG_VERBOSE},
-        {name: "re.DEBUG", value: SRE_FLAG_DEBUG},
-        {name: "re.ASCII", value: SRE_FLAG_ASCII}
-    ];
-    var result = NULL,
-        flag_items,
-        i,
-        flags = obj.flags;
+function pattern_repr(obj) {
+  var flag_names = [
+    {name: "re.TEMPLATE", value: SRE_FLAG_TEMPLATE},
+    {name: "re.IGNORECASE", value: SRE_FLAG_IGNORECASE},
+    {name: "re.LOCALE", value: SRE_FLAG_LOCALE},
+    {name: "re.MULTILINE", value: SRE_FLAG_MULTILINE},
+    {name: "re.DOTALL", value: SRE_FLAG_DOTALL},
+    {name: "re.UNICODE", value: SRE_FLAG_UNICODE},
+    {name: "re.VERBOSE", value: SRE_FLAG_VERBOSE},
+    {name: "re.DEBUG", value: SRE_FLAG_DEBUG},
+    {name: "re.ASCII", value: SRE_FLAG_ASCII}
+  ];
+  var result = NULL,
+    flag_items,
+    i,
+    flags = obj.flags;
 
-    /* Omit re.UNICODE for valid string patterns. */
-    if (obj.isbytes == 0 &&
-        (flags & (SRE_FLAG_LOCALE|SRE_FLAG_UNICODE|SRE_FLAG_ASCII)) ==
-         SRE_FLAG_UNICODE)
-        flags &= ~SRE_FLAG_UNICODE;
+  /* Omit re.UNICODE for valid string patterns. */
+  if (obj.isbytes == 0 &&
+    (flags & (SRE_FLAG_LOCALE | SRE_FLAG_UNICODE | SRE_FLAG_ASCII)) ==
+    SRE_FLAG_UNICODE)
+    flags &= ~SRE_FLAG_UNICODE;
 
-    flag_items = PyList_New(0);
-    if (!flag_items){
-        return NULL;
-    }
-    for (i = 0; i < Py_ARRAY_LENGTH(flag_names); i++) {
-        if (flags & flag_names[i].value) {
-            var item = PyUnicode_FromString(flag_names[i].name);
-            if (!item){
-                return done();
-            }
-            if (PyList_Append(flag_items, item) < 0) {
-                Py_DECREF(item);
-                return done();
-            }
-            Py_DECREF(item);
-            flags &= ~flag_names[i].value;
-        }
-    }
-    if (flags) {
-        var item = PyUnicode_FromFormat("0x%x", flags);
-        if (!item){
-            return done();
-        }
-        if (PyList_Append(flag_items, item) < 0) {
-            Py_DECREF(item);
-            return done();
-        }
+  flag_items = PyList_New(0);
+  if (!flag_items) {
+    return NULL;
+  }
+  for (i = 0; i < Py_ARRAY_LENGTH(flag_names); i++) {
+    if (flags & flag_names[i].value) {
+      var item = PyUnicode_FromString(flag_names[i].name);
+      if (!item) {
+        return done();
+      }
+      if (PyList_Append(flag_items, item) < 0) {
         Py_DECREF(item);
+        return done();
+      }
+      Py_DECREF(item);
+      flags &= ~flag_names[i].value;
     }
+  }
+  if (flags) {
+    var item = PyUnicode_FromFormat("0x%x", flags);
+    if (!item) {
+      return done();
+    }
+    if (PyList_Append(flag_items, item) < 0) {
+      Py_DECREF(item);
+      return done();
+    }
+    Py_DECREF(item);
+  }
 
-    if (PyList_Size(flag_items) > 0) {
-        var flags_result,
-            sep = PyUnicode_FromString("|");
-        if (!sep){
-            return done();
-        }
-        flags_result = PyUnicode_Join(sep, flag_items);
-        Py_DECREF(sep);
-        if (!flags_result){
-            return done();
-        }
-        result = PyUnicode_FromFormat("re.compile(%.200R, %S)",
-                                      obj.pattern, flags_result);
-        Py_DECREF(flags_result);
+  if (PyList_Size(flag_items) > 0) {
+    var flags_result,
+      sep = PyUnicode_FromString("|");
+    if (!sep) {
+      return done();
     }
-    else {
-        result = PyUnicode_FromFormat("re.compile(%.200R)", obj.pattern);
+    flags_result = PyUnicode_Join(sep, flag_items);
+    Py_DECREF(sep);
+    if (!flags_result) {
+      return done();
     }
+    result = PyUnicode_FromFormat("re.compile(%.200R, %S)",
+      obj.pattern, flags_result);
+    Py_DECREF(flags_result);
+  } else {
+    result = PyUnicode_FromFormat("re.compile(%.200R)", obj.pattern);
+  }
 
-    function done(){
-        Py_DECREF(flag_items);
-        return result;
-    }
+  function done() {
+    Py_DECREF(flag_items);
+    return result;
+  }
 }
 
 var pattern_doc = "Compiled regular expression object.";
 
 /* PatternObject's 'groupindex' method. */
-function pattern_groupindex(self, ignored){
-    if (self.groupindex == NULL){
-        return PyDict_New();
-    }
-    return PyDictProxy_New(self.groupindex);
+function pattern_groupindex(self, ignored) {
+  if (self.groupindex == NULL) {
+    return PyDict_New();
+  }
+  return PyDictProxy_New(self.groupindex);
 }
 
 // static int _validate(PatternObject *self); /* Forward */
@@ -1350,84 +1362,84 @@ _sre.compile
 [clinic start generated code]*/
 
 function _sre_compile_impl(pattern, flags,
-                  code, groups, groupindex,
-                  indexgroup){
-    console.log('arguments', arguments)
-    /* "compile" pattern descriptor to pattern object */
+                           code, groups, groupindex,
+                           indexgroup) {
+  console.log('arguments', arguments)
+  /* "compile" pattern descriptor to pattern object */
 
-    var module_state = get_sre_module_state($module),
-        self,
-        i, n;
+  var module_state = get_sre_module_state($module),
+    self,
+    i, n;
 
-    n = PyList_GET_SIZE(code);
-    /* coverity[ampersand_in_size] */
-    self = PyObject_GC_NewVar(PatternObject, module_state.Pattern_Type, n);
-    if (!self){
-        return NULL;
+  n = PyList_GET_SIZE(code);
+  /* coverity[ampersand_in_size] */
+  self = PyObject_GC_NewVar(PatternObject, module_state.Pattern_Type, n);
+  if (!self) {
+    return NULL;
+  }
+  self.weakreflist = NULL;
+  self.pattern = NULL;
+  self.groupindex = NULL;
+  self.indexgroup = NULL;
+
+  self.codesize = n;
+
+  for (i = 0; i < n; i++) {
+    var o = PyList_GET_ITEM(code, i),
+      value = PyLong_AsUnsignedLong(o);
+    self.code[i] = value;
+    if (self.code[i] != value) {
+      PyErr_SetString(PyExc_OverflowError,
+        "regular expression code size limit exceeded");
+      break;
     }
-    self.weakreflist = NULL;
-    self.pattern = NULL;
-    self.groupindex = NULL;
-    self.indexgroup = NULL;
+  }
+  PyObject_GC_Track(self);
 
-    self.codesize = n;
+  if (PyErr_Occurred()) {
+    Py_DECREF(self);
+    return NULL;
+  }
 
-    for (i = 0; i < n; i++) {
-        var o = PyList_GET_ITEM(code, i),
-            value = PyLong_AsUnsignedLong(o);
-        self.code[i] = value;
-        if (self.code[i] != value) {
-            PyErr_SetString(PyExc_OverflowError,
-                            "regular expression code size limit exceeded");
-            break;
-        }
+  if (pattern == _b_.None) {
+    self.isbytes = -1;
+  } else {
+    var p_length,
+      charsize,
+      view = {};
+    view.buf = NULL;
+    if (!getstring(pattern, p_length, self.isbytes,
+      charsize, view)) {
+      Py_DECREF(self);
+      return NULL;
     }
-    PyObject_GC_Track(self);
-
-    if (PyErr_Occurred()) {
-        Py_DECREF(self);
-        return NULL;
+    if (view.buf) {
+      PyBuffer_Release(view);
     }
+  }
 
-    if (pattern == _b_.None) {
-        self.isbytes = -1;
-    }else {
-        var p_length,
-            charsize,
-            view = {};
-        view.buf = NULL;
-        if (!getstring(pattern, p_length, self.isbytes,
-                       charsize, view)) {
-            Py_DECREF(self);
-            return NULL;
-        }
-        if (view.buf){
-            PyBuffer_Release(view);
-        }
+  Py_INCREF(pattern);
+  self.pattern = pattern;
+
+  self.flags = flags;
+
+  self.groups = groups;
+
+  if (PyDict_GET_SIZE(groupindex) > 0) {
+    Py_INCREF(groupindex);
+    self.groupindex = groupindex;
+    if (PyTuple_GET_SIZE(indexgroup) > 0) {
+      Py_INCREF(indexgroup);
+      self.indexgroup = indexgroup;
     }
+  }
 
-    Py_INCREF(pattern);
-    self.pattern = pattern;
+  if (!_validate(self)) {
+    Py_DECREF(self);
+    return NULL;
+  }
 
-    self.flags = flags;
-
-    self.groups = groups;
-
-    if (PyDict_GET_SIZE(groupindex) > 0) {
-        Py_INCREF(groupindex);
-        self.groupindex = groupindex;
-        if (PyTuple_GET_SIZE(indexgroup) > 0) {
-            Py_INCREF(indexgroup);
-            self.indexgroup = indexgroup;
-        }
-    }
-
-    if (!_validate(self)) {
-        Py_DECREF(self);
-        return NULL;
-    }
-
-    return self;
+  return self;
 }
 
 /* -------------------------------------------------------------------- */
@@ -1459,577 +1471,579 @@ function _sre_compile_impl(pattern, flags,
 var VVERBOSE
 
 /* Trace macro for the validator */
-function VTRACE(v){
-    if(VVERBOSE){
-        console.log(v)
-    }
+function VTRACE(v) {
+  if (VVERBOSE) {
+    console.log(v)
+  }
 }
 
 /* Report failure */
-function FAIL(){
-    VTRACE(("FAIL: %d\n", __LINE__));
-    return 0;
+function FAIL() {
+  VTRACE(("FAIL: %d\n", __LINE__));
+  return 0;
 }
 
 /* Extract opcode, argument, or skip count from code array */
-function GET_OP(){
-    VTRACE(("%p: ", code))
-    if (code >= end){
-        FAIL
-    }
-    op = code++
-    VTRACE(("%lu (op)\n", op))
+function GET_OP() {
+  VTRACE(("%p: ", code))
+  if (code >= end) {
+    FAIL
+  }
+  op = code++
+  VTRACE(("%lu (op)\n", op))
 }
 
-function GET_ARG(){
-    VTRACE(("%p= ", code))
-    if (code >= end){
-        FAIL
-    }
-    arg = code++
-    VTRACE("%lu (arg)\n", arg)
+function GET_ARG() {
+  VTRACE(("%p= ", code))
+  if (code >= end) {
+    FAIL
+  }
+  arg = code++
+  VTRACE("%lu (arg)\n", arg)
 }
 
-function GET_SKIP_ADJ(adj){
-    VTRACE(("%p= ", code))
-    if (code >= end){
-        FAIL
-    }
-    skip = code
-    VTRACE(("%lu (skip to %p)\n",
-           skip, code+skip));
-    if (skip-adj > (end - code)){
-        FAIL
-    }
-    code++
+function GET_SKIP_ADJ(adj) {
+  VTRACE(("%p= ", code))
+  if (code >= end) {
+    FAIL
+  }
+  skip = code
+  VTRACE(("%lu (skip to %p)\n",
+    skip, code + skip));
+  if (skip - adj > (end - code)) {
+    FAIL
+  }
+  code++
 }
 
 // #define GET_SKIP GET_SKIP_ADJ(0)
 
-function _validate_charset(code, end){
-    /* Some variables are manipulated by the macros above */
-    var op,
-        arg,
-        offset,
-        i;
+function _validate_charset(code, end) {
+  /* Some variables are manipulated by the macros above */
+  var op,
+    arg,
+    offset,
+    i;
 
-    while (code < end) {
-        GET_OP;
-        switch (op) {
+  while (code < end) {
+    GET_OP;
+    switch (op) {
 
-        case SRE_OP_NEGATE:
-            break;
+      case SRE_OP_NEGATE:
+        break;
 
-        case SRE_OP_LITERAL:
-            GET_ARG;
-            break;
+      case SRE_OP_LITERAL:
+        GET_ARG;
+        break;
 
-        case SRE_OP_RANGE:
-        case SRE_OP_RANGE_UNI_IGNORE:
-            GET_ARG;
-            GET_ARG;
-            break;
+      case SRE_OP_RANGE:
+      case SRE_OP_RANGE_UNI_IGNORE:
+        GET_ARG;
+        GET_ARG;
+        break;
 
-        case SRE_OP_CHARSET:
-            offset = 256/SRE_CODE_BITS; /* 256-bit bitmap */
-            if (offset > (end - code)){
-                FAIL;
-            }
-            code += offset;
-            break;
-
-        case SRE_OP_BIGCHARSET:
-            GET_ARG; /* Number of blocks */
-            offset = 256/sizeof(SRE_CODE); /* 256-byte table */
-            if (offset > (end - code)){
-                FAIL;
-            }
-            /* Make sure that each byte points to a valid block */
-            for (i = 0; i < 256; i++) {
-                if (code[i] >= arg){
-                    FAIL;
-                }
-            }
-            code += offset;
-            offset = arg * (256 / SRE_CODE_BITS); /* 256-bit bitmap times arg */
-            if (offset > (end - code)){
-                FAIL;
-            }
-            code += offset;
-            break;
-
-        case SRE_OP_CATEGORY:
-            GET_ARG;
-            switch (arg) {
-            case SRE_CATEGORY_DIGIT:
-            case SRE_CATEGORY_NOT_DIGIT:
-            case SRE_CATEGORY_SPACE:
-            case SRE_CATEGORY_NOT_SPACE:
-            case SRE_CATEGORY_WORD:
-            case SRE_CATEGORY_NOT_WORD:
-            case SRE_CATEGORY_LINEBREAK:
-            case SRE_CATEGORY_NOT_LINEBREAK:
-            case SRE_CATEGORY_LOC_WORD:
-            case SRE_CATEGORY_LOC_NOT_WORD:
-            case SRE_CATEGORY_UNI_DIGIT:
-            case SRE_CATEGORY_UNI_NOT_DIGIT:
-            case SRE_CATEGORY_UNI_SPACE:
-            case SRE_CATEGORY_UNI_NOT_SPACE:
-            case SRE_CATEGORY_UNI_WORD:
-            case SRE_CATEGORY_UNI_NOT_WORD:
-            case SRE_CATEGORY_UNI_LINEBREAK:
-            case SRE_CATEGORY_UNI_NOT_LINEBREAK:
-                break;
-            default:
-                FAIL;
-            }
-            break;
-
-        default:
-            FAIL;
-
+      case SRE_OP_CHARSET:
+        offset = 256 / SRE_CODE_BITS; /* 256-bit bitmap */
+        if (offset > (end - code)) {
+          FAIL;
         }
-    }
+        code += offset;
+        break;
 
-    return 1;
-}
-
-function _validate_inner(code, end, groups){
-    /* Some variables are manipulated by the macros above */
-    var op,
-        arg,
-        skip;
-
-    VTRACE(("code=%p, end=%p\n", code, end));
-
-    if (code > end){
-        FAIL;
-    }
-    while (code < end) {
-        GET_OP;
-        switch (op) {
-
-        case SRE_OP_MARK:
-            /* We don't check whether marks are properly nested; the
-               sre_match() code is robust even if they don't, and the worst
-               you can get is nonsensical match results. */
-            GET_ARG;
-            if (arg > 2 * groups + 1) {
-                VTRACE(("arg=%d, groups=%d\n", arg, groups));
-                FAIL;
-            }
-            break;
-
-        case SRE_OP_LITERAL:
-        case SRE_OP_NOT_LITERAL:
-        case SRE_OP_LITERAL_IGNORE:
-        case SRE_OP_NOT_LITERAL_IGNORE:
-        case SRE_OP_LITERAL_UNI_IGNORE:
-        case SRE_OP_NOT_LITERAL_UNI_IGNORE:
-        case SRE_OP_LITERAL_LOC_IGNORE:
-        case SRE_OP_NOT_LITERAL_LOC_IGNORE:
-            GET_ARG;
-            /* The arg is just a character, nothing to check */
-            break;
-
-        case SRE_OP_SUCCESS:
-        case SRE_OP_FAILURE:
-            /* Nothing to check; these normally end the matching process */
-            break;
-
-        case SRE_OP_AT:
-            GET_ARG;
-            switch (arg) {
-            case SRE_AT_BEGINNING:
-            case SRE_AT_BEGINNING_STRING:
-            case SRE_AT_BEGINNING_LINE:
-            case SRE_AT_END:
-            case SRE_AT_END_LINE:
-            case SRE_AT_END_STRING:
-            case SRE_AT_BOUNDARY:
-            case SRE_AT_NON_BOUNDARY:
-            case SRE_AT_LOC_BOUNDARY:
-            case SRE_AT_LOC_NON_BOUNDARY:
-            case SRE_AT_UNI_BOUNDARY:
-            case SRE_AT_UNI_NON_BOUNDARY:
-                break;
-            default:
-                FAIL;
-            }
-            break;
-
-        case SRE_OP_ANY:
-        case SRE_OP_ANY_ALL:
-            /* These have no operands */
-            break;
-
-        case SRE_OP_IN:
-        case SRE_OP_IN_IGNORE:
-        case SRE_OP_IN_UNI_IGNORE:
-        case SRE_OP_IN_LOC_IGNORE:
-            GET_SKIP;
-            /* Stop 1 before the end; we check the FAILURE below */
-            if (!_validate_charset(code, code+skip-2)){
-                FAIL;
-            }
-            if (code[skip-2] != SRE_OP_FAILURE){
-                FAIL;
-            }
-            code += skip-1;
-            break;
-
-        case SRE_OP_INFO:
-            {
-                /* A minimal info field is
-                   <INFO> <1=skip> <2=flags> <3=min> <4=max>;
-                   If SRE_INFO_PREFIX or SRE_INFO_CHARSET is in the flags,
-                   more follows. */
-                var flags, i, newcode;
-                GET_SKIP;
-                newcode = code + skip - 1;
-                GET_ARG;
-                flags = arg;
-                GET_ARG;
-                GET_ARG;
-                /* Check that only valid flags are present */
-                if ((flags & ~(SRE_INFO_PREFIX |
-                               SRE_INFO_LITERAL |
-                               SRE_INFO_CHARSET)) != 0){
-                    FAIL;
-                }
-                /* PREFIX and CHARSET are mutually exclusive */
-                if ((flags & SRE_INFO_PREFIX) &&
-                    (flags & SRE_INFO_CHARSET)){
-                    FAIL;
-                }
-                /* LITERAL implies PREFIX */
-                if ((flags & SRE_INFO_LITERAL) &&
-                    !(flags & SRE_INFO_PREFIX)){
-                    FAIL;
-                }
-                /* Validate the prefix */
-                if (flags & SRE_INFO_PREFIX) {
-                    var prefix_len;
-                    GET_ARG; prefix_len = arg;
-                    GET_ARG;
-                    /* Here comes the prefix string */
-                    if (prefix_len > (newcode - code)){
-                        FAIL;
-                    }
-                    code += prefix_len;
-                    /* And here comes the overlap table */
-                    if (prefix_len > (newcode - code)){
-                        FAIL;
-                    }
-                    /* Each overlap value should be < prefix_len */
-                    for (i = 0; i < prefix_len; i++) {
-                        if (code[i] >= prefix_len)
-                            FAIL;
-                    }
-                    code += prefix_len;
-                }
-                /* Validate the charset */
-                if (flags & SRE_INFO_CHARSET) {
-                    if (!_validate_charset(code, newcode-1)){
-                        FAIL;
-                    }
-                    if (newcode[-1] != SRE_OP_FAILURE){
-                        FAIL;
-                    }
-                    code = newcode;
-                }else if (code != newcode) {
-                  VTRACE(("code=%p, newcode=%p\n", code, newcode));
-                    FAIL;
-                }
-            }
-            break;
-
-        case SRE_OP_BRANCH:
-            {
-                var target = NULL;
-                for (;;) {
-                    GET_SKIP;
-                    if (skip == 0){
-                        break;
-                    }
-                    /* Stop 2 before the end; we check the JUMP below */
-                    if (!_validate_inner(code, code+skip-3, groups)){
-                        FAIL;
-                    }
-                    code += skip-3;
-                    /* Check that it ends with a JUMP, and that each JUMP
-                       has the same target */
-                    GET_OP;
-                    if (op != SRE_OP_JUMP){
-                        FAIL;
-                    }
-                    GET_SKIP;
-                    if (target == NULL){
-                        target = code+skip-1;
-                    }else if (code+skip-1 != target){
-                        FAIL;
-                    }
-                }
-            }
-            break;
-
-        case SRE_OP_REPEAT_ONE:
-        case SRE_OP_MIN_REPEAT_ONE:
-            {
-                var min, max;
-                GET_SKIP;
-                GET_ARG; min = arg;
-                GET_ARG; max = arg;
-                if (min > max){
-                    FAIL;
-                }
-                if (max > SRE_MAXREPEAT){
-                    FAIL;
-                }
-                if (!_validate_inner(code, code+skip-4, groups)){
-                    FAIL;
-                }
-                code += skip-4;
-                GET_OP;
-                if (op != SRE_OP_SUCCESS){
-                    FAIL;
-                }
-            }
-            break;
-
-        case SRE_OP_REPEAT:
-            {
-                var min, max;
-                GET_SKIP;
-                GET_ARG; min = arg;
-                GET_ARG; max = arg;
-                if (min > max){
-                    FAIL;
-                }
-                if (max > SRE_MAXREPEAT){
-                    FAIL;
-                }
-                if (!_validate_inner(code, code+skip-3, groups)){
-                    FAIL;
-                }
-                code += skip-3;
-                GET_OP;
-                if (op != SRE_OP_MAX_UNTIL && op != SRE_OP_MIN_UNTIL){
-                    FAIL;
-                }
-            }
-            break;
-
-        case SRE_OP_GROUPREF:
-        case SRE_OP_GROUPREF_IGNORE:
-        case SRE_OP_GROUPREF_UNI_IGNORE:
-        case SRE_OP_GROUPREF_LOC_IGNORE:
-            GET_ARG;
-            if (arg >= groups){
-                FAIL;
-            }
-            break;
-
-        case SRE_OP_GROUPREF_EXISTS:
-            /* The regex syntax for this is: '(?(group)then|else)', where
-               'group' is either an integer group number or a group name,
-               'then' and 'else' are sub-regexes, and 'else' is optional. */
-            GET_ARG;
-            if (arg >= groups){
-                FAIL;
-            }
-            GET_SKIP_ADJ(1);
-            code--; /* The skip is relative to the first arg! */
-            /* There are two possibilities here: if there is both a 'then'
-               part and an 'else' part, the generated code looks like:
-
-               GROUPREF_EXISTS
-               <group>
-               <skipyes>
-               ...then part...
-               JUMP
-               <skipno>
-               (<skipyes> jumps here)
-               ...else part...
-               (<skipno> jumps here)
-
-               If there is only a 'then' part, it looks like:
-
-               GROUPREF_EXISTS
-               <group>
-               <skip>
-               ...then part...
-               (<skip> jumps here)
-
-               There is no direct way to decide which it is, and we don't want
-               to allow arbitrary jumps anywhere in the code; so we just look
-               for a JUMP opcode preceding our skip target.
-            */
-            if (skip >= 3 && skip-3 < (end - code) &&
-                    code[skip-3] == SRE_OP_JUMP){
-                VTRACE(("both then and else parts present\n"));
-                if (!_validate_inner(code+1, code+skip-3, groups)){
-                    FAIL;
-                }
-                code += skip-2; /* Position after JUMP, at <skipno> */
-                GET_SKIP;
-                if (!_validate_inner(code, code+skip-1, groups)){
-                    FAIL;
-                }
-                code += skip-1;
-            }else {
-                VTRACE(("only a then part present\n"));
-                if (!_validate_inner(code+1, code+skip-1, groups)){
-                    FAIL;
-                }
-                code += skip-1;
-            }
-            break;
-
-        case SRE_OP_ASSERT:
-        case SRE_OP_ASSERT_NOT:
-            GET_SKIP;
-            GET_ARG; /* 0 for lookahead, width for lookbehind */
-            code--; /* Back up over arg to simplify math below */
-            if (arg & 0x80000000){
-                FAIL; /* Width too large */
-            }
-            /* Stop 1 before the end; we check the SUCCESS below */
-            if (!_validate_inner(code+1, code+skip-2, groups)){
-                FAIL;
-            }
-            code += skip-2;
-            GET_OP;
-            if (op != SRE_OP_SUCCESS){
-                FAIL;
-            }
-            break;
-
-        default:
-            FAIL;
-
+      case SRE_OP_BIGCHARSET:
+        GET_ARG; /* Number of blocks */
+        offset = 256 / sizeof(SRE_CODE); /* 256-byte table */
+        if (offset > (end - code)) {
+          FAIL;
         }
-    }
+        /* Make sure that each byte points to a valid block */
+        for (i = 0; i < 256; i++) {
+          if (code[i] >= arg) {
+            FAIL;
+          }
+        }
+        code += offset;
+        offset = arg * (256 / SRE_CODE_BITS); /* 256-bit bitmap times arg */
+        if (offset > (end - code)) {
+          FAIL;
+        }
+        code += offset;
+        break;
 
-    VTRACE(("okay\n"));
-    return 1;
-}
+      case SRE_OP_CATEGORY:
+        GET_ARG;
+        switch (arg) {
+          case SRE_CATEGORY_DIGIT:
+          case SRE_CATEGORY_NOT_DIGIT:
+          case SRE_CATEGORY_SPACE:
+          case SRE_CATEGORY_NOT_SPACE:
+          case SRE_CATEGORY_WORD:
+          case SRE_CATEGORY_NOT_WORD:
+          case SRE_CATEGORY_LINEBREAK:
+          case SRE_CATEGORY_NOT_LINEBREAK:
+          case SRE_CATEGORY_LOC_WORD:
+          case SRE_CATEGORY_LOC_NOT_WORD:
+          case SRE_CATEGORY_UNI_DIGIT:
+          case SRE_CATEGORY_UNI_NOT_DIGIT:
+          case SRE_CATEGORY_UNI_SPACE:
+          case SRE_CATEGORY_UNI_NOT_SPACE:
+          case SRE_CATEGORY_UNI_WORD:
+          case SRE_CATEGORY_UNI_NOT_WORD:
+          case SRE_CATEGORY_UNI_LINEBREAK:
+          case SRE_CATEGORY_UNI_NOT_LINEBREAK:
+            break;
+          default:
+            FAIL;
+        }
+        break;
 
-function _validate_outer(code, end, groups){
-    if (groups < 0 || groups > SRE_MAXGROUPS ||
-            code >= end || end[-1] != SRE_OP_SUCCESS){
+      default:
         FAIL;
+
     }
-    return _validate_inner(code, end-1, groups);
+  }
+
+  return 1;
 }
 
-function _validate(self){
-    if (!_validate_outer(self.code, self.code+self.codesize, self.groups)){
-        PyErr_SetString(PyExc_RuntimeError, "invalid SRE code");
-        return 0;
-    }else{
-        VTRACE(("Success!\n"));
+function _validate_inner(code, end, groups) {
+  /* Some variables are manipulated by the macros above */
+  var op,
+    arg,
+    skip;
+
+  VTRACE(("code=%p, end=%p\n", code, end));
+
+  if (code > end) {
+    FAIL;
+  }
+  while (code < end) {
+    GET_OP;
+    switch (op) {
+
+      case SRE_OP_MARK:
+        /* We don't check whether marks are properly nested; the
+           sre_match() code is robust even if they don't, and the worst
+           you can get is nonsensical match results. */
+        GET_ARG;
+        if (arg > 2 * groups + 1) {
+          VTRACE(("arg=%d, groups=%d\n", arg, groups));
+          FAIL;
+        }
+        break;
+
+      case SRE_OP_LITERAL:
+      case SRE_OP_NOT_LITERAL:
+      case SRE_OP_LITERAL_IGNORE:
+      case SRE_OP_NOT_LITERAL_IGNORE:
+      case SRE_OP_LITERAL_UNI_IGNORE:
+      case SRE_OP_NOT_LITERAL_UNI_IGNORE:
+      case SRE_OP_LITERAL_LOC_IGNORE:
+      case SRE_OP_NOT_LITERAL_LOC_IGNORE:
+        GET_ARG;
+        /* The arg is just a character, nothing to check */
+        break;
+
+      case SRE_OP_SUCCESS:
+      case SRE_OP_FAILURE:
+        /* Nothing to check; these normally end the matching process */
+        break;
+
+      case SRE_OP_AT:
+        GET_ARG;
+        switch (arg) {
+          case SRE_AT_BEGINNING:
+          case SRE_AT_BEGINNING_STRING:
+          case SRE_AT_BEGINNING_LINE:
+          case SRE_AT_END:
+          case SRE_AT_END_LINE:
+          case SRE_AT_END_STRING:
+          case SRE_AT_BOUNDARY:
+          case SRE_AT_NON_BOUNDARY:
+          case SRE_AT_LOC_BOUNDARY:
+          case SRE_AT_LOC_NON_BOUNDARY:
+          case SRE_AT_UNI_BOUNDARY:
+          case SRE_AT_UNI_NON_BOUNDARY:
+            break;
+          default:
+            FAIL;
+        }
+        break;
+
+      case SRE_OP_ANY:
+      case SRE_OP_ANY_ALL:
+        /* These have no operands */
+        break;
+
+      case SRE_OP_IN:
+      case SRE_OP_IN_IGNORE:
+      case SRE_OP_IN_UNI_IGNORE:
+      case SRE_OP_IN_LOC_IGNORE:
+        GET_SKIP;
+        /* Stop 1 before the end; we check the FAILURE below */
+        if (!_validate_charset(code, code + skip - 2)) {
+          FAIL;
+        }
+        if (code[skip - 2] != SRE_OP_FAILURE) {
+          FAIL;
+        }
+        code += skip - 1;
+        break;
+
+      case SRE_OP_INFO: {
+        /* A minimal info field is
+           <INFO> <1=skip> <2=flags> <3=min> <4=max>;
+           If SRE_INFO_PREFIX or SRE_INFO_CHARSET is in the flags,
+           more follows. */
+        var flags, i, newcode;
+        GET_SKIP;
+        newcode = code + skip - 1;
+        GET_ARG;
+        flags = arg;
+        GET_ARG;
+        GET_ARG;
+        /* Check that only valid flags are present */
+        if ((flags & ~(SRE_INFO_PREFIX |
+          SRE_INFO_LITERAL |
+          SRE_INFO_CHARSET)) != 0) {
+          FAIL;
+        }
+        /* PREFIX and CHARSET are mutually exclusive */
+        if ((flags & SRE_INFO_PREFIX) &&
+          (flags & SRE_INFO_CHARSET)) {
+          FAIL;
+        }
+        /* LITERAL implies PREFIX */
+        if ((flags & SRE_INFO_LITERAL) &&
+          !(flags & SRE_INFO_PREFIX)) {
+          FAIL;
+        }
+        /* Validate the prefix */
+        if (flags & SRE_INFO_PREFIX) {
+          var prefix_len;
+          GET_ARG;
+          prefix_len = arg;
+          GET_ARG;
+          /* Here comes the prefix string */
+          if (prefix_len > (newcode - code)) {
+            FAIL;
+          }
+          code += prefix_len;
+          /* And here comes the overlap table */
+          if (prefix_len > (newcode - code)) {
+            FAIL;
+          }
+          /* Each overlap value should be < prefix_len */
+          for (i = 0; i < prefix_len; i++) {
+            if (code[i] >= prefix_len)
+              FAIL;
+          }
+          code += prefix_len;
+        }
+        /* Validate the charset */
+        if (flags & SRE_INFO_CHARSET) {
+          if (!_validate_charset(code, newcode - 1)) {
+            FAIL;
+          }
+          if (newcode[-1] != SRE_OP_FAILURE) {
+            FAIL;
+          }
+          code = newcode;
+        } else if (code != newcode) {
+          VTRACE(("code=%p, newcode=%p\n", code, newcode));
+          FAIL;
+        }
+      }
+        break;
+
+      case SRE_OP_BRANCH: {
+        var target = NULL;
+        for (; ;) {
+          GET_SKIP;
+          if (skip == 0) {
+            break;
+          }
+          /* Stop 2 before the end; we check the JUMP below */
+          if (!_validate_inner(code, code + skip - 3, groups)) {
+            FAIL;
+          }
+          code += skip - 3;
+          /* Check that it ends with a JUMP, and that each JUMP
+             has the same target */
+          GET_OP;
+          if (op != SRE_OP_JUMP) {
+            FAIL;
+          }
+          GET_SKIP;
+          if (target == NULL) {
+            target = code + skip - 1;
+          } else if (code + skip - 1 != target) {
+            FAIL;
+          }
+        }
+      }
+        break;
+
+      case SRE_OP_REPEAT_ONE:
+      case SRE_OP_MIN_REPEAT_ONE: {
+        var min, max;
+        GET_SKIP;
+        GET_ARG;
+        min = arg;
+        GET_ARG;
+        max = arg;
+        if (min > max) {
+          FAIL;
+        }
+        if (max > SRE_MAXREPEAT) {
+          FAIL;
+        }
+        if (!_validate_inner(code, code + skip - 4, groups)) {
+          FAIL;
+        }
+        code += skip - 4;
+        GET_OP;
+        if (op != SRE_OP_SUCCESS) {
+          FAIL;
+        }
+      }
+        break;
+
+      case SRE_OP_REPEAT: {
+        var min, max;
+        GET_SKIP;
+        GET_ARG;
+        min = arg;
+        GET_ARG;
+        max = arg;
+        if (min > max) {
+          FAIL;
+        }
+        if (max > SRE_MAXREPEAT) {
+          FAIL;
+        }
+        if (!_validate_inner(code, code + skip - 3, groups)) {
+          FAIL;
+        }
+        code += skip - 3;
+        GET_OP;
+        if (op != SRE_OP_MAX_UNTIL && op != SRE_OP_MIN_UNTIL) {
+          FAIL;
+        }
+      }
+        break;
+
+      case SRE_OP_GROUPREF:
+      case SRE_OP_GROUPREF_IGNORE:
+      case SRE_OP_GROUPREF_UNI_IGNORE:
+      case SRE_OP_GROUPREF_LOC_IGNORE:
+        GET_ARG;
+        if (arg >= groups) {
+          FAIL;
+        }
+        break;
+
+      case SRE_OP_GROUPREF_EXISTS:
+        /* The regex syntax for this is: '(?(group)then|else)', where
+           'group' is either an integer group number or a group name,
+           'then' and 'else' are sub-regexes, and 'else' is optional. */
+        GET_ARG;
+        if (arg >= groups) {
+          FAIL;
+        }
+        GET_SKIP_ADJ(1);
+        code--; /* The skip is relative to the first arg! */
+        /* There are two possibilities here: if there is both a 'then'
+           part and an 'else' part, the generated code looks like:
+
+           GROUPREF_EXISTS
+           <group>
+           <skipyes>
+           ...then part...
+           JUMP
+           <skipno>
+           (<skipyes> jumps here)
+           ...else part...
+           (<skipno> jumps here)
+
+           If there is only a 'then' part, it looks like:
+
+           GROUPREF_EXISTS
+           <group>
+           <skip>
+           ...then part...
+           (<skip> jumps here)
+
+           There is no direct way to decide which it is, and we don't want
+           to allow arbitrary jumps anywhere in the code; so we just look
+           for a JUMP opcode preceding our skip target.
+        */
+        if (skip >= 3 && skip - 3 < (end - code) &&
+          code[skip - 3] == SRE_OP_JUMP) {
+          VTRACE(("both then and else parts present\n"));
+          if (!_validate_inner(code + 1, code + skip - 3, groups)) {
+            FAIL;
+          }
+          code += skip - 2; /* Position after JUMP, at <skipno> */
+          GET_SKIP;
+          if (!_validate_inner(code, code + skip - 1, groups)) {
+            FAIL;
+          }
+          code += skip - 1;
+        } else {
+          VTRACE(("only a then part present\n"));
+          if (!_validate_inner(code + 1, code + skip - 1, groups)) {
+            FAIL;
+          }
+          code += skip - 1;
+        }
+        break;
+
+      case SRE_OP_ASSERT:
+      case SRE_OP_ASSERT_NOT:
+        GET_SKIP;
+        GET_ARG; /* 0 for lookahead, width for lookbehind */
+        code--; /* Back up over arg to simplify math below */
+        if (arg & 0x80000000) {
+          FAIL; /* Width too large */
+        }
+        /* Stop 1 before the end; we check the SUCCESS below */
+        if (!_validate_inner(code + 1, code + skip - 2, groups)) {
+          FAIL;
+        }
+        code += skip - 2;
+        GET_OP;
+        if (op != SRE_OP_SUCCESS) {
+          FAIL;
+        }
+        break;
+
+      default:
+        FAIL;
+
     }
-    return 1;
+  }
+
+  VTRACE(("okay\n"));
+  return 1;
+}
+
+function _validate_outer(code, end, groups) {
+  if (groups < 0 || groups > SRE_MAXGROUPS ||
+    code >= end || end[-1] != SRE_OP_SUCCESS) {
+    FAIL;
+  }
+  return _validate_inner(code, end - 1, groups);
+}
+
+function _validate(self) {
+  if (!_validate_outer(self.code, self.code + self.codesize, self.groups)) {
+    PyErr_SetString(PyExc_RuntimeError, "invalid SRE code");
+    return 0;
+  } else {
+    VTRACE(("Success!\n"));
+  }
+  return 1;
 }
 
 /* -------------------------------------------------------------------- */
+
 /* match methods */
 
-function match_traverse(self, visit, arg){
-    Py_VISIT(Py_TYPE(self));
-    Py_VISIT(self.string);
-    Py_VISIT(self.regs);
-    Py_VISIT(self.pattern);
+function match_traverse(self, visit, arg) {
+  Py_VISIT(Py_TYPE(self));
+  Py_VISIT(self.string);
+  Py_VISIT(self.regs);
+  Py_VISIT(self.pattern);
+  return 0;
+}
+
+function match_clear(self) {
+  Py_CLEAR(self.string);
+  Py_CLEAR(self.regs);
+  Py_CLEAR(self.pattern);
+  return 0;
+}
+
+function match_dealloc(self) {
+  var tp = Py_TYPE(self);
+
+  PyObject_GC_UnTrack(self);
+  match_clear(self);
+  tp.tp_free(self);
+  Py_DECREF(tp);
+}
+
+function match_getslice_by_index(self, index, def) {
+  var length,
+    isbytes, charsize,
+    view,
+    result,
+    ptr,
+    i, j;
+
+  assert(0 <= index && index < self.groups);
+  index *= 2;
+
+  if (self.string == Py_None || self.mark[index] < 0) {
+    /* return default value if the string or group is undefined */
+    Py_INCREF(def);
+    return def;
+  }
+
+  ptr = getstring(self.string, length, isbytes, charsize, view);
+  if (ptr == NULL) {
+    return NULL;
+  }
+  i = self.mark[index];
+  j = self.mark[index + 1];
+  i = Py_MIN(i, length);
+  j = Py_MIN(j, length);
+  result = getslice(isbytes, ptr, self.string, i, j);
+  if (isbytes && view.buf != NULL) {
+    PyBuffer_Release(view);
+  }
+  return result;
+}
+
+function match_getindex(self, index) {
+  var i;
+
+  if (index == NULL) {
+    /* Default value */
     return 0;
+  }
+  if (PyIndex_Check(index)) {
+    i = PyNumber_AsSsize_t(index, NULL);
+  } else {
+    i = -1;
+
+    if (self.pattern.groupindex) {
+      index = PyDict_GetItemWithError(self.pattern.groupindex, index);
+      if (index && PyLong_Check(index)) {
+        i = PyLong_AsSsize_t(index);
+      }
+    }
+  }
+  if (i < 0 || i >= self.groups) {
+    /* raise IndexError if we were given a bad group number */
+    if (!PyErr_Occurred()) {
+      PyErr_SetString(PyExc_IndexError, "no such group");
+    }
+    return -1;
+  }
+
+  return i;
 }
 
-function match_clear(self){
-    Py_CLEAR(self.string);
-    Py_CLEAR(self.regs);
-    Py_CLEAR(self.pattern);
-    return 0;
-}
+function match_getslice(self, index, def) {
+  var i = match_getindex(self, index);
 
-function match_dealloc(self){
-    var tp = Py_TYPE(self);
+  if (i < 0) {
+    return NULL;
+  }
 
-    PyObject_GC_UnTrack(self);
-    match_clear(self);
-    tp.tp_free(self);
-    Py_DECREF(tp);
-}
-
-function match_getslice_by_index(self, index, def){
-    var length,
-        isbytes, charsize,
-        view,
-        result,
-        ptr,
-        i, j;
-
-    assert(0 <= index && index < self.groups);
-    index *= 2;
-
-    if (self.string == Py_None || self.mark[index] < 0) {
-        /* return default value if the string or group is undefined */
-        Py_INCREF(def);
-        return def;
-    }
-
-    ptr = getstring(self.string, length, isbytes, charsize, view);
-    if (ptr == NULL){
-        return NULL;
-    }
-    i = self.mark[index];
-    j = self.mark[index + 1];
-    i = Py_MIN(i, length);
-    j = Py_MIN(j, length);
-    result = getslice(isbytes, ptr, self.string, i, j);
-    if (isbytes && view.buf != NULL){
-        PyBuffer_Release(view);
-    }
-    return result;
-}
-
-function match_getindex(self, index){
-    var i;
-
-    if (index == NULL){
-        /* Default value */
-        return 0;
-    }
-    if (PyIndex_Check(index)) {
-        i = PyNumber_AsSsize_t(index, NULL);
-    }else {
-        i = -1;
-
-        if (self.pattern.groupindex) {
-            index = PyDict_GetItemWithError(self.pattern.groupindex, index);
-            if (index && PyLong_Check(index)) {
-                i = PyLong_AsSsize_t(index);
-            }
-        }
-    }
-    if (i < 0 || i >= self.groups) {
-        /* raise IndexError if we were given a bad group number */
-        if (!PyErr_Occurred()) {
-            PyErr_SetString(PyExc_IndexError, "no such group");
-        }
-        return -1;
-    }
-
-    return i;
-}
-
-function match_getslice(self, index, def){
-    var i = match_getindex(self, index);
-
-    if (i < 0) {
-        return NULL;
-    }
-
-    return match_getslice_by_index(self, i, def);
+  return match_getslice_by_index(self, i, def);
 }
 
 /*[clinic input]
@@ -2040,50 +2054,50 @@ _sre.SRE_Match.expand
 Return the string obtained by doing backslash substitution on the string template, as done by the sub() method.
 [clinic start generated code]*/
 
-function _sre_SRE_Match_expand_impl(self, template){
-    /* delegate to Python code */
-    return call(
-        SRE_PY_MODULE, "_expand",
-        PyTuple_Pack(3, self.pattern, self, template)
-        );
+function _sre_SRE_Match_expand_impl(self, template) {
+  /* delegate to Python code */
+  return call(
+    SRE_PY_MODULE, "_expand",
+    PyTuple_Pack(3, self.pattern, self, template)
+  );
 }
 
-function match_group(self, args){
-    var result,
-        i, size;
+function match_group(self, args) {
+  var result,
+    i, size;
 
-    size = PyTuple_GET_SIZE(args);
+  size = PyTuple_GET_SIZE(args);
 
-    switch (size) {
+  switch (size) {
     case 0:
-        result = match_getslice(self, _PyLong_GetZero(), _b_.None);
-        break;
+      result = match_getslice(self, _PyLong_GetZero(), _b_.None);
+      break;
     case 1:
-        result = match_getslice(self, PyTuple_GET_ITEM(args, 0), _b_.None);
-        break;
+      result = match_getslice(self, PyTuple_GET_ITEM(args, 0), _b_.None);
+      break;
     default:
-        /* fetch multiple items */
-        result = PyTuple_New(size);
-        if (!result){
-            return NULL;
+      /* fetch multiple items */
+      result = PyTuple_New(size);
+      if (!result) {
+        return NULL;
+      }
+      for (i = 0; i < size; i++) {
+        var item = match_getslice(
+          self, PyTuple_GET_ITEM(args, i), _b_.None
+        );
+        if (!item) {
+          Py_DECREF(result);
+          return NULL;
         }
-        for (i = 0; i < size; i++) {
-            var item = match_getslice(
-                self, PyTuple_GET_ITEM(args, i), _b_.None
-                );
-            if (!item) {
-                Py_DECREF(result);
-                return NULL;
-            }
-            PyTuple_SET_ITEM(result, i, item);
-        }
-        break;
-    }
-    return result;
+        PyTuple_SET_ITEM(result, i, item);
+      }
+      break;
+  }
+  return result;
 }
 
-function match_getitem(self, name){
-    return match_getslice(self, name, _b_.None);
+function match_getitem(self, name) {
+  return match_getslice(self, name, _b_.None);
 }
 
 /*[clinic input]
@@ -2095,25 +2109,25 @@ _sre.SRE_Match.groups
 Return a tuple containing all the subgroups of the match, from 1.
 [clinic start generated code]*/
 
-function _sre_SRE_Match_groups_impl(self, default_value){
-    var result,
-        index;
+function _sre_SRE_Match_groups_impl(self, default_value) {
+  var result,
+    index;
 
-    result = PyTuple_New(self.groups-1);
-    if (!result){
-        return NULL;
+  result = PyTuple_New(self.groups - 1);
+  if (!result) {
+    return NULL;
+  }
+  for (index = 1; index < self.groups; index++) {
+    var item;
+    item = match_getslice_by_index(self, index, default_value);
+    if (!item) {
+      Py_DECREF(result);
+      return NULL;
     }
-    for (index = 1; index < self.groups; index++) {
-        var item;
-        item = match_getslice_by_index(self, index, default_value);
-        if (!item) {
-            Py_DECREF(result);
-            return NULL;
-        }
-        PyTuple_SET_ITEM(result, index-1, item);
-    }
+    PyTuple_SET_ITEM(result, index - 1, item);
+  }
 
-    return result;
+  return result;
 }
 
 /*[clinic input]
@@ -2125,39 +2139,39 @@ _sre.SRE_Match.groupdict
 Return a dictionary containing all the named subgroups of the match, keyed by the subgroup name.
 [clinic start generated code]*/
 
-function _sre_SRE_Match_groupdict_impl(self, default_value){
-    var result,
-        key,
-        value,
-        pos = 0,
-        hash;
+function _sre_SRE_Match_groupdict_impl(self, default_value) {
+  var result,
+    key,
+    value,
+    pos = 0,
+    hash;
 
-    result = PyDict_New();
-    if (!result || !self.pattern.groupindex){
-        return result;
-    }
-    while (_PyDict_Next(self.pattern.groupindex, pos, key, value, hash)) {
-        var status;
-        Py_INCREF(key);
-        value = match_getslice(self, key, default_value);
-        if (!value) {
-            Py_DECREF(key);
-            throw failed;
-        }
-        status = _PyDict_SetItem_KnownHash(result, key, value, hash);
-        Py_DECREF(value);
-        Py_DECREF(key);
-        if (status < 0){
-            throw failed;
-        }
-    }
-
+  result = PyDict_New();
+  if (!result || !self.pattern.groupindex) {
     return result;
-
-    var failed = function(){
-        Py_DECREF(result);
-        return NULL;
+  }
+  while (_PyDict_Next(self.pattern.groupindex, pos, key, value, hash)) {
+    var status;
+    Py_INCREF(key);
+    value = match_getslice(self, key, default_value);
+    if (!value) {
+      Py_DECREF(key);
+      throw failed;
     }
+    status = _PyDict_SetItem_KnownHash(result, key, value, hash);
+    Py_DECREF(value);
+    Py_DECREF(key);
+    if (status < 0) {
+      throw failed;
+    }
+  }
+
+  return result;
+
+  var failed = function () {
+    Py_DECREF(result);
+    return NULL;
+  }
 }
 
 /*[clinic input]
@@ -2169,15 +2183,15 @@ _sre.SRE_Match.start -> Py_ssize_t
 Return index of the start of the substring matched by group.
 [clinic start generated code]*/
 
-function _sre_SRE_Match_start_impl(self, group){
-    var index = match_getindex(self, group);
+function _sre_SRE_Match_start_impl(self, group) {
+  var index = match_getindex(self, group);
 
-    if (index < 0) {
-        return -1;
-    }
+  if (index < 0) {
+    return -1;
+  }
 
-    /* mark is -1 if group is undefined */
-    return self.mark[index * 2];
+  /* mark is -1 if group is undefined */
+  return self.mark[index * 2];
 }
 
 /*[clinic input]
@@ -2189,38 +2203,38 @@ _sre.SRE_Match.end -> Py_ssize_t
 Return index of the end of the substring matched by group.
 [clinic start generated code]*/
 
-function _sre_SRE_Match_end_impl(self, group){
-    var index = match_getindex(self, group);
+function _sre_SRE_Match_end_impl(self, group) {
+  var index = match_getindex(self, group);
 
-    if (index < 0) {
-        return -1;
-    }
+  if (index < 0) {
+    return -1;
+  }
 
-    /* mark is -1 if group is undefined */
-    return self.mark[index * 2 + 1];
+  /* mark is -1 if group is undefined */
+  return self.mark[index * 2 + 1];
 }
 
-function _pair(i1, i2){
-    var pair,
-        item;
+function _pair(i1, i2) {
+  var pair,
+    item;
 
-    pair = PyTuple_New(2);
-    if (!pair){
-        return NULL;
-    }
-    item = PyLong_FromSsize_t(i1);
-    if (!item){
-        throw error;
-    }
-    PyTuple_SET_ITEM(pair, 0, item);
+  pair = PyTuple_New(2);
+  if (!pair) {
+    return NULL;
+  }
+  item = PyLong_FromSsize_t(i1);
+  if (!item) {
+    throw error;
+  }
+  PyTuple_SET_ITEM(pair, 0, item);
 
-    item = PyLong_FromSsize_t(i2);
-    if (!item){
-        throw error;
-    }
-    PyTuple_SET_ITEM(pair, 1, item);
+  item = PyLong_FromSsize_t(i2);
+  if (!item) {
+    throw error;
+  }
+  PyTuple_SET_ITEM(pair, 1, item);
 
-    return pair;
+  return pair;
 
 }
 
@@ -2233,39 +2247,39 @@ _sre.SRE_Match.span
 For match object m, return the 2-tuple (m.start(group), m.end(group)).
 [clinic start generated code]*/
 
-function _sre_SRE_Match_span_impl(self, group){
-    var index = match_getindex(self, group);
+function _sre_SRE_Match_span_impl(self, group) {
+  var index = match_getindex(self, group);
 
-    if (index < 0) {
-        return NULL;
-    }
+  if (index < 0) {
+    return NULL;
+  }
 
-    /* marks are -1 if group is undefined */
-    return _pair(self.mark[index * 2], self.mark[index * 2 + 1]);
+  /* marks are -1 if group is undefined */
+  return _pair(self.mark[index * 2], self.mark[index * 2 + 1]);
 }
 
-function match_regs(self){
-    var regs,
-        item,
-        index;
+function match_regs(self) {
+  var regs,
+    item,
+    index;
 
-    regs = PyTuple_New(self.groups);
-    if (!regs){
-        return NULL;
+  regs = PyTuple_New(self.groups);
+  if (!regs) {
+    return NULL;
+  }
+  for (index = 0; index < self.groups; index++) {
+    item = _pair(self.mark[index * 2], self.mark[index * 2 + 1]);
+    if (!item) {
+      Py_DECREF(regs);
+      return NULL;
     }
-    for (index = 0; index < self.groups; index++) {
-        item = _pair(self.mark[index * 2], self.mark[index * 2 + 1]);
-        if (!item) {
-            Py_DECREF(regs);
-            return NULL;
-        }
-        PyTuple_SET_ITEM(regs, index, item);
-    }
+    PyTuple_SET_ITEM(regs, index, item);
+  }
 
-    Py_INCREF(regs);
-    self.regs = regs;
+  Py_INCREF(regs);
+  self.regs = regs;
 
-    return regs;
+  return regs;
 }
 
 /*[clinic input]
@@ -2273,9 +2287,9 @@ _sre.SRE_Match.__copy__
 
 [clinic start generated code]*/
 
-function _sre_SRE_Match___copy___impl(self){
-    Py_INCREF(self);
-    return self;
+function _sre_SRE_Match___copy___impl(self) {
+  Py_INCREF(self);
+  return self;
 }
 
 /*[clinic input]
@@ -2286,152 +2300,153 @@ _sre.SRE_Match.__deepcopy__
 
 [clinic start generated code]*/
 
-function _sre_SRE_Match___deepcopy__(self, memo){
-    Py_INCREF(self);
-    return self;
+function _sre_SRE_Match___deepcopy__(self, memo) {
+  Py_INCREF(self);
+  return self;
 }
 
 var match_doc =
-"The result of re.match() and re.search().\n\
-Match objects always have a boolean value of True.";
+  "The result of re.match() and re.search().\n\
+  Match objects always have a boolean value of True.";
 
 var match_group_doc =
-"group([group1, ...]) -> str or tuple.\n\
-    Return subgroup(s) of the match by indices or names.\n\
-    For 0 returns the entire match.";
+  "group([group1, ...]) -> str or tuple.\n\
+      Return subgroup(s) of the match by indices or names.\n\
+      For 0 returns the entire match.";
 
-function match_lastindex_get(self, ignored){
-    if (self.lastindex >= 0){
-        return PyLong_FromSsize_t(self.lastindex);
-    }
-    Py_RETURN_NONE;
+function match_lastindex_get(self, ignored) {
+  if (self.lastindex >= 0) {
+    return PyLong_FromSsize_t(self.lastindex);
+  }
+  Py_RETURN_NONE;
 }
 
-function match_lastgroup_get(self, ignored){
-    if (self.pattern.indexgroup &&
-            self.lastindex >= 0 &&
-            self.lastindex < PyTuple_GET_SIZE(self.pattern.indexgroup)){
-        var result = PyTuple_GET_ITEM(self.pattern.indexgroup,
-                                            self.lastindex);
-        Py_INCREF(result);
-        return result;
-    }
-    Py_RETURN_NONE;
-}
-
-function match_regs_get(self, ignored){
-    if (self.regs) {
-        Py_INCREF(self.regs);
-        return self.regs;
-    } else{
-        return match_regs(self);
-    }
-}
-
-function match_repr(self){
-    var result,
-        group0 = match_getslice_by_index(self, 0, _b_.None);
-    if (group0 == NULL){
-        return NULL;
-    }
-    result = PyUnicode_FromFormat(
-            "<%s object; span=(%zd, %zd), match=%.50R>",
-            Py_TYPE(self).tp_name,
-            self.mark[0], self.mark[1], group0);
-    Py_DECREF(group0);
+function match_lastgroup_get(self, ignored) {
+  if (self.pattern.indexgroup &&
+    self.lastindex >= 0 &&
+    self.lastindex < PyTuple_GET_SIZE(self.pattern.indexgroup)) {
+    var result = PyTuple_GET_ITEM(self.pattern.indexgroup,
+      self.lastindex);
+    Py_INCREF(result);
     return result;
+  }
+  Py_RETURN_NONE;
+}
+
+function match_regs_get(self, ignored) {
+  if (self.regs) {
+    Py_INCREF(self.regs);
+    return self.regs;
+  } else {
+    return match_regs(self);
+  }
+}
+
+function match_repr(self) {
+  var result,
+    group0 = match_getslice_by_index(self, 0, _b_.None);
+  if (group0 == NULL) {
+    return NULL;
+  }
+  result = PyUnicode_FromFormat(
+    "<%s object; span=(%zd, %zd), match=%.50R>",
+    Py_TYPE(self).tp_name,
+    self.mark[0], self.mark[1], group0);
+  Py_DECREF(group0);
+  return result;
 }
 
 
 function pattern_new_match(module_state,
-                  pattern,
-                  state,
-                  status){
-    /* create match object (from state object) */
+                           pattern,
+                           state,
+                           status) {
+  /* create match object (from state object) */
 
-    var match,
-        i, j,
-        base,
-        n;
+  var match,
+    i, j,
+    base,
+    n;
 
-    if (status > 0) {
+  if (status > 0) {
 
-        /* create match object (with room for extra group marks) */
-        /* coverity[ampersand_in_size] */
-        match = PyObject_GC_NewVar(MatchObject,
-                                   module_state.Match_Type,
-                                   2 * (pattern.groups + 1));
-        if (!match){
-            return NULL;
-        }
-        Py_INCREF(pattern);
-        match.pattern = pattern;
-
-        Py_INCREF(state.string);
-        match.string = state.string;
-
-        match.regs = NULL;
-        match.groups = pattern.groups + 1;
-
-        /* fill in group slices */
-
-        base = state.beginning;
-        n = state.charsize;
-
-        match.mark[0] = (state.start - base) / n;
-        match.mark[1] = (state.ptr - base) / n;
-
-        for (i = j = 0; i < pattern.groups; i++, j+=2){
-            if (j  +1 <= state.lastmark && state.mark[j] && state.mark[j + 1]) {
-                match.mark[j + 2] = (state.mark[j] - base) / n;
-                match.mark[j + 3] = (state.mark[j + 1] - base) / n;
-            } else{
-                match.mark[j + 2] = match.mark[j + 3] = -1; /* undefined */
-            }
-        }
-        match.pos = state.pos;
-        match.endpos = state.endpos;
-
-        match.lastindex = state.lastindex;
-
-        PyObject_GC_Track(match);
-        return match;
-
-    } else if (status == 0) {
-
-        /* no match */
-        Py_RETURN_NONE;
-
+    /* create match object (with room for extra group marks) */
+    /* coverity[ampersand_in_size] */
+    match = PyObject_GC_NewVar(MatchObject,
+      module_state.Match_Type,
+      2 * (pattern.groups + 1));
+    if (!match) {
+      return NULL;
     }
+    Py_INCREF(pattern);
+    match.pattern = pattern;
 
-    /* internal error */
-    pattern_error(status);
-    return NULL;
+    Py_INCREF(state.string);
+    match.string = state.string;
+
+    match.regs = NULL;
+    match.groups = pattern.groups + 1;
+
+    /* fill in group slices */
+
+    base = state.beginning;
+    n = state.charsize;
+
+    match.mark[0] = (state.start - base) / n;
+    match.mark[1] = (state.ptr - base) / n;
+
+    for (i = j = 0; i < pattern.groups; i++, j += 2) {
+      if (j + 1 <= state.lastmark && state.mark[j] && state.mark[j + 1]) {
+        match.mark[j + 2] = (state.mark[j] - base) / n;
+        match.mark[j + 3] = (state.mark[j + 1] - base) / n;
+      } else {
+        match.mark[j + 2] = match.mark[j + 3] = -1; /* undefined */
+      }
+    }
+    match.pos = state.pos;
+    match.endpos = state.endpos;
+
+    match.lastindex = state.lastindex;
+
+    PyObject_GC_Track(match);
+    return match;
+
+  } else if (status == 0) {
+
+    /* no match */
+    Py_RETURN_NONE;
+
+  }
+
+  /* internal error */
+  pattern_error(status);
+  return NULL;
 }
 
 
 /* -------------------------------------------------------------------- */
+
 /* scanner methods (experimental) */
 
-function scanner_traverse(self, visit, arg){
-    Py_VISIT(Py_TYPE(self));
-    Py_VISIT(self.pattern);
-    return 0;
+function scanner_traverse(self, visit, arg) {
+  Py_VISIT(Py_TYPE(self));
+  Py_VISIT(self.pattern);
+  return 0;
 }
 
-function scanner_clear(self){
-    Py_CLEAR(self.pattern);
-    return 0;
+function scanner_clear(self) {
+  Py_CLEAR(self.pattern);
+  return 0;
 }
 
-function scanner_dealloc(self){
-    var tp = Py_TYPE(self);
+function scanner_dealloc(self) {
+  var tp = Py_TYPE(self);
 
-    PyObject_GC_UnTrack(self);
-    state_fini(self.state);
-    scanner_clear(self);
-    tp.tp_free(self);
-    Py_DECREF(tp);
+  PyObject_GC_UnTrack(self);
+  state_fini(self.state);
+  scanner_clear(self);
+  tp.tp_free(self);
+  Py_DECREF(tp);
 }
 
 /*[clinic input]
@@ -2442,34 +2457,34 @@ _sre.SRE_Scanner.match
 
 [clinic start generated code]*/
 
-function _sre_SRE_Scanner_match_impl(self, cls){
-    var module_state = get_sre_module_state_by_class(cls),
-        state = self.state,
-        match,
-        status;
+function _sre_SRE_Scanner_match_impl(self, cls) {
+  var module_state = get_sre_module_state_by_class(cls),
+    state = self.state,
+    match,
+    status;
 
-    if (state.start == NULL){
-        Py_RETURN_NONE;
-    }
-    state_reset(state);
+  if (state.start == NULL) {
+    Py_RETURN_NONE;
+  }
+  state_reset(state);
 
-    state.ptr = state.start;
+  state.ptr = state.start;
 
-    status = sre_match(state, PatternObject_GetCode(self.pattern));
-    if (PyErr_Occurred()){
-        return NULL;
-    }
-    match = pattern_new_match(module_state, self.pattern,
-                              state, status);
+  status = sre_match(state, PatternObject_GetCode(self.pattern));
+  if (PyErr_Occurred()) {
+    return NULL;
+  }
+  match = pattern_new_match(module_state, self.pattern,
+    state, status);
 
-    if (status == 0){
-        state.start = NULL;
-    }else {
-        state.must_advance = (state.ptr == state.start);
-        state.start = state.ptr;
-    }
+  if (status == 0) {
+    state.start = NULL;
+  } else {
+    state.must_advance = (state.ptr == state.start);
+    state.start = state.ptr;
+  }
 
-    return match;
+  return match;
 }
 
 
@@ -2481,130 +2496,129 @@ _sre.SRE_Scanner.search
 
 [clinic start generated code]*/
 
-function _sre_SRE_Scanner_search_impl(self, cls){
-    var module_state = get_sre_module_state_by_class(cls),
-        state = self.state,
-        match,
-        status;
+function _sre_SRE_Scanner_search_impl(self, cls) {
+  var module_state = get_sre_module_state_by_class(cls),
+    state = self.state,
+    match,
+    status;
 
-    if (state.start == NULL){
-        Py_RETURN_NONE;
-    }
-    state_reset(state);
+  if (state.start == NULL) {
+    Py_RETURN_NONE;
+  }
+  state_reset(state);
 
-    state.ptr = state.start;
+  state.ptr = state.start;
 
-    status = sre_search(state, PatternObject_GetCode(self.pattern));
-    if (PyErr_Occurred()){
-        return NULL;
-    }
+  status = sre_search(state, PatternObject_GetCode(self.pattern));
+  if (PyErr_Occurred()) {
+    return NULL;
+  }
 
-    match = pattern_new_match(module_state, self.pattern,
-                              state, status);
+  match = pattern_new_match(module_state, self.pattern,
+    state, status);
 
-    if (status == 0){
-        state.start = NULL;
-    }else {
-        state.must_advance = (state.ptr == state.start);
-        state.start = state.ptr;
-    }
+  if (status == 0) {
+    state.start = NULL;
+  } else {
+    state.must_advance = (state.ptr == state.start);
+    state.start = state.ptr;
+  }
 
-    return match;
+  return match;
 }
 
 function pattern_scanner(module_state,
-                self,
-                string,
-                pos,
-                endpos){
-    var scanner;
+                         self,
+                         string,
+                         pos,
+                         endpos) {
+  var scanner;
 
-    /* create scanner object */
-    scanner = PyObject_GC_New(ScannerObject, module_state.Scanner_Type);
-    if (!scanner){
-        return NULL;
-    }
-    scanner.pattern = NULL;
+  /* create scanner object */
+  scanner = PyObject_GC_New(ScannerObject, module_state.Scanner_Type);
+  if (!scanner) {
+    return NULL;
+  }
+  scanner.pattern = NULL;
 
-    /* create search state object */
-    if (!state_init(scanner.state, self, string, pos, endpos)) {
-        Py_DECREF(scanner);
-        return NULL;
-    }
+  /* create search state object */
+  if (!state_init(scanner.state, self, string, pos, endpos)) {
+    Py_DECREF(scanner);
+    return NULL;
+  }
 
-    Py_INCREF(self);
-    scanner.pattern = self;
+  Py_INCREF(self);
+  scanner.pattern = self;
 
-    PyObject_GC_Track(scanner);
-    return scanner;
+  PyObject_GC_Track(scanner);
+  return scanner;
 }
 
-function pattern_hash(self){
-    var hash, hash2;
+function pattern_hash(self) {
+  var hash, hash2;
 
-    hash = PyObject_Hash(self.pattern);
-    if (hash == -1) {
-        return -1;
-    }
+  hash = PyObject_Hash(self.pattern);
+  if (hash == -1) {
+    return -1;
+  }
 
-    hash2 = _Py_HashBytes(self.code, sizeof(self.code[0]) * self.codesize);
-    hash ^= hash2;
+  hash2 = _Py_HashBytes(self.code, sizeof(self.code[0]) * self.codesize);
+  hash ^= hash2;
 
-    hash ^= self.flags;
-    hash ^= self.isbytes;
-    hash ^= self.codesize;
+  hash ^= self.flags;
+  hash ^= self.isbytes;
+  hash ^= self.codesize;
 
-    if (hash == -1) {
-        hash = -2;
-    }
-    return hash;
+  if (hash == -1) {
+    hash = -2;
+  }
+  return hash;
 }
 
-function pattern_richcompare(lefto, righto, op){
-    var tp = Py_TYPE(lefto),
-        module_state = get_sre_module_state_by_class(tp),
-        left, right,
-        cmp;
+function pattern_richcompare(lefto, righto, op) {
+  var tp = Py_TYPE(lefto),
+    module_state = get_sre_module_state_by_class(tp),
+    left, right,
+    cmp;
 
-    if (op != Py_EQ && op != Py_NE) {
-        Py_RETURN_NOTIMPLEMENTED;
-    }
+  if (op != Py_EQ && op != Py_NE) {
+    Py_RETURN_NOTIMPLEMENTED;
+  }
 
-    if (!Py_IS_TYPE(righto, module_state.Pattern_Type))
-    {
-        Py_RETURN_NOTIMPLEMENTED;
-    }
+  if (!Py_IS_TYPE(righto, module_state.Pattern_Type)) {
+    Py_RETURN_NOTIMPLEMENTED;
+  }
 
-    if (lefto == righto) {
-        /* a pattern is equal to itself */
-        return PyBool_FromLong(op == Py_EQ);
-    }
+  if (lefto == righto) {
+    /* a pattern is equal to itself */
+    return PyBool_FromLong(op == Py_EQ);
+  }
 
-    left = lefto;
-    right = righto;
+  left = lefto;
+  right = righto;
 
-    cmp = (left.flags == right.flags
-           && left.isbytes == right.isbytes
-           && left.codesize == right.codesize);
-    if (cmp) {
-        /* Compare the code and the pattern because the same pattern can
-           produce different codes depending on the locale used to compile the
-           pattern when the re.LOCALE flag is used. Don't compare groups,
-           indexgroup nor groupindex: they are derivated from the pattern. */
-        cmp = (memcmp(left.code, right.code,
-                      sizeof(left.code[0]) * left.codesize) == 0);
+  cmp = (left.flags == right.flags
+    && left.isbytes == right.isbytes
+    && left.codesize == right.codesize);
+  if (cmp) {
+    /* Compare the code and the pattern because the same pattern can
+       produce different codes depending on the locale used to compile the
+       pattern when the re.LOCALE flag is used. Don't compare groups,
+       indexgroup nor groupindex: they are derivated from the pattern. */
+    cmp = (memcmp(left.code, right.code,
+      sizeof(left.code[0]) * left.codesize) == 0);
+  }
+  if (cmp) {
+    cmp = PyObject_RichCompareBool(left.pattern, right.pattern,
+      Py_EQ);
+    if (cmp < 0) {
+      return NULL;
     }
-    if (cmp) {
-        cmp = PyObject_RichCompareBool(left.pattern, right.pattern,
-                                       Py_EQ);
-        if (cmp < 0) {
-            return NULL;
-        }
-    }
-    if (op == Py_NE) {
-        cmp = !cmp;
-    }
-    return PyBool_FromLong(cmp);
+  }
+  if (op == Py_NE) {
+    cmp = !cmp;
+  }
+  return PyBool_FromLong(cmp);
 }
 
 // #include "clinic/_sre.c.h"
@@ -2641,8 +2655,9 @@ static PyGetSetDef pattern_getset[] = {
 */
 
 function PAT_OFF(x) {
-    return offsetof(PatternObject, x)
+  return offsetof(PatternObject, x)
 }
+
 var pattern_members = []
 /*
 static PyMemberDef pattern_members[] = {
@@ -2675,11 +2690,11 @@ static PyType_Slot pattern_slots[] = {
 */
 
 var pattern_spec = {
-    name: "re.Pattern",
-    basicsize: 0,
-    itemsize: 0,
-    flags: 0,
-    slots: pattern_slots
+  name: "re.Pattern",
+  basicsize: 0,
+  itemsize: 0,
+  flags: 0,
+  slots: pattern_slots
 }
 /*
 static PyType_Spec pattern_spec = {
@@ -2711,6 +2726,7 @@ static PyMethodDef match_methods[] = {
 */
 
 var match_getset = []
+
 /*
 static PyGetSetDef match_getset[] = {
     {"lastindex", (getter)match_lastindex_get, (setter)NULL,
@@ -2723,7 +2739,7 @@ static PyGetSetDef match_getset[] = {
 */
 
 function MATCH_OFF(x) {
-    return offsetof(MatchObject, x)
+  return offsetof(MatchObject, x)
 }
 
 var match_members = []
@@ -2758,11 +2774,11 @@ static PyType_Slot match_slots[] = {
     {Py_tp_traverse, match_traverse},
     {Py_tp_clear, match_clear},
 */
-    /* As mapping.
-     *
-     * Match objects do not support length or assignment, but do support
-     * __getitem__.
-     */
+/* As mapping.
+ *
+ * Match objects do not support length or assignment, but do support
+ * __getitem__.
+ */
 /*
     {Py_mp_subscript, match_getitem},
 
@@ -2771,11 +2787,11 @@ static PyType_Slot match_slots[] = {
 */
 
 var match_spec = {
-    name: 're.Match',
-    basicsizie: 0,
-    itemsize: 0,
-    flags: 0,
-    slots: match_slots
+  name: 're.Match',
+  basicsizie: 0,
+  itemsize: 0,
+  flags: 0,
+  slots: match_slots
 }
 /*
 static PyType_Spec match_spec = {
@@ -2799,7 +2815,7 @@ static PyMethodDef scanner_methods[] = {
 */
 
 function SCAN_OFF(x) {
-    return offsetof(ScannerObject, x)
+  return offsetof(ScannerObject, x)
 }
 
 var scanner_members = []
@@ -2823,10 +2839,10 @@ static PyType_Slot scanner_slots[] = {
 */
 
 var scanner_spec = {
-    name: '',
-    basicsize: 0,
-    flags: 0,
-    slots: scanner_slots
+  name: '',
+  basicsize: 0,
+  flags: 0,
+  slots: scanner_slots
 }
 
 /*
@@ -2851,78 +2867,78 @@ static PyMethodDef _functions[] = {
 };
 */
 
-function sre_traverse(module, visit, arg){
-    var state = get_sre_module_state(module);
+function sre_traverse(module, visit, arg) {
+  var state = get_sre_module_state(module);
 
-    Py_VISIT(state.Pattern_Type);
-    Py_VISIT(state.Match_Type);
-    Py_VISIT(state.Scanner_Type);
+  Py_VISIT(state.Pattern_Type);
+  Py_VISIT(state.Match_Type);
+  Py_VISIT(state.Scanner_Type);
 
-    return 0;
+  return 0;
 }
 
-function sre_clear(module){
-    var state = get_sre_module_state(module);
+function sre_clear(module) {
+  var state = get_sre_module_state(module);
 
-    Py_CLEAR(state.Pattern_Type);
-    Py_CLEAR(state.Match_Type);
-    Py_CLEAR(state.Scanner_Type);
+  Py_CLEAR(state.Pattern_Type);
+  Py_CLEAR(state.Match_Type);
+  Py_CLEAR(state.Scanner_Type);
 
-    return 0;
+  return 0;
 }
 
-function sre_free(module){
-    sre_clear(module);
+function sre_free(module) {
+  sre_clear(module);
 }
 
-function CREATE_TYPE(m, type, spec){
-    type = PyType_FromModuleAndSpec(m, spec, NULL);
-    if (type == NULL) {
-        throw error;
-    }
+function CREATE_TYPE(m, type, spec) {
+  type = PyType_FromModuleAndSpec(m, spec, NULL);
+  if (type == NULL) {
+    throw error;
+  }
 }
 
-function ADD_ULONG_CONSTANT(module, name, value){
-    var o = PyLong_FromUnsignedLong(value);
-    if (!o) {
-        throw error
-    }
-    var res = PyModule_AddObjectRef(module, name, o)
-    Py_DECREF(o)
-    if (res < 0) {
-        throw error
-    }
+function ADD_ULONG_CONSTANT(module, name, value) {
+  var o = PyLong_FromUnsignedLong(value);
+  if (!o) {
+    throw error
+  }
+  var res = PyModule_AddObjectRef(module, name, o)
+  Py_DECREF(o)
+  if (res < 0) {
+    throw error
+  }
 }
 
-function sre_exec(m){
-    var state;
+function sre_exec(m) {
+  var state;
 
-    /* Create heap types */
-    state = get_sre_module_state(m);
-    CREATE_TYPE(m, state.Pattern_Type, pattern_spec);
-    CREATE_TYPE(m, state.Match_Type, match_spec);
-    CREATE_TYPE(m, state.Scanner_Type, scanner_spec);
+  /* Create heap types */
+  state = get_sre_module_state(m);
+  CREATE_TYPE(m, state.Pattern_Type, pattern_spec);
+  CREATE_TYPE(m, state.Match_Type, match_spec);
+  CREATE_TYPE(m, state.Scanner_Type, scanner_spec);
 
-    if (PyModule_AddIntConstant(m, "MAGIC", SRE_MAGIC) < 0) {
-        throw error;
-    }
+  if (PyModule_AddIntConstant(m, "MAGIC", SRE_MAGIC) < 0) {
+    throw error;
+  }
 
-    if (PyModule_AddIntConstant(m, "CODESIZE", sizeof(SRE_CODE)) < 0) {
-        throw error;
-    }
+  if (PyModule_AddIntConstant(m, "CODESIZE", sizeof(SRE_CODE)) < 0) {
+    throw error;
+  }
 
-    ADD_ULONG_CONSTANT(m, "MAXREPEAT", SRE_MAXREPEAT);
-    ADD_ULONG_CONSTANT(m, "MAXGROUPS", SRE_MAXGROUPS);
+  ADD_ULONG_CONSTANT(m, "MAXREPEAT", SRE_MAXREPEAT);
+  ADD_ULONG_CONSTANT(m, "MAXGROUPS", SRE_MAXGROUPS);
 
-    if (PyModule_AddStringConstant(m, "copyright", copyright) < 0) {
-        throw error;
-    }
+  if (PyModule_AddStringConstant(m, "copyright", copyright) < 0) {
+    throw error;
+  }
 
-    return 0;
-/*
-error:
-    return -1;
-    */
+  return 0;
+  /*
+  error:
+      return -1;
+      */
 }
 
 var sre_slots = []
@@ -2957,9 +2973,9 @@ PyInit__sre(void)
 */
 
 var $module = {
-    compile: _sre_compile_impl,
-    CODESIZE: 4,
-    MAGIC: 20171005,
-    MAXGROUPS: 2147483647,
-    MAXREPEAT: 2147483648
+  compile: _sre_compile_impl,
+  CODESIZE: 4,
+  MAGIC: 20171005,
+  MAXGROUPS: 2147483647,
+  MAXREPEAT: 2147483648
 }

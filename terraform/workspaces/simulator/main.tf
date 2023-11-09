@@ -105,11 +105,11 @@ data "aws_availability_zones" "available" {
 
 data "aws_ami" "bastion" {
   most_recent = true
-  owners = [
+  owners      = [
     "self",
   ]
   filter {
-    name = "name"
+    name   = "name"
     values = [
       "simulator-bastion-*"
     ]
@@ -118,11 +118,11 @@ data "aws_ami" "bastion" {
 
 data "aws_ami" "k8s" {
   most_recent = true
-  owners = [
+  owners      = [
     "self",
   ]
   filter {
-    name = "name"
+    name   = "name"
     values = [
       "simulator-k8s-*"
     ]

@@ -12,30 +12,30 @@ metadata:
 data:
   config.json: |
     {
-        "distSpecVersion": "1.1.0-dev",
-        "http": {
-            "address":"0.0.0.0",
-            "port":"5000",
-            "auth": {
-                "htpasswd": {
-                  "path": "/etc/zot/htpasswd"
-                },
-                "failDelay": 1
-            }
-        },
-        "storage":{
-            "rootDirectory":"/data/zot",
-            "commit": true,
-            "dedupe": true,
-            "gc": true,
-            "gcDelay": "1h",
-            "gcInterval": "6h"
-        },
-        "log": {
-            "level": "debug",
-            "output":"/dev/stdout",
-            "audit":"/var/log/zot/zot-audit.log"
+      "distSpecVersion": "1.1.0-dev",
+      "http": {
+        "address": "0.0.0.0",
+        "port": "5000",
+        "auth": {
+          "htpasswd": {
+            "path": "/etc/zot/htpasswd"
+          },
+          "failDelay": 1
         }
+      },
+      "storage": {
+        "rootDirectory": "/data/zot",
+        "commit": true,
+        "dedupe": true,
+        "gc": true,
+        "gcDelay": "1h",
+        "gcInterval": "6h"
+      },
+      "log": {
+        "level": "debug",
+        "output": "/dev/stdout",
+        "audit": "/var/log/zot/zot-audit.log"
+      }
     }
 ---
 apiVersion: v1
@@ -78,7 +78,7 @@ spec:
   capacity:
     storage: 10Gi
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   storageClassName: zot-storage
   hostPath:
@@ -86,11 +86,11 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: In
-          values:
-          - "{{ master_hostname }}"
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - "{{ master_hostname }}"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -99,7 +99,7 @@ metadata:
   namespace: default
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   storageClassName: zot-storage
   resources:
     requests:
@@ -127,30 +127,30 @@ spec:
       serviceAccountName: zot
       nodeName: "{{ master_hostname }}"
       tolerations:
-      - operator: Exists
+        - operator: Exists
       containers:
-      - name: zot
-        securityContext:
-          allowPrivilegeEscalation: false
-        image: docker.io/controlplaneoffsec/zot-registry:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-          - name: zot
-            containerPort: 5000
-        volumeMounts:
-        - name: config
-          mountPath: /etc/zot
-          readOnly: true
-        - name: data
-          mountPath: /data/zot
+        - name: zot
+          securityContext:
+            allowPrivilegeEscalation: false
+          image: docker.io/controlplaneoffsec/zot-registry:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: zot
+              containerPort: 5000
+          volumeMounts:
+            - name: config
+              mountPath: /etc/zot
+              readOnly: true
+            - name: data
+              mountPath: /data/zot
       volumes:
-      - name: config
-        projected:
-          sources:
-          - configMap:
-              name: zot-config
-          - secret:
-              name: ba
-      - name: data
-        persistentVolumeClaim:
-          claimName: zot-data-pvc
+        - name: config
+          projected:
+            sources:
+              - configMap:
+                  name: zot-config
+              - secret:
+                  name: ba
+        - name: data
+          persistentVolumeClaim:
+            claimName: zot-data-pvc

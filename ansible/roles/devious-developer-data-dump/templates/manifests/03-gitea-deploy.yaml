@@ -378,14 +378,14 @@ metadata:
     version: "latest"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    {}
+    { }
 spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - name: http
-    port: 3000
-    targetPort: 3000
+    - name: http
+      port: 3000
+      targetPort: 3000
   selector:
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -405,15 +405,15 @@ metadata:
     version: "latest"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    {}
+    { }
 spec:
   type: ClusterIP
   clusterIP: None
   ports:
-  - name: ssh
-    port: 22
-    targetPort: 22
-    protocol: TCP
+    - name: ssh
+      port: 22
+      targetPort: 22
+      protocol: TCP
   selector:
     app.kubernetes.io/name: gitea
     app.kubernetes.io/instance: gitea
@@ -434,7 +434,7 @@ spec:
   replicas: 1
   serviceName: gitea-postgresql-hl
   updateStrategy:
-    rollingUpdate: {}
+    rollingUpdate: { }
     type: RollingUpdate
   selector:
     matchLabels:
@@ -555,7 +555,7 @@ spec:
                   exec pg_isready -U "gitea" -d "dbname=gitea" -h 127.0.0.1 -p 5432
                   [ -f /opt/bitnami/postgresql/tmp/.initialized ] || [ -f /bitnami/postgresql/.initialized ]
           resources:
-            limits: {}
+            limits: { }
             requests:
               cpu: 250m
               memory: 256Mi
@@ -621,7 +621,7 @@ spec:
         - name: init-directories
           image: "controlplaneoffsec/gitea:latest"
           imagePullPolicy: Always
-          command: ["/usr/sbin/init_directory_structure.sh"]
+          command: [ "/usr/sbin/init_directory_structure.sh" ]
           env:
             - name: GITEA_APP_INI
               value: /data/gitea/conf/app.ini
@@ -670,11 +670,11 @@ spec:
               mountPath: /data
 
           securityContext:
-            {}
+            { }
         - name: init-app-ini
           image: "controlplaneoffsec/gitea:latest"
           imagePullPolicy: Always
-          command: ["/usr/sbin/config_environment.sh"]
+          command: [ "/usr/sbin/config_environment.sh" ]
           env:
             - name: GITEA_APP_INI
               value: /data/gitea/conf/app.ini
@@ -725,10 +725,10 @@ spec:
               mountPath: /env-to-ini-mounts/inlines/
 
           securityContext:
-            {}
+            { }
         - name: configure-gitea
           image: "controlplaneoffsec/gitea:latest"
-          command: ["/usr/sbin/configure_gitea.sh"]
+          command: [ "/usr/sbin/configure_gitea.sh" ]
           imagePullPolicy: Always
           securityContext:
             runAsUser: 1000
@@ -858,9 +858,9 @@ spec:
               port: http
             timeoutSeconds: 1
           resources:
-            {}
+            { }
           securityContext:
-            {}
+            { }
           volumeMounts:
             - name: temp
               mountPath: /tmp
@@ -882,13 +882,13 @@ spec:
           secret:
             secretName: gitea-inline-config
         - name: temp
-          emptyDir: {}
+          emptyDir: { }
   volumeClaimTemplates:
     - metadata:
         name: data
       spec:
         accessModes:
-            - "ReadWriteOnce"
+          - "ReadWriteOnce"
         storageClassName: "local-storage"
         resources:
           requests:
