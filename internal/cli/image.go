@@ -17,6 +17,7 @@ var imageCmd = &cobra.Command{
 }
 
 // TODO: Add flags for containerd, runc, cni, and kubernetes version
+// TODO: Add image cleanup functionality
 
 var imageBuildCmd = &cobra.Command{
 	Use:   "build [name]",

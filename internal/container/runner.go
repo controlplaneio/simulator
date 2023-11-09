@@ -50,6 +50,7 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		return NoHome
 	}
 
+	// TODO: work with env var for directory
 	localAdminSSHBundleDir := filepath.Join(home, ".simulator/admin")
 	localPlayerSSHBundleDir := filepath.Join(home, ".simulator/player")
 	localAWSDir := filepath.Join(home, ".aws")
