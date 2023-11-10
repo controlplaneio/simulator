@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/dockerconfigjson
-metadata:
-  name: prod-pull-creds
-  namespace: rescue-drop-prod
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJyZWcucmVzY3VlLmRyb3AiOnsidXNlcm5hbWUiOiJjaSIsInBhc3N3b3JkIjoic3RvcmVpbWFnZSIsImF1dGgiOiJZMms2YzNSdmNtVnBiV0ZuWlE9PSJ9fX0=

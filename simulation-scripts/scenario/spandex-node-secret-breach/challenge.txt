@@ -1,3 +1,0 @@
-Aqua knows that coffee is an important part of any engineering organisation, and all signs point to a malware infestation dropped via Hyper Text Coffee Pot Control Protocol (HTCPCP, RFC 2324). The new Kubernetes-powered coffee machines weren’t such a good idea after all.
-
-You start in the caffeine pod, find the flag dropped on the host coffee machine.

@@ -1,1 +1,0 @@
-You can stop CreWLing pages with User-agent: *

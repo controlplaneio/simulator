@@ -1,5 +1,0 @@
-The platform team spent their Christmas holidays migrating from pod security policies to the new fancy standard, locking down the k8s fleet!
-
-Nonetheless, an attacker stole a developer credential and has managed to run his own unconstrained Pod in the dev-app-factory namespace, to later pivot on the host.
-
-How is that even possible?! Can you find a way to remediate this and ensure that the attacker Pod can't run anymore in the cluster?

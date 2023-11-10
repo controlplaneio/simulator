@@ -1,3 +1,0 @@
-Not content with attacking the databases and git repositories, the General’s attack is escalating to Aqua’s production infrastructure. Aqua IDS has notified us that it’s blocked an attack from within a pod, but the API server audit logs show no other sign of a breach. How have the attackers exfiltrated secrets from this cluster?
-
-You will start in the project-x pod in the top-secret namespace. There may be some clues on the master at $MASTER_IP_ADDRESSES.

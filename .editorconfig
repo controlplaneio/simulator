@@ -1,18 +1,38 @@
 root = true
 
-# EditorConfig is awesome: http://EditorConfig.org
-
-[*.go]
-indent_size = 4
-indent_style = tab
-trim_trailing_whitespace = true
-end_of_line = lf
-insert_final_newline = true
-max_line_length = 120
-
-[Makefile]
+[*]
 charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120
+tab_width = 4
+
+[*.proto]
+indent_size = 2
+tab_width = 2
+
+[{*.bash,*.sh,*.zsh}]
+indent_size = 2
+tab_width = 2
+
+[{*.go,*.go2}]
 indent_style = tab
 
-[bashrc]
+[{*.har,*.jsb2,*.jsb3,*.json,.babelrc,.eslintrc,.stylelintrc,bowerrc,jest.config}]
+indent_size = 2
+
+[{*.hcl,*.nomad}]
+indent_size = 2
+
+[{*.pb,*.textproto}]
+indent_size = 2
+tab_width = 2
+
+[{*.tf,*.tfvars}]
+indent_size = 2
+
+[{*.yaml,*.yml,Kptfile}]
 indent_size = 2

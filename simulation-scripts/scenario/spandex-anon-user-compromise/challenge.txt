@@ -1,3 +1,0 @@
-Reports from the Aqua security team are that the General’s henchmen got into our systems via the Kubernetes workers running on  $NODE_IP_ADDRESSES, and exfiltrated secrets, looking to escalate the attack further. We don’t know which secrets they used, so your first task is to find the compromised secret.
-
-You start in the pod known to be the point of compromise. Re-trace the attack path and extract the other workload’s password.

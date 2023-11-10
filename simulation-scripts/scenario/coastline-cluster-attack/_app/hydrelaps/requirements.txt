@@ -1,3 +1,0 @@
-flask-rest-jsonapi-next
-flask_sqlalchemy
-faker

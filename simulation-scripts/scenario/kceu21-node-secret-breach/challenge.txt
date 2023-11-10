@@ -1,9 +1,0 @@
-
-| ⡇⡠ ⡀⢀ ⣇⡀ ⢀⡀ ⢀⣀ ⢀⡀ ⣀⡀ ⣏⡉ ⡇⢸  ⡜ ⠊⡱ ⢺
-| ⠏⠢ ⠣⠼ ⠧⠜ ⠣⠭ ⠣⠤ ⠣⠜ ⠇⠸ ⠧⠤ ⠣⠜ ⠎  ⠮⠤ ⠼⠄
-
-We've cleared Captain Hashjack's motley crew from most of the systems! We've almost got them!
-
-But there is mysterious traffic on the network, we think it's the last signal in the pirates' command and control network.
-
-Investigate the unknown network signal to find where the Captain's hiding the flag.
