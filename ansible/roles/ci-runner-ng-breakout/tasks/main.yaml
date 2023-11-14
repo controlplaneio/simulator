@@ -1,0 +1,42 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+    state: "{{ state }}"
+  loop:
+    - manifests/scenario.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Set flag
+  ansible.builtin.copy:
+    dest: /root/flag.txt
+    content: flag_ctf{NextGenAutomationBreakoutAchievedTM}
+  when: "state == 'present' and inventory_hostname in groups['nodes']"
+
+- name: Remove flag
+  ansible.builtin.file:
+    path: /root/flag.txt
+    state: absent
+  when: "state == 'absent' and inventory_hostname in groups['nodes']"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: ci-runner-ng
+    pod: "$(kubectl get po -n ci-runner-ng -l=name=jenk-ng-runner-s82n6 -oname)"
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"
