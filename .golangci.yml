@@ -1,0 +1,118 @@
+linters-settings:
+  exhaustive:
+    check:
+      - switch
+      - map
+    default-signifies-exhaustive: true
+  lll:
+    line-length: 120
+  gci:
+    sections:
+      - standard # Captures all standard packages if they do not match another section.
+      - default # Contains all imports that could not be matched to another section type.
+      - prefix(github.com/controlplaneio/simulator/) # Groups all imports with the specified Prefix.
+
+issues:
+  exclude-rules:
+    # disable funlen for test funcs
+    - source: "^func Test"
+      linters:
+        - funlen
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  # inverted configuration with `enable-all` and `disable` is not scalable during updates of golangci-lint
+  disable-all: true
+  enable:
+    - asasalint
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - decorder
+    # - depguard # just for limiting packages
+    - dogsled
+    - dupl
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - execinquery
+    - exhaustive
+#    - exhaustruct
+    - exportloopref
+    - forbidigo
+    - forcetypeassert
+    # - funlen # complexity
+    # disable gci while it doesn't play nice with gofumpt and goimports
+    # https://github.com/golangci/golangci-lint/issues/1490
+    # - gci
+    # - ginkgolinter # not using ginkgo
+    - gocheckcompilerdirectives
+#    - gochecknoglobals
+#    - gochecknoinits
+    - gocognit # complexity
+    - goconst
+    - gocritic
+    # - gocyclo # using gocognit
+    # - godot # comment style
+    - gofmt
+#    - gofumpt
+    - goheader
+    - goimports
+    - gomnd # detect loose numbers
+    - gomoddirectives # not sure
+    - gomodguard # same as depguard?
+    - goprintffuncname
+    - gosec
+    - gosmopolitan
+    - gosimple
+    - govet
+    - grouper
+    - importas # configure this
+    - interfacebloat # maybe configure
+    - ineffassign
+#    - ireturn
+    - lll
+    - loggercheck
+    # - maintidx # using gocognit
+    - makezero
+    - mirror
+    - misspell
+    - musttag
+    - nakedret
+    # - nestif # using gocognit
+    - nilerr
+    - nilnil
+    # - nlreturn # probably not
+    - noctx
+    - nolintlint
+    - nonamedreturns # maybe
+    - nosprintfhostport
+    - paralleltest
+    - prealloc
+    - predeclared
+    - promlinter
+    - reassign
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - staticcheck
+    - stylecheck
+    - tagalign
+    - tagliatelle
+    - tenv
+    - testpackage
+    - thelper
+    - tparallel # same with parallel test
+    - unconvert
+    - unparam
+    - usestdlibvars
+    - unused
+#    - varnamelen
+    - wastedassign
+    - whitespace
+    - wrapcheck
+    # - wsl

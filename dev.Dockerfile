@@ -10,7 +10,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN /usr/bin/golangci-lint run -v
+RUN /usr/bin/golangci-lint run -v -c .golangci.yml
 
 FROM ${GOLANG_IMAGE} as BUILDER
 

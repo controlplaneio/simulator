@@ -20,12 +20,13 @@ var imageCmd = &cobra.Command{
 
 var buildCmd = &cobra.Command{
 	Use: "build",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.BuildImage(ctx, template)
+		err := cp.BuildImage(ctx, template)
+		cobra.CheckErr(err)
 	},
 }
 

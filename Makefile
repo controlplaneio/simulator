@@ -1,10 +1,13 @@
 SIMULATOR_IMAGE ?= controlplane/simulator
 
-simulator-dev-image:
+lint:
+	golangci-lint run -c .golangci.yml
+
+simulator-dev-image: lint
 	docker build -t $(SIMULATOR_IMAGE):dev -f dev.Dockerfile .
 
 simulator-image: simulator-dev-image
 	docker build -t $(SIMULATOR_IMAGE) .
 
-simulator-cli:
+simulator-cli: lint
 	go build -v -o bin/simulator internal/cmd/main.go

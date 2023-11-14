@@ -16,23 +16,25 @@ var infraCmd = &cobra.Command{
 
 var createCmd = &cobra.Command{
 	Use: "create",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.CreateInfrastructure(ctx, bucket, key, name)
+		err := cp.CreateInfrastructure(ctx, bucket, key, name)
+		cobra.CheckErr(err)
 	},
 }
 
 var destroyCmd = &cobra.Command{
 	Use: "destroy",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.DestroyInfrastructure(ctx, bucket, key, name)
+		err := cp.DestroyInfrastructure(ctx, bucket, key, name)
+		cobra.CheckErr(err)
 	},
 }
 

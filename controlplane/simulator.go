@@ -49,47 +49,56 @@ type Simulator interface {
 	UninstallScenario(ctx context.Context, name string) error
 }
 
-type simulator struct {
-}
+type simulator struct{}
 
 func (s simulator) CreateBucket(ctx context.Context, name string) error {
+	//nolint:wrapcheck
 	return aws.CreateBucket(ctx, name)
 }
 
 func (s simulator) BuildImage(ctx context.Context, name string) error {
 	err := commands.PackerInitCommand(PackerTemplateDir, name).Run(ctx)
 	if err != nil {
-		return err
+		return err //nolint:wrapcheck
 	}
 
+	//nolint:wrapcheck
 	return commands.PackerBuildCommand(PackerTemplateDir, name).Run(ctx)
 }
 
 func (s simulator) CreateInfrastructure(ctx context.Context, bucket, key, name string) error {
 	err := commands.TerraformInitCommand(TerraformWorkspaceDir, backendConfig(bucket, key)).Run(ctx)
 	if err != nil {
+		//nolint:wrapcheck
 		return err
 	}
 
-	return commands.TerraformCommand(TerraformWorkspaceDir, commands.TerraformApply, terraformVars(name, bucket)).Run(ctx)
-
+	//nolint:wrapcheck
+	return commands.TerraformCommand(TerraformWorkspaceDir, commands.TerraformApply, terraformVars(name, bucket)).
+		Run(ctx)
 }
 
 func (s simulator) DestroyInfrastructure(ctx context.Context, bucket, key, name string) error {
 	err := commands.TerraformInitCommand(TerraformWorkspaceDir, backendConfig(bucket, key)).Run(ctx)
 	if err != nil {
+		//nolint:wrapcheck
 		return err
 	}
 
-	return commands.TerraformCommand(TerraformWorkspaceDir, commands.TerraformDestroy, terraformVars(name, bucket)).Run(ctx)
+	//nolint:wrapcheck
+	return commands.TerraformCommand(TerraformWorkspaceDir, commands.TerraformDestroy, terraformVars(name, bucket)).
+		Run(ctx)
 }
 
 func (s simulator) InstallScenario(ctx context.Context, name string) error {
+	//nolint:wrapcheck
 	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name).Run(ctx)
 }
 
 func (s simulator) UninstallScenario(ctx context.Context, name string) error {
-	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name, "state=absent").Run(ctx)
+	//nolint:wrapcheck
+	return commands.AnsiblePlaybookCommand(AdminSSHBundleDir, AnsiblePlaybookDir, name, "state=absent").
+		Run(ctx)
 }
 
 func backendConfig(bucket, key string) []string {

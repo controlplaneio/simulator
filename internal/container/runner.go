@@ -22,12 +22,8 @@ import (
 	"github.com/controlplaneio/simulator/v2/internal/config"
 )
 
-var (
-	NoHome       = errors.New("unable to determine your home directory")
-	NoClient     = errors.New("unable to create docker client")
-	CreateFailed = errors.New("unable to create simulator container")
-	StartFailed  = errors.New("unable to start simulator container")
-	AttachFailed = errors.New("unable to attach to simulator container")
+const (
+	ownerReadWriteExecute = 0700
 )
 
 type Simulator interface {
@@ -47,7 +43,7 @@ type simulator struct {
 func (r simulator) Run(ctx context.Context, command []string) error {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return NoHome
+		return errors.Join(errors.New("failed to determine home directory"), err)
 	}
 
 	// TODO: work with env var for directory
@@ -57,12 +53,12 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 
 	err = mkdirsIfNotExisting(localAdminSSHBundleDir, localPlayerSSHBundleDir)
 	if err != nil {
-		return err
+		return errors.Join(errors.New("failed to create bundle directory"), err)
 	}
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
-		return NoClient
+		return errors.Join(errors.New("failed to create docker client"), err)
 	}
 
 	mounts := []mount.Mount{
@@ -130,10 +126,10 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		"",
 	)
 	if err != nil {
-		return CreateFailed
+		return errors.Join(errors.New("failed to create container"), err)
 	}
 	defer func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute) //nolint:gomnd
 		defer cancel()
 
 		err = cli.ContainerStop(ctx, cont.ID, container.StopOptions{})
@@ -153,12 +149,12 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		Stderr: true,
 	})
 	if err != nil {
-		return AttachFailed
+		return errors.Join(errors.New("failed to attach to container"), err)
 	}
 
 	err = cli.ContainerStart(ctx, cont.ID, types.ContainerStartOptions{})
 	if err != nil {
-		return errors.Join(StartFailed, err)
+		return errors.Join(errors.New("failed to start container"), err)
 	}
 
 	var wg sync.WaitGroup
@@ -176,9 +172,9 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 func mkdirsIfNotExisting(dirs ...string) error {
 	for _, dir := range dirs {
 		if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
-			err := os.MkdirAll(dir, 0750)
+			err := os.MkdirAll(dir, ownerReadWriteExecute)
 			if err != nil {
-				return err
+				return errors.Join(errors.New("failed to create directory"), err)
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -34,6 +35,7 @@ func (c command) Run(ctx context.Context, output ...io.Writer) error {
 		writer = output[0]
 	}
 
+	//nolint:gosec
 	cmd := exec.CommandContext(ctx, string(c.Executable), c.Arguments...)
 	cmd.Dir = c.WorkingDir
 	cmd.Env = c.Environment
@@ -43,18 +45,19 @@ func (c command) Run(ctx context.Context, output ...io.Writer) error {
 	// TODO: Ensure ctrl-c stops the command
 	err := cmd.Run()
 	if err != nil {
-		slog.Error("failed to run", "command", c)
+		return errors.Join(errors.New("failed to run command"), err)
 	}
 
-	return err
+	return nil
 }
 
 func (c command) LogValue() slog.Value {
 	cmd := fmt.Sprintf("%s %s", c.Executable, strings.Join(c.Arguments, " "))
-	var env []string
+	env := make([]string, 0)
 
 	// Only log env keys, not values
 	for _, value := range c.Environment {
+		//nolint:gocritic
 		env = append(env, value[:strings.Index(value, "=")])
 	}
 
