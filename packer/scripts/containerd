@@ -44,4 +44,5 @@ rm cni-plugins.tgz
 # Configure containerd
 containerd config default | sudo tee /etc/containerd/config.toml
 sudo sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+sudo sed -i -e "s/disable_apparmor.*$/disable_apparmor = true/g" /etc/containerd/config.toml
 sudo systemctl restart containerd

@@ -1,0 +1,9 @@
+---
+
+- name: CI Runner NG Breakout
+  hosts: bastion:nodes
+  become: yes
+  vars:
+    state: present
+  roles:
+    - ci-runner-ng-breakout

@@ -1,0 +1,15 @@
+category: KubeCon
+difficulty: KubeCon
+name: ci-runner-ng-breakout
+kind: cp.simulator/scenario:1.0.0
+objective: Get postgres password.
+tasks:
+  "1":
+    hints:
+    sortOrder: 1
+    startingPoint:
+      mode: pod
+      podName: jenk-ng-runner-s82n6
+      podNamespace: ci-runner-ng
+    summary: There is a containerd socket mounted into the container,
+      is it possible to traverse the cluster?
