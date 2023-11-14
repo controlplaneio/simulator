@@ -113,7 +113,8 @@ func tabulateScenarios(scenarios []scenarios.Scenario) {
 			s.Name,
 			s.Description,
 			s.Category,
-			s.Difficulty})
+			s.Difficulty,
+		})
 		table.SetRowLine(true)
 	}
 	table.Render()

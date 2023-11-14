@@ -23,7 +23,7 @@ func CreateBucket(ctx context.Context, name string) error {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		slog.Error("failed to create bucket", "name", name, "error", err)
-		return err
+		return errors.Join(errors.New("failed to create bucket"), err)
 	}
 
 	var bucketAlreadyOwnedByYou *types.BucketAlreadyOwnedByYou
@@ -35,12 +35,9 @@ func CreateBucket(ctx context.Context, name string) error {
 			LocationConstraint: types.BucketLocationConstraintEuWest2,
 		},
 	})
-	if err != nil {
-		if !errors.As(err, &bucketAlreadyOwnedByYou) {
-		} else {
-			slog.Error("failed to create bucket", "name", name, "error", err)
-			return err
-		}
+	if err != nil && !errors.As(err, &bucketAlreadyOwnedByYou) {
+		slog.Error("failed to create bucket", "name", name, "error", err)
+		return errors.Join(errors.New("failed to create bucket"), err)
 	}
 
 	return nil

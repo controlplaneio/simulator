@@ -10,8 +10,10 @@ import (
 )
 
 const (
-	Dir      = "SIMULATOR_DIR"
-	FileName = "config.yaml"
+	Dir                   = "SIMULATOR_DIR"
+	FileName              = "config.yaml"
+	ownerReadWrite        = 0600
+	ownerReadWriteExecute = 0700
 )
 
 //go:embed config.yaml
@@ -33,36 +35,36 @@ type Config struct {
 }
 
 func (c *Config) Read() error {
-	file := file()
+	file := simulatorConfigFile()
 
 	if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
 		dir := filepath.Dir(file)
 		if _, err := os.Stat(dir); err != nil {
-			err = os.MkdirAll(dir, 0755)
+			err = os.MkdirAll(dir, ownerReadWriteExecute)
 			if err != nil {
-				return err
+				return errors.Join(errors.New("failed to create directory"), err)
 			}
 		}
 
 		config, err := defaultConfig.ReadFile(FileName)
 		if err != nil {
-			return err
+			return errors.Join(errors.New("failed to read config"), err)
 		}
 
-		err = os.WriteFile(file, config, 0644)
+		err = os.WriteFile(file, config, ownerReadWrite)
 		if err != nil {
-			return err
+			return errors.Join(errors.New("failed to write config"), err)
 		}
 	}
 
 	config, err := os.ReadFile(file)
 	if err != nil {
-		return err
+		return errors.Join(errors.New("failed to read config"), err)
 	}
 
 	err = yaml.Unmarshal(config, &c)
 	if err != nil {
-		return err
+		return errors.Join(errors.New("failed to unmarshall config"), err)
 	}
 
 	return nil
@@ -71,13 +73,17 @@ func (c *Config) Read() error {
 func (c *Config) Write() error {
 	config, err := yaml.Marshal(&c)
 	if err != nil {
-		return err
+		return errors.Join(errors.New("failed to unmarshall config"), err)
 	}
 
-	return os.WriteFile(file(), config, 0644)
+	if err := os.WriteFile(simulatorConfigFile(), config, ownerReadWrite); err != nil {
+		return errors.Join(errors.New("failed to write config"), err)
+	}
+
+	return nil
 }
 
-func file() string {
+func simulatorConfigFile() string {
 	dir, ok := os.LookupEnv(Dir)
 	if !ok {
 		home, err := os.UserHomeDir()

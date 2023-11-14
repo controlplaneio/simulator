@@ -3,12 +3,9 @@ package scenarios
 import (
 	"embed"
 	"errors"
-	"fmt"
 	"log/slog"
 
 	"gopkg.in/yaml.v2"
-
-	"github.com/controlplaneio/simulator/v2/controlplane"
 )
 
 //go:embed scenarios.yaml
@@ -20,13 +17,13 @@ func List() ([]Scenario, error) {
 	b, err := config.ReadFile("scenarios.yaml")
 	if err != nil {
 		slog.Error("failed to load scenarios file")
-		return nil, err
+		return nil, errors.Join(errors.New("failed to list scenarios"), err)
 	}
 
 	err = yaml.Unmarshal(b, &scenarios)
 	if err != nil {
 		slog.Error("failed to unmarshall scenarios")
-		return nil, err
+		return nil, errors.Join(errors.New("failed to list scenarios"), err)
 	}
 
 	return scenarios, nil
@@ -37,7 +34,7 @@ func Find(id string) (Scenario, error) {
 
 	scenarios, err := List()
 	if err != nil {
-		return s, err
+		return s, errors.Join(errors.New("failed to find scenario"), err)
 	}
 
 	for _, scenario := range scenarios {
@@ -55,12 +52,4 @@ type Scenario struct {
 	Description string `yaml:"description"`
 	Category    string `yaml:"category"`
 	Difficulty  string `yaml:"difficulty"`
-}
-
-func (s Scenario) Challenge() ([]byte, error) {
-	return config.ReadFile(fmt.Sprintf("roles/%s/files/challenge.txt", s.ID))
-}
-
-func (s Scenario) Playbook() string {
-	return fmt.Sprintf("%s/%s", controlplane.AnsiblePlaybookDir, s.ID)
 }

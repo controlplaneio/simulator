@@ -16,23 +16,25 @@ var scenarioCmd = &cobra.Command{
 
 var installCmd = &cobra.Command{
 	Use: "install",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.InstallScenario(ctx, name)
+		err := cp.InstallScenario(ctx, name)
+		cobra.CheckErr(err)
 	},
 }
 
 var uninstallCmd = &cobra.Command{
 	Use: "uninstall",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.UninstallScenario(ctx, name)
+		err := cp.UninstallScenario(ctx, name)
+		cobra.CheckErr(err)
 	},
 }
 
@@ -42,5 +44,4 @@ func init() {
 	scenarioCmd.AddCommand(installCmd)
 	scenarioCmd.AddCommand(uninstallCmd)
 	simulatorCmd.AddCommand(scenarioCmd)
-
 }

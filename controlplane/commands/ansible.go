@@ -17,7 +17,7 @@ func AnsiblePlaybookCommand(workingDir, playbookDir, playbook string, extraVars 
 	if len(extraVars) > 0 {
 		args = append(args,
 			"--extra-vars",
-			fmt.Sprintf("%s", strings.Join(extraVars, " ")),
+			strings.Join(extraVars, " "),
 		)
 	}
 

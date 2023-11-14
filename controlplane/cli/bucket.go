@@ -16,12 +16,13 @@ var bucketCmd = &cobra.Command{
 
 var createBucketCmd = &cobra.Command{
 	Use: "create",
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 		defer stop()
 
 		cp := controlplane.New()
-		return cp.CreateBucket(ctx, bucket)
+		err := cp.CreateBucket(ctx, bucket)
+		cobra.CheckErr(err)
 	},
 }
 
