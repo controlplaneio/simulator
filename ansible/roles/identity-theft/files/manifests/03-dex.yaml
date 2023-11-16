@@ -1,0 +1,150 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dex
+  name: dex
+  namespace: dex
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dex
+  template:
+    metadata:
+      labels:
+        app: dex
+    spec:
+      nodeName: master-1
+      containers:
+        - image: ghcr.io/dexidp/dex:v2.32.0
+          name: dex
+          command: [ "/usr/local/bin/dex", "serve", "/etc/dex/cfg/config.yaml" ]
+          ports:
+            - name: http
+              containerPort: 5556
+          volumeMounts:
+            - name: config
+              mountPath: /etc/dex/cfg
+          env:
+            - name: PODCHECKER_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: pod-checker-client
+                  key: client-id
+            - name: PODCHECKER_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pod-checker-client
+                  key: client-secret
+          readinessProbe:
+            httpGet:
+              path: /dex/.well-known/openid-configuration
+              port: 5556
+              scheme: HTTP
+      volumes:
+        - name: config
+          configMap:
+            name: dex
+            items:
+              - key: config.yaml
+                path: config.yaml
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: dex
+  namespace: dex
+data:
+  config.yaml: |
+    issuer: http://dex.dex.svc.cluster.local:5556/dex
+
+    storage:
+      type: sqlite3
+      config:
+        file: /var/dex/dex.db
+
+    web:
+      http: 0.0.0.0:5556
+
+    telemetry:
+      http: 0.0.0.0:5558
+
+    grpc:
+      addr: 0.0.0.0:5557
+
+    oauth2:
+      passwordConnector: local
+
+    staticClients:
+      - id: pod-checker
+        secret: cG9kY2hlY2tlcmF1dGgK
+        redirectURIs:
+          - 'http://pod-checker.frontend.local:8080/callback'
+        name: 'Pod Checker'
+
+    enablePasswordDB: true
+
+    staticPasswords:
+      - email: "admin@pod-checker.local"
+        hash: "$2y$10$o1OVtIkViMcb1j3jVughleHJTqjYSW0HIdiwek6m1CjlkWRDzrN1O"
+        username: "admin"
+        userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+      - email: "db@pod-checker.local"
+        hash: "$2y$10$PYQb2OTtPPhKlfsZX388teom6rJea.EnIhyN1Jy6g1.NX24NY8yf2"
+        username: "db"
+        userID: "279838d4-aafc-41da-a35d-2b82ba34cfb4"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dex
+  namespace: dex
+spec:
+  ports:
+    - name: dex
+      port: 5556
+      protocol: TCP
+      targetPort: 5556
+  selector:
+    app: dex
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pod-checker-client
+  namespace: dex
+type: Opaque
+data:
+  client-id: cG9kLWNoZWNrZXI=
+  client-secret: Y0c5a1kyaGxZMnRsY21GMWRHZ0s=
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: dex-private
+  namespace: dex
+spec:
+  podSelector:
+    matchLabels:
+      app: dex
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              ns: private-services
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: dex-frontend
+  namespace: dex
+spec:
+  podSelector:
+    matchLabels:
+      app: dex
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              ns: frontend

@@ -1,0 +1,95 @@
+---
+
+- name: Install calico network
+  ansible.builtin.include_role:
+    name: cluster-network
+    tasks_from: calico
+
+- name: Apply K8s manifests
+  kubernetes.core.k8s:
+    definition: "{{ lookup('ansible.builtin.file', item) | from_yaml_all }}"
+    state: "{{ state }}"
+    force: "{% if state == 'absent' %}yes{% else %}no{% endif %}"
+  loop:
+    - manifests/00-namespaces.yaml
+    - manifests/01-kyverno-install.yaml
+    - manifests/02-service-policy.yaml
+    - manifests/03-dex.yaml
+    - manifests/04-secretstore-pgsql.yaml
+    - manifests/05-yamlidator.yaml
+    - manifests/06-secret-store.yaml
+    - manifests/07-pod-checker.yaml
+    - manifests/08-public.yaml
+    - manifests/09-job.yaml
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Wait until pods are up
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: "{{ item.namespace }}"
+    label_selectors:
+      - "{{ item.label }}"
+  register: pod_list
+  until: pod_list|json_query('resources[*].status.phase')|unique == ["Running"]
+  retries: 5
+  delay: 10
+  loop:
+    - namespace: dex
+      label: app=dex
+    - namespace: private-services
+      label: app=secret-store
+  become: no
+  when: "'bastion' in inventory_hostname"
+
+- name: Configure users
+  ansible.builtin.shell:
+    cmd: "{{ lookup('ansible.builtin.file', 'scripts/master.sh') }}"
+  args:
+    executable: /bin/bash
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  when: "state == 'present' and 'master-1' in inventory_hostname"
+
+- name: Node flags
+  block:
+    - name: Create flag dir
+      ansible.builtin.file:
+        path: /mnt/snake-charmer
+        state: directory
+      when: "state == 'present'"
+
+    - name: Set flag
+      ansible.builtin.copy:
+        dest: /mnt/snake-charmer/flag.txt
+        content: 'flag_ctf{WORKER_NODE_PWNED_GO_4_MASTER}'
+      when: "state == 'present'"
+
+    - name: Remove flag dir
+      ansible.builtin.file:
+        path: /mnt/snake-charmer
+        state: absent
+      when: "state == 'absent'"
+  when: inventory_hostname in groups['nodes']
+
+- name: Configure socat
+  ansible.builtin.include_role:
+    name: socat
+  vars:
+    socat_target_ip: "{{ master_ip }}"
+
+- name: Set starting point
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: pod
+  vars:
+    namespace: public
+    pod: public-terminal
+
+- name: Copy challenge
+  ansible.builtin.include_role:
+    name: starting-point
+    tasks_from: challenge
+  vars:
+    challenge_content: "{{ lookup('ansible.builtin.file', 'files/challenge.txt') }}"
