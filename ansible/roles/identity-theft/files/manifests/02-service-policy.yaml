@@ -1,0 +1,68 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-nodeport
+  annotations:
+    policies.kyverno.io/title: Disallow NodePort
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Service
+    policies.kyverno.io/description: >-
+      A Kubernetes Service of type NodePort uses a host port to receive traffic from
+      any source. A NetworkPolicy cannot be used to control traffic to host ports.
+      Although NodePort Services can be useful, their use must be limited to Services
+      with additional upstream security checks. This policy validates that any new Services
+      do not use the `NodePort` type.
+spec:
+  validationFailureAction: enforce
+  background: true
+  rules:
+    - name: validate-nodeport
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              namespaces:
+                - private-services
+      validate:
+        message: "SECOPS ALERT: Services of type NodePort are restricted."
+        pattern:
+          spec:
+            =(type): "!NodePort"
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: protect-service-name
+  annotations:
+    policies.kyverno.io/title: Restrict service name changes
+    policies.kyverno.io/category: Sample
+    policies.kyverno.io/subject: Service, Name
+    policies.kyverno.io/minversion: 1.6.0
+    policies.kyverno.io/description: >-
+      Prevent Service Name Changes
+spec:
+  validationFailureAction: enforce
+  background: false
+  rules:
+    - name: protect-service-name
+      match:
+        any:
+          - resources:
+              kinds:
+                - Service
+              namespaces:
+                - private-services
+      validate:
+        message: "SECOPS ALERT: Service name cannot be Changed."
+        deny:
+          conditions:
+            all:
+              - key: "{{ request.object.metadata.name || '' }}"
+                operator: NotEquals
+                value: "secret-store"
+              - key: "{{ request.object.metadata.name || '' }}"
+                operator: NotEquals
+                value: "{{ request.oldObject.metadata.name || '' }}"

@@ -1,0 +1,10 @@
+---
+
+- name: Identity Theft
+  hosts: all
+  become: yes
+  vars:
+    state: present
+    master_ip: "{{ hostvars['master-1']['ansible_facts']['default_ipv4']['address'] }}"
+  roles:
+    - identity-theft
