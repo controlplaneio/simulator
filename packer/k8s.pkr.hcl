@@ -5,7 +5,7 @@ variable "name" {
 
 variable "region" {
   type    = string
-  default = "eu-west-2"
+  default = "${env("AWS_REGION")}"
 }
 
 variable "containerd_version" {
@@ -30,10 +30,11 @@ variable "kube_version" {
 
 locals {
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
+  name      = "${var.name}-${var.kube_version}-${local.timestamp}"
 }
 
 build {
-  name    = "simulator-k8s"
+  name = "simulator-k8s"
   sources = [
     "source.amazon-ebs.ubuntu"
   ]
@@ -88,6 +89,16 @@ source "amazon-ebs" "ubuntu" {
     owners      = ["099720109477"]
   }
   ssh_username = "ubuntu"
+  tags = {
+    Containerd_Version = "${var.containerd_version}"
+    Runc_Version       = "${var.runc_version}"
+    CNI_Version        = "${var.cni_version}"
+    K8s_Version        = "${var.kube_version}"
+    Base_AMI_Name      = "{{ .SourceAMIName }}"
+  }
+  snapshot_tags = {
+    AMI_Name = "${local.name}"
+  }
 }
 
 packer {
