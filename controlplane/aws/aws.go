@@ -28,11 +28,16 @@ func CreateBucket(ctx context.Context, name string) error {
 
 	var bucketAlreadyOwnedByYou *types.BucketAlreadyOwnedByYou
 
+	region, ok := os.LookupEnv("AWS_REGION")
+	if !ok {
+		return errors.New("failed to create bucket, aws region not set")
+	}
+
 	client := s3.NewFromConfig(cfg)
 	_, err = client.CreateBucket(ctx, &s3.CreateBucketInput{
 		Bucket: aws.String(name),
 		CreateBucketConfiguration: &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraintEuWest2,
+			LocationConstraint: types.BucketLocationConstraint(region),
 		},
 	})
 	if err != nil && !errors.As(err, &bucketAlreadyOwnedByYou) {
