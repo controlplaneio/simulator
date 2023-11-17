@@ -95,6 +95,7 @@ Role ARN from the output.
         "s3:CreateBucket",
         "s3:DeleteObject",
         "s3:GetObject",
+        "s3:ListBucket",
         "s3:PutObject"
       ],
       "Effect": "Allow",
