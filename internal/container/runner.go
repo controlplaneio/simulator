@@ -61,6 +61,18 @@ func (r simulator) Run(ctx context.Context, command []string) error {
 		return errors.Join(errors.New("failed to create docker client"), err)
 	}
 
+	out, err := cli.ImagePull(ctx, r.Config.Container.Image, types.ImagePullOptions{})
+	if err != nil {
+		return errors.Join(errors.New("failed to pull image"), err)
+	}
+	defer func(out io.ReadCloser) {
+		_ = out.Close()
+	}(out)
+
+	if _, err = io.Copy(os.Stdout, out); err != nil {
+		return errors.Join(errors.New("failed to pull image"), err)
+	}
+
 	mounts := []mount.Mount{
 		{
 			Type:     mount.TypeBind,
