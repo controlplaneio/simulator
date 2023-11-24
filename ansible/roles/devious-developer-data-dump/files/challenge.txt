@@ -9,7 +9,7 @@
     | [_][_] [__][_][__][_____________________][__][_][_] [_][_][_] [____][_][_| |
     |____________________________________________________________________________|
 
-Captain Hλ$ħ𝔍Ⱥ¢k is targetting a distribution company called Rescue Drop as it holds Personal Identifiable Information (PII)
+Captain Hλ$ħ𝔍Ⱥ¢k is targeting a distribution company called Rescue Drop as it holds Personal Identifiable Information (PII)
 
 The Rescue Drop application is not accessible publicly but is open source!
 

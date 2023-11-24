@@ -18,10 +18,10 @@ The purpose of CI Runner Next Generation Breakout is to teach participants about
 
 ```
 During penetration testing of a client kubernetes cluster, a vulnerability in a pod has been noticed.
-The pod is part of the client build infrastructure and you are concerned that a compromise may lead to leaked secrets within the target cluster.
-Verify the vulnerability by extracting the secret access key from another pod in the ci-server-vulnerability namespace.
 
-You will start in the jenk-5ym3 pod in the ci-server-vulnerability namespace.
+The pod is part of the CI/CD build infrastructure and you are concerned that a compromised runner may lead to compromised VMs.
+
+Verify the vulnerability by breaking out of the CI runner pod.
 ```
 
 ## Guided Walkthrough

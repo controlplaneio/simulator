@@ -1,7 +1,7 @@
-category: CNSecCon
-difficulty: CNSecCon
+category: CloudNative SecurityCon North America 2023 CTF
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
-objective: Fix misconfigurations
+objective: Learn about Pod Security Standards and Pod Security Admission
 tasks:
   "1":
     hints:
@@ -19,5 +19,5 @@ tasks:
       podName: admin
       podNamespace: platform
       podHost: master-0
-    summary: Can you fix the Pod Security misconfigurations so that the attacker's Pod can't be admitted anymore in the cluster?
+    summary: In the transition away from Pod Security Policy an adversary has deployed a malicious workload which resists removal. Unravel the mystery and remove the workload off the cluster
 name: pss-misconfiguration

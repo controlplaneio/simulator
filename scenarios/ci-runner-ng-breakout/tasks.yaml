@@ -1,8 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
-name: ci-runner-ng-breakout
+category:  CloudNative SecurityCon North America 2023 CTF
+difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
-objective: Get postgres password.
+objective: Learn about Container breakout via containerd
 tasks:
   "1":
     hints:
@@ -11,5 +10,5 @@ tasks:
       mode: pod
       podName: jenk-ng-runner-s82n6
       podNamespace: ci-runner-ng
-    summary: There is a containerd socket mounted into the container,
-      is it possible to traverse the cluster?
+    summary: An adversary has exploited CI runner and reached the underlying host. Can you find out how?
+name: ci-runner-ng-breakout

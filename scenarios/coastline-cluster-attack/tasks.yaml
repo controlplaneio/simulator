@@ -1,7 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
+category: CloudNative SecurityCon North America 2023 CTF
+difficulty: Complex
 kind: cp.simulator/scenario:1.0.0
-objective: Obtain cluster admin
+objective: Learn about Leveraging ephemeral containers for initial access, service account enumeration and privilege escalation, service account token abuse, vulnerable daemonsets
 tasks:
   "1":
     hints:
@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: jumpbox-terminal
       podNamespace: dmz
-    summary: Can you obtain cluster admin of coastline?
+    summary: Pivot across multiple systems, escalate privileges and obtain full cluster compromise
 name: coastline-cluster-attack

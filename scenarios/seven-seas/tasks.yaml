@@ -1,7 +1,7 @@
-category: Workshop
-difficulty: Workshop
+category: KubeCon + CloudNativeCon North America 2023 CTF
+difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
-objective: Sail the Seven Seas and find all the missing map pieces!
+objective: Learn about Kubernetes Fundamentals, Container Enumeration and Exploitation
 tasks:
   "1":
     hints:
@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: fancy
       podNamespace: arctic
-    summary: Can you plunder the Royal Fortune?
+    summary: Sail the Seven Seas, find all the missing map pieces and plunder the Royal Fortune
 name: seven-seas

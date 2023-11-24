@@ -1,7 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
+category: KubeCon + CloudNativeCon Europe 2023 CTF
+difficulty: Easy
 kind: cp.simulator/scenario:1.0.0
-objective: Find the treasure using kubernetes navigation
+objective: Learn about accessing containers without kubectl exec
 tasks:
   "1":
     hints:
@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: dark-tide
       podNamespace: sea
-    summary: Can you find the treasure?
+    summary: Use Kubernetes to smuggle aboard and find the hidden treasure
 name: commandeer-container

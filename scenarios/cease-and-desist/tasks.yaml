@@ -1,7 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
+category: KubeCon + CloudNativeCon North America 2023 CTF
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
-objective: Restore production by reactiviting the reform-kube license server.
+objective: Learn about Cilium Network Policies
 tasks:
   "1":
     hints:
@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: admin-console
       podNamespace: administration
-    summary: Restore production by reactiviting the reform-kube license server.
+    summary: Fix the reform-kube licensing server and get production running again
 name: cease-and-desist

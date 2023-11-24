@@ -1,7 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
+category: KubeCon + CloudNativeCon Europe 2023 CTF
+difficulty: Medium
 kind: cp.simulator/scenario:1.0.0
-objective: Undo Kubernetes controls to allow access to an exploitable application
+objective: Learn about Kubernetes Ingress, Services and Network Policies
 tasks:
   "1":
     hints:
@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: jumpbox-terminal
       podNamespace: dmz
-    summary: Can you build a backdoor for Hashjack to exploit?
+    summary: Install a backdoor onto a Kubernetes cluster for Captain Hλ$ħ𝔍Ⱥ¢k to exploit
 name: build-a-backdoor
