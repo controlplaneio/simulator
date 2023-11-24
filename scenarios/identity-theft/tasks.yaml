@@ -1,7 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
+category: KubeCon + CloudNativeCon North America 2023 CTF
+difficulty: Complex
 kind: cp.simulator/scenario:1.0.0
-objective: Time to steal users identities
+objective: Learn about realistic adversary behaviour and OIDC token abuse
 tasks:
   "1":
     hints:
@@ -10,5 +10,5 @@ tasks:
       mode: pod
       podName: public-terminal
       podNamespace: public
-    summary: Can you steal the identity of the pod-checker users?
+    summary: Exploit a public facing application, obtain a foothold on the cluster and access a secret store
 name: identity-theft

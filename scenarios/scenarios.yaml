@@ -2,54 +2,54 @@
 
 - id: cease-and-desist
   name: Cease and Desist
-  description: "Restore production by reactiviting the reform-kube license server."
-  category: KubeCon
-  difficulty:
+  description: "Fix the reform-kube licensing server and get production running again"
+  category: KubeCon + CloudNativeCon North America 2023 CTF
+  difficulty: Medium
 
 - id: identity-theft
   name: Identity Theft
-  description: "Can you steal the identity of the pod-checker users?"
-  category: KubeCon
-  difficulty:
+  description: "Exploit a public facing application, obtain a foothold on the cluster and access a secret store"
+  category: KubeCon + CloudNativeCon North America 2023 CTF
+  difficulty: Complex
 
 - id: seven-seas
   name: Seven Seas
-  description: "Sail the Seven Seas and find all the missing map pieces!"
-  category: Workshop
-  difficulty:
+  description: "Sail the Seven Seas, find all the missing map pieces and plunder the Royal Fortune"
+  category: KubeCon + CloudNativeCon North America 2023 CTF
+  difficulty: Easy
 
 - id: build-a-backdoor
   name: Build-a-Backdoor
-  description: "KCEU23: Build a backdoor for Hashjack to exploit"
-  category: KubeCon
-  difficulty:
+  description: "Install a backdoor onto a Kubernetes cluster for Captain Hλ$ħ𝔍Ⱥ¢k to exploit"
+  category: KubeCon + CloudNativeCon Europe 2023 CTF
+  difficulty: Medium
 
 - id: devious-developer-data-dump
   name: Devious Developer Data Dump
-  description: "KCEU23: Can you navigate Rescue Drop's CI/CD infrastructure, following Hashjack to the goal?"
-  category: KubeCon
-  difficulty:
+  description: "Exploit a public repository to access a production environment and steal sensitive data"
+  category: KubeCon + CloudNativeCon Europe 2023 CTF
+  difficulty: Complex
 
 - id: commandeer-container
   name: Commandeer Container
-  description: "KCEU23: Can you navigate Kubernetes and find the treasure?"
-  category: KubeCon
-  difficulty:
+  description: "Use Kubernetes to smuggle aboard and find the hidden treasure"
+  category: KubeCon + CloudNativeCon Europe 2023 CTF
+  difficulty: Easy
 
 - id: ci-runner-ng-breakout
   name: CI Runner-NG Breakout
-  description: "CNSCon: There is a containerd socket mounted into the container, is it possible to traverse the cluster?"
-  category: KubeCon
-  difficulty:
+  description: "An adversary has exploited CI runner and reached the underlying host. Can you find out how?"
+  category: CloudNative SecurityCon North America 2023 CTF
+  difficulty: Easy
 
 - id: pss-misconfiguration
-  name: CNSecCon NA 23 PSS Misconfiguration
-  description: "CNSCon: An unrestricted Pod is admitted in the cluster regardless of the security context restrictions in place: what's happening?"
-  category: CNSecCon
-  difficulty:
+  name: PSS Misconfiguration
+  description: "In the transition away from Pod Security Policy an adversary has deployed a malicious workload which resists removal. Unravel the mystery and remove the workload off the cluster"
+  category: CloudNative SecurityCon North America 2023 CTF
+  difficulty: Medium
 
 - id: coastline-cluster-attack
-  name: CNSEC23 Coastline Cluster Attack
-  description: "CNSEC23: Hashjack has taken over a jumpbox in coastline. He wants you get cluster admin"
-  category: KubeCon
-  difficulty:
+  name: Coastline Cluster Attack
+  description: "Pivot across multiple systems, escalate privileges and obtain full cluster compromise"
+  category: CloudNative SecurityCon North America 2023 CTF
+  difficulty: Complex

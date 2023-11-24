@@ -1,8 +1,7 @@
-category: KubeCon
-difficulty: KubeCon
-name: cicd
+category: KubeCon + CloudNativeCon Europe 2023 CTF
+difficulty: Complex
 kind: cp.simulator/scenario:1.0.0
-objective: Get postgres password.
+objective: Learn about how secret discovery in a code repository can lead to full cluster compromise
 tasks:
   "1":
     hints:
@@ -11,4 +10,5 @@ tasks:
       mode: pod
       podName: jumpbox
       podNamespace: dmz
-    summary: x
+    summary: Exploit a public repository to access a production environment and steal sensitive data
+name: devious-developer-data-dump
