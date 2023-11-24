@@ -23,5 +23,7 @@ The table below outlines each scenario, learning objectives, technology used and
 ### Difficulty Rating
 
 **Easy** - A person with limited Kubernetes knowledge and is able to research how technology works, can complete these scenarios
+
 **Medium** - More challenging scenarios which require a greater understanding or experience of technology and to problem solve
+
 **Complex** - These are the most challenging scenarios, very little breadcrumbs are given and requires pre-existing knowledge or deep research to be conducted to complete
