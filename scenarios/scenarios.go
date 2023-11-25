@@ -14,13 +14,13 @@ var config embed.FS
 func List() ([]Scenario, error) {
 	var scenarios []Scenario
 
-	b, err := config.ReadFile("scenarios.yaml")
+	bytes, err := config.ReadFile("scenarios.yaml")
 	if err != nil {
 		slog.Error("failed to load scenarios file")
 		return nil, errors.Join(errors.New("failed to list scenarios"), err)
 	}
 
-	err = yaml.Unmarshal(b, &scenarios)
+	err = yaml.Unmarshal(bytes, &scenarios)
 	if err != nil {
 		slog.Error("failed to unmarshall scenarios")
 		return nil, errors.Join(errors.New("failed to list scenarios"), err)
@@ -29,21 +29,21 @@ func List() ([]Scenario, error) {
 	return scenarios, nil
 }
 
-func Find(id string) (Scenario, error) {
-	var s Scenario
+func Find(scenarioID string) (Scenario, error) {
+	var scenario Scenario
 
 	scenarios, err := List()
 	if err != nil {
-		return s, errors.Join(errors.New("failed to find scenario"), err)
+		return scenario, errors.Join(errors.New("failed to find scenario"), err)
 	}
 
-	for _, scenario := range scenarios {
-		if scenario.ID == id {
+	for _, scenario = range scenarios {
+		if scenario.ID == scenarioID {
 			return scenario, nil
 		}
 	}
 
-	return s, errors.New("unable to find scenario")
+	return scenario, errors.New("unable to find scenario")
 }
 
 type Scenario struct {

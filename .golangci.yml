@@ -51,8 +51,8 @@ linters:
     # - gci
     # - ginkgolinter # not using ginkgo
     - gocheckcompilerdirectives
-#    - gochecknoglobals
-#    - gochecknoinits
+    - gochecknoglobals
+    - gochecknoinits
     - gocognit # complexity
     - goconst
     - gocritic
@@ -74,7 +74,7 @@ linters:
     - importas # configure this
     - interfacebloat # maybe configure
     - ineffassign
-#    - ireturn
+    - ireturn
     - lll
     - loggercheck
     # - maintidx # using gocognit
@@ -111,7 +111,7 @@ linters:
     - unparam
     - usestdlibvars
     - unused
-#    - varnamelen
+    - varnamelen
     - wastedassign
     - whitespace
     - wrapcheck

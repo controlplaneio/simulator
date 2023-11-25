@@ -3,7 +3,6 @@ package aws
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"os"
 
@@ -13,11 +12,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-var (
-	Env []string
-)
+type BucketCreator interface {
+	Create(ctx context.Context, name string) error
+}
 
-func CreateBucket(ctx context.Context, name string) error {
+type S3 struct{}
+
+func (s S3) Create(ctx context.Context, name string) error {
 	slog.Info("creating bucket", "name", name)
 
 	cfg, err := config.LoadDefaultConfig(ctx)
@@ -46,21 +47,4 @@ func CreateBucket(ctx context.Context, name string) error {
 	}
 
 	return nil
-}
-
-func init() {
-	envKeys := []string{
-		"AWS_PROFILE",
-		"AWS_REGION",
-		"AWS_ACCESS_KEY_ID",
-		"AWS_SECRET_ACCESS_KEY",
-		"AWS_SESSION_TOKEN",
-	}
-
-	for _, key := range envKeys {
-		value, ok := os.LookupEnv(key)
-		if ok && len(value) > 0 {
-			Env = append(Env, fmt.Sprintf("%s=%s", key, value))
-		}
-	}
 }

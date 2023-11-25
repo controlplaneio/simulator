@@ -5,7 +5,7 @@ locals {
   player_key_name   = format("%s-player-key", var.name)
 
   ssh_config_instances = merge([for i in module.instances : i.instances]...)
-  ssh_config_player    = templatefile("${path.module}/templates/ssh_config", {
+  ssh_config_player = templatefile("${path.module}/templates/ssh_config", {
     bastion_ip        = aws_instance.bastion.public_ip,
     ssh_user          = "player"
     ssh_force_tty     = true
@@ -26,9 +26,12 @@ locals {
     for i, g in var.instance_groups :
     { format("%ss", lower(var.instance_groups[i].name)) = keys(module.instances[i].instances) }
   ]...)
-  ansible_config              = templatefile("${path.module}/templates/ansible.cfg", {
+
+  ansible_config = templatefile("${path.module}/templates/ansible.cfg", {
+    roles_path          = var.ansible_roles_dir
     ssh_config_filename = var.ssh_config_filename
   })
+
   ansible_inventory = templatefile("${path.module}/templates/inventory.yaml.tpl", {
     ansible_inventory_instances = local.ansible_inventory_instances
   })

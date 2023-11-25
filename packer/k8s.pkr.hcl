@@ -81,7 +81,7 @@ source "amazon-ebs" "ubuntu" {
   region        = "${var.region}"
   source_ami_filter {
     filters = {
-      name                = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"
+      name                = "ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20231117"
       root-device-type    = "ebs"
       virtualization-type = "hvm"
     }
@@ -95,6 +95,7 @@ source "amazon-ebs" "ubuntu" {
     CNI_Version        = "${var.cni_version}"
     K8s_Version        = "${var.kube_version}"
     Base_AMI_Name      = "{{ .SourceAMIName }}"
+    Kind               = "K8s"
   }
   snapshot_tags = {
     AMI_Name = "${local.name}"
@@ -104,7 +105,7 @@ source "amazon-ebs" "ubuntu" {
 packer {
   required_plugins {
     amazon = {
-      version = ">= 0.0.2"
+      version = "~> 1"
       source  = "github.com/hashicorp/amazon"
     }
   }

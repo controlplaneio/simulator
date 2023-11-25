@@ -114,6 +114,7 @@ data "aws_iam_policy_document" "simulator" {
       "s3:CreateBucket",
       "s3:DeleteObject",
       "s3:GetObject",
+      "s3:ListAllMyBuckets",
       "s3:ListBucket",
       "s3:PutObject",
     ]
