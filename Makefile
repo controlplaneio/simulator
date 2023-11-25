@@ -10,4 +10,4 @@ simulator-image: simulator-dev-image
 	docker build -t $(SIMULATOR_IMAGE) .
 
 simulator-cli: lint
-	go build -v -o bin/simulator internal/cmd/main.go
+	go build -v -o bin/simulator cmd/simulator/main.go

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"embed"
 	"errors"
 	"os"
 	"path/filepath"
@@ -16,53 +15,52 @@ const (
 	ownerReadWriteExecute = 0700
 )
 
-//go:embed config.yaml
-var defaultConfig embed.FS
-
 type Config struct {
-	Name    string `yaml:"name"`
-	Bucket  string `yaml:"bucket"`
-	BaseDir string `yaml:"baseDir,omitempty"`
+	Name      string `yaml:"name"`
+	Bucket    string `yaml:"bucket"`
+	BaseDir   string `yaml:"baseDir,omitempty"`
+	Cli       `yaml:"cli,omitempty"`
+	Container `yaml:"container"`
+}
 
-	Cli struct {
-		Dev bool `yaml:"dev,omitempty"`
-	} `yaml:"cli,omitempty"`
+type Cli struct {
+	Dev bool `yaml:"dev,omitempty"`
+}
 
-	Container struct {
-		Image    string `yaml:"image"`
-		Rootless bool   `yaml:"rootless,omitempty"`
-	} `yaml:"container"`
+type Container struct {
+	Image    string `yaml:"image"`
+	Rootless bool   `yaml:"rootless,omitempty"`
 }
 
 func (c *Config) Read() error {
-	file := simulatorConfigFile()
+	file, err := simulatorConfigFile()
+	if err != nil {
+		return err
+	}
 
-	if _, err := os.Stat(file); errors.Is(err, os.ErrNotExist) {
+	if _, err = os.Stat(file); errors.Is(err, os.ErrNotExist) {
 		dir := filepath.Dir(file)
-		if _, err := os.Stat(dir); err != nil {
+		if _, err = os.Stat(dir); err != nil {
 			err = os.MkdirAll(dir, ownerReadWriteExecute)
 			if err != nil {
-				return errors.Join(errors.New("failed to create directory"), err)
+				return errors.Join(errors.New("failed to create config directory"), err)
 			}
 		}
 
-		config, err := defaultConfig.ReadFile(FileName)
-		if err != nil {
-			return errors.Join(errors.New("failed to read config"), err)
-		}
-
-		err = os.WriteFile(file, config, ownerReadWrite)
-		if err != nil {
+		config := defaultConfig()
+		if err = config.Write(); err != nil {
 			return errors.Join(errors.New("failed to write config"), err)
 		}
+
+		return nil
 	}
 
-	config, err := os.ReadFile(file)
+	bytes, err := os.ReadFile(file)
 	if err != nil {
 		return errors.Join(errors.New("failed to read config"), err)
 	}
 
-	err = yaml.Unmarshal(config, &c)
+	err = yaml.Unmarshal(bytes, &c)
 	if err != nil {
 		return errors.Join(errors.New("failed to unmarshall config"), err)
 	}
@@ -76,22 +74,62 @@ func (c *Config) Write() error {
 		return errors.Join(errors.New("failed to unmarshall config"), err)
 	}
 
-	if err := os.WriteFile(simulatorConfigFile(), config, ownerReadWrite); err != nil {
+	file, err := simulatorConfigFile()
+	if err != nil {
+		return err
+	}
+
+	if err = os.WriteFile(file, config, ownerReadWrite); err != nil {
 		return errors.Join(errors.New("failed to write config"), err)
 	}
 
 	return nil
 }
 
-func simulatorConfigFile() string {
+func (c Config) AdminBundleDir() (string, error) {
+	dir, err := simulatorDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "admin"), nil
+}
+
+func (c Config) PlayerBundleDir() (string, error) {
+	dir, err := simulatorDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, "player"), nil
+}
+
+func simulatorDir() (string, error) {
 	dir, ok := os.LookupEnv(Dir)
 	if !ok {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			panic(err)
+			return "", errors.Join(errors.New("failed to determine user's home directory"), err)
 		}
-		dir = filepath.Join(home, ".simulator")
+
+		return filepath.Join(home, ".simulator"), nil
 	}
 
-	return filepath.Join(dir, FileName)
+	return dir, nil
+}
+
+func simulatorConfigFile() (string, error) {
+	dir, err := simulatorDir()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(dir, FileName), nil
+}
+
+func defaultConfig() Config {
+	return Config{
+		Name: "simulator",
+		Container: Container{
+			Image: "controlplane/simulator:latest",
+		},
+	}
 }

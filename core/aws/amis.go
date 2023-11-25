@@ -16,10 +16,6 @@ type AMIManager interface {
 	Delete(ctx context.Context, id string) error
 }
 
-type AMICreator interface {
-	Create(ctx context.Context, id string) error
-}
-
 type AMI struct {
 	Name    string
 	ID      string
@@ -63,7 +59,7 @@ func (m EC2) List(ctx context.Context) ([]AMI, error) {
 	return amis, nil
 }
 
-func (m EC2) Delete(ctx context.Context, id string) error {
+func (m EC2) Delete(ctx context.Context, amiID string) error {
 	client, err := m.ec2Client(ctx)
 	if err != nil {
 		return errors.Join(errors.New("failed to create ec2 client"), err)
@@ -71,7 +67,7 @@ func (m EC2) Delete(ctx context.Context, id string) error {
 
 	describeImages, err := client.DescribeImages(ctx, &ec2.DescribeImagesInput{
 		ImageIds: []string{
-			id,
+			amiID,
 		},
 		Owners: []string{
 			"self",

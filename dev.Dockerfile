@@ -19,9 +19,9 @@ WORKDIR /build
 COPY go.* ./
 RUN go mod download
 
-COPY . .
+COPY . ./
 
-RUN go build -v -o /simulator controlplane/cmd/main.go
+RUN go build -v -o /simulator cmd/container/main.go
 
 FROM ${PACKER_IMAGE} as PACKER
 FROM ${TERRAFORM_IMAGE} as TERRAFORM

@@ -69,3 +69,7 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "ansible_roles_dir" {
+  description = "The full path to the directory containing the Ansible Roles."
+}

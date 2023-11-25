@@ -1,3 +1,0 @@
-name: simulator
-container:
-  image: controlplane/simulator:latest

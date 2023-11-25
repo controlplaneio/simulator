@@ -2,39 +2,40 @@ package cli
 
 import (
 	"context"
-	"os"
-	"os/signal"
-	"syscall"
 
 	"github.com/spf13/cobra"
 
-	"github.com/controlplaneio/simulator/v2/internal/container"
+	"github.com/controlplaneio/simulator/v2/core/aws"
+	"github.com/controlplaneio/simulator/v2/internal/config"
 )
 
-var bucketCmd = &cobra.Command{
-	Use: "bucket",
+func WithBucketCmd(opts ...SimulatorCmdOptions) SimulatorCmdOptions {
+	bucketCmd := &cobra.Command{
+		Use:   "bucket",
+		Short: "Manage the bucket used to store the Terraform state",
+	}
+
+	for _, opt := range opts {
+		opt(bucketCmd)
+	}
+
+	return func(command *cobra.Command) {
+		command.AddCommand(bucketCmd)
+	}
 }
 
-var createBucketCmd = &cobra.Command{
-	Use: "create",
-	Run: func(cmd *cobra.Command, args []string) {
-		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-		defer stop()
+func WithCreateBucketCmd(config config.Config, creator aws.BucketCreator) SimulatorCmdOptions {
+	bucketCreateCommand := &cobra.Command{
+		Use: "create",
+		Run: func(cmd *cobra.Command, args []string) {
+			ctx := context.Background()
 
-		command := []string{
-			"bucket",
-			"create",
-			"--name",
-			cfg.Bucket,
-		}
+			err := creator.Create(ctx, config.Bucket)
+			cobra.CheckErr(err)
+		},
+	}
 
-		runner := container.New(cfg)
-		err := runner.Run(ctx, command)
-		cobra.CheckErr(err)
-	},
-}
-
-func init() {
-	bucketCmd.AddCommand(createBucketCmd)
-	simulatorCmd.AddCommand(bucketCmd)
+	return func(command *cobra.Command) {
+		command.AddCommand(bucketCreateCommand)
+	}
 }

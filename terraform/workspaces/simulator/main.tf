@@ -3,16 +3,24 @@ variable "name" {
   default     = "simulator"
 }
 
-variable "bucket" {
-  description = "S3 bucket where s3 bundles will be written."
+variable "ansible_playbook_dir" {
+  description = "The full path to the directory containing the Ansible Playbooks."
+  default = "/simulator/ansible/playbooks"
 }
 
-variable "admin_ssh_bundle_dir" {
-  description = ""
+variable "ansible_roles_dir" {
+  description = "The full path to the directory containing the Ansible Roles."
+  default = "/simulator/ansible/roles"
 }
 
-variable "player_ssh_bundle_dir" {
-  description = ""
+variable "admin_bundle_dir" {
+  description = "The full path to the directory where the admin bundle files will be written."
+  default = "/simulator/config/admin"
+}
+
+variable "player_bundle_dir" {
+  description = "The full path to the directory where the player bundle files will be written."
+  default = "/simulator/config/player"
 }
 
 # TODO: add switch to turn of ip lookup and ingress control
@@ -24,8 +32,8 @@ locals {
 
   ansible_config_filename             = "ansible.cfg"
   ansible_inventory_filename          = "inventory.yaml"
-  ansible_playbook_update_known_hosts = "/simulator/ansible/playbooks/update-known-hosts.yaml"
-  ansible_playbook_init_cluster       = "/simulator/ansible/playbooks/init-cluster.yaml"
+  ansible_playbook_update_known_hosts = "${var.ansible_playbook_dir}/update-known-hosts.yaml"
+  ansible_playbook_init_cluster       = "${var.ansible_playbook_dir}/init-cluster.yaml"
 
   bastion_ami_id        = data.aws_ami.bastion.id
   bastion_instance_type = "t2.small"
@@ -90,6 +98,7 @@ module "cluster" {
   instance_groups          = local.instance_groups
   ssh_config_filename      = local.ssh_config_filename
   tags                     = local.tags
+  ansible_roles_dir        = var.ansible_roles_dir
 }
 
 resource "random_shuffle" "availability_zones" {
@@ -105,11 +114,11 @@ data "aws_availability_zones" "available" {
 
 data "aws_ami" "bastion" {
   most_recent = true
-  owners      = [
+  owners = [
     "self",
   ]
   filter {
-    name   = "name"
+    name = "name"
     values = [
       "simulator-bastion-*"
     ]
@@ -118,11 +127,11 @@ data "aws_ami" "bastion" {
 
 data "aws_ami" "k8s" {
   most_recent = true
-  owners      = [
+  owners = [
     "self",
   ]
   filter {
-    name   = "name"
+    name = "name"
     values = [
       "simulator-k8s-*"
     ]
@@ -131,6 +140,5 @@ data "aws_ami" "k8s" {
 
 terraform {
   backend "s3" {
-    key = "state/simulator.tfstate"
   }
 }
