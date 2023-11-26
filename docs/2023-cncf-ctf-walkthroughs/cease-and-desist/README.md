@@ -83,7 +83,7 @@ rkls-password   Opaque   1      5m17s
 It looks like the password for the reform-kube licensing server is stored in a secret. We can pull the secret with the following command:
 
 ```bash
-root@admin-console:~# kubectl get secrets rkls-password -ojson | jq -Mr '.data.password' | base64 -d
+root@admin-console:~# kubectl get secrets -o jsonpath='{.data.password}' | base64 -d
 access-2-reform-kube-server
 ```
 
@@ -194,7 +194,7 @@ root@admin-console:~# kubectl get pods -n production
 No resources found in production namespace.
 ```
 
-As expected based on the challenge description, there are no pods running in the `production` namespace and that is end objective. Let's turn our attention to the `licensing` namespace. We have permissions to `get` and `list` pods as well as `create` for `pods/exec`. This combination of permissions allows us to `exec` into a pod and run commands but before we do that, we also have a permissions to `ciliumnetworkpolicies.cilium.io`. But what is cilium and what is a cilium network policy?
+As expected based on the challenge description, there are no pods running in the `production` namespace. Our objective is to get production up and running again. Let's turn our attention to the `licensing` namespace. We have permissions to `get` and `list` pods as well as `create` for `pods/exec`. This combination of permissions allows us to `exec` into a pod and run commands but before we do that, we also have a permissions to `ciliumnetworkpolicies.cilium.io`. But what is cilium and what is a cilium network policy?
 
 ### Step 2: Reviewing the Cilium Network Policy
 
@@ -407,7 +407,9 @@ Navigate to `https://gist.github.com/` and click on the `+` icon in the top righ
 
 ![Trial Gist](./images/1-trial-gist.png)
 
-Click on the raw value and copy the url of your Gist. We can now use this as our licensing server URL.
+Click on the raw value and copy the url of your Gist. We can now use this as our licensing server URL. 
+
+> Note: Despite the gist being 'secret', it can still be accessed by the URL directly.
 
 ![Trial Gist Raw](./images/2-trial-gist-raw.png)
 
@@ -586,3 +588,4 @@ This CTF scenario does not have a remediation plan as it is to demonstrate how C
 
 - Cilium is a powerful tool which can be used for securing network connectivity within Kubernetes, allowing transparent encryption of network traffic between services, traffic observability and network policy enforcement.
 - A typical layer 7 egress restriction pattern is to run a reverse proxy within a dedicated namespace or node which all workloads are forced to use. With Cilium, this can be achieved with Cilium network policies but with unified layer 3 and layer 7 egress restrictions.
+- Overly permissive egress allowed access to an endpoint service arbitrary, attacker controlled content. This under a large amount of the security provided by filtering egress in the first place. 

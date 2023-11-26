@@ -427,7 +427,7 @@ status:
   startTime: "2023-11-22T08:24:38Z"
 ```
 
-The pod spec reveals a few interesting things. We can see that the pod has a label of `app: ii` associated with it which is likely used for the service and network policy. Next we find two ports exposed, `8080` and `5724`. The `8080` port is used for the website and the `5724` port is for `ops-mgmt` or operations management. This is the port we needed to find and expose for Captain Hλ$ħ𝔍Ⱥ¢k to exploit. We can also see that the port is configured with a specific username and password. We shouldn't worry about this as soon as we expose it, Captain Hλ$ħ𝔍Ⱥ¢k will do the rest.
+The pod spec reveals a few interesting things. We can see that the pod has a label of `app: ii` associated with it which is likely used for the service and network policy. Next we find two ports exposed, `8080` and `5724`. The `8080` port is used for the website and the `5724` port is for `ops-mgmt` or operations management. This is the port we needed to find and expose for [[>>QAIS Formatting is going weird for me here. It's the only place]] Captain Hλ$ħ𝔍Ⱥ¢k to exploit. We can also see that the port is configured with a specific username and password. We shouldn't worry about this as soon as we expose it, `Captain Hλ$ħ𝔍Ⱥ¢k` will do the rest.
 
 As reminder, we cannot modify the pod so our focus is on what we can change which is:
 
@@ -503,7 +503,7 @@ root@jumpbox-terminal:~# kubectl apply -f np.yaml
 networkpolicy.networking.k8s.io/ii-prod-mgmt-np configured
 ```
 
-> Note: For more information about network policies, please see the official documentation [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/). There is also an excellent resource here [Network Policy Recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) which has examples of how to configure network policies.
+> Note: For more information about network policies, please see the official documentation [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/). There is also an excellent resource here: [Network Policy Recipes](https://github.com/ahmetb/kubernetes-network-policy-recipes) which has examples of how to configure network policies.
 
 Next on our list is the service, so let's inspect it and see what needs to be changed.
 
@@ -741,7 +741,7 @@ NAME                     READY   STATUS    RESTARTS   AGE
 ii-management-services   1/1     Running   0          7m51s
 ```
 
-We can see that the `ii-management-services` pod is running, sneaky Hλ$ħ𝔍Ⱥ¢k it matches the name of the one in the `ii-prod` namespace. Let's inspect it and see what we can find.
+We can see that the `ii-management-services` pod is running, sneaky Hλ$ħ𝔍Ⱥ¢k! It matches the name of the one in the `ii-prod` namespace. Let's inspect it and see what we can find.
 
 ```bash
 root@jumpbox-terminal:~# kubectl get pods ii-management-services -n ii-pord -oyaml
@@ -782,8 +782,8 @@ Congratulations, you have completed Build a Backdoor!
 
 ## Remediation and Security Considerations
 
-This CTF scenario does not have a remediation plan as it is provide participants hands-on experience of configuring Kubernetes Ingress, Services and Network Policy. But important security considerations are.
+This CTF scenario does not have a remediation plan as it provides participants hands-on experience of configuring Kubernetes Ingress, Services and Network Policy. But important security considerations are.
 
-- The Introspective Insight application demonstrates issues with "lifting and shifting" old applications to Kubernetes. Cloud native applications no longer require a management port for the configuration of an application and use configuration as code. This allows stricter control over the application configuration and security can review changes before being deployed into production.
-- The scenario demonstrates how network policy can be used to restrict access to pods. The [Kubernetes Security Checklist](https://kubernetes.io/docs/concepts/security/security-checklist/#network-security) has a item to ensure that *"Ingress and egress network policies are applied to all workloads in the cluster."*. Whilst this scenario has covered ingress network policy, egress network policy is just as important to reduce what an adversary with a foothold in the cluster can do.
+- The Introspective Insight application demonstrates issues with "lifting and shifting" old applications to Kubernetes. Cloud native applications should be managed through runtime configuration, ans so no longer require a management port for the configuration. This allows stricter control over the application configuration and security can review changes before being deployed into production.
+- The scenario demonstrates how network policy can be used to restrict access to pods. The [Kubernetes Security Checklist](https://kubernetes.io/docs/concepts/security/security-checklist/#network-security) has a item to ensure that *"Ingress and egress network policies are applied to all workloads in the cluster."*. Whilst this scenario has covered ingress network policy, egress network policy is just as important to reduce what an adversary with a foothold in the cluster can do. 
 - We encourage you to review the Kyverno policies included with the scenario as demonstrates the power of applying admission control to Kubernetes and how they can be customised to your environment. For more information about Kyverno, please see the official documentation [Kyverno](https://kyverno.io/).

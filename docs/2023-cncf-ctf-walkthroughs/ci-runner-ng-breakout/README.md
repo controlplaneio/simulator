@@ -17,9 +17,9 @@ The purpose of CI Runner Next Generation Breakout is to teach participants about
 ## Challenge Description
 
 ```
-During penetration testing of a client kubernetes cluster, a vulnerability in a pod has been noticed.
+During penetration testing of a client Kubernetes cluster, a vulnerability in a pod has been noticed.
 
-The pod is part of the CI/CD build infrastructure and you are concerned that a compromised runner may lead to compromised VMs.
+The pod is part of the CI/CD build infrastructure and you are concerned that a compromised runner may lead to compromised VMs and further compromise of the whole CI/CD system.
 
 Verify the vulnerability by breaking out of the CI runner pod.
 ```
@@ -56,7 +56,7 @@ root@jenk-ng-runner-s82n6-7dc596dcd4-nlfrq:~# which kubectl
 
 ```
 
-There is a service account token mounted at `/var/run/secrets/kubernetes.io/serviceaccount/token` which we can use to authenticate to the API server. But if we download `kubectl`, we soon discover the service account token has no permissions in the normal Kubernetes namespace.
+There is a service account token mounted at `/var/run/secrets/kubernetes.io/serviceaccount/token` which we can use to authenticate to the API server. But if we download `kubectl`, we soon discover the service account token has no permissions in the default Kubernetes namespace.
 
 > Note: the `kubectl` binary can downloaded from the [Kubernetes release page](https://kubernetes.io/releases/)
 
@@ -194,7 +194,7 @@ It looks like we have access to the containerd socket.
 
 ### Step 2: Discovering ctr and interacting with containerd
 
-So we have access to containerd socket but how do we access and interact with containerd. A quick search on the internet returns the [containerd via CLI](https://github.com/containerd/containerd/blob/main/docs/getting-started.md#interacting-with-containerd-via-cli) which shows us that we can use `ctr` to interact with containerd. Let' see if we have access to it.
+So we have access to containerd socket, but how do we access and interact with containerd? A quick search on the internet returns the [containerd via CLI](https://github.com/containerd/containerd/blob/main/docs/getting-started.md#interacting-with-containerd-via-cli) which shows us that we can use `ctr` to interact with containerd. Let's see if we have access to it.
 
 ```bash
 root@jenk-ng-runner-s82n6-7dc596dcd4-nlfrq:/var/run/containerd# which ctr
@@ -263,7 +263,7 @@ There are quite a few options but the most interesting are the ability to manage
 
 There are a couple of ways of running `nsenter` via a container. We could leverage a well known distribution such as `ubuntu:latest` or `alpine:latest` which has `nsenter` pre-installed and then `exec` into the spawned container to run it. We could also set the entrypoint of the container to `nsenter` and then run the container. For this scenario, we will use the former method.
 
-> Note: We recommend that you learn to build your own container to do this. It is tempting to use an image from DockerHub but you have no idea of what else is included in the image. It is far better to build your own image from source to understand what is included in the image. Here is a link to an example repository by Justin Cormack [nsenter-dockerfile](https://github.com/justincormack/nsenter1).
+> Note: We recommend that you learn to build your own container to do this. It is tempting to use an image from Docker Hub but you have no idea of what else is included in the image. It is far better to build your own image from source to understand what is included in the image. Here is a link to an example repository by Justin Cormack [nsenter-dockerfile](https://github.com/justincormack/nsenter1).
 
 Let's look at the options for `images`.
 
@@ -310,7 +310,7 @@ unpacking linux/amd64 sha256:2b7412e6465c3c7fc5bb21d3e6f1917c167358449fecac8176c
 done: 1.433770706s
 ```
 
-Excellent we have our ubuntu image, let's see if we can run it.
+Excellent we have our Ubuntu image. Let's see if we can run it.
 
 ### Step 4: Running a container with access to the host pid namespace
 
@@ -507,4 +507,4 @@ Congratulations, you have completed CI Runner NG Breakout.
 
 ## Remediation and Security Considerations
 
-This CTF scenario has a pretty simple remediation plan, don't give access to the containerd socket for building container images in CI runners. [Kaniko](https://github.com/GoogleContainerTools/kaniko) or [Buildah](https://github.com/containers/buildah) can be used without root privileges to build container images.
+This CTF scenario has a pretty simple remediation plan, don't give access to the containerd socket for building container images in CI runners. [Kaniko](https://github.com/GoogleContainerTools/kaniko) or [Buildah](https://github.com/containers/buildah) can be used without root privileges to build container images, among others.
