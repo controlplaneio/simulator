@@ -4,12 +4,21 @@ import (
 	"embed"
 	"errors"
 	"log/slog"
+	"sort"
 
 	"gopkg.in/yaml.v2"
 )
 
 //go:embed scenarios.yaml
 var config embed.FS
+
+type Scenario struct {
+	ID          string `yaml:"id"`
+	Name        string `yaml:"name"`
+	Description string `yaml:"description"`
+	Category    string `yaml:"category"`
+	Difficulty  string `yaml:"difficulty"`
+}
 
 func List() ([]Scenario, error) {
 	var scenarios []Scenario
@@ -25,6 +34,20 @@ func List() ([]Scenario, error) {
 		slog.Error("failed to unmarshall scenarios")
 		return nil, errors.Join(errors.New("failed to list scenarios"), err)
 	}
+
+	sort.Slice(scenarios, func(i, j int) bool {
+		iDifficulty := scenarios[i].Difficulty
+		jDifficulty := scenarios[j].Difficulty
+
+		switch iDifficulty {
+		case "Complex":
+			return jDifficulty != "Complex"
+		case "Medium":
+			return jDifficulty == "Easy"
+		default:
+			return false
+		}
+	})
 
 	return scenarios, nil
 }
@@ -44,12 +67,4 @@ func Find(scenarioID string) (Scenario, error) {
 	}
 
 	return scenario, errors.New("unable to find scenario")
-}
-
-type Scenario struct {
-	ID          string `yaml:"id"`
-	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
-	Category    string `yaml:"category"`
-	Difficulty  string `yaml:"difficulty"`
 }
