@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"errors"
+	"sort"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -20,6 +21,7 @@ type AMI struct {
 	Name    string
 	ID      string
 	Created string
+	Tags    map[string]string
 }
 
 func (a AMI) CreationDate() string {
@@ -49,12 +51,22 @@ func (m EC2) List(ctx context.Context) ([]AMI, error) {
 
 	amis := make([]AMI, 0)
 	for _, image := range resp.Images {
+		tags := make(map[string]string)
+		for _, tag := range image.Tags {
+			tags[aws.ToString(tag.Key)] = aws.ToString(tag.Value)
+		}
+
 		amis = append(amis, AMI{
 			Name:    aws.ToString(image.Name),
 			ID:      aws.ToString(image.ImageId),
 			Created: aws.ToString(image.CreationDate),
+			Tags:    tags,
 		})
 	}
+
+	sort.Slice(amis, func(i, j int) bool {
+		return amis[i].Created > amis[j].Created
+	})
 
 	return amis, nil
 }

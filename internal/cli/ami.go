@@ -42,6 +42,7 @@ func WithAMIListCmd(manager aws.AMIManager) SimulatorCmdOptions {
 
 			table.SetHeader([]string{
 				"ID",
+				"Type",
 				"Name",
 				"Created",
 			})
@@ -50,11 +51,13 @@ func WithAMIListCmd(manager aws.AMIManager) SimulatorCmdOptions {
 				tablewriter.Colors{tablewriter.Bold},
 				tablewriter.Colors{tablewriter.Bold},
 				tablewriter.Colors{tablewriter.Bold},
+				tablewriter.Colors{tablewriter.Bold},
 			)
 
 			for _, ami := range amis {
 				table.Append([]string{
 					ami.ID,
+					ami.Tags["Type"],
 					ami.Name,
 					ami.CreationDate(),
 				})

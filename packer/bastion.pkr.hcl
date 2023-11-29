@@ -70,7 +70,7 @@ source "amazon-ebs" "ubuntu" {
   tags = {
     K8s_Version   = "${var.kube_version}"
     Base_AMI_Name = "{{ .SourceAMIName }}"
-    Kind          = "Bastion"
+    Type          = "Bastion"
   }
   snapshot_tags = {
     AMI_Name = "${local.name}"
