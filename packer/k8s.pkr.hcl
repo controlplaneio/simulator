@@ -95,7 +95,7 @@ source "amazon-ebs" "ubuntu" {
     CNI_Version        = "${var.cni_version}"
     K8s_Version        = "${var.kube_version}"
     Base_AMI_Name      = "{{ .SourceAMIName }}"
-    Kind               = "K8s"
+    Type               = "K8s"
   }
   snapshot_tags = {
     AMI_Name = "${local.name}"
