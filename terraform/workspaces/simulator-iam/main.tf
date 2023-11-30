@@ -112,6 +112,7 @@ data "aws_iam_policy_document" "simulator" {
   statement {
     actions = [
       "s3:CreateBucket",
+      "s3:DeleteBucket",
       "s3:DeleteObject",
       "s3:GetObject",
       "s3:ListAllMyBuckets",

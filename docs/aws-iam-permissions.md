@@ -93,6 +93,7 @@ Role ARN from the output.
     {
       "Action": [
         "s3:CreateBucket",
+        "s3:DeleteBucket",
         "s3:DeleteObject",
         "s3:GetObject",
         "s3:ListAllMyBuckets",

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 	"os"
@@ -90,7 +91,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	awsBucketCreator := aws.S3{}
+	awsBucketCreator, err := aws.NewS3Client(context.Background())
+	if err != nil {
+		slog.Error("failed to create s3 client", "error", err)
+		os.Exit(1)
+	}
+
 	amiManager := aws.EC2{}
 	amiCreator := tools.PackerContainer{
 		Client: dockerClient,
