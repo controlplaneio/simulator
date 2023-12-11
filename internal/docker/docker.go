@@ -3,6 +3,7 @@ package docker
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"os"
@@ -20,7 +21,7 @@ import (
 func NewClient() (*Client, error) {
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
-		return nil, errors.Join(errors.New("failed to create docker client"), err)
+		return nil, fmt.Errorf("failed to create docker client: %w", err)
 	}
 
 	return &Client{cli}, nil
@@ -33,7 +34,7 @@ type Client struct {
 func (c Client) PullImage(ctx context.Context, ref string) error {
 	out, err := c.client.ImagePull(ctx, ref, types.ImagePullOptions{})
 	if err != nil {
-		return errors.Join(errors.New("failed to pull image"), err)
+		return fmt.Errorf("failed to pull image: %w", err)
 	}
 	defer func() {
 		_ = out.Close()
@@ -47,15 +48,16 @@ func (c Client) PullImage(ctx context.Context, ref string) error {
 }
 
 func (c Client) Run(ctx context.Context, conf Config) error {
-	mounts := make([]mount.Mount, 0)
+	// Pre-allocate the 'mounts' slice with the required capacity
+	mounts := make([]mount.Mount, len(conf.Mounts))
 
-	for _, m := range conf.Mounts {
-		mounts = append(mounts, mount.Mount{
+	for i, m := range conf.Mounts {
+		mounts[i] = mount.Mount{
 			Type:     mount.TypeBind,
 			Source:   m.Source,
 			Target:   m.Target,
 			ReadOnly: m.ReadOnly,
-		})
+		}
 	}
 
 	containerConfig := &container.Config{
@@ -82,12 +84,13 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 		"",
 	)
 	if err != nil {
-		return errors.Join(errors.New("failed to create container"), err)
+		return fmt.Errorf("failed to create container: %w", err)
 	}
 
 	defer func() {
 		//nolint:gomnd
 		cctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+		// TODO: above, do we need to create a new context from the original ctx?
 		defer cancel()
 
 		if err := c.client.ContainerStop(cctx, cont.ID, container.StopOptions{}); err != nil {
@@ -105,18 +108,21 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 		Stderr: true,
 	})
 	if err != nil {
-		return errors.Join(errors.New("failed to attach to container"), err)
+		return fmt.Errorf("failed to attach to container: %w", err)
 	}
 
 	err = c.client.ContainerStart(ctx, cont.ID, types.ContainerStartOptions{})
 	if err != nil {
-		return errors.Join(errors.New("failed to start container"), err)
+		return fmt.Errorf("failed to start container: %w", err)
 	}
 
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(1)
 	go func() {
-		_, _ = io.Copy(os.Stdout, hijack.Reader)
+		_, err := io.Copy(os.Stdout, hijack.Reader)
+		if err != nil {
+			slog.Warn("failed to copy container output", "err", err)
+		}
 		defer waitGroup.Done()
 	}()
 

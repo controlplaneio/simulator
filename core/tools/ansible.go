@@ -2,7 +2,6 @@ package tools
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -29,7 +28,7 @@ func (p AnsiblePlaybook) Install(ctx context.Context, id string) error {
 	playbook := fmt.Sprintf("%s.yaml", id)
 
 	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, playbook).Run(ctx, p.Output); err != nil {
-		return errors.Join(errors.New("failed to execute Ansible Playbook"), err)
+		return fmt.Errorf("failed to execute Ansible Playbook: %w", err)
 	}
 
 	return nil
@@ -40,7 +39,7 @@ func (p AnsiblePlaybook) Uninstall(ctx context.Context, id string) error {
 
 	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, playbook, "state=absent").
 		Run(ctx, p.Output); err != nil {
-		return errors.Join(errors.New("failed to execute Ansible Playbook"), err)
+		return fmt.Errorf("failed to run Ansible Playbook with state=absent: %w", err)
 	}
 
 	return nil
@@ -79,12 +78,13 @@ func (p AnsiblePlaybookContainer) Install(ctx context.Context, id string) error 
 	}
 
 	if err := p.Client.Run(ctx, config); err != nil {
-		return errors.Join(errors.New("failed to build ami"), err)
+		return fmt.Errorf("failed to build ami: %w", err)
 	}
 
 	return nil
 }
 
+//nolint:varnamelen
 func (p AnsiblePlaybookContainer) Uninstall(ctx context.Context, id string) error {
 	config := *p.Config
 	config.Cmd = []string{
@@ -94,7 +94,7 @@ func (p AnsiblePlaybookContainer) Uninstall(ctx context.Context, id string) erro
 	}
 
 	if err := p.Client.Run(ctx, config); err != nil {
-		return errors.Join(errors.New("failed to build ami"), err)
+		return fmt.Errorf("failed to uninstall playbook with id %s: %w", id, err)
 	}
 
 	return nil

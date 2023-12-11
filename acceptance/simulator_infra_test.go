@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -30,6 +31,10 @@ const (
 // 2. Using the AdminBundle, ssh into the Bastion and execute 'kubectl get nodes'
 // 3. Verify the master and two nodes are initialised, but not ready (has no cluster network yet)
 func TestSimulatorWorkspaceCreatesAccessibleCluster(t *testing.T) {
+	if os.Getenv("RUN_ACCEPTANCE_TEST") != strings.ToLower("yes") {
+		t.Skip("Skipping acceptance tests as RUN_ACCEPTANCE_TEST is not set to 'yes'")
+	}
+
 	t.Parallel()
 
 	currentDir, err := os.Getwd()

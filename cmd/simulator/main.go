@@ -19,6 +19,16 @@ import (
 
 const (
 	ownerReadWriteExecute = 0700
+	appName               = "Simulator" // name of the application
+)
+
+// all the variables below are injected during the build process
+var (
+	version = "v2.0.0" // the semantic version, injected from git tags during build
+	//nolint:gochecknoglobals
+	gitHash = "" // the git hash of the build
+	//nolint:gochecknoglobals
+	buildDate = "" // build date, will be injected by the build system
 )
 
 func main() {
@@ -146,6 +156,12 @@ func main() {
 			cli.WithScenarioInstallCmd(scenarioManager),
 			cli.WithScenarioUninstallCmd(scenarioManager),
 		),
+		cli.WithVersionCmd(cli.VersionInfo{
+			Version:   version,
+			AppName:   appName,
+			GitHash:   gitHash,
+			BuildDate: buildDate,
+		}),
 	)
 
 	err = simulator.Execute()

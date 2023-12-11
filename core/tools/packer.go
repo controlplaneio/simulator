@@ -2,7 +2,6 @@ package tools
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 
@@ -26,11 +25,11 @@ func (p Packer) Build(ctx context.Context, id string) error {
 	template := fmt.Sprintf("%s.pkr.hcl", id)
 
 	if err := packerInitCommand(p.WorkingDir, template).Run(ctx, p.Output); err != nil {
-		return errors.Join(errors.New("failed to initialise packer"), err)
+		return fmt.Errorf("failed to initialise packer: %w", err)
 	}
 
 	if err := packerBuildCommand(p.WorkingDir, template).Run(ctx, p.Output); err != nil {
-		return errors.Join(errors.New("failed to build ami"), err)
+		return fmt.Errorf("failed to build ami with packer: %w", err)
 	}
 
 	return nil
@@ -76,7 +75,7 @@ func (p PackerContainer) Build(ctx context.Context, id string) error {
 	}
 
 	if err := p.Client.Run(ctx, config); err != nil {
-		return errors.Join(errors.New("failed to build ami"), err)
+		return fmt.Errorf("failed to build ami with packer: %w", err)
 	}
 
 	return nil
