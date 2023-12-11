@@ -1,0 +1,41 @@
+builds:
+  - id: simulator
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Tag}}
+      - -X main.gitHash={{.FullCommit}}
+      - -X main.buildDate={{.Date}}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm
+      - arm64
+    goarm:
+      - 6
+      - 7
+    main: ./cmd/simulator/main.go
+    binary: simulator
+archives:
+  - id: simulator
+    name_template: "{{ .ProjectName }}_{{ .Tag }}_{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+    wrap_in_directory: false
+checksum:
+  algorithm: sha256
+  name_template: 'checksums.txt'
+sboms:
+  - id: archive
+    artifacts: archive
+  - id: source
+    artifacts: source

@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 
@@ -43,13 +44,13 @@ func (c *Config) Read() error {
 		if _, err = os.Stat(dir); err != nil {
 			err = os.MkdirAll(dir, ownerReadWriteExecute)
 			if err != nil {
-				return errors.Join(errors.New("failed to create config directory"), err)
+				return fmt.Errorf("failed to create config directory: %w", err)
 			}
 		}
 
 		config := defaultConfig()
 		if err = config.Write(); err != nil {
-			return errors.Join(errors.New("failed to write config"), err)
+			return fmt.Errorf("failed to write config: %w", err)
 		}
 
 		return nil
@@ -57,12 +58,12 @@ func (c *Config) Read() error {
 
 	bytes, err := os.ReadFile(file)
 	if err != nil {
-		return errors.Join(errors.New("failed to read config"), err)
+		return fmt.Errorf("failed to read config: %w", err)
 	}
 
 	err = yaml.Unmarshal(bytes, &c)
 	if err != nil {
-		return errors.Join(errors.New("failed to unmarshall config"), err)
+		return fmt.Errorf("failed to decode config to bytes: %w", err)
 	}
 
 	return nil
@@ -71,7 +72,7 @@ func (c *Config) Read() error {
 func (c *Config) Write() error {
 	config, err := yaml.Marshal(&c)
 	if err != nil {
-		return errors.Join(errors.New("failed to unmarshall config"), err)
+		return fmt.Errorf("failed to encode config: %w", err)
 	}
 
 	file, err := simulatorConfigFile()
@@ -80,7 +81,7 @@ func (c *Config) Write() error {
 	}
 
 	if err = os.WriteFile(file, config, ownerReadWrite); err != nil {
-		return errors.Join(errors.New("failed to write config"), err)
+		return fmt.Errorf("failed to write config: %w", err)
 	}
 
 	return nil
@@ -107,7 +108,7 @@ func simulatorDir() (string, error) {
 	if !ok {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return "", errors.Join(errors.New("failed to determine user's home directory"), err)
+			return "", fmt.Errorf("failed to determine user's home directory: %w", err)
 		}
 
 		return filepath.Join(home, ".simulator"), nil
