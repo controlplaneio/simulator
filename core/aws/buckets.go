@@ -3,6 +3,7 @@ package aws
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -45,7 +46,7 @@ func (c S3Client) Create(ctx context.Context, name string) error {
 		},
 	})
 	if err != nil && !errors.As(err, &bucketAlreadyOwnedByYou) {
-		return errors.Join(errors.New("failed to create bucket"), err)
+		return fmt.Errorf("failed to create bucket: %w", err)
 	}
 
 	return nil
@@ -56,7 +57,7 @@ func (c S3Client) Delete(ctx context.Context, name string) error {
 		Bucket: aws.String(name),
 	})
 	if err != nil {
-		return errors.Join(errors.New("failed to list bucket objects"), err)
+		return fmt.Errorf("failed to list bucket objects: %w", err)
 	}
 
 	objectIDs := make([]types.ObjectIdentifier, len(objects.Contents))
@@ -71,14 +72,14 @@ func (c S3Client) Delete(ctx context.Context, name string) error {
 		},
 	})
 	if err != nil {
-		return errors.Join(errors.New("failed to delete bucket objects"), err)
+		return fmt.Errorf("failed to delete bucket objects: %w", err)
 	}
 
 	_, err = c.client.DeleteBucket(ctx, &s3.DeleteBucketInput{
 		Bucket: aws.String(name),
 	})
 	if err != nil {
-		return errors.Join(errors.New("failed to delete bucket"), err)
+		return fmt.Errorf("failed to delete bucket: %w", err)
 	}
 
 	return nil
