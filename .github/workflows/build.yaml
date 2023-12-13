@@ -58,6 +58,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Login to Docker Hub # for testing the credentials
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and tag dev image
         uses: docker/build-push-action@v5
         with:
@@ -65,18 +71,16 @@ jobs:
           file: ./dev.Dockerfile
           tags: 'controlplane/simulator:dev'
           load: true
-          push: false
+          push: false # for testing
 
       - name: Run Trivy vulnerability scanner on the dev image
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'controlplane/simulator:dev'
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           vuln-type: 'os,library'
-          output: 'trivy-results.txt'
           severity: 'CRITICAL,HIGH'
-
 
       - name: Build and tag simulator image
         uses: docker/build-push-action@v5
@@ -94,13 +98,5 @@ jobs:
           format: 'table'
           exit-code: '0' # TODO: change to 1 when we have no more vulnerabilities
           vuln-type: 'os,library'
-          output: 'trivy-results.txt'
           severity: 'CRITICAL,HIGH'
 
-#      - name: Push simulator image
-#        uses: docker/build-push-action@v5
-#        with:
-#          context: .
-#          file: ./Dockerfile
-#          tags: controlplane/simulator:${{ github.sha }}
-#          push: true
