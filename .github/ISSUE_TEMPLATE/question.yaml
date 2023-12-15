@@ -1,0 +1,27 @@
+name: Question
+description: Post a question about the project
+title: ""
+labels: [question]
+assignees: ""
+body:
+  - type: markdown
+    attributes:
+      value: "Have a question about the project? Feel free to ask it here!"
+  - type: textarea
+    id: your-question
+    attributes:
+      label: Your Question
+      description: A clear and concise question.
+      placeholder: "What would you like to ask?"
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context about your question here.
+      placeholder: "Provide additional information or context if necessary..."
+      render: markdown
+    validations:
+      required: false

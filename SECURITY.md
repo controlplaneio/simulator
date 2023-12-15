@@ -1,5 +1,7 @@
-Contact: security@control-plane.io
+# Security Policy
 
-Encryption: https://api.github.com/users/sublimino/gpg_keys
+## Our Security Address
 
-Disclosure: Full
+Contact: `security@control-plane.io`
+Encryption: `https://keybase.io/sublimino/pgp_keys.asc`
+Disclosure: `Full`
