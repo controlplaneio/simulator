@@ -154,7 +154,7 @@ func main() {
 			cli.WithScenarioListCmd(),
 			cli.WithScenarioDescribeCmd(),
 			cli.WithScenarioInstallCmd(scenarioManager),
-			cli.WithScenarioUninstallCmd(scenarioManager),
+			//cli.WithScenarioUninstallCmd(scenarioManager), TODO: complete ansibilisation of scenarios to support uninstall
 		),
 		cli.WithVersionCmd(cli.VersionInfo{
 			Version:   version,
