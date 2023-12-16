@@ -1,4 +1,29 @@
-# Simulator CLI Configuration
+# Simulator CLI
+
+```mermaid
+flowchart TD
+  simulator --> version
+  simulator --> config
+  simulator --> container
+  simulator --> bucket
+  simulator --> ami
+  simulator --> infra
+  simulator --> scenario
+  container --> pull
+  bucket --> create
+  ami --> build
+  ami --> list
+  ami --> delete
+  infra --> c(create)
+  infra --> destroy
+  scenario --> s(list)
+  scenario --> describe
+  scenario --> install
+```
+
+[//]: # (TODO document commands)
+
+## Configuration
 
 The Simulator ClI is configured using the `simulator config` command.
 

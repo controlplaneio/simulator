@@ -3,8 +3,7 @@
 In order for Simulator to create AMIs and to Terraform the required infrastructure, create an IAM Role with the
 following permissions.
 
-You can use the Terraform configuration [here](../terraform/workspaces/simulator-iam/main.tf) to do this and get the IAM
-Role ARN from the output.
+You can use the Terraform configuration [here](../terraform/workspaces/simulator-iam/main.tf) and get the IAM Role ARN from the output.
 
 ```json
 {
@@ -147,4 +146,3 @@ export AWS_REGION=...
 aws sso login --profile simulator-sso
 source <(aws configure export-credentials --profile simulator --format env)
 ```
-
