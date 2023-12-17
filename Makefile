@@ -17,3 +17,6 @@ simulator-cli: lint ## Build the simulator CLI
 	go build -v -o bin/simulator cmd/simulator/main.go
 
 build: simulator-dev-image simulator-image simulator-cli ## Build docker images and the CLI binary
+
+acceptance-test: ## Run the acceptance test
+	cd acceptance && RUN_ACCEPTANCE_TEST=yes go test

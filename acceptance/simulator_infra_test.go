@@ -2,8 +2,6 @@ package acceptance_test
 
 import (
 	"context"
-	"io"
-	"net"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -12,14 +10,12 @@ import (
 	"time"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
-	"github.com/kevinburke/ssh_config"
 	"github.com/otiai10/copy"
 	"github.com/stretchr/testify/assert"
 	"github.com/xyproto/randomstring"
-	"golang.org/x/crypto/ssh"
-	"golang.org/x/crypto/ssh/knownhosts"
 
 	"github.com/controlplaneio/simulator/v2/core/aws"
+	"github.com/controlplaneio/simulator/v2/utils/ssh"
 )
 
 const (
@@ -89,57 +85,17 @@ func TestSimulatorWorkspaceCreatesAccessibleCluster(t *testing.T) {
 	_, err = terraform.InitAndApplyE(t, terraformOptions)
 	assert.NoError(t, err)
 
-	sshConfigFile, err := os.Open(filepath.Join(adminBundleDir, "simulator_config"))
-	assert.NoError(t, err)
-
-	sshConfig, err := ssh_config.Decode(sshConfigFile)
-	assert.NoError(t, err)
-
-	user, _ := sshConfig.Get(bastion, "User")
-	host, _ := sshConfig.Get(bastion, "Hostname")
-	idFile, _ := sshConfig.Get(bastion, "IdentityFile")
-	knownHostFile, _ := sshConfig.Get(bastion, "UserKnownHostsFile")
-
-	key, err := os.ReadFile(filepath.Join(adminBundleDir, idFile))
-	assert.NoError(t, err)
-
-	signer, err := ssh.ParsePrivateKey(key)
-	assert.NoError(t, err)
-
-	hostKeyCallback, err := knownhosts.New(filepath.Join(adminBundleDir, knownHostFile))
-	assert.NoError(t, err)
-
-	sshClientConf := &ssh.ClientConfig{
-		User: user,
-		Auth: []ssh.AuthMethod{
-			ssh.PublicKeys(signer),
-		},
-		HostKeyAlgorithms: []string{
+	sshClient, err := ssh.NewClient(
+		adminBundleDir,
+		"simulator_config",
+		[]string{
 			ssh.KeyAlgoED25519,
 		},
-		HostKeyCallback: hostKeyCallback,
-		Timeout:         15 * time.Second,
-	}
-
-	conn, err := ssh.Dial("tcp", net.JoinHostPort(host, "22"), sshClientConf)
-	assert.NoError(t, err)
-	defer func(conn *ssh.Client) {
-		_ = conn.Close()
-	}(conn)
-
-	session, err := conn.NewSession()
-	assert.NoError(t, err)
-	defer func(session *ssh.Session) {
-		_ = session.Close()
-	}(session)
-
-	stdout, err := session.StdoutPipe()
+		15*time.Second,
+	)
 	assert.NoError(t, err)
 
-	err = session.Start("kubectl get nodes")
-	assert.NoError(t, err)
-
-	output, err := io.ReadAll(stdout)
+	output, err := sshClient.Execute("kubectl get nodes")
 	assert.NoError(t, err)
 
 	assert.Regexp(t, regexp.MustCompile("master-1.*NotReady"), string(output))
