@@ -1,4 +1,4 @@
-name: release-binary
+name: release-binary-docker-images
 
 on:
   push:
@@ -10,13 +10,93 @@ permissions:
   contents: write
 
 jobs:
+  build-push-docker-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and tag dev image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./dev.Dockerfile
+          tags: |
+            controlplane/simulator:dev
+          load: true
+          push: false
+
+      - name: Run Trivy vulnerability scanner on the dev image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'controlplane/simulator:dev'
+          format: 'table'
+          exit-code: '1'
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Build and tag simulator image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: controlplane/simulator:${{ github.ref_name }}
+          load: true
+          push: false
+
+      - name: Run Trivy vulnerability scanner on simulator image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: controlplane/simulator:${{ github.ref_name }}
+          format: 'table'
+          exit-code: '1'
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          trivyignores: './.trivy-config/.trivyignore'
+
+      - name: Build and push dev image ## should use cache image from the previous step
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./dev.Dockerfile
+          tags: 'controlplane/simulator:dev'
+          load: false ## push and load cannot be set at the same time
+          push: true
+
+      - name: pull dev image
+        run: |
+          docker images ls
+          docker pull controlplane/simulator:dev
+          docker images ls
+
+      - name: Build and push simulator image ## should use cache image from the previous step
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          tags: |
+            controlplane/simulator:${{ github.ref_name }}
+            controlplane/simulator:latest
+          load: false
+          push: true
+
   goreleaser:
     runs-on: ubuntu-latest
+    name: goreleaser
+    needs: build-push-docker-images
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Shallow clones should be disabled for a releaser
+          fetch-depth: 0
 
       - name: Setup Go
         uses: actions/setup-go@v4
