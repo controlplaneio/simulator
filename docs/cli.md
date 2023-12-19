@@ -11,6 +11,7 @@ flowchart TD
   simulator --> scenario
   container --> pull
   bucket --> create
+  bucket --> d(delete)
   ami --> build
   ami --> list
   ami --> delete

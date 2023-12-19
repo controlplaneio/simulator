@@ -12,8 +12,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-type BucketCreator interface {
+type BucketManager interface {
 	Create(ctx context.Context, name string) error
+	Delete(ctx context.Context, name string) error
 }
 
 func NewS3Client(ctx context.Context) (*S3Client, error) {

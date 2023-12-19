@@ -24,13 +24,29 @@ func WithBucketCmd(opts ...SimulatorCmdOptions) SimulatorCmdOptions {
 	}
 }
 
-func WithCreateBucketCmd(config config.Config, creator aws.BucketCreator) SimulatorCmdOptions {
+func WithCreateBucketCmd(config config.Config, manager aws.BucketManager) SimulatorCmdOptions {
 	bucketCreateCommand := &cobra.Command{
 		Use: "create",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
 
-			err := creator.Create(ctx, config.Bucket)
+			err := manager.Create(ctx, config.Bucket)
+			cobra.CheckErr(err)
+		},
+	}
+
+	return func(command *cobra.Command) {
+		command.AddCommand(bucketCreateCommand)
+	}
+}
+
+func WithDeleteBucketCmd(config config.Config, manager aws.BucketManager) SimulatorCmdOptions {
+	bucketCreateCommand := &cobra.Command{
+		Use: "delete",
+		Run: func(cmd *cobra.Command, args []string) {
+			ctx := context.Background()
+
+			err := manager.Delete(ctx, config.Bucket)
 			cobra.CheckErr(err)
 		},
 	}
