@@ -40,6 +40,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		slog.Error("failed to determine user home dir", "error", err)
+		os.Exit(1)
+	}
+
 	adminBundleDir, err := conf.AdminBundleDir()
 	if err != nil {
 		slog.Error("failed to determine admin bundle dir", "error", err)
@@ -64,8 +70,8 @@ func main() {
 			Target: "/simulator/config/player",
 		},
 		{
-			Source:   "/home/ric/.aws",
-			Target:   "/home/ubuntu/.aws",
+			Source:   filepath.Join(homeDir, ".aws"),
+			Target:   aws.SharedConfigDir(conf.ContainerUser()),
 			ReadOnly: true,
 		},
 	}
@@ -154,7 +160,7 @@ func main() {
 			cli.WithScenarioListCmd(),
 			cli.WithScenarioDescribeCmd(),
 			cli.WithScenarioInstallCmd(scenarioManager),
-			//cli.WithScenarioUninstallCmd(scenarioManager), TODO: complete ansibilisation of scenarios to support uninstall
+			// cli.WithScenarioUninstallCmd(scenarioManager), TODO: complete ansibilisation of scenarios to support uninstall
 		),
 		cli.WithVersionCmd(cli.VersionInfo{
 			Version:   version,

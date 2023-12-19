@@ -29,3 +29,11 @@ func EnvVars() []string {
 
 	return env
 }
+
+func SharedConfigDir(user string) string {
+	if user == "root" {
+		return "/root/.aws"
+	}
+
+	return fmt.Sprintf("/home/%s/.aws", user)
+}
