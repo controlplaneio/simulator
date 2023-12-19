@@ -87,7 +87,7 @@ func (c *Config) Write() error {
 	return nil
 }
 
-func (c Config) AdminBundleDir() (string, error) {
+func (c *Config) AdminBundleDir() (string, error) {
 	dir, err := simulatorDir()
 	if err != nil {
 		return "", err
@@ -95,12 +95,20 @@ func (c Config) AdminBundleDir() (string, error) {
 	return filepath.Join(dir, "admin"), nil
 }
 
-func (c Config) PlayerBundleDir() (string, error) {
+func (c *Config) PlayerBundleDir() (string, error) {
 	dir, err := simulatorDir()
 	if err != nil {
 		return "", err
 	}
 	return filepath.Join(dir, "player"), nil
+}
+
+func (c *Config) ContainerUser() string {
+	if c.Rootless {
+		return "root"
+	}
+
+	return "ubuntu"
 }
 
 func simulatorDir() (string, error) {
