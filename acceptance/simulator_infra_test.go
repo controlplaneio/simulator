@@ -18,10 +18,6 @@ import (
 	"github.com/controlplaneio/simulator/v2/utils/ssh"
 )
 
-const (
-	bastion = "bastion"
-)
-
 // TestSimulatorWorkspaceCreatesAccessibleCluster Performs the following steps to acceptance test the Terraform
 // 1. Terraform the infrastructure
 // 2. Using the AdminBundle, ssh into the Bastion and execute 'kubectl get nodes'
