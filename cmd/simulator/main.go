@@ -107,7 +107,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	awsBucketCreator, err := aws.NewS3Client(context.Background())
+	awsBucketManager, err := aws.NewS3Client(context.Background())
 	if err != nil {
 		slog.Error("failed to create s3 client", "error", err)
 		os.Exit(1)
@@ -134,7 +134,8 @@ func main() {
 	simulator := cli.NewSimulatorCmd(
 		cli.WithConfigCmd(conf),
 		cli.WithBucketCmd(
-			cli.WithCreateBucketCmd(conf, awsBucketCreator),
+			cli.WithCreateBucketCmd(conf, awsBucketManager),
+			cli.WithDeleteBucketCmd(conf, awsBucketManager),
 		),
 		cli.WithContainerCmd(
 			cli.WithContainerPullCmd(conf, dockerClient),
