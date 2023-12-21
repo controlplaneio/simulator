@@ -1,7 +1,0 @@
-Scenario: During your basic app sec testing you have been able to break out of your test application and into the container.
-
-Starting Point: nginx pod in secret-tank-desant namespace
-
-Difficulty: Easy
-
-Task 1: Is there a way an attacker could progress the attack using what's available to you in the container?
