@@ -14,11 +14,10 @@ builds:
       - windows
     goarch:
       - amd64
-      - arm
       - arm64
-    goarm:
-      - 6
-      - 7
+    ignore:
+      - goos: darwin
+        goarch: arm
     main: ./cmd/simulator/main.go
     binary: simulator
 archives:
