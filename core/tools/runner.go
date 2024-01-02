@@ -2,7 +2,6 @@ package tools
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -15,6 +14,7 @@ type Executable string
 type runner struct {
 	Executable Executable
 	WorkingDir string
+	Env        []string
 	Arguments  []string
 }
 
@@ -26,10 +26,11 @@ func (c runner) Run(ctx context.Context, output io.Writer) error {
 	cmd.Dir = c.WorkingDir
 	cmd.Stdout = output
 	cmd.Stderr = output
+	cmd.Env = c.Env
 
 	err := cmd.Run()
 	if err != nil {
-		return errors.Join(errors.New("failed to run runner"), err)
+		return fmt.Errorf("failed to run runner: %w", err)
 	}
 
 	return nil

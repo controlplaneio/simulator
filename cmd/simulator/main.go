@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -114,7 +113,7 @@ func main() {
 	}
 
 	amiManager := aws.EC2{}
-	amiCreator := tools.PackerContainer{
+	amiBuilder := tools.PackerContainer{
 		Client: dockerClient,
 		Config: dockerConfig,
 	}
@@ -141,7 +140,7 @@ func main() {
 			cli.WithContainerPullCmd(conf, dockerClient),
 		),
 		cli.WithAMICmd(
-			cli.WithAmiBuildCmd(amiCreator),
+			cli.WithAmiBuildCmd(amiBuilder),
 			cli.WithAMIListCmd(amiManager),
 			cli.WithAMIDeleteCmd(amiManager),
 		),
@@ -177,11 +176,9 @@ func main() {
 
 func mkDirsIfNotExist(dirs ...string) {
 	for _, dir := range dirs {
-		if _, err := os.Stat(dir); errors.Is(err, os.ErrNotExist) {
-			if err := os.Mkdir(dir, ownerReadWriteExecute); err != nil {
-				slog.Error("failed to bundle directory", "dir", dir, "error", err)
-				os.Exit(1)
-			}
+		if err := os.MkdirAll(dir, ownerReadWriteExecute); err != nil {
+			slog.Error("failed to bundle directory", "dir", dir, "error", err)
+			os.Exit(1)
 		}
 	}
 }

@@ -11,6 +11,7 @@ import (
 
 const (
 	AnsiblePlaybookExecutable Executable = "ansible-playbook"
+	AnsibleConfigPath         string     = "/simulator/config/admin/ansible.cfg"
 )
 
 type ScenarioManager interface {
@@ -61,6 +62,11 @@ func ansiblePlaybookCommand(workingDir, playbookDir, playbook string, extraVars 
 		Executable: AnsiblePlaybookExecutable,
 		WorkingDir: workingDir,
 		Arguments:  args,
+		// Ansible complains on Windows+WSL that the directory
+		// with the ansible configuration is world writable
+		// and hence ignore the configuration unless explicitly
+		// set using the ANSIBLE_CONFIG environment variable.
+		Env: []string{"ANSIBLE_CONFIG=" + AnsibleConfigPath},
 	}
 }
 

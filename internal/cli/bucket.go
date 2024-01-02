@@ -2,6 +2,8 @@ package cli
 
 import (
 	"context"
+	"log/slog"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -29,6 +31,11 @@ func WithCreateBucketCmd(config config.Config, manager aws.BucketManager) Simula
 		Use: "create",
 		Run: func(cmd *cobra.Command, args []string) {
 			ctx := context.Background()
+
+			if config.Bucket == "" {
+				slog.Error("Bucket name not configured, use the 'config' flag to set it")
+				os.Exit(1)
+			}
 
 			err := manager.Create(ctx, config.Bucket)
 			cobra.CheckErr(err)
