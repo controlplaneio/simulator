@@ -3,6 +3,7 @@ package scenarios
 import (
 	"embed"
 	"errors"
+	"fmt"
 	"log/slog"
 	"sort"
 
@@ -26,13 +27,13 @@ func List() ([]Scenario, error) {
 	bytes, err := config.ReadFile("scenarios.yaml")
 	if err != nil {
 		slog.Error("failed to load scenarios file")
-		return nil, errors.Join(errors.New("failed to list scenarios"), err)
+		return nil, fmt.Errorf("failed to list scenarios: %w", err)
 	}
 
 	err = yaml.Unmarshal(bytes, &scenarios)
 	if err != nil {
 		slog.Error("failed to unmarshall scenarios")
-		return nil, errors.Join(errors.New("failed to list scenarios"), err)
+		return nil, fmt.Errorf("failed to list scenarios: %w", err)
 	}
 
 	sort.Slice(scenarios, func(i, j int) bool {
@@ -57,7 +58,7 @@ func Find(scenarioID string) (Scenario, error) {
 
 	scenarios, err := List()
 	if err != nil {
-		return scenario, errors.Join(errors.New("failed to find scenario"), err)
+		return scenario, fmt.Errorf("failed to find scenario: %w", err)
 	}
 
 	for _, scenario = range scenarios {

@@ -5,15 +5,19 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 
 	"gopkg.in/yaml.v2"
 )
 
 const (
-	Dir                   = "SIMULATOR_DIR"
-	FileName              = "config.yaml"
-	ownerReadWrite        = 0600
-	ownerReadWriteExecute = 0700
+	// https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html
+	XDGConfigHomeLinuxEnv  = "XDG_CONFIG_HOME"
+	LocalAppDataWindowsEnv = "LOCALAPPDATA"
+	Dir                    = "SIMULATOR_DIR"
+	FileName               = "config.yaml"
+	ownerReadWrite         = 0600
+	ownerReadWriteExecute  = 0700
 )
 
 type Config struct {
@@ -41,11 +45,9 @@ func (c *Config) Read() error {
 
 	if _, err = os.Stat(file); errors.Is(err, os.ErrNotExist) {
 		dir := filepath.Dir(file)
-		if _, err = os.Stat(dir); err != nil {
-			err = os.MkdirAll(dir, ownerReadWriteExecute)
-			if err != nil {
-				return fmt.Errorf("failed to create config directory: %w", err)
-			}
+		err = os.MkdirAll(dir, ownerReadWriteExecute)
+		if err != nil {
+			return fmt.Errorf("failed to create config directory: %w", err)
 		}
 
 		config := defaultConfig()
@@ -88,7 +90,7 @@ func (c *Config) Write() error {
 }
 
 func (c *Config) AdminBundleDir() (string, error) {
-	dir, err := simulatorDir()
+	dir, err := SimulatorDir()
 	if err != nil {
 		return "", err
 	}
@@ -96,7 +98,7 @@ func (c *Config) AdminBundleDir() (string, error) {
 }
 
 func (c *Config) PlayerBundleDir() (string, error) {
-	dir, err := simulatorDir()
+	dir, err := SimulatorDir()
 	if err != nil {
 		return "", err
 	}
@@ -111,22 +113,41 @@ func (c *Config) ContainerUser() string {
 	return "ubuntu"
 }
 
-func simulatorDir() (string, error) {
-	dir, ok := os.LookupEnv(Dir)
-	if !ok {
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return "", fmt.Errorf("failed to determine user's home directory: %w", err)
-		}
-
-		return filepath.Join(home, ".simulator"), nil
+func SimulatorDir() (string, error) {
+	// User provided config has precedence
+	if dir, ok := os.LookupEnv(Dir); ok {
+		return dir, nil
 	}
 
-	return dir, nil
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", fmt.Errorf("failed to determine user's home directory: %w", err)
+	}
+
+	switch runtime.GOOS {
+	case "darwin":
+		return filepath.Join(homeDir, "Library", "Preferences", "io.controlplane.simulator"), nil
+	case "linux":
+		if dir, ok := os.LookupEnv(XDGConfigHomeLinuxEnv); ok {
+			return filepath.Join(dir, "simulator"), nil
+		}
+
+		// Fallback to default XDG dir
+		return filepath.Join(homeDir, ".config", "simulator"), nil
+	case "windows":
+		if dir, ok := os.LookupEnv(LocalAppDataWindowsEnv); ok {
+			return filepath.Join(dir, "simulator"), nil
+		}
+
+		// Fallback to default local app data dir
+		return filepath.Join(homeDir, "AppData", "Local", "simulator"), nil
+	default:
+		return "", fmt.Errorf("operating system not support: %s", runtime.GOOS)
+	}
 }
 
 func simulatorConfigFile() (string, error) {
-	dir, err := simulatorDir()
+	dir, err := SimulatorDir()
 	if err != nil {
 		return "", err
 	}

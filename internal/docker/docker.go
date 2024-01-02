@@ -2,7 +2,6 @@ package docker
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -41,7 +40,7 @@ func (c Client) PullImage(ctx context.Context, ref string) error {
 	}()
 
 	if _, err = io.Copy(os.Stdout, out); err != nil {
-		return errors.Join(errors.New("failed to pull image"), err)
+		return fmt.Errorf("failed to pull image: %w", err)
 	}
 
 	return nil
@@ -119,11 +118,12 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(1)
 	go func() {
+		defer waitGroup.Done()
+
 		_, err := io.Copy(os.Stdout, hijack.Reader)
 		if err != nil {
 			slog.Warn("failed to copy container output", "err", err)
 		}
-		defer waitGroup.Done()
 	}()
 
 	waitGroup.Wait()

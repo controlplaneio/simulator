@@ -20,7 +20,7 @@ type BucketManager interface {
 func NewS3Client(ctx context.Context) (*S3Client, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
-		return nil, errors.Join(errors.New("failed to load default config"), err)
+		return nil, fmt.Errorf("failed to load default config: %w", err)
 	}
 
 	return &S3Client{
@@ -35,7 +35,7 @@ type S3Client struct {
 func (c S3Client) Create(ctx context.Context, name string) error {
 	region, ok := os.LookupEnv("AWS_REGION")
 	if !ok {
-		return errors.New("failed to create bucket, aws region not set")
+		return errors.New("failed to create bucket, AWS_REGION not set")
 	}
 
 	var bucketAlreadyOwnedByYou *types.BucketAlreadyOwnedByYou

@@ -46,6 +46,21 @@ simulator config --bucket <name> --rootless
 
 ## Setup
 
+Before setting up the prerequisites, ensure the AWS_REGION environment variable is set:
+
+For Linux and MacOS:
+
+```shell
+export AWS_REGION=my-aws-region
+```
+
+For Windows:
+
+```powershell
+$env:AWS_REGION = "my-aws-region"
+```
+
+
 There are three prerequisite steps to perform to setup your local and AWS environment before you can launch the
 infrastructure and play the scenarios.
 
@@ -58,9 +73,9 @@ Run the following commands to perform these steps.
 ```shell
 simulator bucket create
 simulator container pull
-for i in bastion k8s; do
-  simulator ami build $i
-done
+
+simulator ami build bastion
+simulator ami build k8s
 ```
 
 ## Launch
@@ -85,8 +100,13 @@ With the infrastructure provisioned and the scenario installed, it's time to pla
 
 A Player bundle has been created that will allow you SSH directly into the starting point for the selected scenario.
 
-This will either be in `$HOME/.simulator/player` or `$SIMULATOR_DIR/player` depending on whether you used the defaults
-or a custom directory for the configuration. From here simple SSH to access the scenario.
+The configuration directory can be found using the following command:
+
+```shell
+simulator config --print-dir
+```
+
+From this directory, simple SSH to access the scenario.
 
 ```shell
 ssh -F simulator_config bastion

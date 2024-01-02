@@ -2,7 +2,6 @@ package tools
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 
@@ -31,13 +30,13 @@ func (t Terraform) Create(ctx context.Context, stateBucket string, stateKey stri
 	backend := backendConfig(stateBucket, stateKey)
 
 	if err := terraformInitCommand(t.WorkingDir, backend).Run(ctx, t.Output); err != nil {
-		return errors.Join(errors.New("failed to initialise terraform"), err)
+		return fmt.Errorf("failed to initialise terraform: %w", err)
 	}
 
 	vars := terraformVars(name)
 
 	if err := terraformCommand(t.WorkingDir, TerraformApply, vars).Run(ctx, t.Output); err != nil {
-		return errors.Join(errors.New("failed to apply terraform"), err)
+		return fmt.Errorf("failed to apply terraform: %w", err)
 	}
 
 	return nil
@@ -47,13 +46,13 @@ func (t Terraform) Destroy(ctx context.Context, stateBucket string, stateKey str
 	backend := backendConfig(stateBucket, stateKey)
 
 	if err := terraformInitCommand(t.WorkingDir, backend).Run(ctx, t.Output); err != nil {
-		return errors.Join(errors.New("failed to initialise terraform"), err)
+		return fmt.Errorf("failed to initialise terraform: %w", err)
 	}
 
 	vars := terraformVars(name)
 
 	if err := terraformCommand(t.WorkingDir, TerraformDestroy, vars).Run(ctx, t.Output); err != nil {
-		return errors.Join(errors.New("failed to apply terraform"), err)
+		return fmt.Errorf("failed to destroy terraform: %w", err)
 	}
 
 	return nil
@@ -128,7 +127,7 @@ func (p TerraformContainer) Create(ctx context.Context, stateBucket string, stat
 	}
 
 	if err := p.Client.Run(ctx, config); err != nil {
-		return errors.Join(errors.New("failed to create infra"), err)
+		return fmt.Errorf("failed to create infra: %w", err)
 	}
 
 	return nil
@@ -148,7 +147,7 @@ func (p TerraformContainer) Destroy(ctx context.Context, stateBucket string, sta
 	}
 
 	if err := p.Client.Run(ctx, config); err != nil {
-		return errors.Join(errors.New("failed to destroy infra"), err)
+		return fmt.Errorf("failed to destroy infra: %w", err)
 	}
 
 	return nil
