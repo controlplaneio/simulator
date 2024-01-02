@@ -68,13 +68,14 @@ jobs:
           push: false
 
       - name: Run Trivy vulnerability scanner on the dev image
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.16.0
         with:
           image-ref: 'controlplane/simulator:dev'
           format: 'table'
           exit-code: '1'
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          trivyignores: './.trivy-config/.trivyignore'
 
       - name: Build and tag simulator image
         uses: docker/build-push-action@v5
@@ -86,7 +87,7 @@ jobs:
           push: false
 
       - name: Run Trivy vulnerability scanner on simulator image
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@0.16.0
         with:
           image-ref: controlplane/simulator:${{ github.sha }}
           format: 'table'
