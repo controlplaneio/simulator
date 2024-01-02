@@ -10,7 +10,7 @@ terraform/workspaces/simulator/.terraform/
 .dockerignore
 .editorconfig
 .gitignore
-dev.Dockerfile
+Dockerfile.dev
 Dockerfile
 LICENSE
 Makefile

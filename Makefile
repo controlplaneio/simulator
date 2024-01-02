@@ -8,7 +8,7 @@ lint: ## Lint the code
 	golangci-lint run -c .golangci.yml
 
 simulator-dev-image: lint ## Lint the code and build the development Docker image
-	docker build -t $(SIMULATOR_IMAGE):dev -f dev.Dockerfile .
+	docker build -t $(SIMULATOR_IMAGE):dev -f Dockerfile.dev .
 
 simulator-image: simulator-dev-image ## Build the Docker image for the simulator
 	docker build -t $(SIMULATOR_IMAGE) .
