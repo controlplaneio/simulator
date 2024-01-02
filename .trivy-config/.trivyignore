@@ -1,5 +1,5 @@
 ## these following are not fixed in the upstream yet, so we are ignoring them for now
-# packer-plugin-amazon_v1.2.8_x5.0_linux_amd64 
+# packer-plugin-amazon_v1.2.8_x5.0_linux_amd64
 # registry.terraform.io/hashicorp/template/2.2.0/linux_amd64/terraform-provider-template_v2.2.0_x4
 CVE-2023-39325
 GHSA-m425-mq94-257g
@@ -22,3 +22,7 @@ CVE-2022-27664
 CVE-2022-41723
 CVE-2021-38561
 CVE-2022-32149
+# packer's dependency go-git
+# packer being non-responsive isn't a worry and responses
+# from github shouldn't be an issue
+CVE-2023-49568
