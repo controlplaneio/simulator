@@ -1,46 +1,46 @@
-name: Feature request
-description: Suggest an idea for this project
-title: ""
-labels: []
-assignees: ""
+---
+name: 🛠️ Feature Request
+description: Suggest an idea to help us improve W&B
+title: "[Feature]: "
+labels:
+  - "feature_request"
+  - "enhancement"
+
 body:
   - type: markdown
     attributes:
-      value: "Thanks for suggesting a feature! Please fill out the form below."
+      value: |
+        **Thanks :heart: for taking the time to fill out this feature request report!**
+
   - type: textarea
-    id: problem-description
     attributes:
-      label: Is your feature request related to a problem? Please describe.
-      description: A clear and concise description of what the problem is. For example: "I'm always frustrated when..."
-      placeholder: "Describe the problem or the frustration..."
-      render: markdown
+      label: Description
+      description: |
+        A clear and concise description of the feature you're interested in.
     validations:
       required: true
+
   - type: textarea
-    id: desired-solution
     attributes:
-      label: Describe the solution you'd like
-      description: A clear and concise description of what you want to happen.
-      placeholder: "Explain your ideal solution..."
-      render: markdown
+      label: Suggested Solution
+      description: |
+        Describe the solution you'd like. A clear and concise description of what you want to happen.
     validations:
       required: true
+
   - type: textarea
-    id: alternatives-considered
     attributes:
-      label: Describe alternatives you've considered
-      description: A clear and concise description of any alternative solutions or features you've considered.
-      placeholder: "List any alternative solutions or features..."
-      render: markdown
+      label: Alternatives
+      description: |
+        Describe alternatives you've considered.
+        A clear and concise description of any alternative solutions or features you've considered.
     validations:
       required: false
-  - type: markdown
+
+  - type: textarea
     attributes:
-      value: "If you have any additional context or screenshots, you can add them below."
-  - type: file
-    id: additional-context
-    attributes:
-      label: Additional context or screenshots
-      description: Add any other context or screenshots about the feature request here.
+      label: Additional Context
+      description: |
+        Add any other context about the problem here.
     validations:
       required: false

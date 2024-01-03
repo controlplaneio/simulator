@@ -1,12 +1,12 @@
-name: Bug report
-description: Create a report to help us improve
-title: ""
-labels: [bug]
-assignees: ""
+name: "Bug report for simulator"
+description: Report a bug in simulator.
+title: "[Bug]: "
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: "Thanks for taking the time to fill out this bug report!"
+  
   - type: textarea
     id: describe-bug
     attributes:
@@ -16,6 +16,7 @@ body:
       render: markdown
     validations:
       required: true
+  
   - type: textarea
     id: reproduce-steps
     attributes:
@@ -29,6 +30,7 @@ body:
       render: markdown
     validations:
       required: true
+  
   - type: textarea
     id: expected-behavior
     attributes:
@@ -38,14 +40,12 @@ body:
       render: markdown
     validations:
       required: true
-  - type: markdown
+  - type: textarea
+    id: logs
     attributes:
-      value: "You can add screenshots or additional context below."
-  - type: file
-    id: screenshots
-    attributes:
-      label: Screenshots
-      description: If applicable, add screenshots to help explain your problem.
+      label: Relevant log output
+      description: Please copy and paste any relevant log output.
+      render: shell
     validations:
       required: false
   - type: textarea

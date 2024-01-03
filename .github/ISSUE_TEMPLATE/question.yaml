@@ -1,8 +1,7 @@
 name: Question
 description: Post a question about the project
-title: ""
+title: "[Question]: "
 labels: [question]
-assignees: ""
 body:
   - type: markdown
     attributes:
