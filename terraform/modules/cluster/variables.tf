@@ -37,6 +37,11 @@ variable "bastion_volume_size" {
   default     = "8"
 }
 
+variable "bastion_ssh_ingress" {
+  description = "List of CIDR blocks to grant ssh access to bastion."
+  type = list(string)
+}
+
 variable "instance_groups" {
   description = ""
   type        = list(object({

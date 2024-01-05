@@ -11,3 +11,6 @@ locals {
     { format("%s", lower(var.instance_groups[i].name)) = keys(module.instances[i].instances) }
   ]...)
 }
+
+
+

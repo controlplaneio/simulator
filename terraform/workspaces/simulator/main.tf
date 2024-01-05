@@ -3,6 +3,12 @@ variable "name" {
   default     = "simulator"
 }
 
+variable "bastion_ssh_ingress" {
+  description = "List of CIDR blocks to grant ssh access to bastion."
+  type        = list(string)
+  default     = []
+}
+
 variable "ansible_playbook_dir" {
   description = "The full path to the directory containing the Ansible Playbooks."
   default     = "/simulator/ansible/playbooks"
@@ -28,8 +34,6 @@ variable "player_bundle_dir" {
   default     = "/simulator/config/player"
 }
 
-# TODO: add switch to turn of ip lookup and ingress control
-
 locals {
   ssh_identity_filename    = "simulator_rsa"
   ssh_config_filename      = "simulator_config"
@@ -43,6 +47,9 @@ locals {
 
   bastion_ami_id        = data.aws_ami.bastion.id
   bastion_instance_type = "t2.small"
+  bastion_ssh_ingress = length(var.bastion_ssh_ingress) > 0 ? var.bastion_ssh_ingress : [
+    format("%s/32", trim(data.http.player_ip.response_body, "\n")),
+  ]
 
   instance_groups = [
     {
@@ -99,6 +106,7 @@ module "cluster" {
   availability_zone     = random_shuffle.availability_zones.result[0]
   bastion_ami_id        = local.bastion_ami_id
   bastion_instance_type = local.bastion_instance_type
+  bastion_ssh_ingress   = local.bastion_ssh_ingress
   instance_groups       = local.instance_groups
   tags                  = local.tags
 }
@@ -216,4 +224,8 @@ data "aws_ami" "k8s" {
 terraform {
   backend "s3" {
   }
+}
+
+data "http" "player_ip" {
+  url = "https://icanhazip.com/"
 }

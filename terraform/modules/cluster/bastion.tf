@@ -4,7 +4,7 @@ resource "aws_instance" "bastion" {
   key_name                    = aws_key_pair.admin.id
   subnet_id                   = var.public_subnet_id
   associate_public_ip_address = true
-  vpc_security_group_ids      = [
+  vpc_security_group_ids = [
     aws_security_group.bastion.id,
   ]
 
@@ -55,10 +55,7 @@ resource "aws_security_group_rule" "bastion_ssh_ingress" {
   protocol          = "tcp"
   from_port         = 22
   to_port           = 22
-  cidr_blocks       = [
-    format("%s/32", trim(data.http.player_ip.response_body, "\n")),
-    #    "0.0.0.0/0",
-  ]
+  cidr_blocks       = var.bastion_ssh_ingress
 }
 
 resource "aws_security_group_rule" "bastion_open_egress" {
@@ -67,11 +64,7 @@ resource "aws_security_group_rule" "bastion_open_egress" {
   protocol          = -1
   from_port         = 0
   to_port           = 0
-  cidr_blocks       = [
+  cidr_blocks = [
     "0.0.0.0/0",
   ]
-}
-
-data "http" "player_ip" {
-  url = "https://icanhazip.com/"
 }
