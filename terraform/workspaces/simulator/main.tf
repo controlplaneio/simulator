@@ -20,12 +20,12 @@ variable "ansible_roles_path_extra" {
 
 variable "admin_bundle_dir" {
   description = "The full path to the directory where the admin bundle files will be written."
-  default = "/simulator/config/admin"
+  default     = "/simulator/config/admin"
 }
 
 variable "player_bundle_dir" {
   description = "The full path to the directory where the player bundle files will be written."
-  default = "/simulator/config/player"
+  default     = "/simulator/config/player"
 }
 
 # TODO: add switch to turn of ip lookup and ingress control
@@ -92,25 +92,88 @@ module "network" {
 module "cluster" {
   source = "../../modules/cluster"
 
-  name                     = var.name
-  network_id               = module.network.network_id
-  public_subnet_id         = module.network.public_subnet_id
-  private_subnet_id        = module.network.private_subnet_id
-  availability_zone        = random_shuffle.availability_zones.result[0]
-  ssh_identity_filename    = local.ssh_identity_filename
-  ssh_known_hosts_filename = local.ssh_known_hosts_filename
-  bastion_ami_id           = local.bastion_ami_id
-  bastion_instance_type    = local.bastion_instance_type
-  instance_groups          = local.instance_groups
+  name                  = var.name
+  network_id            = module.network.network_id
+  public_subnet_id      = module.network.public_subnet_id
+  private_subnet_id     = module.network.private_subnet_id
+  availability_zone     = random_shuffle.availability_zones.result[0]
+  bastion_ami_id        = local.bastion_ami_id
+  bastion_instance_type = local.bastion_instance_type
+  instance_groups       = local.instance_groups
+  tags                  = local.tags
+}
+
+resource "local_file" "admin_private_key" {
+  content_base64  = module.cluster.admin_private_key
+  filename        = format("%s/%s", var.admin_bundle_dir, local.ssh_identity_filename)
+  file_permission = "0600"
+}
+
+module "admin_ssh_config" {
+  source = "../../modules/ssh-config"
+
+  bastion_ip           = module.cluster.bastion_ip
+  instances            = module.cluster.instances
+  ssh_config_dir       = var.admin_bundle_dir
+  ssh_config_file      = local.ssh_config_filename
+  ssh_user             = "ubuntu"
+  ssh_identity_file    = local.ssh_identity_filename
+  ssh_known_hosts_file = local.ssh_known_hosts_filename
+
+  depends_on = [
+    module.network,
+    module.cluster,
+    local_file.admin_private_key,
+  ]
+}
+
+resource "local_file" "player_private_key" {
+  content_base64  = module.cluster.player_private_key
+  filename        = format("%s/%s", var.player_bundle_dir, local.ssh_identity_filename)
+  file_permission = "0600"
+}
+
+module "player_ssh_config" {
+  source = "../../modules/ssh-config"
+
+  bastion_ip           = module.cluster.bastion_ip
+  ssh_config_dir       = var.player_bundle_dir
+  ssh_config_file      = local.ssh_config_filename
+  ssh_user             = "player"
+  ssh_force_tty        = true
+  ssh_identity_file    = local.ssh_identity_filename
+  ssh_known_hosts_file = local.ssh_known_hosts_filename
+
+  depends_on = [
+    module.network,
+    module.cluster,
+    local_file.player_private_key,
+  ]
+}
 
 module "ansible_config" {
   source = "../../modules/ansible-config"
 
-  ansible_config_dir        = var.admin_bundle_dir
+  ansible_config_dir      = var.admin_bundle_dir
   ansible_config_filename = local.ansible_config_filename
   ansible_roles_path      = length(var.ansible_roles_path_extra) > 0 ? var.ansible_roles_path_extra : var.ansible_roles_dir
   ssh_config_filename     = local.ssh_config_filename
   hosts_by_group          = module.cluster.hosts_by_group
+}
+
+resource "null_resource" "kubeadm_init" {
+  provisioner "local-exec" {
+    command = format("ansible-playbook %s", local.ansible_playbook_init_cluster)
+    environment = {
+      ANSIBLE_CONFIG = local.ansible_config_path
+    }
+    working_dir = var.admin_bundle_dir
+  }
+
+  depends_on = [
+    module.admin_ssh_config,
+    module.ansible_config,
+  ]
 }
 
 resource "random_shuffle" "availability_zones" {

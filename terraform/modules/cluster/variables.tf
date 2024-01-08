@@ -18,18 +18,6 @@ variable "availability_zone" {
   description = ""
 }
 
-variable "ssh_config_filename" {
-  description = ""
-}
-
-variable "ssh_identity_filename" {
-  description = ""
-}
-
-variable "ssh_known_hosts_filename" {
-  description = ""
-}
-
 variable "bastion_ami_id" {
   description = ""
 }
