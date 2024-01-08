@@ -8,7 +8,7 @@ import (
 func Configure() {
 	handlerOptions := &slog.HandlerOptions{
 		AddSource: true,
-		Level:     slog.LevelInfo,
+		Level:     slog.LevelError,
 	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, handlerOptions))
