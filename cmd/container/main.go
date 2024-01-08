@@ -10,7 +10,6 @@ import (
 	"github.com/controlplaneio/simulator/v2/core/tools"
 	"github.com/controlplaneio/simulator/v2/internal/cli"
 	"github.com/controlplaneio/simulator/v2/internal/config"
-	"github.com/controlplaneio/simulator/v2/internal/logging"
 )
 
 func main() {
@@ -20,9 +19,6 @@ func main() {
 	packerDir := filepath.Join(simulatorDir, "packer")
 	terraformWorkspaceDir := filepath.Join(simulatorDir, "terraform/workspaces/simulator")
 	ansiblePlaybookDir := filepath.Join(simulatorDir, "ansible/playbooks")
-
-	// configure slog
-	logging.Configure()
 
 	conf := config.Config{}
 	if err := conf.Read(); err != nil {
