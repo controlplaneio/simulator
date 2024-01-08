@@ -13,15 +13,10 @@ output "admin_private_key" {
 output "admin_ssh_config" {
   value = base64encode(local.ssh_config_admin)
 }
-
-output "ansible_config" {
-  value = base64encode(local.ansible_config)
-}
-
-output "ansible_inventory" {
-  value = base64encode(local.ansible_inventory)
-}
-
 output "bastion_ip" {
   value = aws_instance.bastion.public_ip
+}
+
+output "hosts_by_group" {
+  value = local.hosts_by_group
 }

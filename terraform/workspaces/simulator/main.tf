@@ -5,12 +5,17 @@ variable "name" {
 
 variable "ansible_playbook_dir" {
   description = "The full path to the directory containing the Ansible Playbooks."
-  default = "/simulator/ansible/playbooks"
+  default     = "/simulator/ansible/playbooks"
 }
 
 variable "ansible_roles_dir" {
   description = "The full path to the directory containing the Ansible Roles."
-  default = "/simulator/ansible/roles"
+  default     = "/simulator/ansible/roles"
+}
+
+variable "ansible_roles_path_extra" {
+  description = "Extra directories to search for Ansible Roles."
+  default     = ""
 }
 
 variable "admin_bundle_dir" {
@@ -30,10 +35,11 @@ locals {
   ssh_config_filename      = "simulator_config"
   ssh_known_hosts_filename = "simulator_known_hosts"
 
-  ansible_config_filename             = "ansible.cfg"
-  ansible_inventory_filename          = "inventory.yaml"
-  ansible_playbook_update_known_hosts = "${var.ansible_playbook_dir}/update-known-hosts.yaml"
-  ansible_playbook_init_cluster       = "${var.ansible_playbook_dir}/init-cluster.yaml"
+  ansible_config_filename       = "ansible.cfg"
+  ansible_config_path           = format("%s/%s", var.admin_bundle_dir, local.ansible_config_filename)
+  ansible_inventory_filename    = "inventory.yaml"
+  ansible_roles_path            = length(var.ansible_roles_path_extra) > 0 ? format("%s:%s", var.ansible_roles_path_extra, var.ansible_roles_dir) : var.ansible_roles_dir
+  ansible_playbook_init_cluster = "${var.ansible_playbook_dir}/init-cluster.yaml"
 
   bastion_ami_id        = data.aws_ami.bastion.id
   bastion_instance_type = "t2.small"
@@ -96,9 +102,15 @@ module "cluster" {
   bastion_ami_id           = local.bastion_ami_id
   bastion_instance_type    = local.bastion_instance_type
   instance_groups          = local.instance_groups
-  ssh_config_filename      = local.ssh_config_filename
-  tags                     = local.tags
-  ansible_roles_dir        = var.ansible_roles_dir
+
+module "ansible_config" {
+  source = "../../modules/ansible-config"
+
+  ansible_config_dir        = var.admin_bundle_dir
+  ansible_config_filename = local.ansible_config_filename
+  ansible_roles_path      = length(var.ansible_roles_path_extra) > 0 ? var.ansible_roles_path_extra : var.ansible_roles_dir
+  ssh_config_filename     = local.ssh_config_filename
+  hosts_by_group          = module.cluster.hosts_by_group
 }
 
 resource "random_shuffle" "availability_zones" {

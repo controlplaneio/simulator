@@ -21,18 +21,5 @@ locals {
     ssh_known_hosts   = var.ssh_known_hosts_filename
     instances         = local.ssh_config_instances
   })
-
-  ansible_inventory_instances = merge([
-    for i, g in var.instance_groups :
-    { format("%ss", lower(var.instance_groups[i].name)) = keys(module.instances[i].instances) }
   ]...)
-
-  ansible_config = templatefile("${path.module}/templates/ansible.cfg", {
-    roles_path          = var.ansible_roles_dir
-    ssh_config_filename = var.ssh_config_filename
-  })
-
-  ansible_inventory = templatefile("${path.module}/templates/inventory.yaml.tpl", {
-    ansible_inventory_instances = local.ansible_inventory_instances
-  })
 }
