@@ -6,7 +6,6 @@ import (
 	"io"
 	"log/slog"
 	"os"
-	"sync"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -93,11 +92,11 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 		defer cancel()
 
 		if err := c.client.ContainerStop(cctx, cont.ID, container.StopOptions{}); err != nil {
-			slog.Warn("failed to stop container", "id", cont.ID, "err", err)
+			slog.Error("failed to stop container", "id", cont.ID, "err", err)
 		}
 
 		if err := c.client.ContainerRemove(cctx, cont.ID, types.ContainerRemoveOptions{}); err != nil {
-			slog.Warn("failed to remove container", "id", cont.ID, "err", err)
+			slog.Error("failed to remove container", "id", cont.ID, "err", err)
 		}
 	}()
 
@@ -115,18 +114,10 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 		return fmt.Errorf("failed to start container: %w", err)
 	}
 
-	var waitGroup sync.WaitGroup
-	waitGroup.Add(1)
-	go func() {
-		defer waitGroup.Done()
-
-		_, err := io.Copy(os.Stdout, hijack.Reader)
-		if err != nil {
-			slog.Warn("failed to copy container output", "err", err)
-		}
-	}()
-
-	waitGroup.Wait()
+	_, err = io.Copy(os.Stdout, hijack.Reader)
+	if err != nil {
+		return fmt.Errorf("failed to copy container output: %w", err)
+	}
 
 	return nil
 }
