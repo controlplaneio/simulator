@@ -18,6 +18,7 @@ func main() {
 	adminBundleDir := filepath.Join(simulatorDir, "config", "admin")
 	packerDir := filepath.Join(simulatorDir, "packer")
 	terraformWorkspaceDir := filepath.Join(simulatorDir, "terraform/workspaces/simulator")
+	ansibleConfigPath := filepath.Join(adminBundleDir, "ansible.cfg")
 	ansiblePlaybookDir := filepath.Join(simulatorDir, "ansible/playbooks")
 
 	conf := config.Config{}
@@ -39,7 +40,10 @@ func main() {
 	scenarioManager := tools.AnsiblePlaybook{
 		WorkingDir:  adminBundleDir,
 		PlaybookDir: ansiblePlaybookDir,
-		Output:      os.Stdout,
+		// Ansible complains on Windows+WSL that the directory ansible configuration is world writable
+		// and hence ignore the configuration unless explicitly set using the ANSIBLE_CONFIG environment variable.
+		Env:    []string{"ANSIBLE_CONFIG=" + ansibleConfigPath},
+		Output: os.Stdout,
 	}
 
 	withStateBucketFlag := cli.WithFlag("stateBucket", "", "the name of the S3 bucket to store Terraform state")
