@@ -60,3 +60,11 @@ bucket: <your-s3-bucket>
 container:
   image: controlplane/simulator:latest
 ```
+
+## Log level
+
+The default log level is set to `error` by default.
+
+It can be changed using the `--log-level` flag or by setting
+`SIMULATOR_LOG_LEVEL` environment variable to one of
+error, warn, info or debug.

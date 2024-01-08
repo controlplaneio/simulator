@@ -13,7 +13,6 @@ import (
 	"github.com/controlplaneio/simulator/v2/internal/cli"
 	"github.com/controlplaneio/simulator/v2/internal/config"
 	"github.com/controlplaneio/simulator/v2/internal/docker"
-	"github.com/controlplaneio/simulator/v2/internal/logging"
 )
 
 const (
@@ -31,8 +30,6 @@ var (
 )
 
 func main() {
-	logging.Configure()
-
 	conf := config.Config{}
 	if err := conf.Read(); err != nil {
 		slog.Error("failed to read config", "error", err)
