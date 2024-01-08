@@ -11,7 +11,6 @@ import (
 
 const (
 	AnsiblePlaybookExecutable Executable = "ansible-playbook"
-	AnsibleConfigPath         string     = "/simulator/config/admin/ansible.cfg"
 )
 
 type ScenarioManager interface {
@@ -22,13 +21,14 @@ type ScenarioManager interface {
 type AnsiblePlaybook struct {
 	WorkingDir  string
 	PlaybookDir string
+	Env         []string
 	Output      io.Writer
 }
 
 func (p AnsiblePlaybook) Install(ctx context.Context, id string) error {
 	playbook := fmt.Sprintf("%s.yaml", id)
 
-	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, playbook).Run(ctx, p.Output); err != nil {
+	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, p.Env, playbook).Run(ctx, p.Output); err != nil {
 		return fmt.Errorf("failed to execute Ansible Playbook: %w", err)
 	}
 
@@ -38,7 +38,7 @@ func (p AnsiblePlaybook) Install(ctx context.Context, id string) error {
 func (p AnsiblePlaybook) Uninstall(ctx context.Context, id string) error {
 	playbook := fmt.Sprintf("%s.yaml", id)
 
-	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, playbook, "state=absent").
+	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, p.Env, playbook, "state=absent").
 		Run(ctx, p.Output); err != nil {
 		return fmt.Errorf("failed to run Ansible Playbook with state=absent: %w", err)
 	}
@@ -46,7 +46,7 @@ func (p AnsiblePlaybook) Uninstall(ctx context.Context, id string) error {
 	return nil
 }
 
-func ansiblePlaybookCommand(workingDir, playbookDir, playbook string, extraVars ...string) runner {
+func ansiblePlaybookCommand(workingDir, playbookDir string, env []string, playbook string, extraVars ...string) runner {
 	args := []string{
 		fmt.Sprintf("%s/%s", playbookDir, playbook),
 	}
@@ -62,11 +62,7 @@ func ansiblePlaybookCommand(workingDir, playbookDir, playbook string, extraVars 
 		Executable: AnsiblePlaybookExecutable,
 		WorkingDir: workingDir,
 		Arguments:  args,
-		// Ansible complains on Windows+WSL that the directory
-		// with the ansible configuration is world writable
-		// and hence ignore the configuration unless explicitly
-		// set using the ANSIBLE_CONFIG environment variable.
-		Env: []string{"ANSIBLE_CONFIG=" + AnsibleConfigPath},
+		Env:        env,
 	}
 }
 
