@@ -5,6 +5,6 @@ locals {
 }
 
 resource "local_file" "ansible_inventory" {
-  content = local.ansible_inventory
+  content  = local.ansible_inventory
   filename = format("%s/%s", var.ansible_config_dir, var.ansible_inventory_filename)
 }

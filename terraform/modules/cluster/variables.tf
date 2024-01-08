@@ -39,12 +39,12 @@ variable "bastion_volume_size" {
 
 variable "bastion_ssh_ingress" {
   description = "List of CIDR blocks to grant ssh access to bastion."
-  type = list(string)
+  type        = list(string)
 }
 
 variable "instance_groups" {
   description = ""
-  type        = list(object({
+  type = list(object({
     name                 = string
     count                = number
     ami_id               = string
