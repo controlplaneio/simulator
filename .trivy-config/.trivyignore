@@ -28,3 +28,4 @@ CVE-2022-32149
 CVE-2023-49568
 ## Ignoring as it has not been patched in the upstream binary
 GHSA-9763-4f94-gfch
+CVE-2023-49569
