@@ -5,12 +5,11 @@
 
 # Simulator
 
+_🔊 Join [the hosted Simulator waitlist](https://kubesim.io) for private scenarios and training content 🚨_
+
 A distributed systems and infrastructure simulator for attacking and debugging Kubernetes: <code>simulator</code>
 creates a Kubernetes cluster for you in your AWS account; runs scenarios which misconfigure it and/or leave it
 vulnerable to compromise and trains you in mitigating against these vulnerabilities.
-
-For details on why we created this project and our initial goals take a look at the [vision statement](./docs/vision-statement.md).
-For details of the vision and drivers for Simulator V2, take a look at [version two](docs/vision-statement-v2.md)
 
 ## Prerequisites
 
@@ -41,3 +40,11 @@ Simulator supports the following methods of authentication to provision the AWS 
 - [Simulator AMIs](docs/amis.md)
 - [Simulator Infrastructure](docs/infrastructure.md)
 - [Simulator Scenarios](docs/scenarios.md)
+
+## More Info
+
+For details on why we created this project, take a look at the [vision statement](./docs/vision-statement.md) and [V2 redesign](/docs/vision-statement-v2.md).
+
+---
+
+Built with ❤ by [https://control-plane.io/](https://control-plane.io/)
