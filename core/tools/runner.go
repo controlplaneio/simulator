@@ -18,18 +18,19 @@ type runner struct {
 	Arguments  []string
 }
 
-func (c runner) Run(ctx context.Context, output io.Writer) error {
+func (c runner) Run(ctx context.Context, stdOut, stdErr io.Writer) error {
 	slog.Info("running", "runner", c)
 
 	//nolint:gosec
 	cmd := exec.CommandContext(ctx, string(c.Executable), c.Arguments...)
 	cmd.Dir = c.WorkingDir
-	cmd.Stdout = output
-	cmd.Stderr = output
+	cmd.Stdout = stdOut
+	cmd.Stderr = stdErr
 	cmd.Env = c.Env
 
 	err := cmd.Run()
 	if err != nil {
+		slog.Error("failed to run runner", "runner", c, "error", err)
 		return fmt.Errorf("failed to run runner: %w", err)
 	}
 
