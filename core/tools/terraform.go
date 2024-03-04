@@ -23,19 +23,22 @@ type InfraManager interface {
 
 type Terraform struct {
 	WorkingDir string
-	Output     io.Writer
+	StdOut     io.Writer
+	StdErr     io.Writer
 }
 
 func (t Terraform) Create(ctx context.Context, stateBucket string, stateKey string, name string) error {
 	backend := backendConfig(stateBucket, stateKey)
 
-	if err := terraformInitCommand(t.WorkingDir, backend).Run(ctx, t.Output); err != nil {
+	err := terraformInitCommand(t.WorkingDir, backend).Run(ctx, t.StdOut, t.StdErr)
+	if err != nil {
 		return fmt.Errorf("failed to initialise terraform: %w", err)
 	}
 
 	vars := terraformVars(name)
 
-	if err := terraformCommand(t.WorkingDir, TerraformApply, vars).Run(ctx, t.Output); err != nil {
+	err = terraformCommand(t.WorkingDir, TerraformApply, vars).Run(ctx, t.StdOut, t.StdErr)
+	if err != nil {
 		return fmt.Errorf("failed to apply terraform: %w", err)
 	}
 
@@ -45,13 +48,15 @@ func (t Terraform) Create(ctx context.Context, stateBucket string, stateKey stri
 func (t Terraform) Destroy(ctx context.Context, stateBucket string, stateKey string, name string) error {
 	backend := backendConfig(stateBucket, stateKey)
 
-	if err := terraformInitCommand(t.WorkingDir, backend).Run(ctx, t.Output); err != nil {
+	err := terraformInitCommand(t.WorkingDir, backend).Run(ctx, t.StdOut, t.StdErr)
+	if err != nil {
 		return fmt.Errorf("failed to initialise terraform: %w", err)
 	}
 
 	vars := terraformVars(name)
 
-	if err := terraformCommand(t.WorkingDir, TerraformDestroy, vars).Run(ctx, t.Output); err != nil {
+	err = terraformCommand(t.WorkingDir, TerraformDestroy, vars).Run(ctx, t.StdOut, t.StdErr)
+	if err != nil {
 		return fmt.Errorf("failed to destroy terraform: %w", err)
 	}
 

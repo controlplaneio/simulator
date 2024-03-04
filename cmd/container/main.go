@@ -29,12 +29,14 @@ func main() {
 
 	amiBuilder := tools.Packer{
 		WorkingDir: packerDir,
-		Output:     os.Stdout,
+		StdOut:     os.Stdout,
+		StdErr:     os.Stderr,
 	}
 
 	infraManager := tools.Terraform{
 		WorkingDir: terraformWorkspaceDir,
-		Output:     os.Stdout,
+		StdOut:     os.Stdout,
+		StdErr:     os.Stderr,
 	}
 
 	scenarioManager := tools.AnsiblePlaybook{
@@ -43,7 +45,8 @@ func main() {
 		// Ansible complains on Windows+WSL that the directory ansible configuration is world writable
 		// and hence ignore the configuration unless explicitly set using the ANSIBLE_CONFIG environment variable.
 		Env:    []string{"ANSIBLE_CONFIG=" + ansibleConfigPath},
-		Output: os.Stdout,
+		StdOut: os.Stdout,
+		StdErr: os.Stderr,
 	}
 
 	withStateBucketFlag := cli.WithFlag("stateBucket", "", "the name of the S3 bucket to store Terraform state")

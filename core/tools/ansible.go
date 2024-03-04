@@ -22,13 +22,15 @@ type AnsiblePlaybook struct {
 	WorkingDir  string
 	PlaybookDir string
 	Env         []string
-	Output      io.Writer
+	StdOut      io.Writer
+	StdErr      io.Writer
 }
 
 func (p AnsiblePlaybook) Install(ctx context.Context, id string) error {
 	playbook := fmt.Sprintf("%s.yaml", id)
 
-	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, p.Env, playbook).Run(ctx, p.Output); err != nil {
+	err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, p.Env, playbook).Run(ctx, p.StdOut, p.StdErr)
+	if err != nil {
 		return fmt.Errorf("failed to execute Ansible Playbook: %w", err)
 	}
 
@@ -39,7 +41,7 @@ func (p AnsiblePlaybook) Uninstall(ctx context.Context, id string) error {
 	playbook := fmt.Sprintf("%s.yaml", id)
 
 	if err := ansiblePlaybookCommand(p.WorkingDir, p.PlaybookDir, p.Env, playbook, "state=absent").
-		Run(ctx, p.Output); err != nil {
+		Run(ctx, p.StdOut, p.StdErr); err != nil {
 		return fmt.Errorf("failed to run Ansible Playbook with state=absent: %w", err)
 	}
 
