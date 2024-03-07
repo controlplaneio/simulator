@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -30,13 +31,20 @@ func WithInfraCreateCmd(manager tools.InfraManager, opts ...SimulatorCmdOptions)
 	infraCreateCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create simulator infrastructure",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 			defer stop()
 
-			stateBucket, stateKey, name := getTerraformFlags(cmd)
-			err := manager.Create(ctx, stateBucket, stateKey, name)
-			cobra.CheckErr(err)
+			stateBucket, stateKey, name, err := getTerraformFlags(cmd)
+			if err != nil {
+				return fmt.Errorf("unable to get terraform flags: %w", err)
+			}
+
+			err = manager.Create(ctx, stateBucket, stateKey, name)
+			if err != nil {
+				return fmt.Errorf("unable to create simulator infrastructure: %w", err)
+			}
+			return nil
 		},
 	}
 
@@ -53,13 +61,20 @@ func WithInfraDestroyCmd(manager tools.InfraManager, opts ...SimulatorCmdOptions
 	infraDestroyCmd := &cobra.Command{
 		Use:   "destroy",
 		Short: "Destroy simulator infrastructure",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, _ []string) error {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 			defer stop()
 
-			stateBucket, stateKey, name := getTerraformFlags(cmd)
-			err := manager.Destroy(ctx, stateBucket, stateKey, name)
-			cobra.CheckErr(err)
+			stateBucket, stateKey, name, err := getTerraformFlags(cmd)
+			if err != nil {
+				return fmt.Errorf("unable to get terraform flags: %w", err)
+			}
+
+			err = manager.Destroy(ctx, stateBucket, stateKey, name)
+			if err != nil {
+				return fmt.Errorf("unable to destroy simulator infrastructure: %w", err)
+			}
+			return nil
 		},
 	}
 
@@ -72,16 +87,23 @@ func WithInfraDestroyCmd(manager tools.InfraManager, opts ...SimulatorCmdOptions
 	}
 }
 
-func getTerraformFlags(cmd *cobra.Command) (string, string, string) {
+func getTerraformFlags(cmd *cobra.Command) (string, string, string, error) {
 	stateBucket, err := cmd.Flags().GetString("stateBucket")
-	cobra.CheckErr(err)
+	if err != nil {
+		return "", "", "", fmt.Errorf("unable to get stateBucket flag: %w", err)
+	}
 
 	stateKey, err := cmd.Flags().GetString("stateKey")
-	cobra.CheckErr(err)
+	if err != nil {
+		return "", "", "", fmt.Errorf("unable to get stateKey flag: %w", err)
+	}
 
 	name, err := cmd.Flags().GetString("name")
-	cobra.CheckErr(err)
-	return stateBucket, stateKey, name
+	if err != nil {
+		return "", "", "", fmt.Errorf("unable to get name flag: %w", err)
+	}
+
+	return stateBucket, stateKey, name, nil
 }
 
 func WithFlag(name, value, usage string) SimulatorCmdOptions {

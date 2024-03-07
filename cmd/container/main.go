@@ -5,11 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/spf13/cobra"
-
 	"github.com/controlplaneio/simulator/v2/core/tools"
 	"github.com/controlplaneio/simulator/v2/internal/cli"
 	"github.com/controlplaneio/simulator/v2/internal/config"
+	"github.com/controlplaneio/simulator/v2/internal/logging"
 )
 
 func main() {
@@ -75,6 +74,7 @@ func main() {
 		),
 	)
 
-	err := simulator.Execute()
-	cobra.CheckErr(err)
+	if err := simulator.Execute(); err != nil {
+		logging.LogFatal("Simulator CLI returned an error", err)
+	}
 }

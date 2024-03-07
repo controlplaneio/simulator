@@ -24,13 +24,16 @@ func WithConfigCmd(conf config.Config) SimulatorCmdOptions {
 	configCmd.PersistentFlags().BoolVar(&dev, "dev", false, "developer mode")
 	configCmd.PersistentFlags().BoolVar(&rootless, "rootless", false, "docker running in rootless mode")
 
-	configCmd.Run = func(_ *cobra.Command, _ []string) {
+	configCmd.RunE = func(_ *cobra.Command, _ []string) error {
 		if printDir {
 			dir, err := config.SimulatorDir()
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to get simulator config directory: %w", err)
+			}
+
 			//nolint: forbidigo
 			fmt.Println(dir)
-			return
+			return nil
 		}
 
 		if name != "" {
@@ -46,7 +49,9 @@ func WithConfigCmd(conf config.Config) SimulatorCmdOptions {
 			conf.Container.Image = "controlplane/simulator:dev"
 
 			baseDir, err := os.Getwd()
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to current working directory: %w", err)
+			}
 
 			conf.BaseDir = baseDir
 		} else {
@@ -58,7 +63,10 @@ func WithConfigCmd(conf config.Config) SimulatorCmdOptions {
 		conf.Container.Rootless = rootless
 
 		err := conf.Write()
-		cobra.CheckErr(err)
+		if err != nil {
+			return fmt.Errorf("unable to write simulator config to disk: %w", err)
+		}
+		return nil
 	}
 
 	return func(command *cobra.Command) {

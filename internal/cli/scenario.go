@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 
@@ -31,11 +32,14 @@ func WithScenarioListCmd() SimulatorCmdOptions {
 	scenarioListCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List available scenarios",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			list, err := scenarios.List()
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to list available scenarios: %w", err)
+			}
 
 			tabulateScenarios(list)
+			return nil
 		},
 	}
 
@@ -49,13 +53,16 @@ func WithScenarioDescribeCmd() SimulatorCmdOptions {
 		Use:   "describe [id]",
 		Short: "Describes a scenario",
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, args []string) error {
 			scenarioID := args[0]
 
 			s, err := scenarios.Find(scenarioID)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to describe scenario: %w", err)
+			}
 
 			tabulateScenarios([]scenarios.Scenario{s})
+			return nil
 		},
 	}
 
@@ -69,13 +76,16 @@ func WithScenarioInstallCmd(manager tools.ScenarioManager) SimulatorCmdOptions {
 		Use:   "install [id]",
 		Short: "Install the scenario into the simulator infrastructure",
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, args []string) error {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 			defer stop()
 
 			scenarioID := args[0]
 			err := manager.Install(ctx, scenarioID)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to install the scenario: %w", err)
+			}
+			return nil
 		},
 	}
 
@@ -89,13 +99,16 @@ func WithScenarioUninstallCmd(manager tools.ScenarioManager) SimulatorCmdOptions
 		Use:   "uninstall [id]",
 		Short: "Uninstall the scenario from the simulator infrastructure",
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, args []string) error {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 			defer stop()
 
 			scenarioID := args[0]
 			err := manager.Uninstall(ctx, scenarioID)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to uninstall the scenario: %w", err)
+			}
+			return nil
 		},
 	}
 
