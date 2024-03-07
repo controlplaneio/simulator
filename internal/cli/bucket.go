@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"os"
 
@@ -29,7 +30,7 @@ func WithBucketCmd(opts ...SimulatorCmdOptions) SimulatorCmdOptions {
 func WithCreateBucketCmd(config config.Config, manager aws.BucketManager) SimulatorCmdOptions {
 	bucketCreateCommand := &cobra.Command{
 		Use: "create",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			ctx := context.Background()
 
 			if config.Bucket == "" {
@@ -38,7 +39,10 @@ func WithCreateBucketCmd(config config.Config, manager aws.BucketManager) Simula
 			}
 
 			err := manager.Create(ctx, config.Bucket)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to create bucket: %w", err)
+			}
+			return nil
 		},
 	}
 
@@ -50,11 +54,14 @@ func WithCreateBucketCmd(config config.Config, manager aws.BucketManager) Simula
 func WithDeleteBucketCmd(config config.Config, manager aws.BucketManager) SimulatorCmdOptions {
 	bucketCreateCommand := &cobra.Command{
 		Use: "delete",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			ctx := context.Background()
 
 			err := manager.Delete(ctx, config.Bucket)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to delete bucket: %w", err)
+			}
+			return nil
 		},
 	}
 

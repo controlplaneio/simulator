@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -32,11 +33,13 @@ func WithAMIListCmd(manager aws.AMIManager) SimulatorCmdOptions {
 	amiListCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List simulator AMIs",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			ctx := context.Background()
 
 			amis, err := manager.List(ctx)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to list simulator AMIs: %w", err)
+			}
 
 			table := tablewriter.NewWriter(os.Stdout)
 
@@ -64,6 +67,7 @@ func WithAMIListCmd(manager aws.AMIManager) SimulatorCmdOptions {
 				table.SetRowLine(true)
 			}
 			table.Render()
+			return nil
 		},
 	}
 
@@ -77,12 +81,15 @@ func WithAMIDeleteCmd(manager aws.AMIManager) SimulatorCmdOptions {
 		Use:   "delete [ami id]",
 		Short: "Delete a simulator AMI",
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, args []string) error {
 			ctx := context.Background()
 			id := args[0]
 
 			err := manager.Delete(ctx, id)
-			cobra.CheckErr(err)
+			if err != nil {
+				return fmt.Errorf("unable to delete simulator AMI: %w", err)
+			}
+			return nil
 		},
 	}
 
@@ -98,20 +105,16 @@ func WithAmiBuildCmd(builder tools.AMIBuilder) SimulatorCmdOptions {
 		Use:   "build [name]",
 		Short: "Build the packer image",
 		Args:  cobra.MinimumNArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(_ *cobra.Command, args []string) error {
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+			defer stop()
 
-			var err error
 			id := args[0]
-
-			// go func() {
-			err = builder.Build(ctx, id)
-			// }()
-			//
-			// <-ctx.Done() //TODO: Check out quitting
-			stop()
-
-			cobra.CheckErr(err)
+			err := builder.Build(ctx, id)
+			if err != nil {
+				return fmt.Errorf("unable to build packer image: %w", err)
+			}
+			return nil
 		},
 	}
 

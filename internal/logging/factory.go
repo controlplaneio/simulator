@@ -32,3 +32,8 @@ func Configure(level string) error {
 
 	return nil
 }
+
+func LogFatal(msg string, err error) {
+	slog.Error(msg, "error", err)
+	os.Exit(1)
+}
