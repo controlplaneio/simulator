@@ -25,7 +25,7 @@ jobs:
           go_version_file: go.mod
 
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
 
@@ -69,7 +69,7 @@ jobs:
           push: false
 
       - name: Run Trivy vulnerability scanner on the dev image
-        uses: aquasecurity/trivy-action@0.16.0
+        uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: 'controlplane/simulator:dev'
           format: 'table'
@@ -88,7 +88,7 @@ jobs:
           push: false
 
       - name: Run Trivy vulnerability scanner on simulator image
-        uses: aquasecurity/trivy-action@0.16.0
+        uses: aquasecurity/trivy-action@0.18.0
         with:
           image-ref: controlplane/simulator:${{ github.sha }}
           format: 'table'
