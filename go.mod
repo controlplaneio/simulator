@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.25.5
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.137.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.44.0
-	github.com/docker/docker v24.0.7+incompatible
+	github.com/docker/docker v24.0.9+incompatible
 	github.com/gruntwork-io/terratest v0.46.7
 	github.com/kevinburke/ssh_config v1.2.0
 	github.com/olekukonko/tablewriter v0.0.5
