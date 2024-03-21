@@ -4,7 +4,6 @@ Host bastion ${bastion_ip}
 %{if ssh_force_tty ~}
     RequestTTY force
 %{endif ~}
-    ForwardAgent yes
     IdentityFile ${ssh_identity_file}
     UserKnownHostsFile ${ssh_known_hosts}
 %{ for id in keys(instances) ~}
