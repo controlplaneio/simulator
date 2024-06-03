@@ -1,3 +1,8 @@
+terraform {
+  # pin to the last MPL2.0 releases (1.5.x)
+  required_version = "~> 1.5.7"
+}
+
 variable "name" {
   description = "Name to identity the cluster."
   default     = "simulator"

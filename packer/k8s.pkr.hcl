@@ -1,3 +1,8 @@
+packer {
+  # pin to the last MPL2.0 releases (1.9.x)
+  required_version = "~> 1.9.5"
+}
+
 variable "name" {
   type    = string
   default = "simulator-k8s"
@@ -41,8 +46,9 @@ build {
 
   provisioner "shell" {
     inline = [
-      "sudo apt update",
-      "sudo apt install -y apt-transport-https ca-certificates figlet curl jq",
+      "sudo apt-get update",
+      "sudo apt-get upgrade -y",
+      "sudo apt-get install -y apt-transport-https ca-certificates figlet curl jq",
     ]
   }
 
