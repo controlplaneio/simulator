@@ -13,12 +13,12 @@ Guidelines for categorising the difficulty of scenarios.
 
 * May include Node or Master based tasks
 * Likley to still be based on a common misconfiguration
-* May require using a seach engine as well as kubernetes.io
+* May require using a search engine as well as kubernetes.io
 * May require using a non-Kubernetes tool
 
 ## Hard
 
 * Will contain larger tasks
 * Hints will be less prescriptive
-* May require a siginificant time investment
+* May require a significant time investment
 * Most likley will require using a search engine

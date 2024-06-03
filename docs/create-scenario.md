@@ -29,7 +29,7 @@ _Resource definitions_
 - secrets in environment variables
 - missing pod security policies
 - missing network definitions
-- overly permissable service accounts
+- overly permissible service accounts
 
 _Core Components_
 - misconfigured ports on the kubelet
