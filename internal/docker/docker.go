@@ -95,12 +95,12 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 			slog.Error("failed to stop container", "id", cont.ID, "err", err)
 		}
 
-		if err := c.client.ContainerRemove(cctx, cont.ID, types.ContainerRemoveOptions{}); err != nil {
+		if err := c.client.ContainerRemove(cctx, cont.ID, container.RemoveOptions{}); err != nil {
 			slog.Error("failed to remove container", "id", cont.ID, "err", err)
 		}
 	}()
 
-	hijack, err := c.client.ContainerAttach(ctx, cont.ID, types.ContainerAttachOptions{
+	hijack, err := c.client.ContainerAttach(ctx, cont.ID, container.AttachOptions{
 		Stream: true,
 		Stdout: true,
 		Stderr: true,
@@ -109,7 +109,7 @@ func (c Client) Run(ctx context.Context, conf Config) error {
 		return fmt.Errorf("failed to attach to container: %w", err)
 	}
 
-	err = c.client.ContainerStart(ctx, cont.ID, types.ContainerStartOptions{})
+	err = c.client.ContainerStart(ctx, cont.ID, container.StartOptions{})
 	if err != nil {
 		return fmt.Errorf("failed to start container: %w", err)
 	}
