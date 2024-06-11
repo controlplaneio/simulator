@@ -26,6 +26,7 @@ resource "null_resource" "internal_host_test" {
 
   provisioner "remote-exec" {
     inline = [
+      "set -o errexit",
       "chmod +x /root/run-goss.sh",
       "/root/run-goss.sh",
       "rm /root/run-goss.sh /root/goss.yaml",
