@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/controlplaneio/simulator/v2/internal/logging"
@@ -22,12 +23,18 @@ func NewSimulatorCmd(opts ...SimulatorCmdOptions) *cobra.Command {
 
 	simulator.PersistentFlags().String("log-level", logLevel(), "Log level (error, warn, info, debug)")
 
-	simulator.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
-		logLevel, err := cmd.Flags().GetString("log-level")
-		cobra.CheckErr(err)
+	simulator.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
+		logLevel, err := cmd.Flags().GetString("log-level222")
+		if err != nil {
+			return fmt.Errorf("unable to get log-level flag: %w", err)
+		}
 
 		err = logging.Configure(logLevel)
-		cobra.CheckErr(err)
+		if err != nil {
+			return fmt.Errorf("unable to configure logging: %w", err)
+		}
+
+		return nil
 	}
 
 	for _, opt := range opts {
